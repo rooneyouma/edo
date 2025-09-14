@@ -1,4 +1,5 @@
-import React from 'react';
+import React from "react";
+import { Search } from "lucide-react";
 
 const MaintenanceFilters = ({
   searchQuery,
@@ -10,30 +11,28 @@ const MaintenanceFilters = ({
   propertyFilter,
   setPropertyFilter,
   dateFilter,
-  setDateFilter
+  setDateFilter,
 }) => {
   return (
     <div className="mt-4">
       <div className="flex flex-col sm:flex-row gap-4">
         <div className="relative flex-grow">
+          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <Search className="h-5 w-5 text-gray-400 dark:text-gray-500" />
+          </div>
           <input
             type="text"
             name="search"
             id="search"
-            className="block w-full rounded-md border-gray-300 dark:border-gray-600 pl-10 focus:border-violet-500 focus:ring-violet-500 sm:text-sm dark:bg-gray-700 dark:text-gray-100"
+            className="block w-full rounded-lg border border-gray-300 dark:border-gray-700 pl-10 pr-4 py-2 focus:border-violet-500 focus:ring-violet-500 focus:ring-2 focus:ring-opacity-20 dark:bg-gray-800 dark:text-gray-100 sm:text-sm shadow-sm transition-all duration-200"
             placeholder="Search maintenance requests..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
-          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <svg className="h-5 w-5 text-gray-400 dark:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-            </svg>
-          </div>
         </div>
         <div className="flex-shrink-0">
           <select
-            className="block w-full rounded-md border-gray-300 dark:border-gray-600 pl-3 pr-10 py-2 text-sm focus:border-violet-500 focus:ring-violet-500 dark:bg-gray-700 dark:text-gray-100"
+            className="block w-full rounded-lg border border-gray-300 dark:border-gray-700 pl-3 pr-10 py-2 text-sm focus:border-violet-500 focus:ring-violet-500 focus:ring-2 focus:ring-opacity-20 dark:bg-gray-700 dark:text-gray-100 shadow-sm transition-all duration-200"
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
           >
@@ -45,7 +44,7 @@ const MaintenanceFilters = ({
         </div>
         <div className="flex-shrink-0">
           <select
-            className="block w-full rounded-md border-gray-300 dark:border-gray-600 pl-3 pr-10 py-2 text-sm focus:border-violet-500 focus:ring-violet-500 dark:bg-gray-700 dark:text-gray-100"
+            className="block w-full rounded-lg border border-gray-300 dark:border-gray-700 pl-3 pr-10 py-2 text-sm focus:border-violet-500 focus:ring-violet-500 focus:ring-2 focus:ring-opacity-20 dark:bg-gray-700 dark:text-gray-100 shadow-sm transition-all duration-200"
             value={priorityFilter}
             onChange={(e) => setPriorityFilter(e.target.value)}
           >
@@ -57,7 +56,7 @@ const MaintenanceFilters = ({
         </div>
         <div className="flex-shrink-0">
           <select
-            className="block w-full rounded-md border-gray-300 dark:border-gray-600 pl-3 pr-10 py-2 text-sm focus:border-violet-500 focus:ring-violet-500 dark:bg-gray-700 dark:text-gray-100"
+            className="block w-full rounded-lg border border-gray-300 dark:border-gray-700 pl-3 pr-10 py-2 text-sm focus:border-violet-500 focus:ring-violet-500 focus:ring-2 focus:ring-opacity-20 dark:bg-gray-700 dark:text-gray-100 shadow-sm transition-all duration-200"
             value={propertyFilter}
             onChange={(e) => setPropertyFilter(e.target.value)}
           >
@@ -71,7 +70,7 @@ const MaintenanceFilters = ({
         </div>
         <div className="flex-shrink-0">
           <select
-            className="block w-full rounded-md border-gray-300 dark:border-gray-600 pl-3 pr-10 py-2 text-sm focus:border-violet-500 focus:ring-violet-500 dark:bg-gray-700 dark:text-gray-100"
+            className="block w-full rounded-lg border border-gray-300 dark:border-gray-700 pl-3 pr-10 py-2 text-sm focus:border-violet-500 focus:ring-violet-500 focus:ring-2 focus:ring-opacity-20 dark:bg-gray-700 dark:text-gray-100 shadow-sm transition-all duration-200"
             value={dateFilter}
             onChange={(e) => setDateFilter(e.target.value)}
           >
@@ -86,4 +85,4 @@ const MaintenanceFilters = ({
   );
 };
 
-export default MaintenanceFilters; 
+export default MaintenanceFilters;

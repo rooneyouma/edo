@@ -181,6 +181,10 @@ const LandlordDashboard = () => {
     setShowOnboardModal(false);
   };
 
+  const toggleSidebar = () => {
+    setSidebarOpen(!sidebarOpen);
+  };
+
   // Construct display name with proper null checks
   const displayName = user
     ? user.first_name || user.last_name
@@ -189,103 +193,106 @@ const LandlordDashboard = () => {
     : "Landlord";
 
   return (
-    <div className="h-screen bg-slate-50 dark:bg-slate-900 overflow-hidden">
-      <Header toggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
+    <div className="flex h-screen overflow-hidden bg-slate-50 dark:bg-slate-900">
+      {/* Sidebar */}
       <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
-      <div className="h-[calc(100vh-4rem)]">
-        <main className="h-full transition-all duration-200 lg:ml-64 overflow-y-auto">
+
+      {/* Content area */}
+      <div className="relative flex flex-col flex-1 overflow-y-auto overflow-x-hidden lg:ml-64">
+        {/* Site header */}
+        <Header toggleSidebar={toggleSidebar} />
+        <main className="h-full transition-all duration-200 overflow-y-auto">
           <div className="pl-4 pr-8 sm:pl-6 sm:pr-12 lg:pl-8 lg:pr-16 py-8 w-full">
             {/* Dashboard Title */}
             <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-100 mb-4">
               Property Manager
             </h2>
-            {/* Welcome Banner */}
-            <div className="mb-6 flex items-center gap-4">
-              {user && user.avatar && (
-                <img
-                  src={user.avatar}
-                  alt={displayName}
-                  className="h-12 w-12 rounded-full"
-                />
-              )}
-              <div>
-                <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">
-                  Welcome, {displayName}!
-                </h1>
-                <p className="text-sm text-slate-500 dark:text-slate-400">
-                  Here's a summary of your properties and activity.
-                </p>
-              </div>
-            </div>
+            <p className="text-slate-600 dark:text-slate-400 mb-8">
+              Welcome back, {displayName}! Here's what's happening with your
+              properties today.
+            </p>
+
             {/* Quick Actions */}
-            <div className="mb-8 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
-              {quickActions.map((action) => (
-                <Link
-                  key={action.label}
-                  href={action.link}
-                  className={`flex flex-col items-center justify-center rounded-lg p-4 shadow hover:shadow-lg transition ${action.color} min-h-[100px]`}
-                >
-                  {action.icon}
-                  <span className="mt-2 font-semibold text-base">
-                    {action.label}
-                  </span>
-                </Link>
-              ))}
-            </div>
-            {/* Analytics Grid */}
-            <div className="mb-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              {analyticsStats.map((stat) => (
-                <div
-                  key={stat.label}
-                  className={`flex items-center rounded-lg p-4 shadow hover:shadow-lg transition ${stat.color}`}
-                >
-                  <div className="mr-4">{stat.icon}</div>
-                  <div>
-                    <div className={`text-lg font-bold ${stat.text}`}>
-                      {stat.value}
-                    </div>
-                    <div className="text-sm text-slate-700 dark:text-slate-200 font-medium">
-                      {stat.label}
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-            {/* Activity Timeline */}
-            <div className="mb-8 bg-white dark:bg-slate-800 shadow rounded-lg p-6">
-              <div className="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-4">
-                Recent Activity
-              </div>
-              <ol className="relative border-l border-slate-200 dark:border-slate-700 ml-6">
-                {activityTimeline.map((item, idx) => (
-                  <li key={idx} className="mb-8 flex items-start relative">
-                    <span className="absolute -left-6 flex items-center justify-center w-8 h-8 bg-slate-100 dark:bg-slate-700 rounded-full ring-8 ring-slate-50 dark:ring-slate-900">
-                      {item.icon}
+            <div className="mb-8">
+              <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-200 mb-4">
+                Quick Actions
+              </h3>
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+                {quickActions.map((action, index) => (
+                  <Link
+                    key={index}
+                    href={action.link}
+                    className={`${action.color} rounded-lg p-4 flex flex-col items-center justify-center transition-transform hover:scale-105`}
+                  >
+                    {action.icon}
+                    <span className="mt-2 text-sm font-medium text-center">
+                      {action.label}
                     </span>
-                    <div className="flex flex-col ml-4">
-                      <div className="flex items-center gap-2">
-                        <span className="font-medium text-slate-900 dark:text-slate-100">
-                          {item.label}
-                        </span>
-                        <CheckCircle className="h-4 w-4 text-green-400" />
-                      </div>
-                      <div className="text-xs text-slate-500 dark:text-slate-400">
-                        {item.date}
+                  </Link>
+                ))}
+              </div>
+            </div>
+
+            {/* Analytics and Activity */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+              {/* Analytics Stats */}
+              <div className="lg:col-span-2">
+                <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-200 mb-4">
+                  Analytics Overview
+                </h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {analyticsStats.map((stat, index) => (
+                    <div
+                      key={index}
+                      className={`${stat.color} rounded-lg p-4 flex items-center`}
+                    >
+                      <div className="mr-3">{stat.icon}</div>
+                      <div>
+                        <p className={`text-2xl font-bold ${stat.text}`}>
+                          {stat.value}
+                        </p>
+                        <p className="text-sm text-slate-600 dark:text-slate-400">
+                          {stat.label}
+                        </p>
                       </div>
                     </div>
-                  </li>
-                ))}
-              </ol>
+                  ))}
+                </div>
+              </div>
+
+              {/* Recent Activity */}
+              <div>
+                <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-200 mb-4">
+                  Recent Activity
+                </h3>
+                <div className="bg-white dark:bg-slate-800 rounded-lg shadow-sm p-4">
+                  <ul className="space-y-4">
+                    {activityTimeline.map((activity, index) => (
+                      <li key={index} className="flex items-start">
+                        <div className="mr-3 mt-1">{activity.icon}</div>
+                        <div>
+                          <p className="text-sm font-medium text-slate-800 dark:text-slate-200">
+                            {activity.label}
+                          </p>
+                          <p className="text-xs text-slate-500 dark:text-slate-400">
+                            {activity.date}
+                          </p>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
             </div>
           </div>
         </main>
       </div>
+
+      {/* Onboard Role Modal */}
       <OnboardRoleModal
-        roleName="landlord"
-        open={showOnboardModal}
-        onClose={() => router.push("/")}
+        isOpen={showOnboardModal}
+        onClose={() => setShowOnboardModal(false)}
         onSuccess={handleOnboardSuccess}
-        user={user ? { ...user, token: getToken() } : null}
       />
     </div>
   );

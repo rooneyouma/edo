@@ -4,7 +4,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import Sidebar from "../../../partials/dashboard/LandlordSidebar";
 import Header from "../../../partials/dashboard/LandlordHeader";
-import AddPropertyForm from "../../../components/forms/AddPropertyForm";
+import AddPropertyForm from "../../../components/landlord/forms/AddPropertyForm";
 import PropertyList from "../../../components/landlord/properties/PropertyList";
 import PropertyFilters from "../../../components/landlord/properties/PropertyFilters";
 import DeleteConfirmModal from "../../../components/landlord/notices/DeleteConfirmModal";

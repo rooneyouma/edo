@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { apiRequest, tenantAPI } from "../../utils/api";
+import { apiRequest, tenantAPI } from "../../../utils/api";
 
 const AddTenantForm = ({
   onClose,

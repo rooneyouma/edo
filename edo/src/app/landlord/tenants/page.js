@@ -174,12 +174,21 @@ const LandlordTenantsPage = () => {
     }
   };
 
+  const toggleSidebar = () => {
+    setSidebarOpen(!sidebarOpen);
+  };
+
   return (
-    <div className="h-screen bg-slate-50 dark:bg-slate-900 overflow-hidden">
-      <Header toggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
+    <div className="flex h-screen overflow-hidden bg-slate-50 dark:bg-slate-900">
+      {/* Sidebar */}
       <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
-      <div className="h-[calc(100vh-4rem)]">
-        <main className="h-full transition-all duration-200 lg:ml-64 overflow-y-auto">
+
+      {/* Content area */}
+      <div className="relative flex flex-col flex-1 overflow-y-auto overflow-x-hidden lg:ml-64">
+        {/* Site header */}
+        <Header toggleSidebar={toggleSidebar} />
+
+        <main className="grow">
           <div className="pl-4 pr-8 sm:pl-6 sm:pr-12 lg:pl-8 lg:pr-16 py-8 w-full">
             {/* Page Title */}
             <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-100 mb-4">

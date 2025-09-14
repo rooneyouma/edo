@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import AddUnitModal from "./AddUnitModal";
 import Modal from "../../../partials/Modal";
-import AddTenantForm from "../../forms/AddTenantForm";
+import AddTenantForm from "../forms/AddTenantForm";
 import { apiRequest } from "../../../utils/api";
 import ManageUnitsModal from "./ManageUnitsModal";
 
