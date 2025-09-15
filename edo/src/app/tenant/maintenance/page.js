@@ -1,12 +1,11 @@
-'use client';
+"use client";
 
 import React, { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import TenantHeader from "../../partials/tenant/TenantHeader";
-import TenantSidebar from "../../partials/tenant/TenantSidebar";
-import MaintenanceTable from "../../components/tenant/maintenance/MaintenanceTable.jsx";
-import NewRequestModal from "../../components/tenant/maintenance/NewRequestModal.jsx";
-import RequestDetailsModal from "../../components/tenant/maintenance/RequestDetailsModal.jsx";
+import TenantHeader from "../../../partials/tenant/TenantHeader.jsx";
+import TenantSidebar from "../../../partials/tenant/TenantSidebar.jsx";
+import MaintenanceTable from "../../../components/tenant/maintenance/MaintenanceTable.jsx";
+import NewRequestModal from "../../../components/tenant/maintenance/NewRequestModal.jsx";
 import {
   getStatusColor,
   getPriorityColor,
@@ -14,7 +13,7 @@ import {
   createMaintenanceRequest,
   formatDate,
   validateMaintenanceRequest,
-} from "../../utils/maintenanceUtils.js";
+} from "../../../utils/maintenanceUtils.js";
 import {
   Search,
   Filter,
@@ -23,8 +22,9 @@ import {
   Plus,
   AlertCircle,
 } from "lucide-react";
-import { isAuthenticated } from "../../utils/api";
-import { useNavigate, useLocation } from "react-router-dom";
+import { isAuthenticated } from "../../../utils/api";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 const Maintenance = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -42,8 +42,7 @@ const Maintenance = () => {
     images: [],
   });
   const [formErrors, setFormErrors] = useState({});
-  const navigate = useNavigate();
-  const location = useLocation();
+  const router = useRouter();
   const queryClient = useQueryClient();
 
   // React Query for fetching maintenance requests
@@ -111,14 +110,12 @@ const Maintenance = () => {
       <div className="flex flex-col items-center justify-center min-h-screen bg-slate-50 dark:bg-slate-900">
         <h2 className="text-2xl font-bold mb-4">Sign in required</h2>
         <p className="mb-6">You must be signed in to access this page.</p>
-        <button
+        <Link
+          href="/auth/signin?next=/tenant/maintenance"
           className="px-6 py-2 bg-teal-600 text-white rounded-lg font-semibold hover:bg-teal-700 transition"
-          onClick={() =>
-            navigate(`/signin?next=${encodeURIComponent(location.pathname)}`)
-          }
         >
-          Proceed
-        </button>
+          Proceed to Sign In
+        </Link>
       </div>
     );
   }
@@ -188,15 +185,11 @@ const Maintenance = () => {
   if (loading) {
     return (
       <div className="flex h-screen bg-slate-50 dark:bg-slate-900">
-        <TenantSidebar
-          sidebarOpen={isSidebarOpen}
-          setSidebarOpen={setIsSidebarOpen}
-        />
+        <TenantSidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
         <div className="relative flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
-          <TenantHeader
-            sidebarOpen={isSidebarOpen}
-            setSidebarOpen={setIsSidebarOpen}
-          />
+          <div className="lg:ml-64">
+            <TenantHeader toggleSidebar={toggleSidebar} />
+          </div>
           <main className="flex-1 p-4">
             <div className="flex items-center justify-center h-64">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-teal-600"></div>
@@ -209,16 +202,10 @@ const Maintenance = () => {
 
   return (
     <div className="flex h-screen bg-slate-50 dark:bg-slate-900">
-      <TenantSidebar
-        sidebarOpen={isSidebarOpen}
-        setSidebarOpen={setIsSidebarOpen}
-      />
+      <TenantSidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
 
       <div className="relative flex flex-col flex-1 overflow-y-auto overflow-x-hidden lg:ml-64">
-        <TenantHeader
-          sidebarOpen={isSidebarOpen}
-          setSidebarOpen={setIsSidebarOpen}
-        />
+        <TenantHeader toggleSidebar={toggleSidebar} />
 
         <main className="flex-1 pl-4 pr-8 sm:pl-6 sm:pr-12 lg:pl-8 lg:pr-16 py-4">
           <div>

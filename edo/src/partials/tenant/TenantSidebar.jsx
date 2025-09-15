@@ -53,7 +53,7 @@ const TenantSidebar = ({ isOpen, toggleSidebar }) => {
           {/* Sidebar Navigation */}
           <nav className="flex-1 px-4 py-4 space-y-1">
             <Link
-              href="/tenant/dashboard"
+              href="/tenant/"
               className={`block text-gray-800 dark:text-gray-100 truncate transition duration-150 ${
                 pathname.includes("/tenant/dashboard")
                   ? ""
