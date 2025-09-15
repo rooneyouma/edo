@@ -12,12 +12,13 @@ import {
   DollarSign,
   Wrench,
 } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import ThemeToggle from "../../components/ThemeToggle";
 import { authAPI, getStoredUser } from "../../utils/api";
 
 const TenantHeader = ({ toggleSidebar }) => {
-  const navigate = useNavigate();
+  const router = useRouter();
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -112,7 +113,7 @@ const TenantHeader = ({ toggleSidebar }) => {
   const handleResultClick = (result) => {
     setIsSearchOpen(false);
     setSearchQuery("");
-    navigate(result.path);
+    router.push(result.path);
   };
 
   // Handle click outside of search modal
@@ -223,7 +224,7 @@ const TenantHeader = ({ toggleSidebar }) => {
                     ))}
                     <div className="px-4 py-2 border-t border-slate-200 dark:border-slate-700">
                       <Link
-                        to="/tenant/notifications"
+                        href="/tenant/notifications"
                         className="w-full text-sm text-violet-600 dark:text-violet-400 hover:text-violet-700 dark:hover:text-violet-300"
                         onClick={() => setIsNotificationsOpen(false)}
                       >
@@ -293,7 +294,7 @@ const TenantHeader = ({ toggleSidebar }) => {
 
                     {/* Menu items */}
                     <Link
-                      to="/tenant/settings"
+                      href="/tenant/settings"
                       className="flex items-center px-4 py-2 text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700/50"
                       onClick={() => setIsProfileOpen(false)}
                     >

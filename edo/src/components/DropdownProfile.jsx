@@ -8,11 +8,16 @@ const UserAvatar = "/images/user-avatar-32.png";
 
 function DropdownProfile({ align }) {
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [user, setUser] = useState(null); // Initialize user state as null
 
   const trigger = useRef(null);
   const dropdown = useRef(null);
 
-  const user = getStoredUser();
+  // Fetch user data only on client side
+  useEffect(() => {
+    const storedUser = getStoredUser();
+    setUser(storedUser);
+  }, []);
 
   // close on click outside
   useEffect(() => {
@@ -101,10 +106,10 @@ function DropdownProfile({ align }) {
         >
           <div className="pt-0.5 pb-2 px-3 mb-1 border-b border-gray-200 dark:border-gray-700/60">
             <div className="font-medium text-gray-800 dark:text-gray-100">
-              Acme Inc.
+              {user?.company || "Acme Inc."}
             </div>
             <div className="text-xs text-gray-500 dark:text-gray-400 italic">
-              Administrator
+              {user?.role || "Administrator"}
             </div>
           </div>
           <ul>

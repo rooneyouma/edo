@@ -1,10 +1,10 @@
 import React from "react";
-import { NavLink, useLocation } from "react-router-dom";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import EdoLogo from "../../components/EdoLogo";
 
 const TenantSidebar = ({ isOpen, toggleSidebar }) => {
-  const location = useLocation();
-  const { pathname } = location;
+  const pathname = usePathname();
 
   return (
     <>
@@ -52,8 +52,8 @@ const TenantSidebar = ({ isOpen, toggleSidebar }) => {
 
           {/* Sidebar Navigation */}
           <nav className="flex-1 px-4 py-4 space-y-1">
-            <NavLink
-              to="/tenant/dashboard"
+            <Link
+              href="/tenant/dashboard"
               className={`block text-gray-800 dark:text-gray-100 truncate transition duration-150 ${
                 pathname.includes("/tenant/dashboard")
                   ? ""
@@ -91,10 +91,10 @@ const TenantSidebar = ({ isOpen, toggleSidebar }) => {
                   </span>
                 </div>
               </div>
-            </NavLink>
+            </Link>
 
-            <NavLink
-              to="/tenant/rentals"
+            <Link
+              href="/tenant/rentals"
               className={`block text-gray-800 dark:text-gray-100 truncate transition duration-150 ${
                 pathname.includes("/tenant/rentals")
                   ? ""
@@ -126,17 +126,15 @@ const TenantSidebar = ({ isOpen, toggleSidebar }) => {
                   </span>
                 </div>
               </div>
-            </NavLink>
+            </Link>
 
-            <NavLink
-              to="/tenant/payments"
-              className={({ isActive }) =>
-                `flex items-center px-4 py-2 text-sm font-medium rounded-md ${
-                  isActive
-                    ? "bg-[#0d9488]/10 dark:bg-[#0d9488]/20 text-[#0d9488] dark:text-[#0d9488]"
-                    : "text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50"
-                }`
-              }
+            <Link
+              href="/tenant/payments"
+              className={`flex items-center px-4 py-2 text-sm font-medium rounded-md ${
+                pathname === "/tenant/payments"
+                  ? "bg-[#0d9488]/10 dark:bg-[#0d9488]/20 text-[#0d9488] dark:text-[#0d9488]"
+                  : "text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50"
+              }`}
             >
               <svg
                 className="w-5 h-5 mr-3"
@@ -152,17 +150,15 @@ const TenantSidebar = ({ isOpen, toggleSidebar }) => {
                 />
               </svg>
               Payments
-            </NavLink>
+            </Link>
 
-            <NavLink
-              to="/tenant/maintenance"
-              className={({ isActive }) =>
-                `flex items-center px-4 py-2 text-sm font-medium rounded-md ${
-                  isActive
-                    ? "bg-[#0d9488]/10 dark:bg-[#0d9488]/20 text-[#0d9488] dark:text-[#0d9488]"
-                    : "text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50"
-                }`
-              }
+            <Link
+              href="/tenant/maintenance"
+              className={`flex items-center px-4 py-2 text-sm font-medium rounded-md ${
+                pathname === "/tenant/maintenance"
+                  ? "bg-[#0d9488]/10 dark:bg-[#0d9488]/20 text-[#0d9488] dark:text-[#0d9488]"
+                  : "text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50"
+              }`}
             >
               <svg
                 className="w-5 h-5 mr-3"
@@ -178,17 +174,15 @@ const TenantSidebar = ({ isOpen, toggleSidebar }) => {
                 />
               </svg>
               Maintenance
-            </NavLink>
+            </Link>
 
-            <NavLink
-              to="/tenant/notices"
-              className={({ isActive }) =>
-                `flex items-center px-4 py-2 text-sm font-medium rounded-md ${
-                  isActive
-                    ? "bg-[#0d9488]/10 dark:bg-[#0d9488]/20 text-[#0d9488] dark:text-[#0d9488]"
-                    : "text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50"
-                }`
-              }
+            <Link
+              href="/tenant/notices"
+              className={`flex items-center px-4 py-2 text-sm font-medium rounded-md ${
+                pathname === "/tenant/notices"
+                  ? "bg-[#0d9488]/10 dark:bg-[#0d9488]/20 text-[#0d9488] dark:text-[#0d9488]"
+                  : "text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50"
+              }`}
             >
               <svg
                 className="w-5 h-5 mr-3"
@@ -204,17 +198,15 @@ const TenantSidebar = ({ isOpen, toggleSidebar }) => {
                 />
               </svg>
               Notices
-            </NavLink>
+            </Link>
 
-            <NavLink
-              to="/tenant/messages"
-              className={({ isActive }) =>
-                `flex items-center px-4 py-2 text-sm font-medium rounded-md ${
-                  isActive
-                    ? "bg-[#0d9488]/10 dark:bg-[#0d9488]/20 text-[#0d9488] dark:text-[#0d9488]"
-                    : "text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50"
-                }`
-              }
+            <Link
+              href="/tenant/messages"
+              className={`flex items-center px-4 py-2 text-sm font-medium rounded-md ${
+                pathname === "/tenant/messages"
+                  ? "bg-[#0d9488]/10 dark:bg-[#0d9488]/20 text-[#0d9488] dark:text-[#0d9488]"
+                  : "text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50"
+              }`}
             >
               <svg
                 className="w-5 h-5 mr-3"
@@ -230,17 +222,15 @@ const TenantSidebar = ({ isOpen, toggleSidebar }) => {
                 />
               </svg>
               Messages
-            </NavLink>
+            </Link>
 
-            <NavLink
-              to="/tenant/notifications"
-              className={({ isActive }) =>
-                `flex items-center px-4 py-2 text-sm font-medium rounded-md ${
-                  isActive
-                    ? "bg-[#0d9488]/10 dark:bg-[#0d9488]/20 text-[#0d9488] dark:text-[#0d9488]"
-                    : "text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50"
-                }`
-              }
+            <Link
+              href="/tenant/notifications"
+              className={`flex items-center px-4 py-2 text-sm font-medium rounded-md ${
+                pathname === "/tenant/notifications"
+                  ? "bg-[#0d9488]/10 dark:bg-[#0d9488]/20 text-[#0d9488] dark:text-[#0d9488]"
+                  : "text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50"
+              }`}
             >
               <svg
                 className="w-5 h-5 mr-3"
@@ -256,17 +246,15 @@ const TenantSidebar = ({ isOpen, toggleSidebar }) => {
                 />
               </svg>
               Notifications
-            </NavLink>
+            </Link>
 
-            <NavLink
-              to="/tenant/settings"
-              className={({ isActive }) =>
-                `flex items-center px-4 py-2 text-sm font-medium rounded-md ${
-                  isActive
-                    ? "bg-[#0d9488]/10 dark:bg-[#0d9488]/20 text-[#0d9488] dark:text-[#0d9488]"
-                    : "text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50"
-                }`
-              }
+            <Link
+              href="/tenant/settings"
+              className={`flex items-center px-4 py-2 text-sm font-medium rounded-md ${
+                pathname === "/tenant/settings"
+                  ? "bg-[#0d9488]/10 dark:bg-[#0d9488]/20 text-[#0d9488] dark:text-[#0d9488]"
+                  : "text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50"
+              }`}
             >
               <svg
                 className="w-5 h-5 mr-3"
@@ -288,7 +276,7 @@ const TenantSidebar = ({ isOpen, toggleSidebar }) => {
                 />
               </svg>
               Settings
-            </NavLink>
+            </Link>
           </nav>
 
           {/* Sidebar Footer */}
