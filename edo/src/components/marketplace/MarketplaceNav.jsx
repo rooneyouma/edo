@@ -77,39 +77,11 @@ const MarketplaceNav = () => {
       style={{ top: "100%", right: 0 }}
     >
       <Link
-        href="/my-bookings"
-        className="block w-full text-left px-4 py-2 text-base text-gray-700 hover:bg-gray-100 rounded"
-        onClick={() => setShowOptionsMenu(false)}
-      >
-        My Bookings
-      </Link>
-      <Link
-        href="#"
-        className="block w-full text-left px-4 py-2 text-base text-gray-700 hover:bg-gray-100 rounded"
-        onClick={() => setShowOptionsMenu(false)}
-      >
-        Messages
-      </Link>
-      <Link
-        href="/payments"
-        className="block w-full text-left px-4 py-2 text-base text-gray-700 hover:bg-gray-100 rounded"
-        onClick={() => setShowOptionsMenu(false)}
-      >
-        Payments
-      </Link>
-      <Link
         href="/bookmarks"
         className="block w-full text-left px-4 py-2 text-base text-gray-700 hover:bg-gray-100 rounded"
         onClick={() => setShowOptionsMenu(false)}
       >
         Bookmarks
-      </Link>
-      <Link
-        href="/profile"
-        className="block w-full text-left px-4 py-2 text-base text-gray-700 hover:bg-gray-100 rounded"
-        onClick={() => setShowOptionsMenu(false)}
-      >
-        Profile
       </Link>
       <Link
         href="/settings"
@@ -208,39 +180,11 @@ const MarketplaceNav = () => {
                     >
                       <div className="bg-white rounded-lg shadow-lg w-11/12 max-w-xs mx-auto p-6 flex flex-col gap-4">
                         <Link
-                          href="/my-bookings"
-                          className="block w-full text-left px-4 py-2 text-base text-gray-700 hover:bg-gray-100 rounded"
-                          onClick={() => setShowOptionsMenu(false)}
-                        >
-                          My Bookings
-                        </Link>
-                        <Link
-                          href="#"
-                          className="block w-full text-left px-4 py-2 text-base text-gray-700 hover:bg-gray-100 rounded"
-                          onClick={() => setShowOptionsMenu(false)}
-                        >
-                          Messages
-                        </Link>
-                        <Link
-                          href="/payments"
-                          className="block w-full text-left px-4 py-2 text-base text-gray-700 hover:bg-gray-100 rounded"
-                          onClick={() => setShowOptionsMenu(false)}
-                        >
-                          Payments
-                        </Link>
-                        <Link
                           href="/bookmarks"
                           className="block w-full text-left px-4 py-2 text-base text-gray-700 hover:bg-gray-100 rounded"
                           onClick={() => setShowOptionsMenu(false)}
                         >
                           Bookmarks
-                        </Link>
-                        <Link
-                          href="/profile"
-                          className="block w-full text-left px-4 py-2 text-base text-gray-700 hover:bg-gray-100 rounded"
-                          onClick={() => setShowOptionsMenu(false)}
-                        >
-                          Profile
                         </Link>
                         <Link
                           href="/settings"
