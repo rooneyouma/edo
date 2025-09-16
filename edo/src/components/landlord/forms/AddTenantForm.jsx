@@ -371,11 +371,11 @@ const AddTenantForm = ({
       )}
 
       {/* Form Actions */}
-      <div className="flex justify-end space-x-3">
+      <div className="flex justify-end space-x-3 pt-6">
         <button
           type="button"
           onClick={onClose}
-          className="px-4 py-2 border border-slate-300 rounded-md shadow-sm text-sm font-medium text-slate-700 bg-white hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0d9488] dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100 dark:hover:bg-slate-600"
+          className="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0d9488] dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 dark:hover:bg-gray-600"
         >
           Cancel
         </button>
@@ -471,7 +471,7 @@ const QuickAddForm = ({
             name="email"
             value={formData.email}
             onChange={handleEmailChange}
-            className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100 sm:text-sm"
+            className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100 py-2 px-3 sm:text-sm"
             required
             autoComplete="off"
             disabled={checking}
@@ -599,7 +599,7 @@ const QuickAddForm = ({
             name="firstName"
             value={formData.firstName}
             onChange={handleChange}
-            className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100 sm:text-sm"
+            className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100 py-2 px-3 sm:text-sm"
             required
           />
         </div>
@@ -617,7 +617,7 @@ const QuickAddForm = ({
             name="lastName"
             value={formData.lastName}
             onChange={handleChange}
-            className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100 sm:text-sm"
+            className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100 py-2 px-3 sm:text-sm"
             required
           />
         </div>
@@ -635,7 +635,7 @@ const QuickAddForm = ({
             name="phone"
             value={formData.phone}
             onChange={handleChange}
-            className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100 sm:text-sm"
+            className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100 py-2 px-3 sm:text-sm"
             required
           />
         </div>
@@ -652,7 +652,7 @@ const QuickAddForm = ({
             name="propertyId"
             value={formData.propertyId}
             onChange={handleChange}
-            className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100 sm:text-sm"
+            className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100 py-2 px-3 sm:text-sm"
             required
           >
             <option value="">Select Property</option>
@@ -676,7 +676,7 @@ const QuickAddForm = ({
             name="unitNumber"
             value={formData.unitNumber}
             onChange={handleChange}
-            className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100 sm:text-sm"
+            className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100 py-2 px-3 sm:text-sm"
             required
             disabled={!formData.propertyId || loadingUnits}
           >
@@ -713,7 +713,7 @@ const QuickAddForm = ({
               name="rentAmount"
               value={formData.rentAmount}
               onChange={handleChange}
-              className={`block w-full pl-7 rounded-md shadow-sm focus:ring-[#0d9488] focus:ring-2 focus:ring-offset-2 sm:text-sm ${
+              className={`block w-full pl-7 rounded-md shadow-sm focus:ring-[#0d9488] focus:ring-2 focus:ring-offset-2 py-2 px-3 sm:text-sm ${
                 selectedUnit
                   ? "border-slate-300 bg-slate-50 text-slate-500 dark:bg-slate-700 dark:border-slate-600 dark:text-slate-400"
                   : "border-slate-300 focus:border-[#0d9488] dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100"
@@ -742,7 +742,7 @@ const QuickAddForm = ({
               name="securityDeposit"
               value={formData.securityDeposit}
               onChange={handleChange}
-              className={`block w-full pl-7 rounded-md shadow-sm focus:ring-[#0d9488] focus:ring-2 focus:ring-offset-2 sm:text-sm ${
+              className={`block w-full pl-7 rounded-md shadow-sm focus:ring-[#0d9488] focus:ring-2 focus:ring-offset-2 py-2 px-3 sm:text-sm ${
                 selectedUnit && selectedUnit.security_deposit
                   ? "border-slate-300 bg-slate-50 text-slate-500 dark:bg-slate-700 dark:border-slate-600 dark:text-slate-400"
                   : "border-slate-300 focus:border-[#0d9488] dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100"
@@ -766,7 +766,7 @@ const QuickAddForm = ({
             name="leaseType"
             value={formData.leaseType}
             onChange={handleChange}
-            className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100 sm:text-sm"
+            className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100 py-2 px-3 sm:text-sm"
             required
           >
             <option value="rental">Rental Agreement</option>
@@ -787,7 +787,7 @@ const QuickAddForm = ({
             name="startDate"
             value={formData.startDate}
             onChange={handleChange}
-            className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100 sm:text-sm"
+            className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100 py-2 px-3 sm:text-sm"
             required
           />
         </div>
@@ -806,7 +806,7 @@ const QuickAddForm = ({
               name="endDate"
               value={formData.endDate}
               onChange={handleChange}
-              className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100 sm:text-sm"
+              className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100 py-2 px-3 sm:text-sm"
               required
             />
           </div>
@@ -831,7 +831,7 @@ const QuickAddForm = ({
               name="emergencyContact.name"
               value={formData.emergencyContact.name}
               onChange={handleChange}
-              className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100 sm:text-sm"
+              className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100 py-2 px-3 sm:text-sm"
             />
           </div>
 
@@ -848,7 +848,7 @@ const QuickAddForm = ({
               name="emergencyContact.phone"
               value={formData.emergencyContact.phone}
               onChange={handleChange}
-              className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100 sm:text-sm"
+              className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100 py-2 px-3 sm:text-sm"
             />
           </div>
 
@@ -865,7 +865,7 @@ const QuickAddForm = ({
               name="emergencyContact.relationship"
               value={formData.emergencyContact.relationship}
               onChange={handleChange}
-              className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100 sm:text-sm"
+              className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100 py-2 px-3 sm:text-sm"
             />
           </div>
         </div>
@@ -1001,7 +1001,7 @@ const InviteForm = ({
               name="email"
               value={inviteData.email}
               onChange={handleEmailChange}
-              className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100 sm:text-sm"
+              className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100 py-2 px-3 sm:text-sm"
               placeholder="Enter email to check for existing tenant..."
               required
             />
@@ -1065,7 +1065,7 @@ const InviteForm = ({
             name="phone"
             value={inviteData.phone}
             onChange={handleInviteChange}
-            className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100 sm:text-sm"
+            className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100 py-2 px-3 sm:text-sm"
             placeholder="+1 (555) 123-4567"
           />
         </div>
@@ -1082,7 +1082,7 @@ const InviteForm = ({
             name="propertyId"
             value={inviteData.propertyId}
             onChange={handleInviteChange}
-            className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100 sm:text-sm"
+            className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100 py-2 px-3 sm:text-sm"
             required
           >
             <option value="">Select Property</option>
@@ -1106,7 +1106,7 @@ const InviteForm = ({
             name="unitNumber"
             value={inviteData.unitNumber}
             onChange={handleInviteChange}
-            className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100 sm:text-sm"
+            className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100 py-2 px-3 sm:text-sm"
             required
             disabled={!inviteData.propertyId || loadingUnits}
           >
@@ -1139,7 +1139,7 @@ const InviteForm = ({
             value={inviteData.message}
             onChange={handleInviteChange}
             rows={4}
-            className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100 sm:text-sm"
+            className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100 py-2 px-3 sm:text-sm"
             placeholder="Add a personal message to your invitation..."
           />
         </div>

@@ -6,6 +6,10 @@ const TenantList = ({
   setTenantForModal,
   setShowTenantModal,
   handleOptionsClick,
+  showOptionsMenu,
+  handleViewDetails,
+  handleEditTenant,
+  handleDeleteTenant,
 }) => {
   return (
     <div className="overflow-x-auto">
@@ -67,9 +71,9 @@ const TenantList = ({
                   key={tenant.id}
                   className="hover:bg-gray-50 dark:hover:bg-gray-800/50 cursor-pointer"
                   onClick={(event) => {
+                    // Check if the click is not on the actions column (options button)
                     if (!event.target.closest(".actions-column")) {
-                      setTenantForModal(tenant);
-                      setShowTenantModal(true);
+                      handleViewDetails(tenant);
                     }
                   }}
                 >
@@ -100,7 +104,7 @@ const TenantList = ({
                       {tenant.status}
                     </span>
                   </td>
-                  <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400 actions-column">
+                  <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400 actions-column relative">
                     <div className="flex items-center space-x-3">
                       <button
                         onClick={(e) => handleOptionsClick(e, tenant.id)}
@@ -116,6 +120,39 @@ const TenantList = ({
                         </svg>
                       </button>
                     </div>
+                    {/* Options dropdown menu */}
+                    {showOptionsMenu === tenant.id && (
+                      <div className="options-menu absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white dark:bg-gray-800 ring-1 ring-black ring-opacity-5 z-10">
+                        <div
+                          className="py-1"
+                          role="menu"
+                          aria-orientation="vertical"
+                          aria-labelledby="options-menu"
+                        >
+                          <button
+                            onClick={() => handleViewDetails(tenant)}
+                            className="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                            role="menuitem"
+                          >
+                            View Details
+                          </button>
+                          <button
+                            onClick={() => handleEditTenant(tenant)}
+                            className="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                            role="menuitem"
+                          >
+                            Edit
+                          </button>
+                          <button
+                            onClick={() => handleDeleteTenant(tenant)}
+                            className="block w-full text-left px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-gray-100 dark:hover:bg-gray-700"
+                            role="menuitem"
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      </div>
+                    )}
                   </td>
                 </tr>
               ))}

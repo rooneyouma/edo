@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import AddUnitModal from "./AddUnitModal";
-import Modal from "../../../partials/Modal";
+import ConsistentModal from "../modals/ConsistentModal";
 import AddTenantForm from "../forms/AddTenantForm";
 import { apiRequest } from "../../../utils/api";
 import ManageUnitsModal from "./ManageUnitsModal";
@@ -216,10 +216,11 @@ const PropertyList = ({
         property={selectedProperty}
         onUnitAdded={handleUnitAdded}
       />
-      {/* AddTenantsModal placeholder */}
-      <Modal
+      {/* AddTenantsModal with consistent styling */}
+      <ConsistentModal
         isOpen={isAddTenantModalOpen}
         onClose={() => setIsAddTenantModalOpen(false)}
+        title="Add Tenant"
       >
         <AddTenantForm
           onClose={() => setIsAddTenantModalOpen(false)}
@@ -231,7 +232,7 @@ const PropertyList = ({
             setIsAddTenantModalOpen(false);
           }}
         />
-      </Modal>
+      </ConsistentModal>
     </>
   );
 };

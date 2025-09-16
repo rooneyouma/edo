@@ -1,17 +1,25 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
-import TenantHeader from '@/partials/tenant/TenantHeader.jsx';
-import TenantSidebar from '@/partials/tenant/TenantSidebar.jsx';
-import { Bell, AlertTriangle, FileText, DollarSign, Wrench, Filter, ChevronDown } from 'lucide-react';
-import { isAuthenticated } from '@/utils/api.js';
-import { useRouter } from 'next/navigation';
-import Link from 'next/link';
+import React, { useState } from "react";
+import TenantHeader from "@/partials/tenant/TenantHeader.jsx";
+import TenantSidebar from "@/partials/tenant/TenantSidebar.jsx";
+import {
+  Bell,
+  AlertTriangle,
+  FileText,
+  DollarSign,
+  Wrench,
+  Filter,
+  ChevronDown,
+} from "lucide-react";
+import { isAuthenticated } from "@/utils/api.js";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 const Notifications = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [filterType, setFilterType] = useState('all');
-  const [sortBy, setSortBy] = useState('date');
+  const [filterType, setFilterType] = useState("all");
+  const [sortBy, setSortBy] = useState("date");
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [isSortOpen, setIsSortOpen] = useState(false);
   const router = useRouter();
@@ -39,45 +47,46 @@ const Notifications = () => {
   const [notifications, setNotifications] = useState([
     {
       id: 1,
-      type: 'maintenance',
-      title: 'Maintenance Update',
-      message: 'Your maintenance request has been approved and scheduled for tomorrow',
-      time: '2 hours ago',
+      type: "maintenance",
+      title: "Maintenance Update",
+      message:
+        "Your maintenance request has been approved and scheduled for tomorrow",
+      time: "2 hours ago",
       read: false,
-      icon: Wrench
+      icon: Wrench,
     },
     {
       id: 2,
-      type: 'payment',
-      title: 'Payment Reminder',
-      message: 'Rent payment of $1,200 is due in 5 days',
-      time: '1 day ago',
+      type: "payment",
+      title: "Payment Reminder",
+      message: "Rent payment of $1,200 is due in 5 days",
+      time: "1 day ago",
       read: true,
-      icon: DollarSign
+      icon: DollarSign,
     },
     {
       id: 3,
-      type: 'notice',
-      title: 'Building Maintenance Notice',
-      message: 'Annual building maintenance will be conducted next week',
-      time: '2 days ago',
+      type: "notice",
+      title: "Building Maintenance Notice",
+      message: "Annual building maintenance will be conducted next week",
+      time: "2 days ago",
       read: false,
-      icon: FileText
+      icon: FileText,
     },
     {
       id: 4,
-      type: 'eviction',
-      title: 'Eviction Notice',
-      message: 'Notice of eviction proceedings for non-payment',
-      time: '3 days ago',
+      type: "eviction",
+      title: "Eviction Notice",
+      message: "Notice of eviction proceedings for non-payment",
+      time: "3 days ago",
       read: false,
-      icon: AlertTriangle
-    }
+      icon: AlertTriangle,
+    },
   ]);
 
   const handleNotificationClick = (notificationId) => {
-    setNotifications(prevNotifications =>
-      prevNotifications.map(notification =>
+    setNotifications((prevNotifications) =>
+      prevNotifications.map((notification) =>
         notification.id === notificationId
           ? { ...notification, read: true }
           : notification
@@ -87,43 +96,46 @@ const Notifications = () => {
 
   const getNotificationStyles = (type) => {
     switch (type) {
-      case 'eviction':
+      case "eviction":
         return {
-          container: 'bg-red-50 dark:bg-red-900/20',
-          icon: 'text-red-600 dark:text-red-400',
-          badge: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300'
+          container: "bg-red-50 dark:bg-red-900/20",
+          icon: "text-red-600 dark:text-red-400",
+          badge: "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300",
         };
-      case 'maintenance':
+      case "maintenance":
         return {
-          container: 'bg-blue-50 dark:bg-blue-900/20',
-          icon: 'text-blue-600 dark:text-blue-400',
-          badge: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300'
+          container: "bg-blue-50 dark:bg-blue-900/20",
+          icon: "text-blue-600 dark:text-blue-400",
+          badge:
+            "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300",
         };
-      case 'payment':
+      case "payment":
         return {
-          container: 'bg-green-50 dark:bg-green-900/20',
-          icon: 'text-green-600 dark:text-green-400',
-          badge: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300'
+          container: "bg-green-50 dark:bg-green-900/20",
+          icon: "text-green-600 dark:text-green-400",
+          badge:
+            "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300",
         };
       default:
         return {
-          container: 'bg-yellow-50 dark:bg-yellow-900/20',
-          icon: 'text-yellow-600 dark:text-yellow-400',
-          badge: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300'
+          container: "bg-yellow-50 dark:bg-yellow-900/20",
+          icon: "text-yellow-600 dark:text-yellow-400",
+          badge:
+            "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300",
         };
     }
   };
 
-  const filteredNotifications = notifications.filter(notification => {
-    if (filterType === 'all') return true;
+  const filteredNotifications = notifications.filter((notification) => {
+    if (filterType === "all") return true;
     return notification.type === filterType;
   });
 
   const sortedNotifications = [...filteredNotifications].sort((a, b) => {
-    if (sortBy === 'date') {
+    if (sortBy === "date") {
       return a.time.localeCompare(b.time);
     }
-    if (sortBy === 'unread') {
+    if (sortBy === "unread") {
       if (a.read === b.read) {
         return a.time.localeCompare(b.time);
       }
@@ -136,13 +148,19 @@ const Notifications = () => {
     <div className="min-h-screen bg-slate-50 dark:bg-slate-900">
       <TenantHeader toggleSidebar={toggleSidebar} />
       <TenantSidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
-      
+
       {/* Main content */}
-      <main className={`lg:ml-64 pt-6 sm:pt-12 transition-all duration-200 ${isSidebarOpen ? 'ml-64' : 'ml-0'}`}>
+      <main
+        className={`lg:ml-64 pt-6 sm:pt-12 transition-all duration-200 ${
+          isSidebarOpen ? "ml-64" : "ml-0"
+        }`}
+      >
         <div className="pl-4 pr-8 sm:pl-6 sm:pr-12 lg:pl-8 lg:pr-16 py-4 sm:py-8">
           {/* Page header - Title always at top on mobile */}
           <div className="mb-4 sm:mb-8">
-            <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">Notifications</h1>
+            <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">
+              Notifications
+            </h1>
             <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
               View and manage your notifications
             </p>
@@ -164,65 +182,65 @@ const Notifications = () => {
                   <div className="absolute left-0 right-0 sm:right-0 sm:left-auto mt-2 w-full sm:w-48 rounded-md shadow-lg bg-white dark:bg-slate-800 ring-1 ring-black ring-opacity-5 focus:outline-none z-10 max-w-xs sm:max-w-none">
                     <button
                       onClick={() => {
-                        setFilterType('all');
+                        setFilterType("all");
                         setIsFilterOpen(false);
                       }}
                       className={`block w-full text-left px-4 py-2 text-sm ${
-                        filterType === 'all'
-                          ? 'text-[#0d9488] dark:text-[#0d9488] bg-[#0d9488]/10 dark:bg-[#0d9488]/10'
-                          : 'text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/50'
+                        filterType === "all"
+                          ? "text-[#0d9488] dark:text-[#0d9488] bg-[#0d9488]/10 dark:bg-[#0d9488]/10"
+                          : "text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/50"
                       }`}
                     >
                       All Notifications
                     </button>
                     <button
                       onClick={() => {
-                        setFilterType('eviction');
+                        setFilterType("eviction");
                         setIsFilterOpen(false);
                       }}
                       className={`block w-full text-left px-4 py-2 text-sm ${
-                        filterType === 'eviction'
-                          ? 'text-[#0d9488] dark:text-[#0d9488] bg-[#0d9488]/10 dark:bg-[#0d9488]/10'
-                          : 'text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/50'
+                        filterType === "eviction"
+                          ? "text-[#0d9488] dark:text-[#0d9488] bg-[#0d9488]/10 dark:bg-[#0d9488]/10"
+                          : "text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/50"
                       }`}
                     >
                       Eviction Notices
                     </button>
                     <button
                       onClick={() => {
-                        setFilterType('maintenance');
+                        setFilterType("maintenance");
                         setIsFilterOpen(false);
                       }}
                       className={`block w-full text-left px-4 py-2 text-sm ${
-                        filterType === 'maintenance'
-                          ? 'text-[#0d9488] dark:text-[#0d9488] bg-[#0d9488]/10 dark:bg-[#0d9488]/10'
-                          : 'text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/50'
+                        filterType === "maintenance"
+                          ? "text-[#0d9488] dark:text-[#0d9488] bg-[#0d9488]/10 dark:bg-[#0d9488]/10"
+                          : "text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/50"
                       }`}
                     >
                       Maintenance Updates
                     </button>
                     <button
                       onClick={() => {
-                        setFilterType('payment');
+                        setFilterType("payment");
                         setIsFilterOpen(false);
                       }}
                       className={`block w-full text-left px-4 py-2 text-sm ${
-                        filterType === 'payment'
-                          ? 'text-[#0d9488] dark:text-[#0d9488] bg-[#0d9488]/10 dark:bg-[#0d9488]/10'
-                          : 'text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/50'
+                        filterType === "payment"
+                          ? "text-[#0d9488] dark:text-[#0d9488] bg-[#0d9488]/10 dark:bg-[#0d9488]/10"
+                          : "text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/50"
                       }`}
                     >
                       Payment Reminders
                     </button>
                     <button
                       onClick={() => {
-                        setFilterType('notice');
+                        setFilterType("notice");
                         setIsFilterOpen(false);
                       }}
                       className={`block w-full text-left px-4 py-2 text-sm ${
-                        filterType === 'notice'
-                          ? 'text-[#0d9488] dark:text-[#0d9488] bg-[#0d9488]/10 dark:bg-[#0d9488]/10'
-                          : 'text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/50'
+                        filterType === "notice"
+                          ? "text-[#0d9488] dark:text-[#0d9488] bg-[#0d9488]/10 dark:bg-[#0d9488]/10"
+                          : "text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/50"
                       }`}
                     >
                       General Notices
@@ -244,26 +262,26 @@ const Notifications = () => {
                   <div className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white dark:bg-slate-800 ring-1 ring-black ring-opacity-5 focus:outline-none z-10">
                     <button
                       onClick={() => {
-                        setSortBy('date');
+                        setSortBy("date");
                         setIsSortOpen(false);
                       }}
                       className={`block w-full text-left px-4 py-2 text-sm ${
-                        sortBy === 'date'
-                          ? 'text-violet-600 dark:text-violet-400 bg-violet-50 dark:bg-violet-900/20'
-                          : 'text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/50'
+                        sortBy === "date"
+                          ? "text-violet-600 dark:text-violet-400 bg-violet-50 dark:bg-violet-900/20"
+                          : "text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/50"
                       }`}
                     >
                       Most Recent
                     </button>
                     <button
                       onClick={() => {
-                        setSortBy('unread');
+                        setSortBy("unread");
                         setIsSortOpen(false);
                       }}
                       className={`block w-full text-left px-4 py-2 text-sm ${
-                        sortBy === 'unread'
-                          ? 'text-violet-600 dark:text-violet-400 bg-violet-50 dark:bg-violet-900/20'
-                          : 'text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/50'
+                        sortBy === "unread"
+                          ? "text-violet-600 dark:text-violet-400 bg-violet-50 dark:bg-violet-900/20"
+                          : "text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/50"
                       }`}
                     >
                       Unread First
@@ -284,7 +302,7 @@ const Notifications = () => {
                   key={notification.id}
                   onClick={() => handleNotificationClick(notification.id)}
                   className={`p-4 rounded-lg ${styles.container} ${
-                    !notification.read ? 'border-l-4 border-violet-500' : ''
+                    !notification.read ? "border-l-4 border-violet-500" : ""
                   } cursor-pointer hover:bg-opacity-75 transition-colors duration-200`}
                 >
                   <div className="flex items-start space-x-4">
@@ -296,8 +314,11 @@ const Notifications = () => {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-2">
-                          <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${styles.badge}`}>
-                            {notification.type.charAt(0).toUpperCase() + notification.type.slice(1)}
+                          <span
+                            className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${styles.badge}`}
+                          >
+                            {notification.type.charAt(0).toUpperCase() +
+                              notification.type.slice(1)}
                           </span>
                           {!notification.read && (
                             <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-violet-100 text-violet-800 dark:bg-violet-900 dark:text-violet-300">
@@ -327,4 +348,4 @@ const Notifications = () => {
   );
 };
 
-export default Notifications; 
+export default Notifications;

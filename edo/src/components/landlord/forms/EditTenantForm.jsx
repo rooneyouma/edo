@@ -1,67 +1,67 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 
 const EditTenantForm = ({ tenant, onClose, onSubmit }) => {
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    phone: '',
-    propertyId: '',
-    unitNumber: '',
-    rentAmount: '',
-    securityDeposit: '',
-    leaseType: 'rental',
-    startDate: '',
-    endDate: '',
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
+    propertyId: "",
+    unitNumber: "",
+    rentAmount: "",
+    securityDeposit: "",
+    leaseType: "rental",
+    startDate: "",
+    endDate: "",
     emergencyContact: {
-      name: '',
-      phone: '',
-      relationship: ''
-    }
+      name: "",
+      phone: "",
+      relationship: "",
+    },
   });
 
   useEffect(() => {
     if (tenant) {
       // Split the full name into first and last name
-      const [firstName, ...lastNameParts] = tenant.name.split(' ');
-      const lastName = lastNameParts.join(' ');
+      const [firstName, ...lastNameParts] = tenant.name.split(" ");
+      const lastName = lastNameParts.join(" ");
 
       setFormData({
         firstName,
         lastName,
-        email: tenant.email || '',
-        phone: tenant.phone || '',
-        propertyId: tenant.property || '',
-        unitNumber: tenant.unit || '',
-        rentAmount: tenant.rent?.toString() || '',
-        securityDeposit: tenant.securityDeposit?.toString() || '',
-        leaseType: tenant.agreementType || 'rental',
-        startDate: tenant.leaseStart || '',
-        endDate: tenant.leaseEnd || '',
+        email: tenant.email || "",
+        phone: tenant.phone || "",
+        propertyId: tenant.property || "",
+        unitNumber: tenant.unit || "",
+        rentAmount: tenant.rent?.toString() || "",
+        securityDeposit: tenant.securityDeposit?.toString() || "",
+        leaseType: tenant.agreementType || "rental",
+        startDate: tenant.leaseStart || "",
+        endDate: tenant.leaseEnd || "",
         emergencyContact: {
-          name: tenant.emergencyContact?.split(' (')[0] || '',
-          phone: tenant.emergencyContact?.match(/\((.*?)\)/)?.[1] || '',
-          relationship: ''
-        }
+          name: tenant.emergencyContact?.split(" (")[0] || "",
+          phone: tenant.emergencyContact?.match(/\((.*?)\)/)?.[1] || "",
+          relationship: "",
+        },
       });
     }
   }, [tenant]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    if (name.startsWith('emergencyContact.')) {
-      const field = name.split('.')[1];
-      setFormData(prev => ({
+    if (name.startsWith("emergencyContact.")) {
+      const field = name.split(".")[1];
+      setFormData((prev) => ({
         ...prev,
         emergencyContact: {
           ...prev.emergencyContact,
-          [field]: value
-        }
+          [field]: value,
+        },
       }));
     } else {
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
-        [name]: value
+        [name]: value,
       }));
     }
   };
@@ -74,11 +74,16 @@ const EditTenantForm = ({ tenant, onClose, onSubmit }) => {
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">Edit Tenant</h2>
+        <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
+          Edit Tenant
+        </h2>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
-          <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+          <label
+            htmlFor="firstName"
+            className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+          >
             First Name
           </label>
           <input
@@ -87,13 +92,16 @@ const EditTenantForm = ({ tenant, onClose, onSubmit }) => {
             name="firstName"
             value={formData.firstName}
             onChange={handleChange}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 sm:text-sm"
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 py-2 px-3 sm:text-sm"
             required
           />
         </div>
 
         <div>
-          <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+          <label
+            htmlFor="lastName"
+            className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+          >
             Last Name
           </label>
           <input
@@ -102,13 +110,16 @@ const EditTenantForm = ({ tenant, onClose, onSubmit }) => {
             name="lastName"
             value={formData.lastName}
             onChange={handleChange}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 sm:text-sm"
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 py-2 px-3 sm:text-sm"
             required
           />
         </div>
 
         <div>
-          <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+          <label
+            htmlFor="email"
+            className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+          >
             Email
           </label>
           <input
@@ -117,13 +128,16 @@ const EditTenantForm = ({ tenant, onClose, onSubmit }) => {
             name="email"
             value={formData.email}
             onChange={handleChange}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 sm:text-sm"
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 py-2 px-3 sm:text-sm"
             required
           />
         </div>
 
         <div>
-          <label htmlFor="phone" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+          <label
+            htmlFor="phone"
+            className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+          >
             Phone
           </label>
           <input
@@ -132,13 +146,16 @@ const EditTenantForm = ({ tenant, onClose, onSubmit }) => {
             name="phone"
             value={formData.phone}
             onChange={handleChange}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 sm:text-sm"
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 py-2 px-3 sm:text-sm"
             required
           />
         </div>
 
         <div>
-          <label htmlFor="propertyId" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+          <label
+            htmlFor="propertyId"
+            className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+          >
             Property
           </label>
           <select
@@ -146,7 +163,7 @@ const EditTenantForm = ({ tenant, onClose, onSubmit }) => {
             name="propertyId"
             value={formData.propertyId}
             onChange={handleChange}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 sm:text-sm"
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 py-2 px-3 sm:text-sm"
             required
           >
             <option value="">Select Property</option>
@@ -155,7 +172,10 @@ const EditTenantForm = ({ tenant, onClose, onSubmit }) => {
         </div>
 
         <div>
-          <label htmlFor="unitNumber" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+          <label
+            htmlFor="unitNumber"
+            className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+          >
             Unit Number
           </label>
           <input
@@ -164,13 +184,16 @@ const EditTenantForm = ({ tenant, onClose, onSubmit }) => {
             name="unitNumber"
             value={formData.unitNumber}
             onChange={handleChange}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 sm:text-sm"
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 py-2 px-3 sm:text-sm"
             required
           />
         </div>
 
         <div>
-          <label htmlFor="rentAmount" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+          <label
+            htmlFor="rentAmount"
+            className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+          >
             Monthly Rent
           </label>
           <div className="mt-1 relative rounded-md shadow-sm">
@@ -183,14 +206,17 @@ const EditTenantForm = ({ tenant, onClose, onSubmit }) => {
               name="rentAmount"
               value={formData.rentAmount}
               onChange={handleChange}
-              className="block w-full pl-7 rounded-md border-gray-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 sm:text-sm"
+              className="block w-full pl-7 rounded-md border-gray-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 py-2 px-3 sm:text-sm"
               required
             />
           </div>
         </div>
 
         <div>
-          <label htmlFor="securityDeposit" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+          <label
+            htmlFor="securityDeposit"
+            className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+          >
             Security Deposit
           </label>
           <div className="mt-1 relative rounded-md shadow-sm">
@@ -203,14 +229,17 @@ const EditTenantForm = ({ tenant, onClose, onSubmit }) => {
               name="securityDeposit"
               value={formData.securityDeposit}
               onChange={handleChange}
-              className="block w-full pl-7 rounded-md border-gray-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 sm:text-sm"
+              className="block w-full pl-7 rounded-md border-gray-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 py-2 px-3 sm:text-sm"
               required
             />
           </div>
         </div>
 
         <div>
-          <label htmlFor="leaseType" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+          <label
+            htmlFor="leaseType"
+            className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+          >
             Agreement Type
           </label>
           <select
@@ -218,7 +247,7 @@ const EditTenantForm = ({ tenant, onClose, onSubmit }) => {
             name="leaseType"
             value={formData.leaseType}
             onChange={handleChange}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 sm:text-sm"
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 py-2 px-3 sm:text-sm"
             required
           >
             <option value="rental">Rental Agreement</option>
@@ -227,7 +256,10 @@ const EditTenantForm = ({ tenant, onClose, onSubmit }) => {
         </div>
 
         <div>
-          <label htmlFor="startDate" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+          <label
+            htmlFor="startDate"
+            className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+          >
             Start Date
           </label>
           <input
@@ -236,14 +268,17 @@ const EditTenantForm = ({ tenant, onClose, onSubmit }) => {
             name="startDate"
             value={formData.startDate}
             onChange={handleChange}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 sm:text-sm"
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 py-2 px-3 sm:text-sm"
             required
           />
         </div>
 
-        {formData.leaseType === 'lease' && (
+        {formData.leaseType === "lease" && (
           <div>
-            <label htmlFor="endDate" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+            <label
+              htmlFor="endDate"
+              className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+            >
               End Date
             </label>
             <input
@@ -252,7 +287,7 @@ const EditTenantForm = ({ tenant, onClose, onSubmit }) => {
               name="endDate"
               value={formData.endDate}
               onChange={handleChange}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 sm:text-sm"
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 py-2 px-3 sm:text-sm"
               required
             />
           </div>
@@ -260,10 +295,15 @@ const EditTenantForm = ({ tenant, onClose, onSubmit }) => {
       </div>
 
       <div className="border-t border-gray-200 dark:border-gray-700 pt-6">
-        <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">Emergency Contact (Optional)</h3>
+        <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">
+          Emergency Contact (Optional)
+        </h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div>
-            <label htmlFor="emergencyContact.name" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+            <label
+              htmlFor="emergencyContact.name"
+              className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+            >
               Name
             </label>
             <input
@@ -272,12 +312,15 @@ const EditTenantForm = ({ tenant, onClose, onSubmit }) => {
               name="emergencyContact.name"
               value={formData.emergencyContact.name}
               onChange={handleChange}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 sm:text-sm"
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 py-2 px-3 sm:text-sm"
             />
           </div>
 
           <div>
-            <label htmlFor="emergencyContact.phone" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+            <label
+              htmlFor="emergencyContact.phone"
+              className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+            >
               Phone
             </label>
             <input
@@ -286,12 +329,15 @@ const EditTenantForm = ({ tenant, onClose, onSubmit }) => {
               name="emergencyContact.phone"
               value={formData.emergencyContact.phone}
               onChange={handleChange}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 sm:text-sm"
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 py-2 px-3 sm:text-sm"
             />
           </div>
 
           <div>
-            <label htmlFor="emergencyContact.relationship" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+            <label
+              htmlFor="emergencyContact.relationship"
+              className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+            >
               Relationship
             </label>
             <input
@@ -300,7 +346,7 @@ const EditTenantForm = ({ tenant, onClose, onSubmit }) => {
               name="emergencyContact.relationship"
               value={formData.emergencyContact.relationship}
               onChange={handleChange}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 sm:text-sm"
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 py-2 px-3 sm:text-sm"
             />
           </div>
         </div>
@@ -325,4 +371,4 @@ const EditTenantForm = ({ tenant, onClose, onSubmit }) => {
   );
 };
 
-export default EditTenantForm; 
+export default EditTenantForm;

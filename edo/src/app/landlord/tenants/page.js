@@ -8,6 +8,7 @@ import Header from "../../../partials/dashboard/LandlordHeader";
 import TenantList from "../../../components/landlord/tenants/TenantList";
 import TenantFilters from "../../../components/landlord/tenants/TenantFilters";
 import TenantPagination from "../../../components/landlord/tenants/TenantPagination";
+import TenantDetailModal from "../../../components/landlord/tenants/TenantDetailModal"; // Added import
 import { isAuthenticated, getStoredUser, getToken } from "../../../utils/api";
 
 const LandlordTenantsPage = () => {
@@ -20,6 +21,7 @@ const LandlordTenantsPage = () => {
   const [pageInputValue, setPageInputValue] = useState(1);
   const [showTenantModal, setShowTenantModal] = useState(false);
   const [tenantForModal, setTenantForModal] = useState(null);
+  const [showOptionsMenu, setShowOptionsMenu] = useState(null); // Track which tenant's menu is open
   const router = useRouter();
   const storedUser = getStoredUser();
 
@@ -98,6 +100,20 @@ const LandlordTenantsPage = () => {
     }
   }, [router, user]);
 
+  // Close options menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (showOptionsMenu && !event.target.closest(".options-menu")) {
+        setShowOptionsMenu(null);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showOptionsMenu]);
+
   // Filter and sort tenants
   const filteredTenants = mockTenants
     .filter((tenant) => {
@@ -156,8 +172,25 @@ const LandlordTenantsPage = () => {
   // Handle tenant options click
   const handleOptionsClick = (e, tenantId) => {
     e.stopPropagation();
-    // Handle options menu for tenant
-    console.log("Options clicked for tenant:", tenantId);
+    // Toggle the options menu for this tenant
+    setShowOptionsMenu(showOptionsMenu === tenantId ? null : tenantId);
+  };
+
+  // Handle tenant actions
+  const handleViewDetails = (tenant) => {
+    setTenantForModal(tenant);
+    setShowTenantModal(true);
+    setShowOptionsMenu(null);
+  };
+
+  const handleEditTenant = (tenant) => {
+    console.log("Edit tenant:", tenant);
+    setShowOptionsMenu(null);
+  };
+
+  const handleDeleteTenant = (tenant) => {
+    console.log("Delete tenant:", tenant);
+    setShowOptionsMenu(null);
   };
 
   // Get status color classes
@@ -215,6 +248,10 @@ const LandlordTenantsPage = () => {
                 setTenantForModal={setTenantForModal}
                 setShowTenantModal={setShowTenantModal}
                 handleOptionsClick={handleOptionsClick}
+                showOptionsMenu={showOptionsMenu}
+                handleViewDetails={handleViewDetails}
+                handleEditTenant={handleEditTenant}
+                handleDeleteTenant={handleDeleteTenant}
               />
             </div>
 
@@ -232,6 +269,13 @@ const LandlordTenantsPage = () => {
           </div>
         </main>
       </div>
+
+      {/* Tenant Detail Modal */}
+      <TenantDetailModal
+        tenant={tenantForModal}
+        isOpen={showTenantModal}
+        onClose={() => setShowTenantModal(false)}
+      />
     </div>
   );
 };

@@ -74,78 +74,81 @@ const AssignModal = ({
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
-      <div className="space-y-4">
-        <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">
-          Assign Maintenance Request
-        </h3>
+      {/* Added consistent modal container with proper background styling */}
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-4 sm:p-6 w-full">
         <div className="space-y-4">
-          <div>
-            <label
-              htmlFor="assigneeName"
-              className="block text-sm font-medium text-gray-700 dark:text-gray-300"
-            >
-              Name
-            </label>
-            <input
-              type="text"
-              id="assigneeName"
-              className={`mt-1 block w-full rounded-md border py-2 pl-3 pr-10 text-base focus:outline-none focus:ring-2 sm:text-sm ${
-                errors.name
-                  ? "border-red-500 focus:border-red-600 focus:ring-red-500 dark:border-red-400 dark:bg-gray-700 dark:text-gray-100"
-                  : "border-teal-500 dark:border-teal-400 focus:border-teal-600 focus:ring-teal-500 dark:bg-gray-700 dark:text-gray-100"
-              }`}
-              value={assigneeName}
-              onChange={(e) => {
-                setAssigneeName(e.target.value);
-                if (errors.name) {
-                  setErrors((prev) => ({ ...prev, name: "" }));
-                }
-              }}
-              placeholder="Enter name"
-              autoComplete="off"
-            />
-            {errors.name && (
-              <p className="mt-1 text-sm text-red-600 dark:text-red-400">
-                {errors.name}
-              </p>
-            )}
+          <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">
+            Assign Maintenance Request
+          </h3>
+          <div className="space-y-4">
+            <div>
+              <label
+                htmlFor="assigneeName"
+                className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+              >
+                Name
+              </label>
+              <input
+                type="text"
+                id="assigneeName"
+                className={`mt-1 block w-full rounded-md border py-2 pl-3 pr-10 text-base focus:outline-none focus:ring-2 sm:text-sm ${
+                  errors.name
+                    ? "border-red-500 focus:border-red-600 focus:ring-red-500 dark:border-red-400 dark:bg-gray-700 dark:text-gray-100"
+                    : "border-teal-500 dark:border-teal-400 focus:border-teal-600 focus:ring-teal-500 dark:bg-gray-700 dark:text-gray-100"
+                }`}
+                value={assigneeName}
+                onChange={(e) => {
+                  setAssigneeName(e.target.value);
+                  if (errors.name) {
+                    setErrors((prev) => ({ ...prev, name: "" }));
+                  }
+                }}
+                placeholder="Enter name"
+                autoComplete="off"
+              />
+              {errors.name && (
+                <p className="mt-1 text-sm text-red-600 dark:text-red-400">
+                  {errors.name}
+                </p>
+              )}
+            </div>
+            <div>
+              <label
+                htmlFor="assigneePhone"
+                className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+              >
+                Phone Number
+              </label>
+              <input
+                type="tel"
+                id="assigneePhone"
+                className={`mt-1 block w-full rounded-md border py-2 pl-3 pr-10 text-base focus:outline-none focus:ring-2 sm:text-sm ${
+                  errors.phone
+                    ? "border-red-500 focus:border-red-600 focus:ring-red-500 dark:border-red-400 dark:bg-gray-700 dark:text-gray-100"
+                    : "border-teal-500 dark:border-teal-400 focus:border-teal-600 focus:ring-teal-500 dark:bg-gray-700 dark:text-gray-100"
+                }`}
+                value={assigneePhone}
+                onChange={handlePhoneChange}
+                placeholder="Enter phone number"
+                autoComplete="off"
+              />
+              {errors.phone && (
+                <p className="mt-1 text-sm text-red-600 dark:text-red-400">
+                  {errors.phone}
+                </p>
+              )}
+            </div>
           </div>
-          <div>
-            <label
-              htmlFor="assigneePhone"
-              className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+          <div className="flex justify-end space-x-3 pt-4">
+            <button
+              type="button"
+              disabled={updating}
+              className="inline-flex justify-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-[#0d9488] hover:bg-[#0f766e] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0d9488] disabled:opacity-50 disabled:cursor-not-allowed"
+              onClick={handleAssign}
             >
-              Phone Number
-            </label>
-            <input
-              type="tel"
-              id="assigneePhone"
-              className={`mt-1 block w-full rounded-md border py-2 pl-3 pr-10 text-base focus:outline-none focus:ring-2 sm:text-sm ${
-                errors.phone
-                  ? "border-red-500 focus:border-red-600 focus:ring-red-500 dark:border-red-400 dark:bg-gray-700 dark:text-gray-100"
-                  : "border-teal-500 dark:border-teal-400 focus:border-teal-600 focus:ring-teal-500 dark:bg-gray-700 dark:text-gray-100"
-              }`}
-              value={assigneePhone}
-              onChange={handlePhoneChange}
-              placeholder="Enter phone number"
-              autoComplete="off"
-            />
-            {errors.phone && (
-              <p className="mt-1 text-sm text-red-600 dark:text-red-400">
-                {errors.phone}
-              </p>
-            )}
+              {updating ? "Assigning..." : "Assign"}
+            </button>
           </div>
-        </div>
-        <div className="flex justify-end space-x-3 pt-4">
-          <button
-            type="button"
-            disabled={updating}
-            className="inline-flex justify-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-[#0d9488] hover:bg-[#0f766e] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0d9488] disabled:opacity-50 disabled:cursor-not-allowed"
-            onClick={handleAssign}
-          >
-            {updating ? "Assigning..." : "Assign"}
-          </button>
         </div>
       </div>
     </Modal>
