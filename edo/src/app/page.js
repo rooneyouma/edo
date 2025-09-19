@@ -686,25 +686,29 @@ const MarketplaceHome = () => {
         <div className="absolute bottom-0 left-0 w-80 h-80 bg-gradient-to-tr from-teal-300/20 to-emerald-400/10 rounded-full blur-3xl transform -translate-x-24 translate-y-24"></div>
 
         {/* Hero Content */}
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-20">
+        <div
+          className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-10"
+          style={{ maxWidth: "85%" }}
+        >
           <div className="text-center animate-fade-in-up">
-            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-6 leading-tight drop-shadow-xl">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-4 leading-tight drop-shadow-xl">
               Discover Your
               <span className="block bg-gradient-to-r from-white via-[#f0fdfa] to-[#ccfbf1] bg-clip-text text-transparent drop-shadow-2xl">
                 Perfect Space
               </span>
             </h1>
-            <p className="text-lg sm:text-xl md:text-2xl text-white mb-8 max-w-3xl mx-auto leading-relaxed font-semibold drop-shadow-lg">
+            <p className="text-lg sm:text-xl md:text-2xl text-white mb-6 max-w-3xl mx-auto leading-relaxed font-semibold drop-shadow-lg">
               Explore premium properties, find your dream home, or discover
               unique stays.
               <span className="block mt-2">Your next chapter starts here.</span>
             </p>
 
             {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row justify-center gap-4 mb-12">
+            <div className="flex flex-col sm:flex-row justify-center gap-3 mb-8">
               <Link
                 href="/"
                 className="group px-8 py-4 bg-gradient-to-r from-[#009688] to-[#33bbaa] text-white rounded-2xl font-bold text-lg shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300 relative overflow-hidden border border-white/20"
+                style={{ padding: "0.85rem 1.7rem", fontSize: "0.85rem" }}
               >
                 <span className="relative z-10 drop-shadow-md">
                   Explore Properties
@@ -715,6 +719,7 @@ const MarketplaceHome = () => {
                 href="#"
                 onClick={handlePropertyManagerClick}
                 className="px-8 py-4 bg-white/95 backdrop-blur-md text-[#009688] border-2 border-white/60 rounded-2xl font-bold text-lg shadow-xl hover:shadow-2xl hover:bg-white hover:border-white transform hover:scale-105 transition-all duration-300"
+                style={{ padding: "0.85rem 1.7rem", fontSize: "0.85rem" }}
               >
                 For Property Managers
               </Link>
@@ -722,6 +727,7 @@ const MarketplaceHome = () => {
                 href="#"
                 onClick={handleTenantClick}
                 className="px-8 py-4 bg-white/95 backdrop-blur-md text-[#009688] border-2 border-white/60 rounded-2xl font-bold text-lg shadow-xl hover:shadow-2xl hover:bg-white hover:border-white transform hover:scale-105 transition-all duration-300"
+                style={{ padding: "0.85rem 1.7rem", fontSize: "0.85rem" }}
               >
                 For Tenants
               </Link>
@@ -732,6 +738,7 @@ const MarketplaceHome = () => {
               <Link
                 href="/list-property"
                 className="inline-flex items-center px-6 py-3 bg-white/98 backdrop-blur-md text-[#009688] rounded-xl font-bold text-base shadow-xl hover:shadow-2xl border-2 border-white/60 hover:border-white transform hover:scale-105 transition-all duration-300"
+                style={{ padding: "0.51rem 1.02rem", fontSize: "0.85rem" }}
               >
                 <span className="mr-2">+</span>
                 List Your Property or Host a Space
@@ -741,8 +748,11 @@ const MarketplaceHome = () => {
         </div>
       </div>
 
-      {/* Search and Filter Section */}
-      <div className="relative z-20 -mt-8">
+      {/* Search and Filter Section - Positioned immediately after hero without requiring scroll */}
+      <div
+        className="relative z-20 -mt-6"
+        style={{ maxWidth: "85%", margin: "0 auto" }}
+      >
         <SearchFilters
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}
@@ -760,7 +770,10 @@ const MarketplaceHome = () => {
       </div>
 
       {/* Property Group Tabs */}
-      <div className="max-w-[90rem] mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-6">
+      <div
+        className="max-w-[90rem] mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-6"
+        style={{ maxWidth: "85%" }}
+      >
         <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-2 shadow-lg border border-gray-200/50">
           <div className="flex gap-1 sm:gap-2 overflow-x-auto scrollbar-none">
             {propertyTabs.map((tab) => (
@@ -773,6 +786,7 @@ const MarketplaceHome = () => {
                 }`}
                 onClick={() => setActiveTab(tab.value)}
                 type="button"
+                style={{ padding: "0.51rem 0.85rem", fontSize: "0.85rem" }}
               >
                 {tab.label}
               </button>
@@ -782,7 +796,10 @@ const MarketplaceHome = () => {
       </div>
 
       {/* Property Listings */}
-      <div className="max-w-[90rem] mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+      <div
+        className="max-w-[90rem] mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12"
+        style={{ maxWidth: "85%" }}
+      >
         {paginatedProperties.length > 0 ? (
           <>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-6 animate-fade-in-up">
@@ -791,6 +808,7 @@ const MarketplaceHome = () => {
                   key={property.id}
                   property={property}
                   onBookmarkToggle={handleBookmarkToggle}
+                  style={{ transform: "scale(0.85)" }}
                 />
               ))}
             </div>
@@ -802,6 +820,7 @@ const MarketplaceHome = () => {
                   onClick={() => handlePageChange(currentPage - 1)}
                   disabled={currentPage === 1}
                   aria-label="Previous page"
+                  style={{ padding: "0.34rem 0.68rem", fontSize: "0.85rem" }}
                 >
                   <ChevronLeft className="w-4 h-4" />
                 </button>
@@ -823,6 +842,10 @@ const MarketplaceHome = () => {
                       }`}
                       onClick={() => handlePageChange(page)}
                       aria-current={currentPage === page ? "page" : undefined}
+                      style={{
+                        padding: "0.34rem 0.68rem",
+                        fontSize: "0.85rem",
+                      }}
                     >
                       {page}
                     </button>
@@ -833,6 +856,7 @@ const MarketplaceHome = () => {
                   onClick={() => handlePageChange(currentPage + 1)}
                   disabled={currentPage === totalPages}
                   aria-label="Next page"
+                  style={{ padding: "0.34rem 0.68rem", fontSize: "0.85rem" }}
                 >
                   <ChevronRight className="w-4 h-4" />
                 </button>
@@ -870,7 +894,10 @@ const MarketplaceHome = () => {
 
       {/* Modern Footer */}
       <footer className="mt-20 bg-gradient-to-r from-gray-50 to-white border-t border-gray-200/50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div
+          className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12"
+          style={{ maxWidth: "85%" }}
+        >
           <div className="text-center">
             <div className="bg-gradient-to-r from-[#009688] to-[#33bbaa] bg-clip-text text-transparent text-2xl font-bold mb-4">
               edo Real Estate
