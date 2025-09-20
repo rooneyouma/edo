@@ -12,104 +12,139 @@ const Bookmarks = () => {
 
   useEffect(() => {
     // Load bookmarked properties from localStorage
-    const savedBookmarks = localStorage.getItem("bookmarkedProperties");
-    if (savedBookmarks) {
-      const bookmarkedIds = JSON.parse(savedBookmarks);
-      setBookmarkedProperties(bookmarkedIds);
+    const loadBookmarks = () => {
+      const savedBookmarks = localStorage.getItem("bookmarkedProperties");
+      if (savedBookmarks) {
+        const bookmarkedIds = JSON.parse(savedBookmarks);
+        setBookmarkedProperties(bookmarkedIds);
 
-      // Load the actual property data for bookmarked properties
-      const mockProperties = [
-        {
-          id: 1,
-          title: "Modern Downtown Apartment",
-          price: 2500,
-          location: "123 Main St, Downtown",
-          type: "apartment",
-          bedrooms: 2,
-          bathrooms: 2,
-          area: 1200,
-          image: "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267",
-          features: ["Parking", "Gym", "Pool"],
-          description:
-            "Beautiful modern apartment in the heart of downtown with amazing city views.",
-        },
-        {
-          id: 2,
-          title: "Spacious Family Home",
-          price: 4500,
-          location: "456 Oak Ave, Suburbs",
-          type: "house",
-          bedrooms: 4,
-          bathrooms: 3,
-          area: 2500,
-          image: "https://images.unsplash.com/photo-1564013799919-ab600027ffc6",
-          features: ["Garden", "Garage", "Fireplace"],
-          description:
-            "Perfect family home with a large backyard and modern amenities.",
-        },
-        {
-          id: 3,
-          title: "Luxury Waterfront Condo",
-          price: 3800,
-          location: "789 Harbor Blvd, Waterfront",
-          type: "condo",
-          bedrooms: 3,
-          bathrooms: 2,
-          area: 1800,
-          image: "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00",
-          features: ["Water View", "Balcony", "Concierge"],
-          description:
-            "Stunning waterfront condo with panoramic views and luxury finishes.",
-        },
-        {
-          id: 4,
-          title: "Cozy Studio Apartment",
-          price: 1500,
-          location: "321 Pine St, Midtown",
-          type: "apartment",
-          bedrooms: 1,
-          bathrooms: 1,
-          area: 650,
-          image: "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688",
-          features: ["Modern Kitchen", "Walk-in Closet", "High Ceilings"],
-          description:
-            "Efficiently designed studio apartment perfect for urban living.",
-        },
-        {
-          id: 5,
-          title: "Contemporary Townhouse",
-          price: 3200,
-          location: "567 Maple Dr, Uptown",
-          type: "townhouse",
-          bedrooms: 3,
-          bathrooms: 2.5,
-          area: 1600,
-          image: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750",
-          features: ["Private Patio", "Modern Appliances", "Storage"],
-          description:
-            "Stylish townhouse with contemporary design and ample living space.",
-        },
-      ];
+        // Load the actual property data for bookmarked properties
+        const mockProperties = [
+          {
+            id: 1,
+            title: "Modern Downtown Apartment",
+            price: 2500,
+            location: "123 Main St, Downtown",
+            type: "apartment",
+            bedrooms: 2,
+            bathrooms: 2,
+            area: 1200,
+            image:
+              "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267",
+            features: ["Parking", "Gym", "Pool"],
+            description:
+              "Beautiful modern apartment in the heart of downtown with amazing city views.",
+          },
+          {
+            id: 2,
+            title: "Spacious Family Home",
+            price: 4500,
+            location: "456 Oak Ave, Suburbs",
+            type: "house",
+            bedrooms: 4,
+            bathrooms: 3,
+            area: 2500,
+            image:
+              "https://images.unsplash.com/photo-1564013799919-ab600027ffc6",
+            features: ["Garden", "Garage", "Fireplace"],
+            description:
+              "Perfect family home with a large backyard and modern amenities.",
+          },
+          {
+            id: 3,
+            title: "Luxury Waterfront Condo",
+            price: 3800,
+            location: "789 Harbor Blvd, Waterfront",
+            type: "condo",
+            bedrooms: 3,
+            bathrooms: 2,
+            area: 1800,
+            image: "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00",
+            features: ["Water View", "Balcony", "Concierge"],
+            description:
+              "Stunning waterfront condo with panoramic views and luxury finishes.",
+          },
+          {
+            id: 4,
+            title: "Cozy Studio Apartment",
+            price: 1500,
+            location: "321 Pine St, Midtown",
+            type: "apartment",
+            bedrooms: 1,
+            bathrooms: 1,
+            area: 650,
+            image:
+              "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688",
+            features: ["Modern Kitchen", "Walk-in Closet", "High Ceilings"],
+            description:
+              "Efficiently designed studio apartment perfect for urban living.",
+          },
+          {
+            id: 5,
+            title: "Contemporary Townhouse",
+            price: 3200,
+            location: "567 Maple Dr, Uptown",
+            type: "townhouse",
+            bedrooms: 3,
+            bathrooms: 2.5,
+            area: 1600,
+            image:
+              "https://images.unsplash.com/photo-1512917774080-9991f1c4c750",
+            features: ["Private Patio", "Modern Appliances", "Storage"],
+            description:
+              "Stylish townhouse with contemporary design and ample living space.",
+          },
+        ];
 
-      const bookmarkedPropertiesData = mockProperties.filter((property) =>
-        bookmarkedIds.includes(property.id)
-      );
-      setProperties(bookmarkedPropertiesData);
-    }
+        const bookmarkedPropertiesData = mockProperties.filter((property) =>
+          bookmarkedIds.includes(property.id)
+        );
+        setProperties(bookmarkedPropertiesData);
+      }
+    };
+
+    // Load bookmarks initially
+    loadBookmarks();
+
+    // Listen for changes in localStorage (to sync bookmarks across tabs/components)
+    const handleStorageChange = (e) => {
+      if (e.key === "bookmarkedProperties") {
+        try {
+          loadBookmarks();
+        } catch (error) {
+          console.error("Error parsing bookmarked properties:", error);
+        }
+      }
+    };
+
+    // Also listen for custom bookmarkChange events
+    const handleBookmarkChange = () => {
+      loadBookmarks();
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+    window.addEventListener("bookmarkChange", handleBookmarkChange);
+
+    // Cleanup listener on unmount
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+      window.removeEventListener("bookmarkChange", handleBookmarkChange);
+    };
   }, []);
 
   const handleBookmarkToggle = (propertyId) => {
-    setBookmarkedProperties((prev) => {
-      const newBookmarks = prev.filter((id) => id !== propertyId);
-      localStorage.setItem(
-        "bookmarkedProperties",
-        JSON.stringify(newBookmarks)
-      );
-      return newBookmarks;
-    });
+    // Update bookmarked properties in state and localStorage
+    const newBookmarks = bookmarkedProperties.filter((id) => id !== propertyId);
+    setBookmarkedProperties(newBookmarks);
+    localStorage.setItem("bookmarkedProperties", JSON.stringify(newBookmarks));
+
+    // Update the properties list to remove the unbookmarked property
     setProperties((prev) =>
       prev.filter((property) => property.id !== propertyId)
     );
+
+    // Dispatch a custom event to notify other components of the change
+    window.dispatchEvent(new Event("bookmarkChange"));
   };
 
   return (

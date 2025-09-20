@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import {
   MapPin,
@@ -26,14 +26,21 @@ import {
 } from "lucide-react";
 
 const PropertyDetails = ({ params }) => {
-  const { id } = params;
+  const [propertyId, setPropertyId] = useState(null);
   const [isFavorite, setIsFavorite] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const router = useRouter();
 
+  useEffect(() => {
+    // Unwrap the params Promise to get the id
+    Promise.resolve(params).then((unwrappedParams) => {
+      setPropertyId(unwrappedParams.id);
+    });
+  }, [params]);
+
   // Mock data - replace with actual API call
   const property = {
-    id: id || 1,
+    id: propertyId || 1,
     title: "Modern Downtown Apartment",
     price: 2500,
     location: "123 Main St, Downtown",
@@ -90,6 +97,11 @@ const PropertyDetails = ({ params }) => {
       (prev) => (prev - 1 + property.images.length) % property.images.length
     );
   };
+
+  // Render nothing until we have the propertyId
+  if (!propertyId) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="min-h-screen bg-white">

@@ -52,6 +52,39 @@ const MarketplaceHome = () => {
     if (savedBookmarks) {
       setBookmarkedProperties(JSON.parse(savedBookmarks));
     }
+
+    // Listen for changes in localStorage (to sync bookmarks across tabs/components)
+    const handleStorageChange = (e) => {
+      if (e.key === "bookmarkedProperties") {
+        try {
+          const bookmarks = e.newValue ? JSON.parse(e.newValue) : [];
+          setBookmarkedProperties(bookmarks);
+        } catch (error) {
+          console.error("Error parsing bookmarked properties:", error);
+        }
+      }
+    };
+
+    // Also listen for custom bookmarkChange events
+    const handleBookmarkChange = () => {
+      const savedBookmarks = localStorage.getItem("bookmarkedProperties");
+      if (savedBookmarks) {
+        try {
+          setBookmarkedProperties(JSON.parse(savedBookmarks));
+        } catch (error) {
+          console.error("Error parsing bookmarked properties:", error);
+        }
+      }
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+    window.addEventListener("bookmarkChange", handleBookmarkChange);
+
+    // Cleanup listener on unmount
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+      window.removeEventListener("bookmarkChange", handleBookmarkChange);
+    };
   }, []);
 
   // Memoize properties with isBookmarked
@@ -551,18 +584,21 @@ const MarketplaceHome = () => {
   };
 
   // Memoize handleBookmarkToggle
-  const handleBookmarkToggle = useCallback((propertyId) => {
-    setBookmarkedProperties((prev) => {
-      const newBookmarks = prev.includes(propertyId)
-        ? prev.filter((id) => id !== propertyId)
-        : [...prev, propertyId];
-      localStorage.setItem(
-        "bookmarkedProperties",
-        JSON.stringify(newBookmarks)
-      );
-      return newBookmarks;
-    });
-  }, []);
+  const handleBookmarkToggle = useCallback(
+    (propertyId) => {
+      setBookmarkedProperties((prev) => {
+        const newBookmarks = prev.includes(propertyId)
+          ? prev.filter((id) => id !== propertyId)
+          : [...prev, propertyId];
+        localStorage.setItem(
+          "bookmarkedProperties",
+          JSON.stringify(newBookmarks)
+        );
+        return newBookmarks;
+      });
+    },
+    [setBookmarkedProperties]
+  );
 
   // Property group tabs logic
   const propertyTabs = [
@@ -631,7 +667,7 @@ const MarketplaceHome = () => {
     try {
       const user = await authAPI.getCurrentUser();
       if (user && user.roles && user.roles.includes("tenant")) {
-        router.push("/tenant/dashboard");
+        router.push("/tenant/");
       } else {
         setShowTenantModal(true);
       }
@@ -666,7 +702,7 @@ const MarketplaceHome = () => {
       <MarketplaceNav />
 
       {/* Stylish Hero Section with Blurred Background Image and Gradient Overlay - Extends Behind Nav */}
-      <div className="relative overflow-hidden pt-0">
+      <div className="relative overflow-hidden pt-0" style={{ height: "50%" }}>
         {/* Blurred Background Image */}
         <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
@@ -691,11 +727,8 @@ const MarketplaceHome = () => {
           style={{ maxWidth: "85%" }}
         >
           <div className="text-center animate-fade-in-up">
-            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-4 leading-tight drop-shadow-xl">
-              Discover Your
-              <span className="block bg-gradient-to-r from-white via-[#f0fdfa] to-[#ccfbf1] bg-clip-text text-transparent drop-shadow-2xl">
-                Perfect Space
-              </span>
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4 leading-tight drop-shadow-xl">
+              Discover Your Perfect Space
             </h1>
             <p className="text-lg sm:text-xl md:text-2xl text-white mb-6 max-w-3xl mx-auto leading-relaxed font-semibold drop-shadow-lg">
               Explore premium properties, find your dream home, or discover
@@ -706,30 +739,48 @@ const MarketplaceHome = () => {
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row justify-center gap-3 mb-8">
               <Link
-                href="/"
-                className="group px-8 py-4 bg-gradient-to-r from-[#009688] to-[#33bbaa] text-white rounded-2xl font-bold text-lg shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300 relative overflow-hidden border border-white/20"
-                style={{ padding: "0.85rem 1.7rem", fontSize: "0.85rem" }}
-              >
-                <span className="relative z-10 drop-shadow-md">
-                  Explore Properties
-                </span>
-                <div className="absolute inset-0 bg-gradient-to-r from-[#00796b] to-[#26a69a] opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-              </Link>
-              <Link
                 href="#"
                 onClick={handlePropertyManagerClick}
-                className="px-8 py-4 bg-white/95 backdrop-blur-md text-[#009688] border-2 border-white/60 rounded-2xl font-bold text-lg shadow-xl hover:shadow-2xl hover:bg-white hover:border-white transform hover:scale-105 transition-all duration-300"
+                className="px-8 py-4 bg-white/95 backdrop-blur-md text-[#009688] border-2 border-white/60 rounded-2xl font-bold text-lg shadow-xl hover:shadow-2xl hover:bg-white hover:border-white transform hover:scale-105 transition-all duration-300 flex items-center"
                 style={{ padding: "0.85rem 1.7rem", fontSize: "0.85rem" }}
               >
-                For Property Managers
+                To Property Management
+                <svg
+                  className="ml-2 w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M14 5l7 7m0 0l-7 7m7-7H3"
+                  ></path>
+                </svg>
               </Link>
               <Link
                 href="#"
                 onClick={handleTenantClick}
-                className="px-8 py-4 bg-white/95 backdrop-blur-md text-[#009688] border-2 border-white/60 rounded-2xl font-bold text-lg shadow-xl hover:shadow-2xl hover:bg-white hover:border-white transform hover:scale-105 transition-all duration-300"
+                className="px-8 py-4 bg-white/95 backdrop-blur-md text-[#009688] border-2 border-white/60 rounded-2xl font-bold text-lg shadow-xl hover:shadow-2xl hover:bg-white hover:border-white transform hover:scale-105 transition-all duration-300 flex items-center"
                 style={{ padding: "0.85rem 1.7rem", fontSize: "0.85rem" }}
               >
-                For Tenants
+                To Tenant Dashboard
+                <svg
+                  className="ml-2 w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M14 5l7 7m0 0l-7 7m7-7H3"
+                  ></path>
+                </svg>
               </Link>
             </div>
 
@@ -771,7 +822,7 @@ const MarketplaceHome = () => {
 
       {/* Property Group Tabs */}
       <div
-        className="max-w-[90rem] mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-6"
+        className="max-w-[90rem] mx-auto px-4 sm:px-6 lg:px-8 pt-2 pb-4"
         style={{ maxWidth: "85%" }}
       >
         <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-2 shadow-lg border border-gray-200/50">
@@ -797,7 +848,7 @@ const MarketplaceHome = () => {
 
       {/* Property Listings */}
       <div
-        className="max-w-[90rem] mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12"
+        className="max-w-[90rem] mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6"
         style={{ maxWidth: "85%" }}
       >
         {paginatedProperties.length > 0 ? (
