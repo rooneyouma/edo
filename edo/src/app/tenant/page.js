@@ -112,8 +112,14 @@ const TenantDashboard = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [showSearchResults, setShowSearchResults] = useState(false);
+  const [isClient, setIsClient] = useState(false);
   const router = useRouter();
   const storedUser = getStoredUser();
+
+  // Initialize client-side state
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   // React Query for fetching user data
   const { data: user = storedUser } = useQuery({
@@ -203,7 +209,7 @@ const TenantDashboard = () => {
             </h2>
             {/* Welcome Banner */}
             <div className="mb-6 flex items-center gap-4">
-              {user && user.profile_image_url ? (
+              {isClient && user && user.profile_image_url ? (
                 <img
                   src={user.profile_image_url}
                   alt={user.first_name || user.name}
@@ -211,18 +217,20 @@ const TenantDashboard = () => {
                 />
               ) : (
                 <div className="h-12 w-12 rounded-full bg-teal-600 flex items-center justify-center text-white text-xl font-bold">
-                  {user &&
+                  {isClient &&
+                    user &&
                     (user.first_name
                       ? user.first_name.charAt(0)
                       : user.name
                       ? user.name.charAt(0)
                       : "U")}
+                  {!isClient && "U"}
                 </div>
               )}
               <div>
                 <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">
                   Welcome,{" "}
-                  {user
+                  {isClient && user
                     ? `${user.first_name || ""} ${
                         user.last_name || user.name || ""
                       }`.trim()

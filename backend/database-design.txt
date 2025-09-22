@@ -1,0 +1,218 @@
+EDO REAL ESTATE - DATABASE DESIGN DRAFT
+
+1. USERS
+- id (PK)
+- email
+- password_hash
+- first_name
+- last_name
+- phone
+- role (enum: 'landlord', 'tenant', 'admin', 'host')
+- user_type (enum: 'individual', 'company')
+- company_name (nullable)
+- created_at
+- updated_at
+- last_login
+- status (enum: 'active', 'inactive', 'suspended')
+- profile_image
+- verification_status (enum: 'unverified', 'pending', 'verified')
+- verification_documents (JSON array)
+
+2. HOSTS
+- id (PK)
+- user_id (FK -> Users)
+- marketplace_status (enum: 'active', 'inactive', 'suspended')
+- marketplace_rating
+- total_listings
+- verification_status (enum: 'unverified', 'pending', 'verified')
+- verification_documents (JSON array)
+- created_at
+- updated_at
+
+3. PROPERTIES
+- id (PK)
+- landlord_id (FK -> Users)
+- host_id (FK -> Hosts, nullable)
+- title
+- description
+- address
+- city
+- state
+- zip_code
+- property_type (enum: 'apartment', 'house', 'condo', 'townhouse', 'loft')
+- bedrooms
+- bathrooms
+- area_sqft
+- price
+- status (enum: 'available', 'rented', 'maintenance', 'unavailable')
+- listing_type (enum: 'rental', 'sale', 'both')
+- created_at
+- updated_at
+- features (JSON array)
+- images (JSON array of URLs)
+- marketplace_status (enum: 'draft', 'published', 'unpublished')
+- marketplace_visibility (enum: 'public', 'private')
+
+4. UNITS
+- id (PK)
+- property_id (FK -> Properties)
+- unit_number
+- floor
+- bedrooms
+- bathrooms
+- area_sqft
+- price
+- status (enum: 'available', 'rented', 'maintenance', 'unavailable')
+- features (JSON array)
+- images (JSON array of URLs)
+- tenant_id (FK -> Users, nullable)
+- enrollment_date (nullable)
+- enrollment_status (enum: 'pending', 'enrolled', 'rejected')
+
+5. LEASES
+- id (PK)
+- unit_id (FK -> Units)
+- tenant_id (FK -> Users)
+- landlord_id (FK -> Users)
+- host_id (FK -> Hosts, nullable)
+- start_date
+- end_date
+- monthly_rent
+- security_deposit
+- status (enum: 'active', 'expired', 'terminated')
+- created_at
+- updated_at
+- terms (JSON)
+- marketplace_listing_id (nullable)
+
+6. PAYMENTS
+- id (PK)
+- lease_id (FK -> Leases)
+- amount
+- payment_date
+- payment_type (enum: 'rent', 'deposit', 'maintenance', 'other')
+- status (enum: 'pending', 'completed', 'failed', 'refunded')
+- transaction_id
+- created_at
+- updated_at
+
+7. MAINTENANCE_REQUESTS
+- id (PK)
+- unit_id (FK -> Units)
+- tenant_id (FK -> Users)
+- title
+- description
+- priority (enum: 'low', 'medium', 'high', 'emergency')
+- status (enum: 'pending', 'in_progress', 'completed', 'cancelled')
+- created_at
+- updated_at
+- completed_at
+- assigned_to (FK -> Users)
+
+8. MAINTENANCE_TASKS
+- id (PK)
+- request_id (FK -> Maintenance_Requests)
+- assigned_to (FK -> Users)
+- title
+- description
+- status (enum: 'pending', 'in_progress', 'completed', 'cancelled')
+- created_at
+- updated_at
+- completed_at
+- cost
+
+9. NOTICES
+- id (PK)
+- property_id (FK -> Properties)
+- unit_id (FK -> Units, nullable)
+- title
+- content
+- type (enum: 'general', 'maintenance', 'payment', 'emergency')
+- status (enum: 'draft', 'published', 'archived')
+- created_at
+- updated_at
+- published_at
+- expires_at
+
+10. MESSAGES
+- id (PK)
+- sender_id (FK -> Users)
+- receiver_id (FK -> Users)
+- subject
+- content
+- status (enum: 'unread', 'read', 'archived')
+- created_at
+- updated_at
+- parent_message_id (FK -> Messages, nullable)
+
+11. DOCUMENTS
+- id (PK)
+- related_to_type (enum: 'property', 'unit', 'lease', 'maintenance')
+- related_to_id
+- name
+- type
+- url
+- created_at
+- updated_at
+- uploaded_by (FK -> Users)
+
+12. BOOKMARKS
+- id (PK)
+- user_id (FK -> Users)
+- property_id (FK -> Properties)
+- created_at
+
+13. REVIEWS
+- id (PK)
+- property_id (FK -> Properties)
+- user_id (FK -> Users)
+- rating
+- comment
+- status (enum: 'pending', 'approved', 'rejected')
+- created_at
+- updated_at
+
+RELATIONSHIPS:
+- Users (1) -> Hosts (1)
+- Users (1) -> Properties (N) as landlord
+- Hosts (1) -> Properties (N) as marketplace host
+- Users (1) -> Units (N) as tenant
+- Users (1) -> Leases (N) as tenant
+- Users (1) -> Leases (N) as landlord
+- Hosts (1) -> Leases (N) as marketplace host
+- Properties (1) -> Units (N)
+- Units (1) -> Leases (N)
+- Leases (1) -> Payments (N)
+- Units (1) -> Maintenance_Requests (N)
+- Maintenance_Requests (1) -> Maintenance_Tasks (N)
+- Properties (1) -> Notices (N)
+- Units (1) -> Notices (N)
+- Users (1) -> Messages (N) as sender
+- Users (1) -> Messages (N) as receiver
+- Users (1) -> Documents (N)
+- Users (1) -> Bookmarks (N)
+- Properties (1) -> Reviews (N)
+
+INDEXES:
+- Users: email, role
+- Properties: landlord_id, status, property_type
+- Units: property_id, status
+- Leases: tenant_id, landlord_id, status
+- Payments: lease_id, status
+- Maintenance_Requests: unit_id, status, priority
+- Messages: sender_id, receiver_id, status
+- Documents: related_to_type, related_to_id
+- Reviews: property_id, status
+
+NOTES:
+- All tables include soft delete functionality (deleted_at timestamp)
+- All tables include created_at and updated_at timestamps
+- Consider implementing row-level security for multi-tenant data
+- Consider implementing audit logging for critical operations
+- Consider implementing caching for frequently accessed data
+- Consider implementing full-text search for properties and messages
+- Hosts are marketplace-only users who can list properties but don't manage them
+- Landlords can enroll tenants in their properties
+- Properties can be listed in marketplace by hosts
+- Units can be assigned to tenants by landlords
+- Leases can be managed by both landlords and hosts 

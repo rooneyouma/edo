@@ -353,6 +353,34 @@ export const tenantAPI = {
   },
 };
 
+// Landlord tenant management API
+export const landlordTenantAPI = {
+  // Fetch all tenants for the logged-in landlord
+  list: async () => {
+    return await apiRequest("/landlord/tenants/", { method: "GET" });
+  },
+  // Add a new tenant
+  create: async (tenantData) => {
+    return await apiRequest("/landlord/tenants/", {
+      method: "POST",
+      body: JSON.stringify(tenantData),
+    });
+  },
+  // Update a tenant
+  update: async (id, tenantData) => {
+    return await apiRequest(`/landlord/tenants/${id}/`, {
+      method: "PATCH",
+      body: JSON.stringify(tenantData),
+    });
+  },
+  // Delete a tenant
+  delete: async (id) => {
+    return await apiRequest(`/landlord/tenants/${id}/`, {
+      method: "DELETE",
+    });
+  },
+};
+
 // Test API connectivity
 export const testApiConnectivity = async () => {
   try {

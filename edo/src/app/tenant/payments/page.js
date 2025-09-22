@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import TenantHeader from "@/partials/tenant/TenantHeader.jsx";
 import TenantSidebar from "@/partials/tenant/TenantSidebar.jsx";
 import { Search, Filter, X, ArrowUpDown } from "lucide-react";
@@ -20,7 +20,21 @@ const Payments = () => {
   const [sortOrder, setSortOrder] = useState("latest");
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [selectedPayment, setSelectedPayment] = useState(null);
+  const [isClient, setIsClient] = useState(false);
   const router = useRouter();
+
+  // Initialize client-side state
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  if (!isClient) {
+    return (
+      <div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex items-center justify-center">
+        <div className="text-slate-600 dark:text-slate-400">Loading...</div>
+      </div>
+    );
+  }
 
   if (!isAuthenticated()) {
     return (

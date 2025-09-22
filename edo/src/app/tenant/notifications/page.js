@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import TenantHeader from "@/partials/tenant/TenantHeader.jsx";
 import TenantSidebar from "@/partials/tenant/TenantSidebar.jsx";
 import {
@@ -22,28 +22,11 @@ const Notifications = () => {
   const [sortBy, setSortBy] = useState("date");
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [isSortOpen, setIsSortOpen] = useState(false);
+  const [isAuthenticated_State, setIsAuthenticated_State] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
 
-  if (!isAuthenticated()) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-slate-50 dark:bg-slate-900">
-        <h2 className="text-2xl font-bold mb-4">Sign in required</h2>
-        <p className="mb-6">You must be signed in to access this page.</p>
-        <Link
-          href="/signin"
-          className="px-6 py-2 bg-teal-600 text-white rounded-lg font-semibold hover:bg-teal-700 transition"
-        >
-          Proceed
-        </Link>
-      </div>
-    );
-  }
-
-  const toggleSidebar = () => {
-    setIsSidebarOpen(!isSidebarOpen);
-  };
-
-  // Mock notifications data
+  // Mock notifications data - moved before conditional returns to maintain hook order
   const [notifications, setNotifications] = useState([
     {
       id: 1,
@@ -83,6 +66,40 @@ const Notifications = () => {
       icon: AlertTriangle,
     },
   ]);
+
+  // Handle authentication check after component mounts to avoid hydration mismatch
+  useEffect(() => {
+    setIsAuthenticated_State(isAuthenticated());
+    setIsLoading(false);
+  }, []);
+
+  // Show loading state during initial hydration
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex items-center justify-center">
+        <div className="text-slate-600 dark:text-slate-400">Loading...</div>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated_State) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen bg-slate-50 dark:bg-slate-900">
+        <h2 className="text-2xl font-bold mb-4">Sign in required</h2>
+        <p className="mb-6">You must be signed in to access this page.</p>
+        <Link
+          href="/signin"
+          className="px-6 py-2 bg-teal-600 text-white rounded-lg font-semibold hover:bg-teal-700 transition"
+        >
+          Proceed
+        </Link>
+      </div>
+    );
+  }
+
+  const toggleSidebar = () => {
+    setIsSidebarOpen(!isSidebarOpen);
+  };
 
   const handleNotificationClick = (notificationId) => {
     setNotifications((prevNotifications) =>

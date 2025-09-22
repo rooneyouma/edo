@@ -61,7 +61,7 @@ const PropertyList = ({
                 {property.name}
               </h3>
               <p className="text-sm text-gray-700 dark:text-gray-300 mb-1 flex items-center">
-                <span className="truncate">{property.address}</span>
+                <span className="truncate">{`${property.street}, ${property.city}, ${property.state} ${property.zip_code}`}</span>
               </p>
               <p className="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-2 uppercase tracking-wide">
                 {property.type}
@@ -221,6 +221,7 @@ const PropertyList = ({
         isOpen={isAddTenantModalOpen}
         onClose={() => setIsAddTenantModalOpen(false)}
         title="Add Tenant"
+        maxWidth="max-w-4xl"
       >
         <AddTenantForm
           onClose={() => setIsAddTenantModalOpen(false)}

@@ -7,6 +7,7 @@ const AddTenantForm = ({
   onSubmit,
   initialPropertyId,
   initialUnitNumber,
+  initialUnitId, // Add this to handle specific unit selection
 }) => {
   const [activeTab, setActiveTab] = useState("quick-add"); // 'quick-add' or 'invite'
   const [formData, setFormData] = useState({
@@ -118,36 +119,67 @@ const AddTenantForm = ({
       return;
     }
 
-    // Clear selected unit when property changes
-    setSelectedUnit(null);
-    if (activeTab === "quick-add") {
+    // If we have a specific unit ID, don't clear the unit selection
+    if (!initialUnitId) {
+      // Clear selected unit when property changes
+      setSelectedUnit(null);
+      if (activeTab === "quick-add") {
+        setFormData((prev) => ({
+          ...prev,
+          unitNumber: "",
+          rentAmount: "",
+          securityDeposit: "",
+        }));
+      } else {
+        setInviteData((prev) => ({
+          ...prev,
+          unitNumber: "",
+        }));
+      }
+    }
+  }, [propertyId, activeTab, initialUnitId]);
+
+  // Update formData if initialPropertyId, initialUnitNumber, or initialUnitId change
+  useEffect(() => {
+    // Only update if values have actually changed to prevent infinite loops
+    if (
+      initialPropertyId !== formData.propertyId ||
+      initialUnitNumber !== formData.unitNumber
+    ) {
       setFormData((prev) => ({
         ...prev,
-        unitNumber: "",
-        rentAmount: "",
-        securityDeposit: "",
-      }));
-    } else {
-      setInviteData((prev) => ({
-        ...prev,
-        unitNumber: "",
+        propertyId: initialPropertyId || "",
+        unitNumber: initialUnitNumber || "",
       }));
     }
-  }, [propertyId, activeTab]);
 
-  // Update formData if initialPropertyId or initialUnitNumber change
-  useEffect(() => {
-    setFormData((prev) => ({
-      ...prev,
-      propertyId: initialPropertyId || "",
-      unitNumber: initialUnitNumber || "",
-    }));
-    setInviteData((prev) => ({
-      ...prev,
-      propertyId: initialPropertyId || "",
-      unitNumber: initialUnitNumber || "",
-    }));
-  }, [initialPropertyId, initialUnitNumber]);
+    if (
+      initialPropertyId !== inviteData.propertyId ||
+      initialUnitNumber !== inviteData.unitNumber
+    ) {
+      setInviteData((prev) => ({
+        ...prev,
+        propertyId: initialPropertyId || "",
+        unitNumber: initialUnitNumber || "",
+      }));
+    }
+
+    // If we have a specific unit ID, find and populate unit details
+    if (initialUnitId && units.length > 0) {
+      const specificUnit = units.find((unit) => unit.id === initialUnitId);
+      if (
+        specificUnit &&
+        (!selectedUnit || selectedUnit.id !== specificUnit.id)
+      ) {
+        setFormData((prev) => ({
+          ...prev,
+          rentAmount: specificUnit.rent_amount || "",
+          securityDeposit: specificUnit.security_deposit || "",
+        }));
+        setSelectedUnit(specificUnit);
+      }
+    }
+  }, [initialPropertyId, initialUnitNumber, initialUnitId, units.length]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -355,9 +387,12 @@ const AddTenantForm = ({
           checking={checking}
           emailSuggestions={emailSuggestions}
           showSuggestions={showSuggestions}
+          setShowSuggestions={setShowSuggestions}
+          setEmailSuggestions={setEmailSuggestions}
           searchingEmail={searchingEmail}
           emailChecked={emailChecked}
           handleCheckEmail={handleCheckEmail}
+          initialUnitId={initialUnitId}
         />
       ) : (
         <InviteForm
@@ -410,9 +445,12 @@ const QuickAddForm = ({
   checking,
   emailSuggestions,
   showSuggestions,
+  setShowSuggestions,
+  setEmailSuggestions,
   searchingEmail,
   emailChecked,
   handleCheckEmail,
+  initialUnitId,
 }) => {
   // const [checking, setChecking] = useState(false);
   // const [userFound, setUserFound] = useState(false);
@@ -683,17 +721,25 @@ const QuickAddForm = ({
             <option value="">
               {loadingUnits ? "Loading units..." : "Select Unit"}
             </option>
-            {units.map((unit) => (
-              <option key={unit.id} value={unit.unit_id}>
-                {unit.unit_id}
-              </option>
-            ))}
+            {units
+              .filter((unit) =>
+                initialUnitId
+                  ? unit.id === initialUnitId
+                  : unit.status === "vacant"
+              )
+              .map((unit) => (
+                <option key={unit.id} value={unit.unit_id}>
+                  {unit.unit_id}
+                </option>
+              ))}
           </select>
-          {formData.propertyId && !loadingUnits && units.length === 0 && (
-            <div className="mt-2 bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded text-sm">
-              No units found for this property.
-            </div>
-          )}
+          {formData.propertyId &&
+            !loadingUnits &&
+            units.filter((unit) => unit.status === "vacant").length === 0 && (
+              <div className="mt-2 bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-2 rounded text-sm">
+                No vacant units available for this property.
+              </div>
+            )}
         </div>
 
         <div>
@@ -705,7 +751,7 @@ const QuickAddForm = ({
           </label>
           <div className="mt-1 relative rounded-md shadow-sm">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <span className="text-slate-500 sm:text-sm">$</span>
+              <span className="text-slate-500 sm:text-sm">KES</span>
             </div>
             <input
               type="number"
@@ -713,14 +759,14 @@ const QuickAddForm = ({
               name="rentAmount"
               value={formData.rentAmount}
               onChange={handleChange}
-              className={`block w-full pl-7 rounded-md shadow-sm focus:ring-[#0d9488] focus:ring-2 focus:ring-offset-2 py-2 px-3 sm:text-sm ${
-                selectedUnit
+              className={`block w-full pl-12 rounded-md shadow-sm focus:ring-[#0d9488] focus:ring-2 focus:ring-offset-2 py-2 px-3 sm:text-sm ${
+                selectedUnit || initialUnitId
                   ? "border-slate-300 bg-slate-50 text-slate-500 dark:bg-slate-700 dark:border-slate-600 dark:text-slate-400"
                   : "border-slate-300 focus:border-[#0d9488] dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100"
               }`}
               required
-              readOnly={!!selectedUnit}
-              disabled={!!selectedUnit}
+              readOnly={!!(selectedUnit || initialUnitId)}
+              disabled={!!(selectedUnit || initialUnitId)}
             />
           </div>
         </div>
@@ -734,7 +780,7 @@ const QuickAddForm = ({
           </label>
           <div className="mt-1 relative rounded-md shadow-sm">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <span className="text-slate-500 sm:text-sm">$</span>
+              <span className="text-slate-500 sm:text-sm">KES</span>
             </div>
             <input
               type="number"
@@ -742,14 +788,24 @@ const QuickAddForm = ({
               name="securityDeposit"
               value={formData.securityDeposit}
               onChange={handleChange}
-              className={`block w-full pl-7 rounded-md shadow-sm focus:ring-[#0d9488] focus:ring-2 focus:ring-offset-2 py-2 px-3 sm:text-sm ${
-                selectedUnit && selectedUnit.security_deposit
+              className={`block w-full pl-12 rounded-md shadow-sm focus:ring-[#0d9488] focus:ring-2 focus:ring-offset-2 py-2 px-3 sm:text-sm ${
+                (selectedUnit && selectedUnit.security_deposit) || initialUnitId
                   ? "border-slate-300 bg-slate-50 text-slate-500 dark:bg-slate-700 dark:border-slate-600 dark:text-slate-400"
                   : "border-slate-300 focus:border-[#0d9488] dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100"
               }`}
               required
-              readOnly={!!(selectedUnit && selectedUnit.security_deposit)}
-              disabled={!!(selectedUnit && selectedUnit.security_deposit)}
+              readOnly={
+                !!(
+                  (selectedUnit && selectedUnit.security_deposit) ||
+                  initialUnitId
+                )
+              }
+              disabled={
+                !!(
+                  (selectedUnit && selectedUnit.security_deposit) ||
+                  initialUnitId
+                )
+              }
             />
           </div>
         </div>
@@ -1113,17 +1169,21 @@ const InviteForm = ({
             <option value="">
               {loadingUnits ? "Loading units..." : "Select Unit"}
             </option>
-            {units.map((unit) => (
-              <option key={unit.id} value={unit.unit_id}>
-                {unit.unit_id}
-              </option>
-            ))}
+            {units
+              .filter((unit) => unit.status === "vacant")
+              .map((unit) => (
+                <option key={unit.id} value={unit.unit_id}>
+                  {unit.unit_id}
+                </option>
+              ))}
           </select>
-          {inviteData.propertyId && !loadingUnits && units.length === 0 && (
-            <div className="mt-2 bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded text-sm">
-              No units found for this property.
-            </div>
-          )}
+          {inviteData.propertyId &&
+            !loadingUnits &&
+            units.filter((unit) => unit.status === "vacant").length === 0 && (
+              <div className="mt-2 bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-2 rounded text-sm">
+                No vacant units available for this property.
+              </div>
+            )}
         </div>
 
         <div>

@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import Modal from "../../../partials/Modal";
+import ConsistentModal from "../modals/ConsistentModal";
 import AddUnitModal from "./AddUnitModal";
+import AddTenantForm from "../forms/AddTenantForm";
+import DynamicUnitForm from "./DynamicUnitForm";
+import Modal from "../../../partials/Modal";
 import { landlordPropertyAPI } from "../../../utils/api";
 import { apiRequest } from "../../../utils/api";
 import DeleteConfirmModal from "../notices/DeleteConfirmModal";
@@ -38,51 +41,18 @@ const DeleteIcon = () => (
 );
 
 const EditUnitModal = ({ isOpen, onClose, property, unit, onUnitUpdated }) => {
-  const [formData, setFormData] = useState({
-    unit_id: unit?.unit_id || "",
-    floor: unit?.floor || "",
-    bedrooms: unit?.bedrooms || 1,
-    bathrooms: unit?.bathrooms || 1,
-    rent_amount: unit?.rent_amount || "",
-    security_deposit: unit?.security_deposit || "",
-  });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // Always update form data when unit changes
-  useEffect(() => {
-    console.log("Unit changed, updating form data:", unit);
-    setFormData({
-      unit_id: unit?.unit_id || "",
-      floor: unit?.floor || "",
-      bedrooms: unit?.bedrooms || 1,
-      bathrooms: unit?.bathrooms || 1,
-      rent_amount: unit?.rent_amount || "",
-      security_deposit: unit?.security_deposit || "",
-    });
-  }, [unit]);
-
   if (!isOpen || !property || !unit) return null;
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSubmit = async (formData) => {
     setLoading(true);
     setError(null);
     try {
       const unitData = {
         property: property.id,
-        floor: formData.floor,
-        bedrooms: Number(formData.bedrooms),
-        bathrooms: Number(formData.bathrooms),
-        rent_amount: formData.rent_amount ? Number(formData.rent_amount) : null,
-        security_deposit: formData.security_deposit
-          ? Number(formData.security_deposit)
-          : null,
+        ...formData,
       };
       console.log("Updating unit with data:", unitData);
       await landlordPropertyAPI.updateUnit(unit, unitData, "PUT");
@@ -91,153 +61,41 @@ const EditUnitModal = ({ isOpen, onClose, property, unit, onUnitUpdated }) => {
       onClose();
     } catch (err) {
       console.error("Error updating unit:", err);
-      setError("Failed to update unit.");
+      setError("Failed to update unit. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
+  // Prepare initial data for the form
+  const initialData = {
+    unit_id: unit?.unit_id || "",
+    floor: unit?.floor || "",
+    bedrooms: unit?.bedrooms || 1,
+    bathrooms: unit?.bathrooms || 1,
+    rent_amount: unit?.rent_amount || "",
+    security_deposit: unit?.security_deposit || "",
+    status: unit?.status || "vacant",
+  };
+
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
-      {/* Added consistent modal container with proper background styling */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-4 sm:p-6 w-full max-w-2xl mx-auto">
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="mb-6">
-            <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
-              Edit Unit for {property.name}
-            </h2>
-          </div>
-          <div>
-            <label
-              htmlFor="unit_id"
-              className="block text-sm font-medium text-gray-700 dark:text-gray-300"
-            >
-              Unit ID
-            </label>
-            <input
-              type="text"
-              id="unit_id"
-              name="unit_id"
-              value={formData.unit_id}
-              onChange={handleChange}
-              required
-              readOnly
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm bg-gray-100 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 sm:text-sm"
-            />
-          </div>
-          <div>
-            <label
-              htmlFor="floor"
-              className="block text-sm font-medium text-gray-700 dark:text-gray-300"
-            >
-              Floor
-            </label>
-            <input
-              type="text"
-              id="floor"
-              name="floor"
-              value={formData.floor}
-              onChange={handleChange}
-              className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-gray-700 dark:text-gray-100 sm:text-sm"
-            />
-          </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label
-                htmlFor="bedrooms"
-                className="block text-sm font-medium text-gray-700 dark:text-gray-300"
-              >
-                Bedrooms
-              </label>
-              <input
-                type="number"
-                id="bedrooms"
-                name="bedrooms"
-                value={formData.bedrooms}
-                onChange={handleChange}
-                min="1"
-                required
-                className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-gray-700 dark:text-gray-100 sm:text-sm"
-              />
-            </div>
-            <div>
-              <label
-                htmlFor="bathrooms"
-                className="block text-sm font-medium text-gray-700 dark:text-gray-300"
-              >
-                Bathrooms
-              </label>
-              <input
-                type="number"
-                id="bathrooms"
-                name="bathrooms"
-                value={formData.bathrooms}
-                onChange={handleChange}
-                min="1"
-                required
-                className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-gray-700 dark:text-gray-100 sm:text-sm"
-              />
-            </div>
-          </div>
-          <div>
-            <label
-              htmlFor="rent_amount"
-              className="block text-sm font-medium text-gray-700 dark:text-gray-300"
-            >
-              Rent Amount
-            </label>
-            <input
-              type="number"
-              id="rent_amount"
-              name="rent_amount"
-              value={formData.rent_amount}
-              onChange={handleChange}
-              min="0"
-              required
-              className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-gray-700 dark:text-gray-100 sm:text-sm"
-            />
-          </div>
-          <div>
-            <label
-              htmlFor="security_deposit"
-              className="block text-sm font-medium text-gray-700 dark:text-gray-300"
-            >
-              Security Deposit
-            </label>
-            <input
-              type="number"
-              id="security_deposit"
-              name="security_deposit"
-              value={formData.security_deposit}
-              onChange={handleChange}
-              min="0"
-              className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-gray-700 dark:text-gray-100 sm:text-sm"
-            />
-          </div>
-          {error && (
-            <div className="text-red-600 dark:text-red-400 text-sm">
-              {error}
-            </div>
-          )}
-          <div className="flex justify-end space-x-3">
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0d9488] dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 dark:hover:bg-gray-600"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              disabled={loading}
-              className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#0d9488] hover:bg-[#0f766e] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0d9488] disabled:opacity-60"
-            >
-              {loading ? "Saving..." : "Save Changes"}
-            </button>
-          </div>
-        </form>
-      </div>
-    </Modal>
+    <ConsistentModal
+      isOpen={isOpen}
+      onClose={onClose}
+      title={`Edit Unit - ${property.name}`}
+      maxWidth="max-w-4xl"
+    >
+      <DynamicUnitForm
+        propertyType={property.type}
+        initialData={initialData}
+        onSubmit={handleSubmit}
+        onCancel={onClose}
+        loading={loading}
+        error={error}
+        submitButtonText="Save Changes"
+        isEdit={true}
+      />
+    </ConsistentModal>
   );
 };
 
@@ -256,6 +114,8 @@ const ManageUnitsModal = ({
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [deleteError, setDeleteError] = useState(null);
   const [deletingUnitId, setDeletingUnitId] = useState(null);
+  const [showAddTenantModal, setShowAddTenantModal] = useState(false);
+  const [selectedUnitForTenant, setSelectedUnitForTenant] = useState(null);
   const queryClient = useQueryClient();
 
   // React Query mutation for updating property data
@@ -321,29 +181,55 @@ const ManageUnitsModal = ({
     setEditModalOpen(false);
   };
 
+  const handleAddTenant = (unit) => {
+    setSelectedUnitForTenant(unit);
+    setShowAddTenantModal(true);
+  };
+
+  const handleAddTenantClose = () => {
+    setShowAddTenantModal(false);
+    setSelectedUnitForTenant(null);
+  };
+
+  const handleAddTenantSubmit = () => {
+    setShowAddTenantModal(false);
+    setSelectedUnitForTenant(null);
+    // Refresh property data to update unit status
+    updatePropertyMutation.mutate(property.id);
+  };
+
   if (!isOpen || !property) return null;
 
   return (
-    <Modal
+    <ConsistentModal
       isOpen={isOpen}
       onClose={onClose}
-      zIndex={60}
-      maxWidth="sm:max-w-4xl"
+      title={`Manage Units for ${property.name}`}
+      maxWidth="max-w-6xl"
     >
-      {/* Added consistent modal container with proper background styling */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-4 sm:p-6 w-full max-w-4xl mx-auto">
-        <div className="space-y-6 w-full max-w-4xl">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-2 relative mt-8">
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 truncate">
-              Manage Units for {property.name}
-            </h2>
-            <button
-              onClick={() => setIsAddUnitModalOpen(true)}
-              className="w-full sm:w-auto px-3 py-1.5 bg-emerald-600 text-white rounded hover:bg-emerald-700 text-sm font-medium"
+      <div className="space-y-4 relative z-50">
+        <div className="flex justify-end">
+          <button
+            onClick={() => setIsAddUnitModalOpen(true)}
+            className="px-4 py-2 bg-[#0d9488] text-white rounded-md hover:bg-[#0f766e] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0d9488] text-sm font-medium flex items-center gap-2"
+          >
+            <svg
+              className="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
             >
-              + Add Unit
-            </button>
-          </div>
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+              />
+            </svg>
+            Add Unit
+          </button>
+        </div>
+        <div className="mt-4 space-y-4">
           {property.units && property.units.length > 0 ? (
             <div className="overflow-x-auto">
               <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
@@ -366,6 +252,9 @@ const ManageUnitsModal = ({
                     </th>
                     <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Security Deposit
+                    </th>
+                    <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Status
                     </th>
                     <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Actions
@@ -395,7 +284,40 @@ const ManageUnitsModal = ({
                           ? `Kes ${unit.security_deposit}`
                           : "-"}
                       </td>
+                      <td className="px-4 py-2 text-sm text-gray-900 dark:text-gray-100">
+                        <span
+                          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                            unit.status === "vacant"
+                              ? "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400"
+                              : "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400"
+                          }`}
+                        >
+                          {unit.status === "vacant" ? "Vacant" : "Occupied"}
+                        </span>
+                      </td>
                       <td className="px-4 py-2 text-sm text-gray-900 dark:text-gray-100 flex gap-2 items-center">
+                        {unit.status === "vacant" && (
+                          <button
+                            className="text-blue-600 hover:text-blue-900 mr-2 cursor-pointer"
+                            title="Add Tenant"
+                            onClick={() => handleAddTenant(unit)}
+                            aria-label="Add Tenant"
+                          >
+                            <svg
+                              className="w-5 h-5"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                              />
+                            </svg>
+                          </button>
+                        )}
                         <button
                           className="text-violet-600 hover:text-violet-900 mr-2 cursor-pointer"
                           title="Edit Unit"
@@ -455,9 +377,25 @@ const ManageUnitsModal = ({
             title="Delete Unit"
             message="Are you sure you want to delete this unit? This action cannot be undone."
           />
+
+          {/* Add Tenant Modal */}
+          <ConsistentModal
+            isOpen={showAddTenantModal}
+            onClose={handleAddTenantClose}
+            title={`Add Tenant to Unit ${selectedUnitForTenant?.unit_id}`}
+            maxWidth="max-w-4xl"
+          >
+            <AddTenantForm
+              onClose={handleAddTenantClose}
+              onSubmit={handleAddTenantSubmit}
+              initialPropertyId={property?.id}
+              initialUnitNumber={selectedUnitForTenant?.unit_id}
+              initialUnitId={selectedUnitForTenant?.id}
+            />
+          </ConsistentModal>
         </div>
       </div>
-    </Modal>
+    </ConsistentModal>
   );
 };
 

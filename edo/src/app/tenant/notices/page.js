@@ -17,7 +17,16 @@ const Notices = () => {
   const [showVacateModal, setShowVacateModal] = useState(false);
   const [selectedVacateRequest, setSelectedVacateRequest] = useState(null);
   const [isExpandedView, setIsExpandedView] = useState(false);
+  const [notices, setNotices] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [isClient, setIsClient] = useState(false);
   const router = useRouter();
+
+  // Initialize client-side state
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   // Mock data for tenant's properties (in a real app, this would come from your API)
   const tenantProperties = [
@@ -60,6 +69,43 @@ const Notices = () => {
   const [vacateSortOrder, setVacateSortOrder] = useState("latest");
   const [vacateTimeFilter, setVacateTimeFilter] = useState("all");
   const [showVacateFilters, setShowVacateFilters] = useState(false);
+
+  // Fetch notices data
+  useEffect(() => {
+    const fetchNotices = async () => {
+      setLoading(true);
+      try {
+        const data = await apiRequest("/notices/", { method: "GET" });
+        const noticesData = Array.isArray(data) ? data : data?.results || [];
+        setNotices(
+          Array.isArray(noticesData)
+            ? noticesData.map((notice) => ({
+                id: notice?.id ?? Math.random(),
+                type: notice?.notice_type || notice?.type || "general",
+                title: notice?.title || "",
+                content: notice?.message || notice?.content || "",
+                date: notice?.date_sent
+                  ? new Date(notice.date_sent).toLocaleDateString()
+                  : "",
+                priority: notice?.priority || "normal",
+                from:
+                  notice?.from ||
+                  (notice?.property && notice.property.name) ||
+                  "Property Manager",
+                isRead: notice?.isRead || false,
+                managerId: notice?.managerId || null,
+              }))
+            : []
+        );
+        setError(null);
+      } catch (err) {
+        setError("Failed to load notices");
+        setNotices([]);
+      }
+      setLoading(false);
+    };
+    fetchNotices();
+  }, []);
 
   // Helper to check if a date is in a given range
   const isInTimeRange = (dateStr, range) => {
@@ -195,61 +241,30 @@ const Notices = () => {
     setShowNoticeModal(true);
   };
 
-  // Move authentication check after all hooks
-  const notAuthenticatedUI = !isAuthenticated() ? (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-slate-50 dark:bg-slate-900">
-      <h2 className="text-2xl font-bold mb-4">Sign in required</h2>
-      <p className="mb-6">You must be signed in to access this page.</p>
-      <Link
-        href="/auth/signin"
-        className="px-6 py-2 bg-teal-600 text-white rounded-lg font-semibold hover:bg-teal-700 transition"
-      >
-        Proceed to Sign In
-      </Link>
-    </div>
-  ) : null;
+  // Authentication and loading checks
+  if (!isClient) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen bg-slate-50 dark:bg-slate-900">
+        <h2 className="text-2xl font-bold mb-4">Loading...</h2>
+      </div>
+    );
+  }
 
-  const [notices, setNotices] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  if (!isAuthenticated()) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen bg-slate-50 dark:bg-slate-900">
+        <h2 className="text-2xl font-bold mb-4">Sign in required</h2>
+        <p className="mb-6">You must be signed in to access this page.</p>
+        <Link
+          href="/auth/signin"
+          className="px-6 py-2 bg-teal-600 text-white rounded-lg font-semibold hover:bg-teal-700 transition"
+        >
+          Proceed to Sign In
+        </Link>
+      </div>
+    );
+  }
 
-  useEffect(() => {
-    const fetchNotices = async () => {
-      setLoading(true);
-      try {
-        const data = await apiRequest("/notices/", { method: "GET" });
-        const noticesData = Array.isArray(data) ? data : data?.results || [];
-        setNotices(
-          Array.isArray(noticesData)
-            ? noticesData.map((notice) => ({
-                id: notice?.id ?? Math.random(),
-                type: notice?.notice_type || notice?.type || "general",
-                title: notice?.title || "",
-                content: notice?.message || notice?.content || "",
-                date: notice?.date_sent
-                  ? new Date(notice.date_sent).toLocaleDateString()
-                  : "",
-                priority: notice?.priority || "normal",
-                from:
-                  notice?.from ||
-                  (notice?.property && notice.property.name) ||
-                  "Property Manager",
-                isRead: notice?.isRead || false,
-                managerId: notice?.managerId || null,
-              }))
-            : []
-        );
-        setError(null);
-      } catch (err) {
-        setError("Failed to load notices");
-        setNotices([]);
-      }
-      setLoading(false);
-    };
-    fetchNotices();
-  }, []);
-
-  if (!isAuthenticated()) return notAuthenticatedUI;
   if (loading) return <div>Loading notices...</div>;
   if (error) return <div>{error}</div>;
 

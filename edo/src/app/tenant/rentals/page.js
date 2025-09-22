@@ -13,24 +13,13 @@ const MyRentals = () => {
   const [selectedRental, setSelectedRental] = useState(null);
   const [rentals, setRentals] = useState([]);
   const [error, setError] = useState(null);
+  const [isClient, setIsClient] = useState(false);
   const router = useRouter();
 
-  if (!isAuthenticated()) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-slate-50 dark:bg-slate-900">
-        <h2 className="text-2xl font-bold mb-4">Sign in required</h2>
-        <p className="mb-6">You must be signed in to access this page.</p>
-        <Link
-          href="/signin"
-          className="px-6 py-2 bg-teal-600 text-white rounded-lg font-semibold hover:bg-teal-700 transition"
-        >
-          Proceed
-        </Link>
-      </div>
-    );
-  }
+  // Check authentication status
+  const isAuth = isAuthenticated();
 
-  // React Query for fetching rentals
+  // React Query for fetching rentals - always call this hook
   const {
     data: rentalsData,
     isLoading: loading,
@@ -41,8 +30,13 @@ const MyRentals = () => {
       const data = await tenantAPI.getRentals();
       return data.rentals || [];
     },
-    enabled: isAuthenticated(),
+    enabled: isClient && isAuth, // Only fetch when client-side and authenticated
   });
+
+  // Initialize client-side state
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   // Update local state when query data changes
   useEffect(() => {
@@ -58,6 +52,30 @@ const MyRentals = () => {
       console.error("Error fetching rentals:", queryError);
     }
   }, [queryError]);
+
+  // Early returns after all hooks are called
+  if (!isClient) {
+    return (
+      <div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex items-center justify-center">
+        <div className="text-slate-600 dark:text-slate-400">Loading...</div>
+      </div>
+    );
+  }
+
+  if (!isAuth) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen bg-slate-50 dark:bg-slate-900">
+        <h2 className="text-2xl font-bold mb-4">Sign in required</h2>
+        <p className="mb-6">You must be signed in to access this page.</p>
+        <Link
+          href="/signin"
+          className="px-6 py-2 bg-teal-600 text-white rounded-lg font-semibold hover:bg-teal-700 transition"
+        >
+          Proceed
+        </Link>
+      </div>
+    );
+  }
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);

@@ -23,7 +23,7 @@ const Modal = ({
 
         {/* Modal panel */}
         <div
-          className={`relative transform overflow-hidden rounded-lg bg-white dark:bg-slate-900 text-left shadow-xl transition-all sm:my-8 w-full ${maxWidth}`}
+          className={`relative transform overflow-hidden rounded-lg bg-white dark:bg-slate-800 text-left shadow-xl transition-all sm:my-8 w-full ${maxWidth}`}
         >
           {/* Close button - styled and positioned like in LandlordNotices.jsx */}
           <div className="absolute right-0 top-0 pr-4 pt-4">

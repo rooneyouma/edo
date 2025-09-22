@@ -198,7 +198,7 @@ const EditTenantForm = ({ tenant, onClose, onSubmit }) => {
           </label>
           <div className="mt-1 relative rounded-md shadow-sm">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <span className="text-gray-500 sm:text-sm">$</span>
+              <span className="text-gray-500 sm:text-sm">KES</span>
             </div>
             <input
               type="number"
@@ -206,7 +206,7 @@ const EditTenantForm = ({ tenant, onClose, onSubmit }) => {
               name="rentAmount"
               value={formData.rentAmount}
               onChange={handleChange}
-              className="block w-full pl-7 rounded-md border-gray-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 py-2 px-3 sm:text-sm"
+              className="block w-full pl-12 rounded-md border-gray-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 py-2 px-3 sm:text-sm"
               required
             />
           </div>
@@ -221,7 +221,7 @@ const EditTenantForm = ({ tenant, onClose, onSubmit }) => {
           </label>
           <div className="mt-1 relative rounded-md shadow-sm">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <span className="text-gray-500 sm:text-sm">$</span>
+              <span className="text-gray-500 sm:text-sm">KES</span>
             </div>
             <input
               type="number"
@@ -229,7 +229,7 @@ const EditTenantForm = ({ tenant, onClose, onSubmit }) => {
               name="securityDeposit"
               value={formData.securityDeposit}
               onChange={handleChange}
-              className="block w-full pl-7 rounded-md border-gray-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 py-2 px-3 sm:text-sm"
+              className="block w-full pl-12 rounded-md border-gray-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 py-2 px-3 sm:text-sm"
               required
             />
           </div>

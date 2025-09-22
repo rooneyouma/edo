@@ -23,17 +23,25 @@ const TenantHeader = ({ toggleSidebar }) => {
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [user, setUser] = useState(getStoredUser() || null);
+  const [user, setUser] = useState(null);
+  const [isClient, setIsClient] = useState(false);
   const searchModalRef = React.useRef(null);
 
   useEffect(() => {
+    setIsClient(true);
+    setUser(getStoredUser());
+
     async function fetchUser() {
       try {
         const u = await authAPI.getCurrentUser();
         setUser(u);
       } catch {}
     }
-    if (!user) fetchUser();
+
+    const storedUser = getStoredUser();
+    if (!storedUser) {
+      fetchUser();
+    }
   }, []);
 
   const notifications = [
@@ -79,8 +87,8 @@ const TenantHeader = ({ toggleSidebar }) => {
       id: 3,
       type: "payment",
       title: "Rent Payment Due",
-      description: "Rent payment of $1,200 due in 5 days",
-      amount: "$1,200",
+      description: "Rent payment of KES 1,200 due in 5 days",
+      amount: "KES 1,200",
       dueDate: "5 days",
       path: "/tenant/payments",
       icon: DollarSign,
@@ -244,7 +252,7 @@ const TenantHeader = ({ toggleSidebar }) => {
                 onClick={() => setIsProfileOpen(!isProfileOpen)}
               >
                 <span className="sr-only">Open user menu</span>
-                {user && user.profile_image_url ? (
+                {isClient && user && user.profile_image_url ? (
                   <img
                     className="h-8 w-8 rounded-full"
                     src={user.profile_image_url}
@@ -253,12 +261,14 @@ const TenantHeader = ({ toggleSidebar }) => {
                 ) : (
                   <div className="h-8 w-8 rounded-full bg-teal-600 flex items-center justify-center">
                     <span className="text-sm font-medium text-white">
-                      {user &&
+                      {isClient &&
+                        user &&
                         (user.first_name
                           ? user.first_name.charAt(0)
                           : user.name
                           ? user.name.charAt(0)
                           : "U")}
+                      {!isClient && "U"}
                     </span>
                   </div>
                 )}
@@ -273,20 +283,22 @@ const TenantHeader = ({ toggleSidebar }) => {
                       <div className="flex items-center">
                         <div className="h-10 w-10 rounded-full bg-violet-600 flex items-center justify-center">
                           <span className="text-sm font-medium text-white">
-                            {user &&
+                            {isClient &&
+                              user &&
                               (user.first_name
                                 ? user.first_name.charAt(0)
                                 : user.name
                                 ? user.name.charAt(0)
                                 : "U")}
+                            {!isClient && "U"}
                           </span>
                         </div>
                         <div className="ml-3">
                           <p className="text-sm font-medium text-slate-900 dark:text-slate-100">
-                            {user && (user.first_name || user.name)}
+                            {isClient && user && (user.first_name || user.name)}
                           </p>
                           <p className="text-xs text-slate-500 dark:text-slate-400">
-                            {user && user.email}
+                            {isClient && user && user.email}
                           </p>
                         </div>
                       </div>

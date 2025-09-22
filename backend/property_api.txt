@@ -1,0 +1,281 @@
+I'll analyze both your frontend and backend to understand the current structure and identify what's needed to align the API with your frontend requirements. Let's start by examining the backend structure and then the frontend.
+
+### 1. First, let's look at the backend structure:
+
+
+I see that the backend directory isn't in the expected location. Let me check the project structure to find the correct path.
+
+
+Let me check the project structure to better understand the organization of your files.
+
+
+Let's dive into the backend structure to understand its organization and components.
+
+
+Let me examine the backend structure and models to understand the current implementation.
+
+
+Let's examine the models to understand the data structure:
+
+
+Let's examine the frontend structure to understand how it interacts with the backend.
+
+
+Let's take a look at the property details page to understand its current implementation and how it interacts with the backend.
+
+
+Let me examine the API endpoints to understand the current implementation and how they interact with the frontend.
+
+
+Let me examine the property views to understand how properties are being handled in the backend.
+
+
+Let me take a look at the serializers to understand the data structure being sent to the frontend.
+
+
+Let me analyze the current implementation and identify what's needed to align the API with the frontend requirements.
+
+## Current Implementation Analysis
+
+### Backend Structure
+1. **Models**:
+   - [User](cci:2://file:///c:/Users/HomePC/Documents/Edo%20SaaS%20Group/edo/backend/edoAPI/models.py:71:0-158:40): Handles all user types with role-based access
+   - [LandlordProperty](cci:2://file:///c:/Users/HomePC/Documents/Edo%20SaaS%20Group/edo/backend/edoAPI/models.py:160:0-181:57): Represents properties with units
+   - [Unit](cci:2://file:///c:/Users/HomePC/Documents/Edo%20SaaS%20Group/edo/backend/edoAPI/models.py:183:0-197:60): Individual rental units within properties
+   - [Tenant](cci:2://file:///c:/Users/HomePC/Documents/Edo%20SaaS%20Group/edo/backend/edoAPI/models.py:199:0-216:79): Tenant information linked to units
+   - [Payment](cci:2://file:///c:/Users/HomePC/Documents/Edo%20SaaS%20Group/edo/backend/edoAPI/models.py:218:0-230:96): Payment records
+   - [Notice](cci:2://file:///c:/Users/HomePC/Documents/Edo%20SaaS%20Group/edo/backend/edoAPI/models.py:232:0-244:143): Notices sent to tenants
+   - [LandlordMaintenance](cci:2://file:///c:/Users/HomePC/Documents/Edo%20SaaS%20Group/edo/backend/edoAPI/models.py:246:0-276:62): Maintenance requests
+   - [TenantInvitation](cci:2://file:///c:/Users/HomePC/Documents/Edo%20SaaS%20Group/edo/backend/edoAPI/models.py:299:0-332:40): Invitation system for tenants
+
+2. **API Endpoints**:
+   - User authentication and management
+   - Property management for landlords
+   - Unit management
+   - Tenant management
+   - Maintenance requests
+   - Notices and communications
+
+3. **Property Types**:
+   - Currently supports: Apartment Complex, Condominium, Townhouse, Loft, Villa, Other
+
+### Frontend Implementation
+- The property details page is currently using mock data
+- It's designed to show property details, images, and contact information
+- The UI has placeholders for different property types but lacks dynamic rendering
+
+## What's Missing for Property Details Page
+
+### 1. API Endpoints Needed
+1. **Property Details Endpoint**:
+   - `GET /api/v1/properties/{id}/` - Get detailed property information
+   - Should include:
+     - Property details (type, location, description)
+     - Unit details (if applicable)
+     - Owner/landlord information
+     - Amenities
+     - Images
+     - Pricing and availability
+
+2. **Property Search/Filter Endpoint**:
+   - `GET /api/v1/properties/` - List properties with filtering
+   - Should support filtering by:
+     - Property type
+     - Location
+     - Price range
+     - Number of bedrooms/bathrooms
+     - Amenities
+
+3. **Property Types Configuration**:
+   - `GET /api/v1/property-types/` - Get available property types and their configurations
+
+### 2. Data Model Updates Needed
+
+1. **Property Model Enhancements**:
+   - Add more detailed property type specifications
+   - Add fields for BnB-specific information (check-in/out times, cancellation policy, etc.)
+   - Add support for property rules and policies
+   - Add availability calendar
+
+2. **Amenities Model**:
+   - Create a separate Amenity model with categories
+   - Allow property-specific amenities
+   - Support different amenity types for different property types
+
+3. **Images Model**:
+   - Support multiple images per property
+   - Add image types (thumbnail, gallery, floor plans, etc.)
+   - Add image captions and ordering
+
+### 3. Serializer Updates
+
+1. **Property Detail Serializer**:
+   ```python
+   class PropertyDetailSerializer(serializers.ModelSerializer):
+       amenities = AmenitySerializer(many=True)
+       images = PropertyImageSerializer(many=True)
+       owner = UserSerializer()
+       units = UnitSerializer(many=True, required=False)
+       reviews = ReviewSerializer(many=True, required=False)
+       availability = serializers.SerializerMethodField()
+       policies = serializers.SerializerMethodField()
+       
+       class Meta:
+           model = LandlordProperty
+           fields = '__all__'
+   ```
+
+2. **Property Type Configuration**:
+   ```python
+   class PropertyTypeConfig:
+       def __init__(self, property_type):
+           self.configs = {
+               'apartment': {
+                   'contact_label': 'Contact Landlord',
+                   'price_label': 'Monthly Rent',
+                   'area_label': 'Unit Size',
+                   'features_label': 'Apartment Features',
+                   # Other type-specific configurations
+               },
+               'bnb': {
+                   'contact_label': 'Contact Host',
+                   'price_label': 'Price per Night',
+                   'area_label': 'Property Size',
+                   'features_label': 'Property Amenities',
+                   # BnB specific fields
+               },
+               # Other property types
+           }
+   ```
+
+### 4. Frontend Integration
+
+1. **API Service**:
+   ```javascript
+   // services/propertyService.js
+   export const getPropertyDetails = async (id) => {
+     const response = await fetch(`/api/v1/properties/${id}/`);
+     if (!response.ok) throw new Error('Failed to fetch property details');
+     return response.json();
+   };
+
+   export const getPropertyTypes = async () => {
+     const response = await fetch('/api/v1/property-types/');
+     if (!response.ok) throw new Error('Failed to fetch property types');
+     return response.json();
+   };
+   ```
+
+2. **Property Context**:
+   ```javascript
+   // contexts/PropertyContext.js
+   import React, { createContext, useContext, useState, useEffect } from 'react';
+   import { getPropertyDetails, getPropertyTypes } from '../services/propertyService';
+
+   const PropertyContext = createContext();
+
+   export const PropertyProvider = ({ children }) => {
+     const [property, setProperty] = useState(null);
+     const [propertyTypes, setPropertyTypes] = useState({});
+     const [loading, setLoading] = useState(true);
+     const [error, setError] = useState(null);
+
+     const fetchPropertyDetails = async (id) => {
+       try {
+         setLoading(true);
+         const data = await getPropertyDetails(id);
+         setProperty(data);
+       } catch (err) {
+         setError(err.message);
+       } finally {
+         setLoading(false);
+       }
+     };
+
+     useEffect(() => {
+       const loadPropertyTypes = async () => {
+         try {
+           const types = await getPropertyTypes();
+           setPropertyTypes(types);
+         } catch (err) {
+           console.error('Failed to load property types:', err);
+         }
+       };
+       loadPropertyTypes();
+     }, []);
+
+     return (
+       <PropertyContext.Provider value={{ property, propertyTypes, loading, error, fetchPropertyDetails }}>
+         {children}
+       </PropertyContext.Provider>
+     );
+   };
+
+   export const useProperty = () => useContext(PropertyContext);
+   ```
+
+## Implementation Plan
+
+### Phase 1: Backend Updates
+1. **Enhance Property Model**:
+   - Add BnB-specific fields
+   - Add support for property rules and policies
+   - Add availability tracking
+
+2. **Create New Serializers**:
+   - `PropertyDetailSerializer`
+   - `PropertyImageSerializer`
+   - `AmenitySerializer`
+   - `ReviewSerializer`
+
+3. **Create New API Endpoints**:
+   - Property details
+   - Property search/filter
+   - Property types configuration
+
+### Phase 2: Frontend Updates
+1. **Create API Service**:
+   - Implement API calls to the new endpoints
+   - Handle authentication and errors
+
+2. **Update Property Context**:
+   - Manage property state
+   - Handle loading and error states
+   - Provide property type configurations
+
+3. **Enhance Property Details Page**:
+   - Replace mock data with real API calls
+   - Implement dynamic rendering based on property type
+   - Add loading and error states
+
+### Phase 3: Testing and Refinement
+1. **Test All Property Types**:
+   - Verify correct rendering for each property type
+   - Test all interactive elements
+
+2. **Performance Optimization**:
+   - Implement image lazy loading
+   - Optimize API calls
+   - Add caching where appropriate
+
+3. **User Testing**:
+   - Gather feedback
+   - Make necessary adjustments
+
+## Next Steps
+
+1. **Backend Implementation**:
+   - Update the property model with new fields
+   - Create new serializers
+   - Implement new API endpoints
+
+2. **Frontend Integration**:
+   - Set up API service
+   - Create/update context
+   - Enhance property details page
+
+3. **Testing**:
+   - Unit tests for new backend functionality
+   - Integration tests for API endpoints
+   - End-to-end tests for property details page
+

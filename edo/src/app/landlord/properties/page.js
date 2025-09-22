@@ -116,7 +116,6 @@ const Properties = () => {
     const propertyData = {
       name: formData.name,
       type: formData.type,
-      total_units: Number(formData.totalUnits),
       street: formData.address.street,
       city: formData.address.city,
       state: formData.address.state,
@@ -141,7 +140,6 @@ const Properties = () => {
     const propertyData = {
       name: formData.name,
       type: formData.type,
-      total_units: Number(formData.totalUnits),
       street: formData.address.street,
       city: formData.address.city,
       state: formData.address.state,
@@ -295,59 +293,47 @@ const Properties = () => {
       <Modal
         isOpen={isAddPropertyModalOpen}
         onClose={() => setIsAddPropertyModalOpen(false)}
+        maxWidth="max-w-2xl"
       >
-        <AddPropertyForm
-          onSubmit={handleAddProperty}
-          onClose={() => setIsAddPropertyModalOpen(false)}
-        />
+        <div className="p-6">
+          <div className="mb-6">
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
+              {propertyToEdit ? "Edit Property" : "Add New Property"}
+            </h2>
+          </div>
+          <AddPropertyForm
+            property={propertyToEdit}
+            onSubmit={handleAddProperty}
+            onClose={() => setIsAddPropertyModalOpen(false)}
+          />
+        </div>
       </Modal>
 
       {/* Edit Property Modal */}
-      {isEditPropertyModalOpen && propertyToEdit && (
-        <div className="fixed inset-0 z-50">
-          <div className="fixed inset-0 bg-gray-900/30 dark:bg-gray-900/50 transition-opacity" />
-          <div className="fixed inset-0 z-50 overflow-y-auto">
-            <div className="flex min-h-screen items-start justify-center p-4 pt-20">
-              <div className="relative transform overflow-hidden rounded-lg bg-white dark:bg-gray-800 px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 w-full max-w-2xl">
-                <div className="absolute right-0 top-0 pr-4 pt-4">
-                  <button
-                    onClick={() => {
-                      setIsEditPropertyModalOpen(false);
-                      setPropertyToEdit(null);
-                    }}
-                    className="rounded-md bg-white dark:bg-slate-800 text-gray-400 hover:text-gray-500 focus:outline-none"
-                  >
-                    <span className="sr-only">Close</span>
-                    <svg
-                      className="h-6 w-6"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      strokeWidth="1.5"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M6 18L18 6M6 6l12 12"
-                      />
-                    </svg>
-                  </button>
-                </div>
-                <div className="mt-2">
-                  <AddPropertyForm
-                    property={propertyToEdit}
-                    onSubmit={handleEditProperty}
-                    onClose={() => {
-                      setIsEditPropertyModalOpen(false);
-                      setPropertyToEdit(null);
-                    }}
-                  />
-                </div>
-              </div>
-            </div>
+      <Modal
+        isOpen={isEditPropertyModalOpen}
+        onClose={() => {
+          setIsEditPropertyModalOpen(false);
+          setPropertyToEdit(null);
+        }}
+        maxWidth="max-w-2xl"
+      >
+        <div className="p-6">
+          <div className="mb-6">
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
+              Edit Property
+            </h2>
           </div>
+          <AddPropertyForm
+            property={propertyToEdit}
+            onSubmit={handleEditProperty}
+            onClose={() => {
+              setIsEditPropertyModalOpen(false);
+              setPropertyToEdit(null);
+            }}
+          />
         </div>
-      )}
+      </Modal>
 
       {/* Delete Confirmation Modal */}
       <DeleteConfirmModal

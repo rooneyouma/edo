@@ -1115,16 +1115,67 @@ const Notices = () => {
                           min="1"
                           max={totalPages}
                           value={pageInputValue}
-                          onChange={(e) => setPageInputValue(e.target.value)}
-                          onBlur={() => {
-                            const page = parseInt(pageInputValue);
+                          onChange={(e) => {
+                            const value = e.target.value;
+                            setPageInputValue(value);
+                            const page = parseInt(value);
                             if (page >= 1 && page <= totalPages) {
                               handlePageChange(page);
+                            }
+                          }}
+                          onBlur={() => {
+                            const page = parseInt(pageInputValue);
+                            if (page < 1) {
+                              setPageInputValue("1");
+                              handlePageChange(1);
+                            } else if (page > totalPages) {
+                              setPageInputValue(totalPages.toString());
+                              handlePageChange(totalPages);
                             }
                           }}
                           className="w-12 h-6 text-xs text-center rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-violet-500"
                         />
                       </div>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <button
+                        onClick={() => handlePageChange(currentPage - 1)}
+                        disabled={currentPage === 1}
+                        className="inline-flex items-center p-1.5 text-xs font-medium rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        <svg
+                          className="w-4 h-4"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M15 19l-7-7 7-7"
+                          />
+                        </svg>
+                      </button>
+                      <button
+                        onClick={() => handlePageChange(currentPage + 1)}
+                        disabled={currentPage === totalPages}
+                        className="inline-flex items-center p-1.5 text-xs font-medium rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        <svg
+                          className="w-4 h-4"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M9 5l7 7-7 7"
+                          />
+                        </svg>
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -1339,11 +1390,10 @@ const Notices = () => {
                               min="1"
                               max={totalVacateRequestsPages}
                               value={vacateRequestsPageInput}
-                              onChange={(e) =>
-                                setVacateRequestsPageInput(e.target.value)
-                              }
-                              onBlur={() => {
-                                const page = parseInt(vacateRequestsPageInput);
+                              onChange={(e) => {
+                                const value = e.target.value;
+                                setVacateRequestsPageInput(value);
+                                const page = parseInt(value);
                                 if (
                                   page >= 1 &&
                                   page <= totalVacateRequestsPages
@@ -1351,9 +1401,73 @@ const Notices = () => {
                                   handleVacateRequestsPageChange(page);
                                 }
                               }}
+                              onBlur={() => {
+                                const page = parseInt(vacateRequestsPageInput);
+                                if (page < 1) {
+                                  setVacateRequestsPageInput("1");
+                                  handleVacateRequestsPageChange(1);
+                                } else if (page > totalVacateRequestsPages) {
+                                  setVacateRequestsPageInput(
+                                    totalVacateRequestsPages.toString()
+                                  );
+                                  handleVacateRequestsPageChange(
+                                    totalVacateRequestsPages
+                                  );
+                                }
+                              }}
                               className="w-12 h-6 text-xs text-center rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-violet-500"
                             />
                           </div>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <button
+                            onClick={() =>
+                              handleVacateRequestsPageChange(
+                                vacateRequestsPage - 1
+                              )
+                            }
+                            disabled={vacateRequestsPage === 1}
+                            className="inline-flex items-center p-1.5 text-xs font-medium rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                          >
+                            <svg
+                              className="w-4 h-4"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M15 19l-7-7 7-7"
+                              />
+                            </svg>
+                          </button>
+                          <button
+                            onClick={() =>
+                              handleVacateRequestsPageChange(
+                                vacateRequestsPage + 1
+                              )
+                            }
+                            disabled={
+                              vacateRequestsPage === totalVacateRequestsPages
+                            }
+                            className="inline-flex items-center p-1.5 text-xs font-medium rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                          >
+                            <svg
+                              className="w-4 h-4"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M9 5l7 7-7 7"
+                              />
+                            </svg>
+                          </button>
                         </div>
                       </div>
                     </div>
@@ -1537,11 +1651,10 @@ const Notices = () => {
                               min="1"
                               max={totalEvictionNoticesPages}
                               value={evictionNoticesPageInput}
-                              onChange={(e) =>
-                                setEvictionNoticesPageInput(e.target.value)
-                              }
-                              onBlur={() => {
-                                const page = parseInt(evictionNoticesPageInput);
+                              onChange={(e) => {
+                                const value = e.target.value;
+                                setEvictionNoticesPageInput(value);
+                                const page = parseInt(value);
                                 if (
                                   page >= 1 &&
                                   page <= totalEvictionNoticesPages
@@ -1549,9 +1662,73 @@ const Notices = () => {
                                   handleEvictionNoticesPageChange(page);
                                 }
                               }}
+                              onBlur={() => {
+                                const page = parseInt(evictionNoticesPageInput);
+                                if (page < 1) {
+                                  setEvictionNoticesPageInput("1");
+                                  handleEvictionNoticesPageChange(1);
+                                } else if (page > totalEvictionNoticesPages) {
+                                  setEvictionNoticesPageInput(
+                                    totalEvictionNoticesPages.toString()
+                                  );
+                                  handleEvictionNoticesPageChange(
+                                    totalEvictionNoticesPages
+                                  );
+                                }
+                              }}
                               className="w-12 h-6 text-xs text-center rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-violet-500"
                             />
                           </div>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <button
+                            onClick={() =>
+                              handleEvictionNoticesPageChange(
+                                evictionNoticesPage - 1
+                              )
+                            }
+                            disabled={evictionNoticesPage === 1}
+                            className="inline-flex items-center p-1.5 text-xs font-medium rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                          >
+                            <svg
+                              className="w-4 h-4"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M15 19l-7-7 7-7"
+                              />
+                            </svg>
+                          </button>
+                          <button
+                            onClick={() =>
+                              handleEvictionNoticesPageChange(
+                                evictionNoticesPage + 1
+                              )
+                            }
+                            disabled={
+                              evictionNoticesPage === totalEvictionNoticesPages
+                            }
+                            className="inline-flex items-center p-1.5 text-xs font-medium rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                          >
+                            <svg
+                              className="w-4 h-4"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M9 5l7 7-7 7"
+                              />
+                            </svg>
+                          </button>
                         </div>
                       </div>
                     </div>

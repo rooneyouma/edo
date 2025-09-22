@@ -1,5 +1,4 @@
 import React from "react";
-import Modal from "../../../partials/Modal";
 
 const ConsistentModal = ({
   isOpen,
@@ -8,35 +7,56 @@ const ConsistentModal = ({
   children,
   maxWidth = "sm:max-w-2xl",
 }) => {
+  if (!isOpen) return null;
+
   return (
-    <Modal isOpen={isOpen} onClose={onClose} maxWidth={maxWidth}>
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-4 sm:p-6 w-full">
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
-            {title}
-          </h2>
-          <button
-            onClick={onClose}
-            className="text-gray-400 hover:text-gray-500 dark:hover:text-gray-300"
-          >
-            <svg
-              className="h-6 w-6"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
+    <div className="fixed inset-0 z-50 overflow-y-auto">
+      <div className="flex min-h-full items-center justify-center p-4 text-center sm:p-0 sm:ml-64">
+        {/* Backdrop */}
+        <div
+          className="fixed inset-0 bg-gray-900/30 dark:bg-gray-900/60 transition-opacity"
+          onClick={onClose}
+        />
+
+        {/* Modal panel */}
+        <div
+          className={`relative transform overflow-hidden rounded-lg bg-white dark:bg-slate-800 text-left shadow-xl transition-all sm:my-8 w-full ${maxWidth}`}
+        >
+          {/* Close button */}
+          <div className="absolute right-0 top-0 pr-4 pt-4 z-10">
+            <button
+              type="button"
+              className="rounded-md bg-white dark:bg-slate-800 text-gray-400 hover:text-gray-500 focus:outline-none"
+              onClick={onClose}
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
-          </button>
+              <span className="sr-only">Close</span>
+              <svg
+                className="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth="1.5"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </button>
+          </div>
+
+          {title && (
+            <div className="px-6 pt-6 pb-2">
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
+                {title}
+              </h2>
+            </div>
+          )}
+          <div className="px-6 pb-6">{children}</div>
         </div>
-        {children}
       </div>
-    </Modal>
+    </div>
   );
 };
 
