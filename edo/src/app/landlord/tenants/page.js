@@ -173,13 +173,13 @@ const LandlordTenantsPage = () => {
   // Check authentication on mount
   useEffect(() => {
     if (!getToken() || !user) {
-      router.push("/auth/signin");
+      router.push("/auth/signin?role=landlord&next=/landlord/tenants");
       return;
     }
 
     // Check for landlord role
     if (!user.roles || !user.roles.includes("landlord")) {
-      router.push("/");
+      router.push("/landlord"); // Redirect to main landlord page for onboarding
     }
   }, [router, user]);
 

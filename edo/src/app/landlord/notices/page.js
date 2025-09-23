@@ -114,7 +114,9 @@ const Notices = () => {
         <button
           className="px-6 py-2 bg-teal-600 text-white rounded-lg font-semibold hover:bg-teal-700 transition"
           onClick={() =>
-            router.push(`/auth/signin?next=${encodeURIComponent(pathname)}`)
+            router.push(
+              `/auth/signin?role=landlord&next=${encodeURIComponent(pathname)}`
+            )
           }
         >
           Proceed

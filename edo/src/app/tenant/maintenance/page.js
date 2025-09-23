@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import TenantHeader from "../../../partials/tenant/TenantHeader.jsx";
 import TenantSidebar from "../../../partials/tenant/TenantSidebar.jsx";
@@ -51,7 +51,7 @@ const Maintenance = () => {
     setIsClient(true);
   }, []);
 
-  // React Query for fetching maintenance requests
+  // React Query for fetching maintenance requests with optimized settings
   const {
     data: requestsData,
     isLoading: loading,
@@ -76,16 +76,57 @@ const Maintenance = () => {
           error.message.toLowerCase().includes("tenant profile not found")
         ) {
           throw new Error(
-            "No tenant profile found. Please contact your landlord to set up your tenancy."
+            "No rental property found. Please contact your landlord to set up your tenancy."
           );
         }
         throw error;
       }
     },
-    enabled: isAuthenticated(),
+    enabled: !!isAuthenticated(),
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    gcTime: 10 * 60 * 1000, // 10 minutes
+    retry: 1, // Reduce retries for faster failure
   });
 
   const requests = requestsData || [];
+
+  // Memoize expensive filtering and sorting operations
+  const filteredAndSortedRequests = useMemo(() => {
+    if (!requests.length) return [];
+
+    // Filter requests
+    const filtered = requests.filter((request) => {
+      const matchesSearch =
+        searchQuery === "" ||
+        request.subject.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        request.description.toLowerCase().includes(searchQuery.toLowerCase());
+
+      const matchesStatus =
+        statusFilter === "all" ||
+        request.status.toLowerCase() === statusFilter.toLowerCase();
+
+      const matchesPriority =
+        priorityFilter === "all" ||
+        request.priority.toLowerCase() === priorityFilter.toLowerCase();
+
+      return matchesSearch && matchesStatus && matchesPriority;
+    });
+
+    // Sort filtered requests
+    return [...filtered].sort((a, b) => {
+      switch (sortOrder) {
+        case "latest":
+          return new Date(b.created_at) - new Date(a.created_at);
+        case "oldest":
+          return new Date(a.created_at) - new Date(b.created_at);
+        case "priority":
+          const priorityOrder = { emergency: 4, high: 3, medium: 2, low: 1 };
+          return priorityOrder[b.priority] - priorityOrder[a.priority];
+        default:
+          return 0;
+      }
+    });
+  }, [requests, searchQuery, statusFilter, priorityFilter, sortOrder]);
 
   // React Query mutation for creating maintenance requests
   const createRequestMutation = useMutation({
@@ -108,8 +149,42 @@ const Maintenance = () => {
     },
   });
 
+  // Memoize handlers to prevent unnecessary re-renders
+  const handleCreateRequest = useCallback(
+    async (formData) => {
+      setFormErrors({});
+
+      // Validate form data
+      const validation = validateMaintenanceRequest(formData);
+      if (!validation.isValid) {
+        setFormErrors(validation.errors);
+        return;
+      }
+
+      createRequestMutation.mutate(formData);
+    },
+    [createRequestMutation]
+  );
+
+  const handleRequestClick = useCallback((request) => {
+    setSelectedRequest(request);
+  }, []);
+
+  const closeRequestDetails = useCallback(() => {
+    setSelectedRequest(null);
+  }, []);
+
+  const toggleSidebar = useCallback(() => {
+    setIsSidebarOpen(!isSidebarOpen);
+  }, [isSidebarOpen]);
+
   // Handle error state from React Query
   const error = queryError ? queryError.message : null;
+
+  const priorities = ["Low", "Medium", "High", "Emergency"];
+
+  // Check if tenant has multiple properties (for now, we'll assume single property)
+  const hasMultipleProperties = false;
 
   if (!isClient) {
     return (
@@ -125,7 +200,7 @@ const Maintenance = () => {
         <h2 className="text-2xl font-bold mb-4">Sign in required</h2>
         <p className="mb-6">You must be signed in to access this page.</p>
         <Link
-          href="/auth/signin?next=/tenant/maintenance"
+          href="/auth/signin?role=tenant&next=/tenant/maintenance"
           className="px-6 py-2 bg-teal-600 text-white rounded-lg font-semibold hover:bg-teal-700 transition"
         >
           Proceed to Sign In
@@ -133,68 +208,6 @@ const Maintenance = () => {
       </div>
     );
   }
-
-  const handleCreateRequest = async (formData) => {
-    setFormErrors({});
-
-    // Validate form data
-    const validation = validateMaintenanceRequest(formData);
-    if (!validation.isValid) {
-      setFormErrors(validation.errors);
-      return;
-    }
-
-    createRequestMutation.mutate(formData);
-  };
-
-  const priorities = ["Low", "Medium", "High", "Emergency"];
-
-  const toggleSidebar = () => {
-    setIsSidebarOpen(!isSidebarOpen);
-  };
-
-  // Filter and sort requests
-  const filteredRequests = requests.filter((request) => {
-    const matchesSearch =
-      searchQuery === "" ||
-      request.subject.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      request.description.toLowerCase().includes(searchQuery.toLowerCase());
-
-    const matchesStatus =
-      statusFilter === "all" ||
-      request.status.toLowerCase() === statusFilter.toLowerCase();
-
-    const matchesPriority =
-      priorityFilter === "all" ||
-      request.priority.toLowerCase() === priorityFilter.toLowerCase();
-
-    return matchesSearch && matchesStatus && matchesPriority;
-  });
-
-  const sortedRequests = [...filteredRequests].sort((a, b) => {
-    switch (sortOrder) {
-      case "latest":
-        return new Date(b.created_at) - new Date(a.created_at);
-      case "oldest":
-        return new Date(a.created_at) - new Date(b.created_at);
-      case "priority":
-        const priorityOrder = { emergency: 4, high: 3, medium: 2, low: 1 };
-        return priorityOrder[b.priority] - priorityOrder[a.priority];
-      default:
-        return 0;
-    }
-  });
-
-  const handleRequestClick = (request) => {
-    setSelectedRequest(request);
-  };
-
-  const closeRequestDetails = () => {
-    setSelectedRequest(null);
-  };
-
-  // Check if tenant has multiple properties (for now, we'll assume single property)
-  const hasMultipleProperties = false;
 
   if (loading) {
     return (
@@ -221,7 +234,7 @@ const Maintenance = () => {
       <div className="relative flex flex-col flex-1 overflow-y-auto overflow-x-hidden lg:ml-64">
         <TenantHeader toggleSidebar={toggleSidebar} />
 
-        <main className="flex-1 pl-4 pr-8 sm:pl-6 sm:pr-12 lg:pl-8 lg:pr-16 py-4">
+        <main className="flex-1 pl-4 pr-8 sm:pl-6 sm:pr-12 lg:pl-8 lg:pr-16 py-4 sm:py-8">
           <div>
             {/* Header */}
             <div className="mb-8">
@@ -240,8 +253,8 @@ const Maintenance = () => {
                   <AlertCircle className="h-5 w-5 text-red-500 mr-2" />
                   <span className="text-red-700 dark:text-red-300">
                     {error &&
-                    error.toLowerCase().includes("tenant profile not found")
-                      ? "No tenant profile found. Please contact your landlord to set up your tenancy."
+                    error.toLowerCase().includes("rental property not found")
+                      ? "No rental property found. Please contact your landlord to set up your tenancy."
                       : error}
                   </span>
                 </div>
@@ -314,14 +327,14 @@ const Maintenance = () => {
 
             {/* Results Count */}
             <div className="mb-4 text-sm text-slate-600 dark:text-slate-400">
-              {sortedRequests.length} request
-              {sortedRequests.length !== 1 ? "s" : ""} found
+              {filteredAndSortedRequests.length} request
+              {filteredAndSortedRequests.length !== 1 ? "s" : ""} found
             </div>
 
             {/* Maintenance Table */}
-            {sortedRequests.length > 0 ? (
+            {filteredAndSortedRequests.length > 0 ? (
               <MaintenanceTable
-                requests={sortedRequests.map((request) => ({
+                requests={filteredAndSortedRequests.map((request) => ({
                   id: request.id,
                   property: request.property_name,
                   unit: request.unit_number,
@@ -347,13 +360,13 @@ const Maintenance = () => {
                   </p>
                   <p className="text-sm">
                     {error &&
-                    error.toLowerCase().includes("tenant profile not found")
+                    error.toLowerCase().includes("rental property not found")
                       ? "Please contact your landlord to set up your tenancy."
                       : "Create your first maintenance request to get started"}
                   </p>
                 </div>
                 {!error ||
-                !error.toLowerCase().includes("tenant profile not found") ? (
+                !error.toLowerCase().includes("rental property not found") ? (
                   <button
                     onClick={() => setShowNewRequestModal(true)}
                     className="inline-flex items-center px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors"

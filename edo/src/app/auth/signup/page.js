@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { authAPI, storeUser } from "../../../utils/api";
 
@@ -18,6 +18,9 @@ const SignUp = () => {
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const role = searchParams.get("role");
+  const nextPath = searchParams.get("next");
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -61,7 +64,18 @@ const SignUp = () => {
       };
       const response = await authAPI.register(userData);
       storeUser(response.user);
-      router.push("/"); // Redirect to dashboard or home after signup
+
+      // Handle redirect after signup
+      if (role && nextPath) {
+        // User signed up with specific role intent, redirect to onboarding
+        router.push(`/?onboard=${role}&next=${encodeURIComponent(nextPath)}`);
+      } else if (role === "tenant") {
+        router.push("/?onboard=tenant&next=/tenant");
+      } else if (role === "landlord") {
+        router.push("/?onboard=landlord&next=/landlord");
+      } else {
+        router.push("/"); // Default redirect to home
+      }
     } catch (error) {
       if (error.response) {
         const backendErrors = {};

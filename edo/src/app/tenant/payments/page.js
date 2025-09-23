@@ -214,315 +214,317 @@ const Payments = () => {
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-900">
-      <TenantHeader toggleSidebar={toggleSidebar} />
-      <TenantSidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
-
-      {/* Main content */}
-      <main
-        className={`lg:ml-64 pt-8 sm:pt-12 transition-all duration-200 ${
-          isSidebarOpen ? "ml-64" : "ml-0"
-        }`}
-      >
-        <div className="w-full pl-2 pr-6 sm:pl-4 sm:pr-8 md:pl-6 md:pr-12 lg:pl-8 lg:pr-16 py-4 sm:py-8">
-          {/* Page header - Responsive, title always at top, button below on mobile */}
-          <div className="flex flex-col gap-2 sm:flex-row sm:justify-between sm:items-center mb-6">
-            <div>
-              <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">
-                Payments
-              </h1>
-              <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
-                View and manage your rental payments
-              </p>
-            </div>
-            <button
-              onClick={handlePayRent}
-              className="inline-flex items-center justify-center px-3 py-2 border border-transparent rounded-md shadow-sm text-xs sm:text-sm font-medium text-white bg-[#0d9488] hover:bg-[#0f766e] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0d9488] w-full sm:w-auto mt-2 sm:mt-0"
-            >
-              Pay Rent
-            </button>
-          </div>
-
-          {/* Payment summary cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            {/* Total Paid */}
-            <div className="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 p-6">
-              <div className="flex items-center justify-between">
+      <div className="flex">
+        <TenantSidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+        <div className="flex-1 flex flex-col lg:ml-64">
+          <TenantHeader toggleSidebar={toggleSidebar} />
+          {/* Main content */}
+          <main className="flex-1 transition-all duration-200">
+            <div className="w-full pl-2 pr-6 sm:pl-4 sm:pr-8 md:pl-6 md:pr-12 lg:pl-8 lg:pr-16 py-4 sm:py-8">
+              {/* Page header - Responsive, title always at top, button below on mobile */}
+              <div className="flex flex-col gap-2 sm:flex-row sm:justify-between sm:items-center mb-4">
                 <div>
-                  <p className="text-sm text-slate-500 dark:text-slate-400">
-                    Total Paid
-                  </p>
-                  <p className="mt-1 text-2xl font-semibold text-slate-900 dark:text-slate-100">
-                    $12,000
-                  </p>
-                </div>
-                <div className="p-3 bg-green-100 dark:bg-green-900/30 rounded-full">
-                  <svg
-                    className="w-6 h-6 text-green-600 dark:text-green-400"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                    />
-                  </svg>
-                </div>
-              </div>
-            </div>
-
-            {/* Current Balance */}
-            <div className="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-slate-500 dark:text-slate-400">
-                    Current Balance
-                  </p>
-                  <p className="mt-1 text-2xl font-semibold text-slate-900 dark:text-slate-100">
-                    $1,200
-                  </p>
-                </div>
-                <div className="p-3 bg-blue-100 dark:bg-blue-900/30 rounded-full">
-                  <svg
-                    className="w-6 h-6 text-blue-600 dark:text-blue-400"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"
-                    />
-                  </svg>
-                </div>
-              </div>
-            </div>
-
-            {/* Next Payment */}
-            <div className="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-slate-500 dark:text-slate-400">
-                    Next Payment
-                  </p>
-                  <p className="mt-1 text-2xl font-semibold text-slate-900 dark:text-slate-100">
-                    $1,200
-                  </p>
+                  <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">
+                    Payments
+                  </h1>
                   <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
-                    Due in 15 days
+                    View and manage your rental payments
                   </p>
                 </div>
-                <div className="p-3 bg-yellow-100 dark:bg-yellow-900/30 rounded-full">
-                  <svg
-                    className="w-6 h-6 text-yellow-600 dark:text-yellow-400"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                    />
-                  </svg>
-                </div>
-              </div>
-            </div>
-
-            {/* Payment History */}
-            <div className="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-slate-500 dark:text-slate-400">
-                    Payment History
-                  </p>
-                  <p className="mt-1 text-2xl font-semibold text-slate-900 dark:text-slate-100">
-                    10
-                  </p>
-                  <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
-                    Total payments
-                  </p>
-                </div>
-                <div className="p-3 bg-purple-100 dark:bg-purple-900/30 rounded-full">
-                  <svg
-                    className="w-6 h-6 text-purple-600 dark:text-purple-400"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
-                    />
-                  </svg>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Payment history table */}
-          <div className="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700">
-            <div className="p-6">
-              <div className="flex flex-col sm:flex-row gap-4">
-                <div className="flex-1">
-                  <div className="relative">
-                    <Search
-                      className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
-                      size={20}
-                    />
-                    <input
-                      type="text"
-                      placeholder="Search payments..."
-                      className="w-full pl-10 pr-4 py-2.5 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0d9488] focus:border-[#0d9488] dark:bg-gray-800 dark:text-gray-100"
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                    />
-                  </div>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <button
-                    onClick={() => setIsFilterOpen(!isFilterOpen)}
-                    className="inline-flex items-center px-4 py-2 border border-gray-200 dark:border-gray-700 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0d9488]"
-                  >
-                    <Filter className="h-4 w-4 mr-2" />
-                    Filter
-                    {isFilterOpen ? (
-                      <X className="h-4 w-4 ml-2" />
-                    ) : (
-                      <span className="ml-2">▼</span>
-                    )}
-                  </button>
-                  <button
-                    onClick={() =>
-                      setSortOrder(
-                        sortOrder === "latest" ? "earliest" : "latest"
-                      )
-                    }
-                    className="inline-flex items-center px-4 py-2 border border-gray-200 dark:border-gray-700 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0d9488]"
-                  >
-                    <ArrowUpDown className="h-4 w-4 mr-2" />
-                    {sortOrder === "latest" ? "Latest" : "Earliest"}
-                  </button>
-                </div>
+                <button
+                  onClick={handlePayRent}
+                  className="inline-flex items-center justify-center px-3 py-2 border border-transparent rounded-md shadow-sm text-xs sm:text-sm font-medium text-white bg-[#0d9488] hover:bg-[#0f766e] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0d9488] w-full sm:w-auto mt-2 sm:mt-0"
+                >
+                  Pay Rent
+                </button>
               </div>
 
-              {isFilterOpen && (
-                <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                  <div>
-                    <label
-                      htmlFor="status"
-                      className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-                    >
-                      Status
-                    </label>
-                    <select
-                      id="status"
-                      className="block w-full rounded-md border-gray-300 dark:border-gray-600 pl-3 pr-10 py-2 text-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-gray-700 dark:text-gray-100"
-                      value={statusFilter}
-                      onChange={(e) => setStatusFilter(e.target.value)}
-                    >
-                      <option value="all">All Status</option>
-                      <option value="paid">Paid</option>
-                      <option value="pending">Pending</option>
-                      <option value="failed">Failed</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label
-                      htmlFor="method"
-                      className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-                    >
-                      Payment Method
-                    </label>
-                    <select
-                      id="method"
-                      className="block w-full rounded-md border-gray-300 dark:border-gray-600 pl-3 pr-10 py-2 text-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-gray-700 dark:text-gray-100"
-                      value={methodFilter}
-                      onChange={(e) => setMethodFilter(e.target.value)}
-                    >
-                      <option value="all">All Methods</option>
-                      <option value="bank transfer">Bank Transfer</option>
-                      <option value="credit card">Credit Card</option>
-                      <option value="m-pesa">M-PESA</option>
-                      <option value="paypal">PayPal</option>
-                    </select>
-                  </div>
-                </div>
-              )}
-
-              <div className="mt-6 overflow-x-auto">
-                <table className="w-full">
-                  <thead>
-                    <tr className="text-left border-b border-slate-200 dark:border-slate-700">
-                      <th className="pb-3 font-medium text-slate-500 dark:text-slate-400">
-                        Date
-                      </th>
-                      <th className="pb-3 font-medium text-slate-500 dark:text-slate-400">
-                        Amount
-                      </th>
-                      <th className="pb-3 font-medium text-slate-500 dark:text-slate-400">
-                        Status
-                      </th>
-                      <th className="pb-3 font-medium text-slate-500 dark:text-slate-400">
-                        Method
-                      </th>
-                      <th className="pb-3 font-medium text-slate-500 dark:text-slate-400">
-                        Reference
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-200 dark:divide-slate-700">
-                    {filteredPayments.map((payment) => (
-                      <tr
-                        key={payment.id}
-                        className="cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700"
-                        onClick={() => setSelectedPayment(payment)}
+              {/* Payment summary cards */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                {/* Total Paid */}
+                <div className="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm text-slate-500 dark:text-slate-400">
+                        Total Paid
+                      </p>
+                      <p className="mt-1 text-2xl font-semibold text-slate-900 dark:text-slate-100">
+                        $12,000
+                      </p>
+                    </div>
+                    <div className="p-3 bg-green-100 dark:bg-green-900/30 rounded-full">
+                      <svg
+                        className="w-6 h-6 text-green-600 dark:text-green-400"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
                       >
-                        <td className="py-4 text-sm text-slate-900 dark:text-slate-100">
-                          {new Date(payment.date).toLocaleDateString("en-US", {
-                            month: "short",
-                            day: "numeric",
-                            year: "numeric",
-                          })}
-                        </td>
-                        <td className="py-4 text-sm text-slate-900 dark:text-slate-100">
-                          ${payment.amount.toFixed(2)}
-                        </td>
-                        <td className="py-4">
-                          <span
-                            className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                              payment.status === "Paid"
-                                ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
-                                : payment.status === "Pending"
-                                ? "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200"
-                                : "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200"
-                            }`}
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Current Balance */}
+                <div className="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm text-slate-500 dark:text-slate-400">
+                        Current Balance
+                      </p>
+                      <p className="mt-1 text-2xl font-semibold text-slate-900 dark:text-slate-100">
+                        $1,200
+                      </p>
+                    </div>
+                    <div className="p-3 bg-blue-100 dark:bg-blue-900/30 rounded-full">
+                      <svg
+                        className="w-6 h-6 text-blue-600 dark:text-blue-400"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Next Payment */}
+                <div className="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm text-slate-500 dark:text-slate-400">
+                        Next Payment
+                      </p>
+                      <p className="mt-1 text-2xl font-semibold text-slate-900 dark:text-slate-100">
+                        $1,200
+                      </p>
+                      <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+                        Due in 15 days
+                      </p>
+                    </div>
+                    <div className="p-3 bg-yellow-100 dark:bg-yellow-900/30 rounded-full">
+                      <svg
+                        className="w-6 h-6 text-yellow-600 dark:text-yellow-400"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Payment History */}
+                <div className="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm text-slate-500 dark:text-slate-400">
+                        Payment History
+                      </p>
+                      <p className="mt-1 text-2xl font-semibold text-slate-900 dark:text-slate-100">
+                        10
+                      </p>
+                      <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+                        Total payments
+                      </p>
+                    </div>
+                    <div className="p-3 bg-purple-100 dark:bg-purple-900/30 rounded-full">
+                      <svg
+                        className="w-6 h-6 text-purple-600 dark:text-purple-400"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Payment history table */}
+              <div className="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700">
+                <div className="p-6">
+                  <div className="flex flex-col sm:flex-row gap-4">
+                    <div className="flex-1">
+                      <div className="relative">
+                        <Search
+                          className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                          size={20}
+                        />
+                        <input
+                          type="text"
+                          placeholder="Search payments..."
+                          className="w-full pl-10 pr-4 py-2.5 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0d9488] focus:border-[#0d9488] dark:bg-gray-800 dark:text-gray-100"
+                          value={searchQuery}
+                          onChange={(e) => setSearchQuery(e.target.value)}
+                        />
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <button
+                        onClick={() => setIsFilterOpen(!isFilterOpen)}
+                        className="inline-flex items-center px-4 py-2 border border-gray-200 dark:border-gray-700 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0d9488]"
+                      >
+                        <Filter className="h-4 w-4 mr-2" />
+                        Filter
+                        {isFilterOpen ? (
+                          <X className="h-4 w-4 ml-2" />
+                        ) : (
+                          <span className="ml-2">▼</span>
+                        )}
+                      </button>
+                      <button
+                        onClick={() =>
+                          setSortOrder(
+                            sortOrder === "latest" ? "earliest" : "latest"
+                          )
+                        }
+                        className="inline-flex items-center px-4 py-2 border border-gray-200 dark:border-gray-700 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0d9488]"
+                      >
+                        <ArrowUpDown className="h-4 w-4 mr-2" />
+                        {sortOrder === "latest" ? "Latest" : "Earliest"}
+                      </button>
+                    </div>
+                  </div>
+
+                  {isFilterOpen && (
+                    <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                      <div>
+                        <label
+                          htmlFor="status"
+                          className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                        >
+                          Status
+                        </label>
+                        <select
+                          id="status"
+                          className="block w-full rounded-md border-gray-300 dark:border-gray-600 pl-3 pr-10 py-2 text-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-gray-700 dark:text-gray-100"
+                          value={statusFilter}
+                          onChange={(e) => setStatusFilter(e.target.value)}
+                        >
+                          <option value="all">All Status</option>
+                          <option value="paid">Paid</option>
+                          <option value="pending">Pending</option>
+                          <option value="failed">Failed</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label
+                          htmlFor="method"
+                          className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                        >
+                          Payment Method
+                        </label>
+                        <select
+                          id="method"
+                          className="block w-full rounded-md border-gray-300 dark:border-gray-600 pl-3 pr-10 py-2 text-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-gray-700 dark:text-gray-100"
+                          value={methodFilter}
+                          onChange={(e) => setMethodFilter(e.target.value)}
+                        >
+                          <option value="all">All Methods</option>
+                          <option value="bank transfer">Bank Transfer</option>
+                          <option value="credit card">Credit Card</option>
+                          <option value="m-pesa">M-PESA</option>
+                          <option value="paypal">PayPal</option>
+                        </select>
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="mt-6 overflow-x-auto">
+                    <table className="w-full">
+                      <thead>
+                        <tr className="text-left border-b border-slate-200 dark:border-slate-700">
+                          <th className="pb-3 font-medium text-slate-500 dark:text-slate-400">
+                            Date
+                          </th>
+                          <th className="pb-3 font-medium text-slate-500 dark:text-slate-400">
+                            Amount
+                          </th>
+                          <th className="pb-3 font-medium text-slate-500 dark:text-slate-400">
+                            Status
+                          </th>
+                          <th className="pb-3 font-medium text-slate-500 dark:text-slate-400">
+                            Method
+                          </th>
+                          <th className="pb-3 font-medium text-slate-500 dark:text-slate-400">
+                            Reference
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-200 dark:divide-slate-700">
+                        {filteredPayments.map((payment) => (
+                          <tr
+                            key={payment.id}
+                            className="cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700"
+                            onClick={() => setSelectedPayment(payment)}
                           >
-                            {payment.status}
-                          </span>
-                        </td>
-                        <td className="py-4 text-sm text-slate-900 dark:text-slate-100">
-                          {payment.method}
-                        </td>
-                        <td className="py-4 text-sm text-slate-900 dark:text-slate-100">
-                          {payment.reference}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+                            <td className="py-4 text-sm text-slate-900 dark:text-slate-100">
+                              {new Date(payment.date).toLocaleDateString(
+                                "en-US",
+                                {
+                                  month: "short",
+                                  day: "numeric",
+                                  year: "numeric",
+                                }
+                              )}
+                            </td>
+                            <td className="py-4 text-sm text-slate-900 dark:text-slate-100">
+                              ${payment.amount.toFixed(2)}
+                            </td>
+                            <td className="py-4">
+                              <span
+                                className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                                  payment.status === "Paid"
+                                    ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
+                                    : payment.status === "Pending"
+                                    ? "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200"
+                                    : "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200"
+                                }`}
+                              >
+                                {payment.status}
+                              </span>
+                            </td>
+                            <td className="py-4 text-sm text-slate-900 dark:text-slate-100">
+                              {payment.method}
+                            </td>
+                            <td className="py-4 text-sm text-slate-900 dark:text-slate-100">
+                              {payment.reference}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
+          </main>
         </div>
-      </main>
+      </div>
 
       {/* Payment Modal */}
       {showPaymentModal && (

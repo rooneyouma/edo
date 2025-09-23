@@ -28,13 +28,31 @@ const SignIn = () => {
       // Store user data
       storeUser(response.user);
 
+      // Check if user has required role for redirect
+      const userRoles = response.user.roles || [];
+
       // Navigate based on next param or role
       if (nextPath) {
-        router.push(nextPath);
+        // Check if user has required role for the target page
+        if (role && !userRoles.includes(role)) {
+          // User doesn't have required role, redirect to onboarding
+          router.push(`/?onboard=${role}&next=${encodeURIComponent(nextPath)}`);
+        } else {
+          // User has required role or no specific role needed
+          router.push(nextPath);
+        }
       } else if (role === "tenant") {
-        router.push("/tenant/dashboard");
+        if (userRoles.includes("tenant")) {
+          router.push("/tenant");
+        } else {
+          router.push("/?onboard=tenant&next=/tenant");
+        }
       } else if (role === "landlord") {
-        router.push("/landlord");
+        if (userRoles.includes("landlord")) {
+          router.push("/landlord");
+        } else {
+          router.push("/?onboard=landlord&next=/landlord");
+        }
       } else {
         router.push("/");
       }
@@ -89,7 +107,13 @@ const SignIn = () => {
               <p className="mt-4 text-sm text-center text-gray-600">
                 New to edo?{" "}
                 <Link
-                  href="/auth/signup"
+                  href={`/auth/signup${role ? `?role=${role}` : ""}${
+                    nextPath
+                      ? `${role ? "&" : "?"}next=${encodeURIComponent(
+                          nextPath
+                        )}`
+                      : ""
+                  }`}
                   className="font-medium text-[#0d9488] hover:text-[#0f766e]"
                 >
                   Create an account

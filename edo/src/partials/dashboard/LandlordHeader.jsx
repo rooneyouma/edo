@@ -1,16 +1,34 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { Bell } from "lucide-react";
 
 import SearchModal from "../../components/ModalSearch";
-import Notifications from "../../components/DropdownNotifications";
-import Help from "../../components/DropdownHelp";
 import UserMenu from "../../components/DropdownProfile";
 import ThemeToggle from "../../components/ThemeToggle";
 
 function Header({ toggleSidebar, variant = "default" }) {
   const router = useRouter();
   const [searchModalOpen, setSearchModalOpen] = useState(false);
+  const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
+
+  // Mock notifications data - similar to tenant header
+  const notifications = [
+    {
+      id: 1,
+      title: "New Maintenance Request",
+      message: "Tenant submitted a new maintenance request",
+      time: "2 hours ago",
+      read: false,
+    },
+    {
+      id: 2,
+      title: "Rent Payment Received",
+      message: "Payment of $1,200 received from John Doe",
+      time: "1 day ago",
+      read: true,
+    },
+  ];
 
   return (
     <header
@@ -53,6 +71,7 @@ function Header({ toggleSidebar, variant = "default" }) {
 
           {/* Header: Right side */}
           <div className="flex items-center space-x-3">
+            {/* Search */}
             <div>
               <button
                 className={`w-8 h-8 flex items-center justify-center hover:bg-gray-100 lg:hover:bg-gray-200 dark:hover:bg-gray-700/50 dark:lg:hover:bg-gray-800 rounded-full ml-3 ${
@@ -83,11 +102,75 @@ function Header({ toggleSidebar, variant = "default" }) {
                 setModalOpen={setSearchModalOpen}
               />
             </div>
-            <Notifications align="right" />
-            <Help align="right" />
+
+            {/* Theme Toggle */}
             <ThemeToggle />
+
+            {/* Notifications */}
+            <div className="relative">
+              <button
+                type="button"
+                className="p-1 rounded-full text-slate-500 hover:text-slate-600 dark:text-slate-400 dark:hover:text-slate-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-violet-500"
+                onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}
+              >
+                <span className="sr-only">View notifications</span>
+                <Bell className="h-6 w-6" />
+                {notifications.some((n) => !n.read) && (
+                  <span className="absolute top-0 right-0 block h-2 w-2 rounded-full bg-red-400 ring-2 ring-white dark:ring-slate-800" />
+                )}
+              </button>
+
+              {/* Notifications dropdown */}
+              {isNotificationsOpen && (
+                <div className="origin-top-right absolute right-0 mt-2 w-80 rounded-md shadow-lg bg-white dark:bg-slate-800 ring-1 ring-black ring-opacity-5 focus:outline-none">
+                  <div className="py-1">
+                    <div className="px-4 py-2 border-b border-slate-200 dark:border-slate-700">
+                      <h3 className="text-sm font-medium text-slate-900 dark:text-slate-100">
+                        Notifications
+                      </h3>
+                    </div>
+                    {notifications.map((notification) => (
+                      <div
+                        key={notification.id}
+                        className={`px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-700/50 ${
+                          !notification.read
+                            ? "bg-violet-50 dark:bg-violet-900/20"
+                            : ""
+                        }`}
+                      >
+                        <div className="flex items-start">
+                          <div className="flex-1">
+                            <p className="text-sm font-medium text-slate-900 dark:text-slate-100">
+                              {notification.title}
+                            </p>
+                            <p className="text-sm text-slate-500 dark:text-slate-400">
+                              {notification.message}
+                            </p>
+                            <p className="mt-1 text-xs text-slate-400 dark:text-slate-500">
+                              {notification.time}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                    <div className="px-4 py-2 border-t border-slate-200 dark:border-slate-700">
+                      <Link
+                        href="/landlord/notices"
+                        className="w-full text-sm text-violet-600 dark:text-violet-400 hover:text-violet-700 dark:hover:text-violet-300"
+                        onClick={() => setIsNotificationsOpen(false)}
+                      >
+                        View all notifications
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
             {/*  Divider */}
             <hr className="w-px h-6 bg-gray-200 dark:bg-gray-700/60 border-none" />
+
+            {/* Profile Menu */}
             <UserMenu align="right">
               <div className="py-1">
                 <Link

@@ -103,156 +103,157 @@ const MyRentals = () => {
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-900">
-      <TenantHeader toggleSidebar={toggleSidebar} />
-      <TenantSidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
-
-      {/* Main content */}
-      <main
-        className={`lg:ml-64 pt-8 sm:pt-12 transition-all duration-200 ${
-          isSidebarOpen ? "ml-64" : "ml-0"
-        }`}
-      >
-        <div className="w-full pl-2 pr-6 sm:pl-4 sm:pr-8 md:pl-6 md:pr-12 lg:pl-8 lg:pr-16 py-4 sm:py-8">
-          {/* Page header - Responsive, title always at top */}
-          <div className="mb-6">
-            <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">
-              My Rentals
-            </h1>
-            <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
-              View and manage your rental properties
-            </p>
-          </div>
-
-          {/* Loading state */}
-          {loading && (
-            <div className="text-center py-12">
-              <div className="text-slate-500 dark:text-slate-400">
-                Loading your rental properties...
+      <div className="flex">
+        <TenantSidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+        <div className="flex-1 flex flex-col lg:ml-64">
+          <TenantHeader toggleSidebar={toggleSidebar} />
+          {/* Main content */}
+          <main className="flex-1 transition-all duration-200">
+            <div className="w-full pl-2 pr-6 sm:pl-4 sm:pr-8 md:pl-6 md:pr-12 lg:pl-8 lg:pr-16 py-4 sm:py-8">
+              {/* Page header - Responsive, title always at top */}
+              <div className="mb-6">
+                <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">
+                  My Rentals
+                </h1>
+                <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+                  View and manage your rental properties
+                </p>
               </div>
-            </div>
-          )}
 
-          {/* Error state */}
-          {error && (
-            <div className="text-center py-12">
-              <div className="text-red-500 dark:text-red-400 mb-4">{error}</div>
-              <button
-                onClick={() => window.location.reload()}
-                className="px-4 py-2 bg-teal-600 text-white rounded-lg font-semibold hover:bg-teal-700 transition"
-              >
-                Try Again
-              </button>
-            </div>
-          )}
-
-          {/* No rentals state */}
-          {!loading && !error && rentals.length === 0 && (
-            <div className="text-center py-12">
-              <div className="text-slate-500 dark:text-slate-400 text-lg mb-2">
-                No Rental Properties
-              </div>
-              <p className="text-slate-400 dark:text-slate-500 mb-4">
-                You don't have any rental properties yet. Contact your landlord
-                to get started.
-              </p>
-            </div>
-          )}
-
-          {/* Properties grid */}
-          {!loading && !error && rentals.length > 0 && (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {rentals.map((rental) => (
-                <div
-                  key={rental.id}
-                  className="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700"
-                >
-                  <div className="p-6">
-                    <div className="flex items-center justify-between mb-4">
-                      <div>
-                        <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
-                          {rental.property_name}
-                        </h3>
-                        <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
-                          {rental.unit_number}
-                        </p>
-                      </div>
-                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
-                        {rental.status}
-                      </span>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <p className="text-sm text-slate-500 dark:text-slate-400">
-                          Type
-                        </p>
-                        <p className="mt-1 text-sm font-medium text-slate-900 dark:text-slate-100">
-                          {rental.property_type}
-                        </p>
-                      </div>
-                      <div>
-                        <p className="text-sm text-slate-500 dark:text-slate-400">
-                          Unit
-                        </p>
-                        <p className="mt-1 text-sm font-medium text-slate-900 dark:text-slate-100">
-                          {rental.unit_number}
-                        </p>
-                      </div>
-                      <div>
-                        <p className="text-sm text-slate-500 dark:text-slate-400">
-                          Bedrooms
-                        </p>
-                        <p className="mt-1 text-sm font-medium text-slate-900 dark:text-slate-100">
-                          {rental.bedrooms}
-                        </p>
-                      </div>
-                      <div>
-                        <p className="text-sm text-slate-500 dark:text-slate-400">
-                          Bathrooms
-                        </p>
-                        <p className="mt-1 text-sm font-medium text-slate-900 dark:text-slate-100">
-                          {rental.bathrooms}
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="mt-6 border-t border-slate-200 dark:border-slate-700 pt-4">
-                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0">
-                        <div>
-                          <p className="text-sm text-slate-500 dark:text-slate-400">
-                            Lease Ends
-                          </p>
-                          <p className="mt-1 text-sm font-medium text-slate-900 dark:text-slate-100">
-                            {formatDate(rental.lease_end_date)}
-                          </p>
-                        </div>
-                        <div className="flex space-x-2">
-                          <button
-                            onClick={() => setSelectedRental(rental)}
-                            className="inline-flex items-center px-3 py-1.5 border border-slate-200 dark:border-slate-700 rounded-md text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50"
-                          >
-                            View Details
-                          </button>
-                          <button
-                            onClick={() => {
-                              router.push(
-                                `/tenant/messages?managerId=${rental.property_id}`
-                              );
-                            }}
-                            className="inline-flex items-center px-3 py-1.5 border border-transparent rounded-md text-sm font-medium text-white bg-[#0d9488] hover:bg-[#0f766e]"
-                          >
-                            Contact
-                          </button>
-                        </div>
-                      </div>
-                    </div>
+              {/* Loading state */}
+              {loading && (
+                <div className="text-center py-12">
+                  <div className="text-slate-500 dark:text-slate-400">
+                    Loading your rental properties...
                   </div>
                 </div>
-              ))}
+              )}
+
+              {/* Error state */}
+              {error && (
+                <div className="text-center py-12">
+                  <div className="text-red-500 dark:text-red-400 mb-4">
+                    {error}
+                  </div>
+                  <button
+                    onClick={() => window.location.reload()}
+                    className="px-4 py-2 bg-teal-600 text-white rounded-lg font-semibold hover:bg-teal-700 transition"
+                  >
+                    Try Again
+                  </button>
+                </div>
+              )}
+
+              {/* No rentals state */}
+              {!loading && !error && rentals.length === 0 && (
+                <div className="text-center py-12">
+                  <div className="text-slate-500 dark:text-slate-400 text-lg mb-2">
+                    No Rental Properties
+                  </div>
+                  <p className="text-slate-400 dark:text-slate-500 mb-4">
+                    You don't have any rental properties yet. Contact your
+                    landlord to get started.
+                  </p>
+                </div>
+              )}
+
+              {/* Properties grid */}
+              {!loading && !error && rentals.length > 0 && (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {rentals.map((rental) => (
+                    <div
+                      key={rental.id}
+                      className="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700"
+                    >
+                      <div className="p-6">
+                        <div className="flex items-center justify-between mb-4">
+                          <div>
+                            <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+                              {rental.property_name}
+                            </h3>
+                            <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+                              {rental.unit_number}
+                            </p>
+                          </div>
+                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
+                            {rental.status}
+                          </span>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-4">
+                          <div>
+                            <p className="text-sm text-slate-500 dark:text-slate-400">
+                              Type
+                            </p>
+                            <p className="mt-1 text-sm font-medium text-slate-900 dark:text-slate-100">
+                              {rental.property_type}
+                            </p>
+                          </div>
+                          <div>
+                            <p className="text-sm text-slate-500 dark:text-slate-400">
+                              Unit
+                            </p>
+                            <p className="mt-1 text-sm font-medium text-slate-900 dark:text-slate-100">
+                              {rental.unit_number}
+                            </p>
+                          </div>
+                          <div>
+                            <p className="text-sm text-slate-500 dark:text-slate-400">
+                              Bedrooms
+                            </p>
+                            <p className="mt-1 text-sm font-medium text-slate-900 dark:text-slate-100">
+                              {rental.bedrooms}
+                            </p>
+                          </div>
+                          <div>
+                            <p className="text-sm text-slate-500 dark:text-slate-400">
+                              Bathrooms
+                            </p>
+                            <p className="mt-1 text-sm font-medium text-slate-900 dark:text-slate-100">
+                              {rental.bathrooms}
+                            </p>
+                          </div>
+                        </div>
+
+                        <div className="mt-6 border-t border-slate-200 dark:border-slate-700 pt-4">
+                          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0">
+                            <div>
+                              <p className="text-sm text-slate-500 dark:text-slate-400">
+                                Lease Ends
+                              </p>
+                              <p className="mt-1 text-sm font-medium text-slate-900 dark:text-slate-100">
+                                {formatDate(rental.lease_end_date)}
+                              </p>
+                            </div>
+                            <div className="flex space-x-2">
+                              <button
+                                onClick={() => setSelectedRental(rental)}
+                                className="inline-flex items-center px-3 py-1.5 border border-slate-200 dark:border-slate-700 rounded-md text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50"
+                              >
+                                View Details
+                              </button>
+                              <button
+                                onClick={() => {
+                                  router.push(
+                                    `/tenant/messages?managerId=${rental.property_id}`
+                                  );
+                                }}
+                                className="inline-flex items-center px-3 py-1.5 border border-transparent rounded-md text-sm font-medium text-white bg-[#0d9488] hover:bg-[#0f766e]"
+                              >
+                                Contact
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
-          )}
+          </main>
         </div>
-      </main>
+      </div>
 
       {/* Rental Details Modal */}
       {selectedRental && (

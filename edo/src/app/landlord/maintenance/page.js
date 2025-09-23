@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import LandlordSidebar from "../../../partials/dashboard/LandlordSidebar";
 import LandlordHeader from "../../../partials/dashboard/LandlordHeader";
@@ -45,7 +45,7 @@ const LandlordMaintenance = () => {
   const pathname = usePathname();
   const queryClient = useQueryClient();
 
-  // React Query for fetching maintenance requests
+  // React Query for fetching maintenance requests with optimized settings
   const {
     data: requestsData,
     isLoading: loading,
@@ -60,10 +60,69 @@ const LandlordMaintenance = () => {
         throw new Error(result.error || "Failed to fetch maintenance requests");
       }
     },
-    enabled: isAuthenticated(),
+    enabled: !!isAuthenticated(),
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    gcTime: 10 * 60 * 1000, // 10 minutes
+    retry: 1, // Reduce retries for faster failure
   });
 
   const requests = requestsData || [];
+
+  // Memoize expensive filtering and sorting operations
+  const filteredAndSortedRequests = useMemo(() => {
+    if (!requests.length) return [];
+
+    // Filter requests
+    const filtered = requests.filter((request) => {
+      const matchesSearch =
+        request.subject.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        request.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        request.tenant_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        request.property_name.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesStatus =
+        statusFilter === "all" || request.status === statusFilter;
+      const matchesPriority =
+        priorityFilter === "all" || request.priority === priorityFilter;
+      const matchesProperty =
+        propertyFilter === "all" || request.property_id === propertyFilter;
+      const matchesDate = dateFilter === "all" || true; // Simplified for now
+      return (
+        matchesSearch &&
+        matchesStatus &&
+        matchesPriority &&
+        matchesProperty &&
+        matchesDate
+      );
+    });
+
+    // Sort filtered requests
+    return [...filtered].sort((a, b) => {
+      if (sortOrder === "latest") {
+        return new Date(b.created_at) - new Date(a.created_at);
+      } else if (sortOrder === "oldest") {
+        return new Date(a.created_at) - new Date(b.created_at);
+      } else if (sortOrder === "priority") {
+        const priorityOrder = { high: 3, medium: 2, low: 1 };
+        return priorityOrder[b.priority] - priorityOrder[a.priority];
+      }
+      return 0;
+    });
+  }, [
+    requests,
+    searchQuery,
+    statusFilter,
+    priorityFilter,
+    propertyFilter,
+    dateFilter,
+    sortOrder,
+  ]);
+
+  const totalPages = Math.ceil(filteredAndSortedRequests.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const currentRequests = filteredAndSortedRequests.slice(
+    startIndex,
+    startIndex + itemsPerPage
+  );
 
   // React Query mutation for updating maintenance requests
   const updateRequestMutation = useMutation({
@@ -93,6 +152,25 @@ const LandlordMaintenance = () => {
     },
   });
 
+  // Memoize handlers to prevent unnecessary re-renders
+  const handleUpdateRequest = useCallback(
+    async (requestId, updateData) => {
+      updateRequestMutation.mutate({ requestId, updateData });
+    },
+    [updateRequestMutation]
+  );
+
+  const handleDeleteRequest = useCallback(
+    async (requestId) => {
+      deleteRequestMutation.mutate(requestId);
+    },
+    [deleteRequestMutation]
+  );
+
+  const toggleSidebar = useCallback(() => {
+    setSidebarOpen(!sidebarOpen);
+  }, [sidebarOpen]);
+
   // Handle error state from React Query
   const error = queryError ? queryError.message : null;
 
@@ -104,7 +182,9 @@ const LandlordMaintenance = () => {
         <button
           className="px-6 py-2 bg-teal-600 text-white rounded-lg font-semibold hover:bg-teal-700 transition"
           onClick={() =>
-            router.push(`/auth/signin?next=${encodeURIComponent(pathname)}`)
+            router.push(
+              `/auth/signin?role=landlord&next=${encodeURIComponent(pathname)}`
+            )
           }
         >
           Proceed
@@ -112,56 +192,6 @@ const LandlordMaintenance = () => {
       </div>
     );
   }
-
-  const handleUpdateRequest = async (requestId, updateData) => {
-    updateRequestMutation.mutate({ requestId, updateData });
-  };
-
-  const handleDeleteRequest = async (requestId) => {
-    deleteRequestMutation.mutate(requestId);
-  };
-
-  // Filter and sort requests
-  const filteredRequests = requests.filter((request) => {
-    const matchesSearch =
-      request.subject.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      request.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      request.tenant_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      request.property_name.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesStatus =
-      statusFilter === "all" || request.status === statusFilter;
-    const matchesPriority =
-      priorityFilter === "all" || request.priority === priorityFilter;
-    const matchesProperty =
-      propertyFilter === "all" || request.property_id === propertyFilter;
-    const matchesDate = dateFilter === "all" || true; // Simplified for now
-    return (
-      matchesSearch &&
-      matchesStatus &&
-      matchesPriority &&
-      matchesProperty &&
-      matchesDate
-    );
-  });
-
-  const sortedRequests = [...filteredRequests].sort((a, b) => {
-    if (sortOrder === "latest") {
-      return new Date(b.created_at) - new Date(a.created_at);
-    } else if (sortOrder === "oldest") {
-      return new Date(a.created_at) - new Date(b.created_at);
-    } else if (sortOrder === "priority") {
-      const priorityOrder = { high: 3, medium: 2, low: 1 };
-      return priorityOrder[b.priority] - priorityOrder[a.priority];
-    }
-    return 0;
-  });
-
-  const totalPages = Math.ceil(sortedRequests.length / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const currentRequests = sortedRequests.slice(
-    startIndex,
-    startIndex + itemsPerPage
-  );
 
   // Pagination handlers
   const handlePageChange = (pageNumber) => {
@@ -211,10 +241,6 @@ const LandlordMaintenance = () => {
     setShowStatusModal(false);
     setShowDeleteModal(false);
     setSelectedRequestForAction(null);
-  };
-
-  const toggleSidebar = () => {
-    setSidebarOpen(!sidebarOpen);
   };
 
   if (loading) {
@@ -284,8 +310,8 @@ const LandlordMaintenance = () => {
 
             {/* Results Count */}
             <div className="mb-4 text-sm text-slate-600 dark:text-slate-400">
-              {sortedRequests.length} request
-              {sortedRequests.length !== 1 ? "s" : ""} found
+              {filteredAndSortedRequests.length} request
+              {filteredAndSortedRequests.length !== 1 ? "s" : ""} found
             </div>
 
             {/* Maintenance Table */}

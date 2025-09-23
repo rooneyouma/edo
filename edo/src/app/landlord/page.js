@@ -293,6 +293,7 @@ const LandlordDashboard = () => {
         isOpen={showOnboardModal}
         onClose={() => setShowOnboardModal(false)}
         onSuccess={handleOnboardSuccess}
+        roleName="landlord"
       />
     </div>
   );

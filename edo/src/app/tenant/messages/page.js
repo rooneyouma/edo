@@ -228,7 +228,7 @@ const Messages = () => {
         <h2 className="text-2xl font-bold mb-4">Sign in required</h2>
         <p className="mb-6">You must be signed in to access this page.</p>
         <Link
-          href={`/auth/signin?redirect=/tenant/messages`}
+          href={`/auth/signin?role=tenant&next=/tenant/messages`}
           className="px-6 py-2 bg-teal-600 text-white rounded-lg font-semibold hover:bg-teal-700 transition"
         >
           Proceed to Sign In
@@ -239,90 +239,89 @@ const Messages = () => {
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-900">
-      <TenantHeader toggleSidebar={toggleSidebar} />
-      <TenantSidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
-
-      {/* Main content */}
-      <main
-        className={`lg:ml-64 transition-all duration-200 ${
-          isSidebarOpen ? "ml-64" : "ml-0"
-        }`}
-      >
-        <div className="pl-4 pr-8 sm:pl-6 sm:pr-12 lg:pl-8 lg:pr-16 py-2 md:py-8 h-full min-h-0 flex flex-col">
-          {/* Page header */}
-          <div className="mb-8">
-            <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">
-              Messages
-            </h1>
-            <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
-              Communicate with your property managers
-            </p>
-          </div>
-
-          {/* Messages container */}
-          <div className="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 flex-1 min-h-0 flex flex-col">
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 h-[65vh] md:h-[80vh] min-h-0">
-              {/* Conversations list */}
-              <div
-                className={`lg:col-span-4 border-r border-slate-200 dark:border-slate-700 ${
-                  selectedChat ? "hidden lg:block" : "block"
-                } min-h-0 h-full flex flex-col`}
-              >
-                <div className="h-full flex flex-col min-h-0">
-                  <div className="p-4 border-b border-slate-200 dark:border-slate-700">
-                    <h2 className="text-lg font-medium text-slate-900 dark:text-slate-100">
-                      Chats
-                    </h2>
-                  </div>
-                  <ChatList
-                    conversations={conversations}
-                    selectedChat={selectedChat}
-                    onChatSelect={handleChatSelect}
-                    formatDate={formatDate}
-                  />
-                </div>
+      <div className="flex">
+        <TenantSidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+        <div className="flex-1 flex flex-col lg:ml-64">
+          <TenantHeader toggleSidebar={toggleSidebar} />
+          {/* Main content */}
+          <main className="flex-1 transition-all duration-200">
+            <div className="pl-4 pr-8 sm:pl-6 sm:pr-12 lg:pl-8 lg:pr-16 py-2 md:py-8 h-full min-h-0 flex flex-col">
+              {/* Page header */}
+              <div className="mb-8">
+                <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">
+                  Messages
+                </h1>
+                <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+                  Communicate with your property managers
+                </p>
               </div>
 
-              {/* Chat area */}
-              <div
-                className={`lg:col-span-8 ${
-                  selectedChat ? "block" : "hidden lg:block"
-                } min-h-0 h-full flex flex-col`}
-              >
-                <div className="lg:hidden">
-                  <button
-                    onClick={() => setSelectedChat(null)}
-                    className="p-4 flex items-center space-x-2 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100"
+              {/* Messages container */}
+              <div className="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 flex-1 min-h-0 flex flex-col">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 h-[65vh] md:h-[80vh] min-h-0">
+                  {/* Conversations list */}
+                  <div
+                    className={`lg:col-span-4 border-r border-slate-200 dark:border-slate-700 ${
+                      selectedChat ? "hidden lg:block" : "block"
+                    } min-h-0 h-full flex flex-col`}
                   >
-                    <svg
-                      className="w-5 h-5"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M15 19l-7-7 7-7"
+                    <div className="h-full flex flex-col min-h-0">
+                      <div className="p-4 border-b border-slate-200 dark:border-slate-700">
+                        <h2 className="text-lg font-medium text-slate-900 dark:text-slate-100">
+                          Chats
+                        </h2>
+                      </div>
+                      <ChatList
+                        conversations={conversations}
+                        selectedChat={selectedChat}
+                        onChatSelect={handleChatSelect}
+                        formatDate={formatDate}
                       />
-                    </svg>
-                    <span>Back to Chats</span>
-                  </button>
+                    </div>
+                  </div>
+
+                  {/* Chat area */}
+                  <div
+                    className={`lg:col-span-8 ${
+                      selectedChat ? "block" : "hidden lg:block"
+                    } min-h-0 h-full flex flex-col`}
+                  >
+                    <div className="lg:hidden">
+                      <button
+                        onClick={() => setSelectedChat(null)}
+                        className="p-4 flex items-center space-x-2 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100"
+                      >
+                        <svg
+                          className="w-5 h-5"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M15 19l-7-7 7-7"
+                          />
+                        </svg>
+                        <span>Back to Chats</span>
+                      </button>
+                    </div>
+                    <ChatView
+                      selectedChat={selectedChat}
+                      messages={messageHistory}
+                      newChatMessage={messageInput}
+                      setNewChatMessage={setMessageInput}
+                      handleMessageSubmit={handleMessageSubmit}
+                      formatDate={formatDate}
+                    />
+                  </div>
                 </div>
-                <ChatView
-                  selectedChat={selectedChat}
-                  messages={messageHistory}
-                  newChatMessage={messageInput}
-                  setNewChatMessage={setMessageInput}
-                  handleMessageSubmit={handleMessageSubmit}
-                  formatDate={formatDate}
-                />
               </div>
             </div>
-          </div>
+          </main>
         </div>
-      </main>
+      </div>
     </div>
   );
 };

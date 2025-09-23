@@ -27,6 +27,7 @@ import {
   becomeTenant,
   storeUser,
 } from "../../utils/api";
+import OnboardRoleModal from "../../components/OnboardRoleModal";
 
 const sampleTenant = {
   name: "John Tenant",
@@ -65,12 +66,6 @@ const quickActions = [
     icon: <MessageCircle className="h-6 w-6" />,
     link: "/tenant/messages",
     color: "bg-purple-600 text-white",
-  },
-  {
-    label: "Support",
-    icon: <LifeBuoy className="h-6 w-6" />,
-    link: "/tenant/support",
-    color: "bg-pink-600 text-white",
   },
 ];
 
@@ -113,6 +108,7 @@ const TenantDashboard = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [showSearchResults, setShowSearchResults] = useState(false);
   const [isClient, setIsClient] = useState(false);
+  const [showOnboardModal, setShowOnboardModal] = useState(false);
   const router = useRouter();
   const storedUser = getStoredUser();
 
@@ -128,6 +124,26 @@ const TenantDashboard = () => {
     enabled: !storedUser && isAuthenticated(),
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
+
+  // Check authentication and roles on mount
+  useEffect(() => {
+    if (isClient && !isAuthenticated()) {
+      router.push("/auth/signin?role=tenant&next=/tenant");
+      return;
+    }
+
+    // Check for tenant role
+    if (user && (!user.roles || !user.roles.includes("tenant"))) {
+      setShowOnboardModal(true);
+    }
+  }, [router, user, isClient]);
+
+  const handleOnboardSuccess = (updatedRoles) => {
+    // Update user roles in state and localStorage
+    const updatedUser = { ...user, roles: updatedRoles };
+    storeUser(updatedUser);
+    setShowOnboardModal(false);
+  };
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -198,218 +214,230 @@ const TenantDashboard = () => {
 
   return (
     <div className="h-screen bg-slate-50 dark:bg-slate-900 overflow-hidden">
-      <TenantHeader toggleSidebar={toggleSidebar} />
-      <TenantSidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
-      <div className="h-[calc(100vh-4rem)]">
-        <main className="h-full transition-all duration-200 lg:ml-64 overflow-y-auto">
-          <div className="pl-3 pr-6 sm:pl-4 sm:pr-8 md:pl-6 md:pr-12 lg:pl-8 lg:pr-16 py-4">
-            {/* Dashboard Title */}
-            <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-100 mb-4">
-              Tenant
-            </h2>
-            {/* Welcome Banner */}
-            <div className="mb-6 flex items-center gap-4">
-              {isClient && user && user.profile_image_url ? (
-                <img
-                  src={user.profile_image_url}
-                  alt={user.first_name || user.name}
-                  className="h-12 w-12 rounded-full"
-                />
-              ) : (
-                <div className="h-12 w-12 rounded-full bg-teal-600 flex items-center justify-center text-white text-xl font-bold">
-                  {isClient &&
-                    user &&
-                    (user.first_name
-                      ? user.first_name.charAt(0)
-                      : user.name
-                      ? user.name.charAt(0)
-                      : "U")}
-                  {!isClient && "U"}
-                </div>
-              )}
-              <div>
-                <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">
-                  Welcome,{" "}
-                  {isClient && user
-                    ? `${user.first_name || ""} ${
-                        user.last_name || user.name || ""
-                      }`.trim()
-                    : ""}
-                  !
-                </h1>
-                <p className="text-sm text-slate-500 dark:text-slate-400">
-                  Here's a summary of your rental and activity.
-                </p>
-              </div>
-            </div>
-            {/* What's Next */}
-            <div className="mb-8">
-              <div className="bg-white dark:bg-slate-800 shadow rounded-lg p-6 flex items-center gap-4">
-                <div>{whatsNext.icon}</div>
-                <div className="flex-1">
-                  <div className="text-lg font-semibold text-slate-900 dark:text-slate-100">
-                    What's Next?
-                  </div>
-                  <div className="text-sm text-slate-500 dark:text-slate-400">
-                    {whatsNext.message}
+      <div className="flex">
+        <TenantSidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+        <div className="flex-1 flex flex-col lg:ml-64">
+          <TenantHeader toggleSidebar={toggleSidebar} />
+          <div className="h-[calc(100vh-4rem)]">
+            <main className="h-full transition-all duration-200 overflow-y-auto">
+              <div className="pl-3 pr-6 sm:pl-4 sm:pr-8 md:pl-6 md:pr-12 lg:pl-8 lg:pr-16 py-4">
+                {/* Dashboard Title */}
+                <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-100 mb-4">
+                  Tenant
+                </h2>
+                {/* Welcome Banner */}
+                <div className="mb-6 flex items-center gap-4">
+                  {isClient && user && user.profile_image_url ? (
+                    <img
+                      src={user.profile_image_url}
+                      alt={user.first_name || user.name}
+                      className="h-12 w-12 rounded-full"
+                    />
+                  ) : (
+                    <div className="h-12 w-12 rounded-full bg-teal-600 flex items-center justify-center text-white text-xl font-bold">
+                      {isClient &&
+                        user &&
+                        (user.first_name
+                          ? user.first_name.charAt(0)
+                          : user.name
+                          ? user.name.charAt(0)
+                          : "U")}
+                      {!isClient && "U"}
+                    </div>
+                  )}
+                  <div>
+                    <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">
+                      Welcome,{" "}
+                      {isClient && user
+                        ? `${user.first_name || ""} ${
+                            user.last_name || user.name || ""
+                          }`.trim()
+                        : ""}
+                      !
+                    </h1>
+                    <p className="text-sm text-slate-500 dark:text-slate-400">
+                      Here's a summary of your rental and activity.
+                    </p>
                   </div>
                 </div>
-                <Link
-                  href={whatsNext.link}
-                  className="inline-flex items-center px-4 py-2 bg-teal-600 text-white rounded hover:bg-teal-700 transition text-sm font-medium"
-                >
-                  {whatsNext.action}
-                  <ArrowRight className="h-4 w-4 ml-2" />
-                </Link>
-              </div>
-            </div>
-            {/* Quick Actions */}
-            <div className="mb-8 grid grid-cols-2 sm:grid-cols-5 gap-4">
-              {quickActions.map((action) => (
-                <Link
-                  key={action.label}
-                  href={action.link}
-                  className={`flex flex-col items-center justify-center rounded-lg p-4 shadow hover:shadow-lg transition ${action.color} min-h-[100px]`}
-                >
-                  {action.icon}
-                  <span className="mt-2 font-semibold text-base">
-                    {action.label}
-                  </span>
-                </Link>
-              ))}
-            </div>
-            {/* Stats Grid */}
-            <div className="grid grid-cols-1 gap-3 sm:gap-4 sm:grid-cols-2 lg:grid-cols-4 mb-8">
-              {/* Rent Due */}
-              <div className="bg-teal-50 dark:bg-teal-900/30 overflow-hidden shadow rounded-lg">
-                <div className="p-3">
-                  <div className="flex items-center">
-                    <div className="flex-shrink-0">
-                      <DollarSign className="h-6 w-6 text-teal-600 dark:text-teal-400" />
+                {/* What's Next */}
+                <div className="mb-8">
+                  <div className="bg-white dark:bg-slate-800 shadow rounded-lg p-6 flex items-center gap-4">
+                    <div>{whatsNext.icon}</div>
+                    <div className="flex-1">
+                      <div className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+                        What's Next?
+                      </div>
+                      <div className="text-sm text-slate-500 dark:text-slate-400">
+                        {whatsNext.message}
+                      </div>
                     </div>
-                    <div className="ml-4 w-0 flex-1">
-                      <dl>
-                        <dt className="text-sm font-medium text-teal-700 dark:text-teal-200 truncate">
-                          Rent Due
-                        </dt>
-                        <dd className="flex items-baseline">
-                          <div className="text-xl sm:text-2xl font-semibold text-teal-900 dark:text-teal-100">
-                            $1,200
-                          </div>
-                          <div className="ml-2 flex items-baseline text-xs sm:text-sm font-semibold text-green-600 dark:text-green-400">
-                            <span>Due in 5 days</span>
-                          </div>
-                        </dd>
-                      </dl>
+                    <Link
+                      href={whatsNext.link}
+                      className="inline-flex items-center px-4 py-2 bg-teal-600 text-white rounded hover:bg-teal-700 transition text-sm font-medium"
+                    >
+                      {whatsNext.action}
+                      <ArrowRight className="h-4 w-4 ml-2" />
+                    </Link>
+                  </div>
+                </div>
+                {/* Quick Actions */}
+                <div className="mb-8 grid grid-cols-2 sm:grid-cols-4 gap-4">
+                  {quickActions.map((action) => (
+                    <Link
+                      key={action.label}
+                      href={action.link}
+                      className={`flex flex-col items-center justify-center rounded-lg p-4 shadow hover:shadow-lg transition ${action.color} min-h-[100px]`}
+                    >
+                      {action.icon}
+                      <span className="mt-2 font-semibold text-base">
+                        {action.label}
+                      </span>
+                    </Link>
+                  ))}
+                </div>
+                {/* Stats Grid */}
+                <div className="grid grid-cols-1 gap-3 sm:gap-4 sm:grid-cols-2 lg:grid-cols-4 mb-8">
+                  {/* Rent Due */}
+                  <div className="bg-teal-50 dark:bg-teal-900/30 overflow-hidden shadow rounded-lg">
+                    <div className="p-3">
+                      <div className="flex items-center">
+                        <div className="flex-shrink-0">
+                          <DollarSign className="h-6 w-6 text-teal-600 dark:text-teal-400" />
+                        </div>
+                        <div className="ml-4 w-0 flex-1">
+                          <dl>
+                            <dt className="text-sm font-medium text-teal-700 dark:text-teal-200 truncate">
+                              Rent Due
+                            </dt>
+                            <dd className="flex items-baseline">
+                              <div className="text-xl sm:text-2xl font-semibold text-teal-900 dark:text-teal-100">
+                                $1,200
+                              </div>
+                              <div className="ml-2 flex items-baseline text-xs sm:text-sm font-semibold text-green-600 dark:text-green-400">
+                                <span>Due in 5 days</span>
+                              </div>
+                            </dd>
+                          </dl>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  {/* Maintenance Requests */}
+                  <div className="bg-blue-50 dark:bg-blue-900/30 overflow-hidden shadow rounded-lg">
+                    <div className="p-3">
+                      <div className="flex items-center">
+                        <div className="flex-shrink-0">
+                          <Wrench className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+                        </div>
+                        <div className="ml-4 w-0 flex-1">
+                          <dl>
+                            <dt className="text-sm font-medium text-blue-700 dark:text-blue-200 truncate">
+                              Maintenance Requests
+                            </dt>
+                            <dd className="flex items-baseline">
+                              <div className="text-xl sm:text-2xl font-semibold text-blue-900 dark:text-blue-100">
+                                2
+                              </div>
+                              <div className="ml-2 flex items-baseline text-xs sm:text-sm font-semibold text-yellow-600 dark:text-yellow-400">
+                                <span>In Progress</span>
+                              </div>
+                            </dd>
+                          </dl>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  {/* Notices */}
+                  <div className="bg-yellow-50 dark:bg-yellow-900/30 overflow-hidden shadow rounded-lg">
+                    <div className="p-3">
+                      <div className="flex items-center">
+                        <div className="flex-shrink-0">
+                          <FileText className="h-6 w-6 text-yellow-600 dark:text-yellow-400" />
+                        </div>
+                        <div className="ml-4 w-0 flex-1">
+                          <dl>
+                            <dt className="text-sm font-medium text-yellow-700 dark:text-yellow-200 truncate">
+                              New Notices
+                            </dt>
+                            <dd className="flex items-baseline">
+                              <div className="text-xl sm:text-2xl font-semibold text-yellow-900 dark:text-yellow-100">
+                                1
+                              </div>
+                              <div className="ml-2 flex items-baseline text-xs sm:text-sm font-semibold text-yellow-600 dark:text-yellow-400">
+                                <span>New</span>
+                              </div>
+                            </dd>
+                          </dl>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  {/* Payment History */}
+                  <div className="bg-purple-50 dark:bg-purple-900/30 overflow-hidden shadow rounded-lg">
+                    <div className="p-3">
+                      <div className="flex items-center">
+                        <div className="flex-shrink-0">
+                          <Calendar className="h-6 w-6 text-purple-600 dark:text-purple-400" />
+                        </div>
+                        <div className="ml-4 w-0 flex-1">
+                          <dl>
+                            <dt className="text-sm font-medium text-purple-700 dark:text-purple-200 truncate">
+                              Payment History
+                            </dt>
+                            <dd className="flex items-baseline">
+                              <div className="text-xl sm:text-2xl font-semibold text-purple-900 dark:text-purple-100">
+                                $7,200
+                              </div>
+                              <div className="ml-2 flex items-baseline text-xs sm:text-sm font-semibold text-purple-600 dark:text-purple-400">
+                                <span>Last 6 months</span>
+                              </div>
+                            </dd>
+                          </dl>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-              {/* Maintenance Requests */}
-              <div className="bg-blue-50 dark:bg-blue-900/30 overflow-hidden shadow rounded-lg">
-                <div className="p-3">
-                  <div className="flex items-center">
-                    <div className="flex-shrink-0">
-                      <Wrench className="h-6 w-6 text-blue-600 dark:text-blue-400" />
-                    </div>
-                    <div className="ml-4 w-0 flex-1">
-                      <dl>
-                        <dt className="text-sm font-medium text-blue-700 dark:text-blue-200 truncate">
-                          Maintenance Requests
-                        </dt>
-                        <dd className="flex items-baseline">
-                          <div className="text-xl sm:text-2xl font-semibold text-blue-900 dark:text-blue-100">
-                            2
-                          </div>
-                          <div className="ml-2 flex items-baseline text-xs sm:text-sm font-semibold text-yellow-600 dark:text-yellow-400">
-                            <span>In Progress</span>
-                          </div>
-                        </dd>
-                      </dl>
-                    </div>
+                {/* Activity Timeline */}
+                <div className="mb-8 bg-white dark:bg-slate-800 shadow rounded-lg p-6">
+                  <div className="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-4">
+                    Recent Activity
                   </div>
-                </div>
-              </div>
-              {/* Notices */}
-              <div className="bg-yellow-50 dark:bg-yellow-900/30 overflow-hidden shadow rounded-lg">
-                <div className="p-3">
-                  <div className="flex items-center">
-                    <div className="flex-shrink-0">
-                      <FileText className="h-6 w-6 text-yellow-600 dark:text-yellow-400" />
-                    </div>
-                    <div className="ml-4 w-0 flex-1">
-                      <dl>
-                        <dt className="text-sm font-medium text-yellow-700 dark:text-yellow-200 truncate">
-                          New Notices
-                        </dt>
-                        <dd className="flex items-baseline">
-                          <div className="text-xl sm:text-2xl font-semibold text-yellow-900 dark:text-yellow-100">
-                            1
-                          </div>
-                          <div className="ml-2 flex items-baseline text-xs sm:text-sm font-semibold text-yellow-600 dark:text-yellow-400">
-                            <span>New</span>
-                          </div>
-                        </dd>
-                      </dl>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              {/* Payment History */}
-              <div className="bg-purple-50 dark:bg-purple-900/30 overflow-hidden shadow rounded-lg">
-                <div className="p-3">
-                  <div className="flex items-center">
-                    <div className="flex-shrink-0">
-                      <Calendar className="h-6 w-6 text-purple-600 dark:text-purple-400" />
-                    </div>
-                    <div className="ml-4 w-0 flex-1">
-                      <dl>
-                        <dt className="text-sm font-medium text-purple-700 dark:text-purple-200 truncate">
-                          Payment History
-                        </dt>
-                        <dd className="flex items-baseline">
-                          <div className="text-xl sm:text-2xl font-semibold text-purple-900 dark:text-purple-100">
-                            $7,200
-                          </div>
-                          <div className="ml-2 flex items-baseline text-xs sm:text-sm font-semibold text-purple-600 dark:text-purple-400">
-                            <span>Last 6 months</span>
-                          </div>
-                        </dd>
-                      </dl>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            {/* Activity Timeline */}
-            <div className="mb-8 bg-white dark:bg-slate-800 shadow rounded-lg p-6">
-              <div className="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-4">
-                Recent Activity
-              </div>
-              <ol className="relative border-l border-slate-200 dark:border-slate-700 ml-6">
-                {activityTimeline.map((item, idx) => (
-                  <li key={idx} className="mb-8 flex items-start relative">
-                    <span className="absolute -left-6 flex items-center justify-center w-8 h-8 bg-slate-100 dark:bg-slate-700 rounded-full ring-8 ring-slate-50 dark:ring-slate-900">
-                      {item.icon}
-                    </span>
-                    <div className="flex flex-col ml-4">
-                      <div className="flex items-center gap-2">
-                        <span className="font-medium text-slate-900 dark:text-slate-100">
-                          {item.label}
+                  <ol className="relative border-l border-slate-200 dark:border-slate-700 ml-6">
+                    {activityTimeline.map((item, idx) => (
+                      <li key={idx} className="mb-8 flex items-start relative">
+                        <span className="absolute -left-6 flex items-center justify-center w-8 h-8 bg-slate-100 dark:bg-slate-700 rounded-full ring-8 ring-slate-50 dark:ring-slate-900">
+                          {item.icon}
                         </span>
-                        <CheckCircle className="h-4 w-4 text-green-400" />
-                      </div>
-                      <div className="text-xs text-slate-500 dark:text-slate-400">
-                        {item.date}
-                      </div>
-                    </div>
-                  </li>
-                ))}
-              </ol>
-            </div>
+                        <div className="flex flex-col ml-4">
+                          <div className="flex items-center gap-2">
+                            <span className="font-medium text-slate-900 dark:text-slate-100">
+                              {item.label}
+                            </span>
+                            <CheckCircle className="h-4 w-4 text-green-400" />
+                          </div>
+                          <div className="text-xs text-slate-500 dark:text-slate-400">
+                            {item.date}
+                          </div>
+                        </div>
+                      </li>
+                    ))}
+                  </ol>
+                </div>
+              </div>
+            </main>
           </div>
-        </main>
+        </div>
       </div>
+
+      {/* Onboard Role Modal */}
+      <OnboardRoleModal
+        isOpen={showOnboardModal}
+        onClose={() => setShowOnboardModal(false)}
+        onSuccess={handleOnboardSuccess}
+        roleName="tenant"
+      />
     </div>
   );
 };

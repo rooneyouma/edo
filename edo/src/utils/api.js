@@ -1,6 +1,18 @@
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000/api/v1";
 
+// Simple auth status cache to reduce repeated checks
+let authCache = {
+  isAuthenticated: false,
+  lastChecked: 0,
+  cacheTimeout: 5000, // 5 seconds
+};
+
+// Clear auth cache when token changes
+const clearAuthCache = () => {
+  authCache.lastChecked = 0;
+};
+
 // Token management
 const getToken = () => {
   // Only access localStorage in browser environment
@@ -14,6 +26,7 @@ const setToken = (token) => {
   // Only access localStorage in browser environment
   if (typeof window !== "undefined") {
     localStorage.setItem("access_token", token);
+    clearAuthCache(); // Clear cache when token changes
   }
 };
 
@@ -21,6 +34,7 @@ const removeToken = () => {
   // Only access localStorage in browser environment
   if (typeof window !== "undefined") {
     localStorage.removeItem("access_token");
+    clearAuthCache(); // Clear cache when token is removed
   }
 };
 
@@ -67,7 +81,7 @@ const refreshToken = async () => {
   }
 };
 
-// API request helper
+// API request helper with timeout
 const apiRequest = async (endpoint, options = {}, retry = true) => {
   const token = getToken();
 
@@ -93,13 +107,20 @@ const apiRequest = async (endpoint, options = {}, retry = true) => {
     headers["Content-Type"] = "application/json";
   }
 
+  // Create AbortController for timeout
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
+
   const config = {
     ...options,
     headers,
+    signal: controller.signal,
   };
 
   try {
     const response = await fetch(`${API_BASE_URL}${endpoint}`, config);
+    clearTimeout(timeoutId); // Clear timeout on successful response
+
     let data;
     const text = await response.text();
     try {
@@ -137,6 +158,16 @@ const apiRequest = async (endpoint, options = {}, retry = true) => {
 
     return data;
   } catch (error) {
+    clearTimeout(timeoutId); // Clear timeout on error
+
+    // Handle timeout specifically
+    if (error.name === "AbortError") {
+      console.error("Request timeout after 30 seconds for endpoint:", endpoint);
+      throw new Error(
+        "Request timeout. Please check your connection and try again."
+      );
+    }
+
     // Enhanced error handling for network issues
     if (error instanceof TypeError && error.message === "Failed to fetch") {
       console.error(
@@ -261,13 +292,21 @@ export const userAPI = {
   },
 };
 
-// Check if user is authenticated
+// Check if user is authenticated with caching
 export const isAuthenticated = () => {
-  // Only access localStorage in browser environment
-  if (typeof window !== "undefined") {
-    return !!getToken();
+  const now = Date.now();
+
+  // Return cached result if still valid
+  if (now - authCache.lastChecked < authCache.cacheTimeout) {
+    return authCache.isAuthenticated;
   }
-  return false;
+
+  // Update cache
+  const token = getToken();
+  authCache.isAuthenticated = !!token && typeof window !== "undefined";
+  authCache.lastChecked = now;
+
+  return authCache.isAuthenticated;
 };
 
 // Get stored user data

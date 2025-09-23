@@ -8,7 +8,7 @@ import React, {
   useRef,
 } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import SearchFilters from "../components/marketplace/SearchFilters.jsx";
 import PropertyCard from "../components/marketplace/PropertyCard.jsx";
 import MarketplaceNav from "../components/marketplace/MarketplaceNav.jsx";
@@ -45,6 +45,25 @@ const MarketplaceHome = () => {
   const [tenantPolicyAccepted, setTenantPolicyAccepted] = useState(false);
 
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  // Check for onboarding redirect parameters
+  useEffect(() => {
+    const onboardRole = searchParams.get("onboard");
+    const nextPath = searchParams.get("next");
+
+    if (onboardRole && isAuthenticated()) {
+      if (onboardRole === "landlord") {
+        setShowPropertyManagerModal(true);
+      } else if (onboardRole === "tenant") {
+        setShowTenantModal(true);
+      }
+
+      // Clean up URL parameters
+      const newUrl = window.location.pathname;
+      window.history.replaceState({}, "", newUrl);
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     // Load bookmarked properties from localStorage
@@ -628,7 +647,14 @@ const MarketplaceHome = () => {
     });
     const updatedUser = await authAPI.getCurrentUser();
     localStorage.setItem("user", JSON.stringify(updatedUser));
-    router.push("/landlord");
+
+    // Check for next parameter
+    const nextPath = searchParams.get("next");
+    if (nextPath) {
+      router.push(nextPath);
+    } else {
+      router.push("/landlord");
+    }
   };
 
   const handleTenantOnboarding = async () => {
@@ -639,12 +665,20 @@ const MarketplaceHome = () => {
     });
     const updatedUser = await authAPI.getCurrentUser();
     localStorage.setItem("user", JSON.stringify(updatedUser));
-    router.push("/tenant/dashboard");
+
+    // Check for next parameter
+    const nextPath = searchParams.get("next");
+    if (nextPath) {
+      router.push(nextPath);
+    } else {
+      router.push("/tenant");
+    }
   };
 
-  const handlePropertyManagerClick = async () => {
+  const handlePropertyManagerClick = async (e) => {
+    e.preventDefault();
     if (!isAuthenticated()) {
-      router.push("/signin?role=landlord");
+      router.push("/auth/signin?role=landlord&next=/landlord");
       return;
     }
     try {
@@ -659,9 +693,10 @@ const MarketplaceHome = () => {
     }
   };
 
-  const handleTenantClick = async () => {
+  const handleTenantClick = async (e) => {
+    e.preventDefault();
     if (!isAuthenticated()) {
-      router.push("/signin?role=tenant");
+      router.push("/auth/signin?role=tenant&next=/tenant");
       return;
     }
     try {
@@ -740,7 +775,7 @@ const MarketplaceHome = () => {
             <div className="flex flex-col sm:flex-row justify-center gap-3 mb-8">
               <Link
                 href="#"
-                onClick={handlePropertyManagerClick}
+                onClick={(e) => handlePropertyManagerClick(e)}
                 className="px-8 py-4 bg-white/95 backdrop-blur-md text-[#009688] border-2 border-white/60 rounded-2xl font-bold text-lg shadow-xl hover:shadow-2xl hover:bg-white hover:border-white transform hover:scale-105 transition-all duration-300 flex items-center"
                 style={{ padding: "0.85rem 1.7rem", fontSize: "0.85rem" }}
               >
@@ -762,7 +797,7 @@ const MarketplaceHome = () => {
               </Link>
               <Link
                 href="#"
-                onClick={handleTenantClick}
+                onClick={(e) => handleTenantClick(e)}
                 className="px-8 py-4 bg-white/95 backdrop-blur-md text-[#009688] border-2 border-white/60 rounded-2xl font-bold text-lg shadow-xl hover:shadow-2xl hover:bg-white hover:border-white transform hover:scale-105 transition-all duration-300 flex items-center"
                 style={{ padding: "0.85rem 1.7rem", fontSize: "0.85rem" }}
               >
