@@ -261,7 +261,6 @@ const DynamicUnitForm = ({
           className="block text-sm font-medium text-slate-700 dark:text-slate-300"
         >
           {fieldConfig.label}
-          {fieldConfig.required && <span className="text-red-500 ml-1">*</span>}
           {helpText && (
             <span className="ml-2 text-xs text-gray-500 italic">
               ({helpText})

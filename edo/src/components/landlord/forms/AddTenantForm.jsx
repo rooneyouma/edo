@@ -20,7 +20,7 @@ const AddTenantForm = ({
     rentAmount: "",
     securityDeposit: "",
     leaseType: "rental",
-    startDate: "",
+    startDate: new Date().toISOString().split("T")[0], // Default to today's date
     endDate: "",
     emergencyContact: {
       name: "",
@@ -88,15 +88,27 @@ const AddTenantForm = ({
     mutationFn: (email) => tenantAPI.checkUserByEmail(email),
     onSuccess: (res) => {
       if (res.exists) {
-        setFormData((prev) => ({
-          ...prev,
-          firstName: res.user.first_name || "",
-          lastName: res.user.last_name || "",
-          phone: res.user.phone || "",
-        }));
-        setUserFound(true);
+        // Check if the user is already registered as a tenant
+        if (res.is_tenant) {
+          setError(
+            "This email is already registered as a tenant. Please use a different email or manage the existing tenant."
+          );
+          setUserFound(false);
+        } else {
+          // User exists but is not yet a tenant, populate the form
+          setFormData((prev) => ({
+            ...prev,
+            firstName: res.user.first_name || "",
+            lastName: res.user.last_name || "",
+            phone: res.user.phone || "",
+          }));
+          setUserFound(true);
+          setError(""); // Clear any previous errors
+        }
       } else {
+        // User doesn't exist, they need to fill in their details
         setUserFound(false);
+        setError(""); // Clear any previous errors
       }
       setEmailChecked(true);
     },
@@ -205,6 +217,54 @@ const AddTenantForm = ({
     setError("");
     setLoading(true);
 
+    // Validate required fields before sending request
+    if (
+      !formData.firstName ||
+      !formData.lastName ||
+      !formData.email ||
+      !formData.phone ||
+      !formData.unitNumber ||
+      !formData.startDate
+    ) {
+      setError("All required fields must be filled out.");
+      setLoading(false);
+      return;
+    }
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      setError("Please enter a valid email address.");
+      setLoading(false);
+      return;
+    }
+
+    // Validate date format
+    if (isNaN(Date.parse(formData.startDate))) {
+      setError("Please enter a valid start date.");
+      setLoading(false);
+      return;
+    }
+
+    if (formData.endDate && isNaN(Date.parse(formData.endDate))) {
+      setError("Please enter a valid end date.");
+      setLoading(false);
+      return;
+    }
+
+    // Prevent submission if email is already registered as a tenant
+    if (
+      emailChecked &&
+      userFound &&
+      error.includes("already registered as a tenant")
+    ) {
+      setError(
+        "Cannot add tenant: This email is already registered as a tenant."
+      );
+      setLoading(false);
+      return;
+    }
+
     try {
       if (activeTab === "invite") {
         // Handle invitation
@@ -227,20 +287,14 @@ const AddTenantForm = ({
           last_name: formData.lastName,
           email: formData.email,
           phone: formData.phone,
-          property_id: formData.propertyId,
-          unit_number: formData.unitNumber,
-          rent_amount: parseFloat(formData.rentAmount) || 0,
-          security_deposit: parseFloat(formData.securityDeposit) || 0,
+          unit_id: formData.unitNumber,
           lease_type: formData.leaseType,
-          lease_start: formData.startDate,
-          lease_end: formData.endDate,
-          emergency_contact: formData.emergencyContact.name
-            ? {
-                name: formData.emergencyContact.name,
-                phone: formData.emergencyContact.phone,
-                relationship: formData.emergencyContact.relationship,
-              }
-            : null,
+          start_date: formData.startDate,
+          end_date: formData.endDate || null,
+          emergency_contact_name: formData.emergencyContact.name || "",
+          emergency_contact_phone: formData.emergencyContact.phone || "",
+          emergency_contact_relationship:
+            formData.emergencyContact.relationship || "",
         };
 
         const response = await apiRequest("/tenants/", {
@@ -258,6 +312,12 @@ const AddTenantForm = ({
           errorMessage = err.response.email[0];
         } else if (err.response.message) {
           errorMessage = err.response.message;
+        } else if (err.response.details) {
+          // Show more detailed validation errors
+          errorMessage =
+            "Invalid data provided: " + JSON.stringify(err.response.details);
+        } else if (err.response.error) {
+          errorMessage = err.response.error;
         }
       }
       setError(errorMessage);
@@ -289,14 +349,45 @@ const AddTenantForm = ({
     });
   };
 
-  // Handle email input change
+  // Handle email input change with debounce
   const handleEmailChange = (e) => {
     const value = e.target.value;
     setFormData((prev) => ({ ...prev, email: value }));
     setError("");
+
+    // Reset tenant found status when email changes
     setUserFound(false);
     setEmailChecked(false);
-    searchEmailSuggestions(value);
+
+    // Clear any existing timeout
+    if (window.emailSearchTimeout) {
+      clearTimeout(window.emailSearchTimeout);
+    }
+
+    // Set new timeout for debounced search
+    if (value.length >= 2) {
+      window.emailSearchTimeout = setTimeout(() => {
+        searchEmailSuggestions(value);
+      }, 300); // 300ms debounce
+    } else {
+      // Clear suggestions if email is too short
+      setEmailSuggestions([]);
+      setShowSuggestions(false);
+    }
+
+    // Also check if user exists when email is valid
+    if (value.length >= 3 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+      if (window.userCheckTimeout) {
+        clearTimeout(window.userCheckTimeout);
+      }
+      window.userCheckTimeout = setTimeout(() => {
+        checkUserMutation.mutate(value, {
+          onSettled: () => {
+            setChecking(false);
+          },
+        });
+      }, 500); // 500ms debounce
+    }
   };
 
   // Handle suggestion selection
@@ -312,22 +403,6 @@ const AddTenantForm = ({
     setEmailChecked(true);
     setShowSuggestions(false);
     setEmailSuggestions([]);
-  };
-
-  // Handle manual email check
-  const handleCheckEmail = async () => {
-    if (!formData.email) {
-      setError("Please enter an email address");
-      return;
-    }
-
-    setChecking(true);
-    setError("");
-    checkUserMutation.mutate(formData.email, {
-      onSettled: () => {
-        setChecking(false);
-      },
-    });
   };
 
   // Handle click outside to close suggestions
@@ -391,7 +466,7 @@ const AddTenantForm = ({
           setEmailSuggestions={setEmailSuggestions}
           searchingEmail={searchingEmail}
           emailChecked={emailChecked}
-          handleCheckEmail={handleCheckEmail}
+          handleEmailChange={handleEmailChange}
           initialUnitId={initialUnitId}
         />
       ) : (
@@ -449,23 +524,9 @@ const QuickAddForm = ({
   setEmailSuggestions,
   searchingEmail,
   emailChecked,
-  handleCheckEmail,
+  handleEmailChange,
   initialUnitId,
 }) => {
-  // const [checking, setChecking] = useState(false);
-  // const [userFound, setUserFound] = useState(false);
-  // const [error, setError] = useState("");
-  // const [emailSuggestions, setEmailSuggestions] = useState([]);
-  // const [showSuggestions, setShowSuggestions] = useState(false);
-  // const [searchingEmail, setSearchingEmail] = useState(false);
-  // const [emailChecked, setEmailChecked] = useState(false);
-
-  // Handle email input change
-  const handleEmailChange = (e) => {
-    const value = e.target.value;
-    setFormData((prev) => ({ ...prev, email: value }));
-  };
-
   // Handle suggestion selection
   const handleSuggestionSelect = (suggestion) => {
     setFormData((prev) => ({
@@ -475,8 +536,6 @@ const QuickAddForm = ({
       lastName: suggestion.last_name || "",
       phone: suggestion.phone || "",
     }));
-    setUserFound(true);
-    setEmailChecked(true);
     setShowSuggestions(false);
     setEmailSuggestions([]);
   };
@@ -508,12 +567,12 @@ const QuickAddForm = ({
             id="email"
             name="email"
             value={formData.email}
-            onChange={handleEmailChange}
+            onChange={(e) => handleEmailChange(e)}
             className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100 py-2 px-3 sm:text-sm"
             required
             autoComplete="off"
             disabled={checking}
-            placeholder="Enter email to check for existing tenant..."
+            placeholder="Enter email to search for existing users..."
           />
           {searchingEmail && (
             <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
@@ -561,66 +620,52 @@ const QuickAddForm = ({
           </div>
         )}
 
-        {/* Check Email Button */}
-        {formData.email && !userFound && !emailChecked && (
-          <div className="mt-2">
-            <button
-              type="button"
-              onClick={handleCheckEmail}
-              disabled={checking}
-              className="px-4 py-2 bg-blue-600 text-white rounded-md font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 text-sm"
-            >
-              {checking ? "Checking..." : "Check Email"}
-            </button>
+        {/* Status Messages */}
+        {error && (
+          <div className="bg-red-50 border border-red-200 rounded-md p-3 text-red-800 text-sm mt-2">
+            {error}
+          </div>
+        )}
+
+        {emailChecked && userFound && (
+          <div className="bg-green-50 border border-green-200 rounded-md p-3 text-green-800 text-sm mt-2">
+            <div className="flex items-center">
+              <svg
+                className="h-5 w-5 text-green-400 mr-2"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                  clipRule="evenodd"
+                />
+              </svg>
+              Existing user found! Details have been automatically populated.
+              You may edit if needed.
+            </div>
+          </div>
+        )}
+
+        {emailChecked && !userFound && (
+          <div className="bg-yellow-50 border border-yellow-200 rounded-md p-3 text-yellow-800 text-sm mt-2">
+            <div className="flex items-center">
+              <svg
+                className="h-5 w-5 text-yellow-400 mr-2"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
+                  clipRule="evenodd"
+                />
+              </svg>
+              New tenant detected. Please enter tenant details below.
+            </div>
           </div>
         )}
       </div>
-
-      {/* Status Messages */}
-      {error && (
-        <div className="bg-red-50 border border-red-200 rounded-md p-3 text-red-800 text-sm">
-          {error}
-        </div>
-      )}
-
-      {emailChecked && userFound && (
-        <div className="bg-green-50 border border-green-200 rounded-md p-3 text-green-800 text-sm">
-          <div className="flex items-center">
-            <svg
-              className="h-5 w-5 text-green-400 mr-2"
-              fill="currentColor"
-              viewBox="0 0 20 20"
-            >
-              <path
-                fillRule="evenodd"
-                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                clipRule="evenodd"
-              />
-            </svg>
-            Tenant found! Details have been automatically populated. You may
-            edit if needed.
-          </div>
-        </div>
-      )}
-
-      {emailChecked && !userFound && (
-        <div className="bg-yellow-50 border border-yellow-200 rounded-md p-3 text-yellow-800 text-sm">
-          <div className="flex items-center">
-            <svg
-              className="h-5 w-5 text-yellow-400 mr-2"
-              fill="currentColor"
-              viewBox="0 0 20 20"
-            >
-              <path
-                fillRule="evenodd"
-                d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
-                clipRule="evenodd"
-              />
-            </svg>
-            No existing tenant found. Please enter tenant details below.
-          </div>
-        </div>
-      )}
 
       {/* Rest of the form fields */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -971,11 +1016,26 @@ const InviteForm = ({
     }
   };
 
-  // Handle email input change
+  // Handle email input change with debounce
   const handleEmailChange = (e) => {
     const value = e.target.value;
     handleInviteChange(e);
-    searchEmailSuggestions(value);
+
+    // Clear any existing timeout
+    if (window.emailSearchTimeout) {
+      clearTimeout(window.emailSearchTimeout);
+    }
+
+    // Set new timeout for debounced search
+    if (value.length >= 2) {
+      window.emailSearchTimeout = setTimeout(() => {
+        searchEmailSuggestions(value);
+      }, 300); // 300ms debounce
+    } else {
+      // Clear suggestions if email is too short
+      setEmailSuggestions([]);
+      setShowSuggestions(false);
+    }
   };
 
   // Handle suggestion selection

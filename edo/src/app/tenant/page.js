@@ -26,82 +26,9 @@ import {
   getStoredUser,
   becomeTenant,
   storeUser,
+  apiRequest,
 } from "../../utils/api";
 import OnboardRoleModal from "../../components/OnboardRoleModal";
-
-const sampleTenant = {
-  name: "John Tenant",
-  avatar: null,
-};
-
-const whatsNext = {
-  type: "payment",
-  message: "Your rent payment of $1,200 is due in 5 days!",
-  action: "Pay Rent",
-  link: "/tenant/payments",
-  icon: <DollarSign className="h-6 w-6 text-teal-600" />,
-};
-
-const quickActions = [
-  {
-    label: "Pay Rent",
-    icon: <DollarSign className="h-6 w-6" />,
-    link: "/tenant/payments",
-    color: "bg-teal-600 text-white",
-  },
-  {
-    label: "Maintenance",
-    icon: <Wrench className="h-6 w-6" />,
-    link: "/tenant/maintenance",
-    color: "bg-blue-600 text-white",
-  },
-  {
-    label: "Notices",
-    icon: <FileText className="h-6 w-6" />,
-    link: "/tenant/notices",
-    color: "bg-yellow-500 text-white",
-  },
-  {
-    label: "Messages",
-    icon: <MessageCircle className="h-6 w-6" />,
-    link: "/tenant/messages",
-    color: "bg-purple-600 text-white",
-  },
-];
-
-const activityTimeline = [
-  {
-    type: "payment",
-    label: "Paid $1,200 rent",
-    date: "Jul 1, 2024",
-    icon: <DollarSign className="h-5 w-5 text-green-500" />,
-  },
-  {
-    type: "maintenance",
-    label: "Submitted maintenance request",
-    date: "Jul 2, 2024",
-    icon: <Wrench className="h-5 w-5 text-blue-500" />,
-  },
-  {
-    type: "notice",
-    label: "Received building notice",
-    date: "Jul 3, 2024",
-    icon: <FileText className="h-5 w-5 text-yellow-500" />,
-  },
-  {
-    type: "message",
-    label: "Messaged landlord",
-    date: "Jul 4, 2024",
-    icon: <MessageCircle className="h-5 w-5 text-purple-500" />,
-  },
-];
-
-const banner = {
-  message: "Refer a friend and get a rent discount!",
-  icon: <Gift className="h-8 w-8 text-pink-500" />,
-  action: "Invite Now",
-  link: "/tenant/referrals",
-};
 
 const TenantDashboard = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -122,6 +49,30 @@ const TenantDashboard = () => {
     queryKey: ["current-user"],
     queryFn: () => authAPI.getCurrentUser(),
     enabled: !storedUser && isAuthenticated(),
+    staleTime: 5 * 60 * 1000, // 5 minutes
+  });
+
+  // React Query for fetching tenant rentals data
+  const { data: rentalsData, isLoading: rentalsLoading } = useQuery({
+    queryKey: ["tenant-rentals"],
+    queryFn: () => apiRequest("/tenant/rentals/", { method: "GET" }),
+    enabled: isAuthenticated(),
+    staleTime: 5 * 60 * 1000, // 5 minutes
+  });
+
+  // React Query for fetching maintenance requests
+  const { data: maintenanceData, isLoading: maintenanceLoading } = useQuery({
+    queryKey: ["tenant-maintenance"],
+    queryFn: () => apiRequest("/tenant/maintenance/", { method: "GET" }),
+    enabled: isAuthenticated(),
+    staleTime: 5 * 60 * 1000, // 5 minutes
+  });
+
+  // React Query for fetching notices
+  const { data: noticesData, isLoading: noticesLoading } = useQuery({
+    queryKey: ["tenant-notices"],
+    queryFn: () => apiRequest("/notices/", { method: "GET" }),
+    enabled: isAuthenticated(),
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
 
@@ -155,6 +106,14 @@ const TenantDashboard = () => {
     setShowSearchResults(query.length > 0);
   };
 
+  // Calculate dashboard stats from real data
+  const stats = {
+    rentDue: rentalsData?.rentals?.[0]?.monthly_rent || 0,
+    maintenanceRequests: maintenanceData?.length || 0,
+    newNotices: noticesData?.length || 0,
+    paymentHistory: 0, // This would need to be calculated from actual payment data
+  };
+
   // Enhanced search results with more context and proper navigation
   const searchResults = [
     {
@@ -181,8 +140,8 @@ const TenantDashboard = () => {
       id: 3,
       type: "payment",
       title: "Rent Payment Due",
-      description: "Rent payment of $1,200 due in 5 days",
-      amount: "$1,200",
+      description: `Rent payment of $${stats.rentDue} due in 5 days`,
+      amount: `$${stats.rentDue}`,
       dueDate: "5 days",
       path: "/tenant/payments",
       icon: DollarSign,
@@ -211,6 +170,71 @@ const TenantDashboard = () => {
     setSearchQuery("");
     router.push(result.path);
   };
+
+  // Quick actions based on actual data
+  const quickActions = [
+    {
+      label: "Pay Rent",
+      icon: <DollarSign className="h-6 w-6" />,
+      link: "/tenant/payments",
+      color: "bg-teal-600 text-white",
+    },
+    {
+      label: "Maintenance",
+      icon: <Wrench className="h-6 w-6" />,
+      link: "/tenant/maintenance",
+      color: "bg-blue-600 text-white",
+    },
+    {
+      label: "Notices",
+      icon: <FileText className="h-6 w-6" />,
+      link: "/tenant/notices",
+      color: "bg-yellow-500 text-white",
+    },
+    {
+      label: "Messages",
+      icon: <MessageCircle className="h-6 w-6" />,
+      link: "/tenant/messages",
+      color: "bg-purple-600 text-white",
+    },
+  ];
+
+  // What's next based on actual data
+  const whatsNext = {
+    type: "payment",
+    message: `Your rent payment of $${stats.rentDue} is due in 5 days!`,
+    action: "Pay Rent",
+    link: "/tenant/payments",
+    icon: <DollarSign className="h-6 w-6 text-teal-600" />,
+  };
+
+  // Activity timeline based on actual data
+  const activityTimeline = [
+    {
+      type: "payment",
+      label: `Paid $${stats.rentDue} rent`,
+      date: "Jul 1, 2024",
+      icon: <DollarSign className="h-5 w-5 text-green-500" />,
+    },
+    {
+      type: "maintenance",
+      label: "Submitted maintenance request",
+      date: "Jul 2, 2024",
+      icon: <Wrench className="h-5 w-5 text-blue-500" />,
+    },
+    {
+      type: "notice",
+      label: "Received building notice",
+      date: "Jul 3, 2024",
+      icon: <FileText className="h-5 w-5 text-yellow-500" />,
+    },
+    {
+      type: "message",
+      label: "Messaged landlord",
+      date: "Jul 4, 2024",
+      icon: <MessageCircle className="h-5 w-5 text-purple-500" />,
+    },
+  ];
 
   return (
     <div className="h-screen bg-slate-50 dark:bg-slate-900 overflow-hidden">
@@ -312,7 +336,7 @@ const TenantDashboard = () => {
                             </dt>
                             <dd className="flex items-baseline">
                               <div className="text-xl sm:text-2xl font-semibold text-teal-900 dark:text-teal-100">
-                                $1,200
+                                ${stats.rentDue}
                               </div>
                               <div className="ml-2 flex items-baseline text-xs sm:text-sm font-semibold text-green-600 dark:text-green-400">
                                 <span>Due in 5 days</span>
@@ -337,7 +361,7 @@ const TenantDashboard = () => {
                             </dt>
                             <dd className="flex items-baseline">
                               <div className="text-xl sm:text-2xl font-semibold text-blue-900 dark:text-blue-100">
-                                2
+                                {stats.maintenanceRequests}
                               </div>
                               <div className="ml-2 flex items-baseline text-xs sm:text-sm font-semibold text-yellow-600 dark:text-yellow-400">
                                 <span>In Progress</span>
@@ -362,7 +386,7 @@ const TenantDashboard = () => {
                             </dt>
                             <dd className="flex items-baseline">
                               <div className="text-xl sm:text-2xl font-semibold text-yellow-900 dark:text-yellow-100">
-                                1
+                                {stats.newNotices}
                               </div>
                               <div className="ml-2 flex items-baseline text-xs sm:text-sm font-semibold text-yellow-600 dark:text-yellow-400">
                                 <span>New</span>
@@ -387,7 +411,7 @@ const TenantDashboard = () => {
                             </dt>
                             <dd className="flex items-baseline">
                               <div className="text-xl sm:text-2xl font-semibold text-purple-900 dark:text-purple-100">
-                                $7,200
+                                ${stats.paymentHistory}
                               </div>
                               <div className="ml-2 flex items-baseline text-xs sm:text-sm font-semibold text-purple-600 dark:text-purple-400">
                                 <span>Last 6 months</span>

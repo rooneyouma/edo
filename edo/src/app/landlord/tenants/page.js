@@ -38,134 +38,34 @@ const LandlordTenantsPage = () => {
   const router = useRouter();
   const storedUser = getStoredUser();
 
-  // Mock tenant data - in a real app, this would come from an API
-  const mockTenants = [
-    {
-      id: 1,
-      name: "John Smith",
-      email: "john.smith@example.com",
-      phone: "(555) 123-4567",
-      property: "Sunset Apartments",
-      unit_number: "A-101",
-      rent: 1200,
-      status: "Active",
-    },
-    {
-      id: 2,
-      name: "Sarah Johnson",
-      email: "sarah.j@example.com",
-      phone: "(555) 987-6543",
-      property: "Mountain View Condos",
-      unit_number: "B-205",
-      rent: 1800,
-      status: "Active",
-    },
-    {
-      id: 3,
-      name: "Michael Brown",
-      email: "m.brown@example.com",
-      phone: "(555) 456-7890",
-      property: "Riverside Townhomes",
-      unit_number: "C-302",
-      rent: 2200,
-      status: "Pending",
-    },
-    {
-      id: 4,
-      name: "Emily Davis",
-      email: "emily.davis@example.com",
-      phone: "(555) 234-5678",
-      property: "Downtown Lofts",
-      unit_number: "D-404",
-      rent: 1500,
-      status: "Inactive",
-    },
-    {
-      id: 5,
-      name: "Robert Wilson",
-      email: "r.wilson@example.com",
-      phone: "(555) 876-5432",
-      property: "Garden Villas",
-      unit_number: "E-501",
-      rent: 2000,
-      status: "Active",
-    },
-    {
-      id: 6,
-      name: "Lisa Rodriguez",
-      email: "lisa.rodriguez@example.com",
-      phone: "(555) 345-6789",
-      property: "Sunset Apartments",
-      unit_number: "A-103",
-      rent: 1300,
-      status: "Active",
-    },
-    {
-      id: 7,
-      name: "David Kim",
-      email: "david.kim@example.com",
-      phone: "(555) 567-8901",
-      property: "Mountain View Condos",
-      unit_number: "B-204",
-      rent: 1600,
-      status: "Pending",
-    },
-    {
-      id: 8,
-      name: "Maria Garcia",
-      email: "maria.garcia@example.com",
-      phone: "(555) 789-0123",
-      property: "Riverside Townhomes",
-      unit_number: "C-301",
-      rent: 2100,
-      status: "Active",
-    },
-    {
-      id: 9,
-      name: "James Thompson",
-      email: "james.t@example.com",
-      phone: "(555) 901-2345",
-      property: "Downtown Lofts",
-      unit_number: "D-405",
-      rent: 1700,
-      status: "Inactive",
-    },
-    {
-      id: 10,
-      name: "Amanda Chen",
-      email: "amanda.chen@example.com",
-      phone: "(555) 012-3456",
-      property: "Garden Villas",
-      unit_number: "E-502",
-      rent: 1950,
-      status: "Active",
-    },
-    {
-      id: 11,
-      name: "Kevin Wright",
-      email: "kevin.wright@example.com",
-      phone: "(555) 234-5670",
-      property: "Sunset Apartments",
-      unit_number: "A-104",
-      rent: 1250,
-      status: "Pending",
-    },
-    {
-      id: 12,
-      name: "Jennifer Lopez",
-      email: "jennifer.lopez@example.com",
-      phone: "(555) 456-7801",
-      property: "Mountain View Condos",
-      unit_number: "B-301",
-      rent: 1850,
-      status: "Active",
-    },
-  ];
-
   // React Query for fetching user data
   const { data: user = storedUser } = useQuery({
     queryKey: ["current-user"],
     queryFn: () => getStoredUser(),
+    enabled: !!getToken() && !!storedUser,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+  });
+
+  // React Query for fetching tenants data
+  const {
+    data: tenantsData,
+    isLoading: isTenantsLoading,
+    isError: isTenantsError,
+    error: tenantsError,
+    refetch: refetchTenants,
+  } = useQuery({
+    queryKey: ["landlord-tenants"],
+    queryFn: async () => {
+      try {
+        const data = await landlordTenantAPI.list();
+        console.log("Tenants data received:", data);
+        return data;
+      } catch (error) {
+        console.error("Error fetching tenants:", error);
+        // Re-throw the error so React Query can handle it properly
+        throw error;
+      }
+    },
     enabled: !!getToken() && !!storedUser,
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
@@ -184,7 +84,7 @@ const LandlordTenantsPage = () => {
   }, [router, user]);
 
   // Filter and sort tenants
-  const filteredTenants = mockTenants
+  const filteredTenants = (tenantsData?.results || tenantsData || [])
     .filter((tenant) => {
       const matchesSearch =
         !searchQuery ||
@@ -276,12 +176,11 @@ const LandlordTenantsPage = () => {
 
       await landlordTenantAPI.update(tenantToEdit.id, updateData);
 
-      // Refresh the tenant list (you might want to use React Query here)
-      console.log("Tenant updated successfully");
+      // Refresh the tenant list
+      await refetchTenants();
 
       setShowEditTenantModal(false);
       setTenantToEdit(null);
-      // TODO: Refresh the tenant data
     } catch (error) {
       console.error("Error updating tenant:", error);
       // TODO: Show error notification
@@ -294,11 +193,11 @@ const LandlordTenantsPage = () => {
 
       await landlordTenantAPI.delete(tenantToDelete.id);
 
-      console.log("Tenant deleted successfully");
+      // Refresh the tenant list
+      await refetchTenants();
 
       setShowDeleteModal(false);
       setTenantToDelete(null);
-      // TODO: Refresh the tenant data
     } catch (error) {
       console.error("Error deleting tenant:", error);
       // TODO: Show error notification
@@ -313,9 +212,10 @@ const LandlordTenantsPage = () => {
     setShowAddTenantModal(false);
   };
 
-  const handleAddTenantSubmit = () => {
+  const handleAddTenantSubmit = async () => {
     setShowAddTenantModal(false);
-    // The form will handle API calls and data refresh
+    // Refresh the tenant data after adding a new tenant
+    await refetchTenants();
   };
 
   // Get status color classes
@@ -336,6 +236,7 @@ const LandlordTenantsPage = () => {
     setSidebarOpen(!sidebarOpen);
   };
 
+  // Render the main component structure consistently to avoid hydration errors
   return (
     <div className="flex h-screen overflow-hidden bg-slate-50 dark:bg-slate-900">
       {/* Sidebar */}
@@ -353,9 +254,15 @@ const LandlordTenantsPage = () => {
               <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-100">
                 Tenants
               </h2>
+              {/* Always render the button but conditionally disable it during loading */}
               <button
                 onClick={handleAddTenant}
-                className="px-4 py-2 bg-[#0d9488] text-white rounded-md hover:bg-[#0f766e] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0d9488] text-sm font-medium flex items-center gap-2"
+                disabled={isTenantsLoading}
+                className={`px-4 py-2 rounded-md text-sm font-medium flex items-center gap-2 ${
+                  isTenantsLoading
+                    ? "bg-gray-300 dark:bg-gray-600 text-gray-500 cursor-not-allowed"
+                    : "bg-[#0d9488] text-white hover:bg-[#0f766e] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0d9488]"
+                }`}
               >
                 <svg
                   className="w-4 h-4"
@@ -374,40 +281,109 @@ const LandlordTenantsPage = () => {
               </button>
             </div>
 
-            {/* Filters */}
-            <TenantFilters
-              searchQuery={searchQuery}
-              setSearchQuery={setSearchQuery}
-              statusFilter={statusFilter}
-              setStatusFilter={setStatusFilter}
-              propertyFilter={propertyFilter}
-              setPropertyFilter={setPropertyFilter}
-              sortOrder={sortOrder}
-              setSortOrder={setSortOrder}
-            />
+            {/* Show badge if no tenants */}
+            {!isTenantsLoading &&
+              !isTenantsError &&
+              filteredTenants.length === 0 && (
+                <div className="mb-6 p-4 bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 rounded-lg">
+                  <div className="flex items-center">
+                    <svg
+                      className="w-5 h-5 text-blue-500 dark:text-blue-400 mr-2"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                      />
+                    </svg>
+                    <span className="text-blue-800 dark:text-blue-200">
+                      {searchQuery ||
+                      statusFilter !== "all" ||
+                      propertyFilter !== "all"
+                        ? "No tenants match your current filters."
+                        : "You don't have any tenants yet. Add your first tenant to get started."}
+                    </span>
+                  </div>
+                </div>
+              )}
 
-            {/* Tenant List */}
-            <div className="mt-6">
-              <TenantList
-                currentTenants={currentTenants}
-                getStatusColor={getStatusColor}
-                setTenantForModal={setTenantForModal}
-                setShowTenantModal={setShowTenantModal}
-                handleViewDetails={handleViewDetails}
-                handleEditTenant={handleEditTenant}
-                handleDeleteTenant={handleDeleteTenant}
-              />
-            </div>
+            {/* Loading state */}
+            {isTenantsLoading && (
+              <div className="space-y-4">
+                <div className="h-10 w-full bg-gray-200 dark:bg-gray-700 rounded-md animate-pulse"></div>
+                <div className="h-64 flex items-center justify-center">
+                  <div className="text-lg text-gray-500 dark:text-gray-400">
+                    Loading tenants...
+                  </div>
+                </div>
+              </div>
+            )}
 
-            {/* Pagination */}
-            <TenantPagination
-              currentPage={currentPage}
-              totalPages={totalPages}
-              pageInputValue={pageInputValue}
-              onPageChange={handlePageChange}
-              onPageInputChange={handlePageInputChange}
-              onPageInputBlur={handlePageInputBlur}
-            />
+            {/* Error state */}
+            {isTenantsError && (
+              <div className="h-64 flex items-center justify-center">
+                <div className="text-lg text-red-500 dark:text-red-400 text-center">
+                  <p>Error loading tenants. Please try again later.</p>
+                  {tenantsError && (
+                    <p className="text-sm mt-2">
+                      {tenantsError.message || "Unknown error occurred"}
+                    </p>
+                  )}
+                  <button
+                    onClick={() => refetchTenants()}
+                    className="mt-4 px-4 py-2 bg-[#0d9488] text-white rounded-md hover:bg-[#0f766e] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0d9488] text-sm font-medium"
+                  >
+                    Retry
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Main content when loaded */}
+            {!isTenantsLoading && !isTenantsError && (
+              <>
+                {/* Filters */}
+                <TenantFilters
+                  searchQuery={searchQuery}
+                  setSearchQuery={setSearchQuery}
+                  statusFilter={statusFilter}
+                  setStatusFilter={setStatusFilter}
+                  propertyFilter={propertyFilter}
+                  setPropertyFilter={setPropertyFilter}
+                  sortOrder={sortOrder}
+                  setSortOrder={setSortOrder}
+                />
+
+                {/* Tenant List */}
+                <div className="mt-6">
+                  <TenantList
+                    currentTenants={currentTenants}
+                    getStatusColor={getStatusColor}
+                    setTenantForModal={setTenantForModal}
+                    setShowTenantModal={setShowTenantModal}
+                    handleViewDetails={handleViewDetails}
+                    handleEditTenant={handleEditTenant}
+                    handleDeleteTenant={handleDeleteTenant}
+                  />
+                </div>
+
+                {/* Pagination */}
+                {filteredTenants.length > 0 && (
+                  <TenantPagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    pageInputValue={pageInputValue}
+                    onPageChange={handlePageChange}
+                    onPageInputChange={handlePageInputChange}
+                    onPageInputBlur={handlePageInputBlur}
+                  />
+                )}
+              </>
+            )}
           </div>
         </main>
       </div>

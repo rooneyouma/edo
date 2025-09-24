@@ -123,10 +123,21 @@ const apiRequest = async (endpoint, options = {}, retry = true) => {
 
     let data;
     const text = await response.text();
-    try {
-      data = JSON.parse(text);
-    } catch (e) {
-      data = { message: "No JSON response", raw: text };
+
+    // Check if response is empty
+    if (!text) {
+      data = { message: "Empty response from server" };
+    } else {
+      try {
+        data = JSON.parse(text);
+      } catch (e) {
+        // If parsing fails, return the raw text with appropriate message
+        data = {
+          message: "Server returned non-JSON response",
+          raw: text,
+          status: response.status,
+        };
+      }
     }
 
     if (!response.ok) {
@@ -150,9 +161,13 @@ const apiRequest = async (endpoint, options = {}, retry = true) => {
       }
       // Attach the full backend error response to the thrown error
       const error = new Error(
-        data.message || data.detail || data.error || "Something went wrong"
+        data.message ||
+          data.detail ||
+          data.error ||
+          `HTTP ${response.status}: Something went wrong`
       );
       error.response = data;
+      error.status = response.status;
       throw error;
     }
 
@@ -182,12 +197,12 @@ const apiRequest = async (endpoint, options = {}, retry = true) => {
       );
     }
 
+    // Re-throw the error if it's already properly formatted
+    if (error.status) {
+      throw error;
+    }
+
     // Show backend error message if available
-    // Remove browser alert for API errors
-    // Optionally log error, but do not alert
-    // if (error.response && (error.response.message || error.response.detail)) {
-    //   alert(`API Error: ${error.response.message || error.response.detail}`);
-    // }
     console.error("API Error:", error);
     throw error;
   }
@@ -396,25 +411,25 @@ export const tenantAPI = {
 export const landlordTenantAPI = {
   // Fetch all tenants for the logged-in landlord
   list: async () => {
-    return await apiRequest("/landlord/tenants/", { method: "GET" });
+    return await apiRequest("/tenants/", { method: "GET" });
   },
   // Add a new tenant
   create: async (tenantData) => {
-    return await apiRequest("/landlord/tenants/", {
+    return await apiRequest("/tenants/", {
       method: "POST",
       body: JSON.stringify(tenantData),
     });
   },
   // Update a tenant
   update: async (id, tenantData) => {
-    return await apiRequest(`/landlord/tenants/${id}/`, {
+    return await apiRequest(`/tenants/${id}/`, {
       method: "PATCH",
       body: JSON.stringify(tenantData),
     });
   },
   // Delete a tenant
   delete: async (id) => {
-    return await apiRequest(`/landlord/tenants/${id}/`, {
+    return await apiRequest(`/tenants/${id}/`, {
       method: "DELETE",
     });
   },

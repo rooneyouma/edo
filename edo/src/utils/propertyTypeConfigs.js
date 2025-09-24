@@ -8,11 +8,8 @@ export const PROPERTY_TYPE_CONFIGS = {
     name: "House",
     unitIdLabel: "House Unit",
     unitIdPlaceholder: "e.g. Main House, Guest House, 1A",
-    floorLabel: "Floor/Level",
-    floorPlaceholder: "e.g. Ground, 1st Floor, Basement",
     fields: {
       unit_id: { required: true, label: "Unit ID" },
-      floor: { required: false, label: "Floor/Level" },
       bedrooms: {
         required: true,
         label: "Bedrooms",
@@ -34,7 +31,6 @@ export const PROPERTY_TYPE_CONFIGS = {
     },
     layout: [
       ["unit_id"],
-      ["floor"],
       ["bedrooms", "bathrooms"],
       ["rent_amount", "security_deposit"],
       ["status"],

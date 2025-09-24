@@ -6,7 +6,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import authenticate
 from .models import User, LandlordProperty, Role, Unit, Tenant, Payment, Notice, LandlordMaintenance, MaintenanceMessage, ChatMessage, TenantInvitation
-from .serializers import UserSerializer, UserRegistrationSerializer, UserLoginSerializer, LandlordPropertySerializer, UnitSerializer, TenantSerializer, PaymentSerializer, NoticeSerializer, LandlordMaintenanceSerializer, MaintenanceMessageSerializer, ChatMessageSerializer, TenantInvitationSerializer
+from .serializers import UserSerializer, UserRegistrationSerializer, UserLoginSerializer, LandlordPropertySerializer, UnitSerializer, TenantSerializer, PaymentSerializer, NoticeSerializer, LandlordMaintenanceSerializer, MaintenanceMessageSerializer, ChatMessageSerializer, TenantInvitationSerializer, LandlordListSerializer, LandlordDetailSerializer
 from rest_framework.decorators import api_view, permission_classes
 from django.db import models
 from django.utils import timezone
@@ -222,6 +222,8 @@ class LandlordPropertyListCreateView(generics.ListCreateAPIView):
     permission_classes = [IsLandlord]
 
     def get_queryset(self):
+        # Landlords can only see their own properties
+        # Admins or special roles could potentially see all properties
         return LandlordProperty.objects.filter(landlord=self.request.user)
 
     def perform_create(self, serializer):
@@ -304,9 +306,26 @@ class UnitViewSet(viewsets.ModelViewSet):
         # Only show units for properties owned by the requesting user
         return Unit.objects.filter(property__landlord=self.request.user)
 
+    def perform_create(self, serializer):
+        # Ensure the property belongs to the requesting user
+        property_id = self.request.data.get('property')
+        if property_id:
+            try:
+                property_obj = LandlordProperty.objects.get(
+                    id=property_id, 
+                    landlord=self.request.user
+                )
+                serializer.save(property=property_obj)
+            except LandlordProperty.DoesNotExist:
+                raise serializers.ValidationError(
+                    "Property not found or you don't have permission to add units to this property."
+                )
+        else:
+            raise serializers.ValidationError("Property ID is required.")
+
 class TenantViewSet(viewsets.ModelViewSet):
     serializer_class = TenantSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsLandlord]
 
     def get_queryset(self):
         # Only show tenants for units owned by the requesting user
@@ -499,6 +518,31 @@ class ChatMessageViewSet(viewsets.ModelViewSet):
         return ChatMessage.objects.filter(
             models.Q(sender=self.request.user) | models.Q(recipient=self.request.user)
         )
+
+class LandlordListView(ListAPIView):
+    """
+    View to list all landlords with their property counts
+    """
+    serializer_class = LandlordListSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    
+    def get_queryset(self):
+        # Get all users who have the landlord role
+        landlord_role = Role.objects.get(name='landlord')
+        return User.objects.filter(roles=landlord_role).distinct()
+
+class LandlordDetailView(RetrieveAPIView):
+    """
+    View to get details of a specific landlord including their properties
+    """
+    serializer_class = LandlordDetailSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    lookup_field = 'id'
+    
+    def get_queryset(self):
+        # Get all users who have the landlord role
+        landlord_role = Role.objects.get(name='landlord')
+        return User.objects.filter(roles=landlord_role).distinct().prefetch_related('landlord_properties')
 
 class LandlordPropertyUnitsView(ListAPIView):
     """
@@ -707,15 +751,22 @@ def search_users_by_email(request):
 def check_user_by_email(request):
     """
     Check if a user exists by email. Returns user info if found, else exists: false.
+    Also checks if the user is already registered as a tenant.
     """
     email = request.GET.get('email', '').strip().lower()
     if not email:
         return Response({'error': 'Email is required.'}, status=status.HTTP_400_BAD_REQUEST)
     try:
-        user = User.objects.filter(email__iexact=email).first()
-        if user:
+        # Check if user exists
+        users = User.objects.filter(email__iexact=email)
+        if users.exists():
+            user = users.first()
+            # Check if this email is already registered as a tenant
+            is_tenant = Tenant.objects.filter(email__iexact=email).exists()
+            
             return Response({
                 'exists': True,
+                'is_tenant': is_tenant,
                 'user': {
                     'id': user.id,
                     'email': user.email,

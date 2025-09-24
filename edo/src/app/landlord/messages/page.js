@@ -10,6 +10,7 @@ import MessageDetailModal from "../../../components/landlord/messages/MessageDet
 import NewMessageModal from "../../../components/landlord/messages/NewMessageModal";
 import ChatView from "../../../components/landlord/messages/ChatView";
 import ChatList from "../../../components/landlord/messages/ChatList";
+import StartChatModal from "../../../components/landlord/messages/StartChatModal";
 import DeleteConfirmModal from "../../../components/landlord/maintenance/DeleteConfirmModal";
 import Modal from "../../../partials/Modal";
 import { isAuthenticated } from "../../../utils/api";
@@ -514,6 +515,43 @@ const Messages = () => {
 
   const [messageTab, setMessageTab] = useState("received");
 
+  // Add state for start chat modal
+  const [showStartChatModal, setShowStartChatModal] = useState(false);
+
+  // Add function to handle starting a new chat
+  const handleStartNewChat = () => {
+    setShowStartChatModal(true);
+  };
+
+  // Add function to handle selecting a tenant for a new chat
+  const handleSelectTenant = (tenant) => {
+    // Check if a chat already exists with this tenant
+    const existingChat = messages.find((chat) => chat.tenant === tenant.name);
+
+    if (existingChat) {
+      // If chat exists, select it
+      handleChatSelect(existingChat);
+    } else {
+      // If chat doesn't exist, create a new one
+      const newChat = {
+        id: Date.now(),
+        tenant: tenant.name,
+        property: tenant.property,
+        unit: tenant.unit,
+        messages: [],
+        lastMessage: "",
+        lastMessageTime: "",
+        unread: false,
+        status: "read",
+      };
+
+      setMessages((prevMessages) => [...prevMessages, newChat]);
+      handleChatSelect(newChat);
+    }
+
+    setShowStartChatModal(false);
+  };
+
   return (
     <div className="flex h-screen overflow-hidden bg-[#F5F5DC] dark:bg-slate-900">
       <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
@@ -831,16 +869,13 @@ const Messages = () => {
                     }`}
                   >
                     <div className="h-full flex flex-col">
-                      <div className="p-4 border-b border-gray-200 dark:border-gray-700">
-                        <h2 className="text-lg font-medium text-gray-900 dark:text-gray-100">
-                          Chats
-                        </h2>
-                      </div>
                       <ChatList
                         messages={messages}
                         selectedChat={selectedChat}
                         onChatSelect={handleChatSelect}
                         formatDate={formatDate}
+                        onStartNewChat={handleStartNewChat} // Add this prop
+                        mockTenants={mockTenants} // Add this prop
                       />
                     </div>
                   </div>
@@ -891,6 +926,13 @@ const Messages = () => {
         onClose={() => setIsEmailMessageModalOpen(false)}
         message={selectedEmailMessage}
         formatDate={formatDate}
+      />
+
+      <StartChatModal
+        isOpen={showStartChatModal}
+        onClose={() => setShowStartChatModal(false)}
+        tenants={mockTenants}
+        onSelectTenant={handleSelectTenant}
       />
 
       <Modal

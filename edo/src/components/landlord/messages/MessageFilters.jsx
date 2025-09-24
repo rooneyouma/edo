@@ -28,7 +28,7 @@ const MessageFilters = ({
             type="text"
             name="search"
             id="search"
-            className="block w-full rounded-lg border border-gray-300 dark:border-gray-700 pl-10 pr-4 py-2 focus:border-violet-500 focus:ring-violet-500 focus:ring-2 focus:ring-opacity-20 dark:bg-gray-800 dark:text-gray-100 sm:text-sm shadow-sm transition-all duration-200"
+            className="block w-full rounded-lg border border-gray-300 dark:border-gray-700 pl-10 pr-4 py-2 focus:border-teal-500 focus:ring-teal-500 focus:ring-2 focus:ring-opacity-20 dark:bg-gray-800 dark:text-gray-100 sm:text-sm shadow-sm transition-all duration-200"
             placeholder={`Search ${isSent ? "sent" : "received"} messages...`}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
@@ -37,7 +37,7 @@ const MessageFilters = ({
         <div className="flex items-center space-x-2">
           <button
             onClick={() => setIsFilterOpen(!isFilterOpen)}
-            className="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-violet-500"
+            className="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500"
           >
             <Filter className="h-4 w-4 mr-2" />
             Filters
@@ -51,7 +51,7 @@ const MessageFilters = ({
             onClick={() =>
               setSortOrder(sortOrder === "latest" ? "earliest" : "latest")
             }
-            className="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-violet-500"
+            className="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500"
           >
             <ArrowUpDown className="h-4 w-4 mr-2" />
             {sortOrder === "latest" ? "Latest" : "Earliest"}
@@ -74,7 +74,7 @@ const MessageFilters = ({
                 id="status"
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="block w-full rounded-lg border border-gray-300 dark:border-gray-700 pl-3 pr-10 py-2 text-sm focus:border-violet-500 focus:ring-violet-500 focus:ring-2 focus:ring-opacity-20 dark:bg-gray-700 dark:text-gray-100 shadow-sm transition-all duration-200"
+                className="block w-full rounded-lg border border-gray-300 dark:border-gray-700 pl-3 pr-10 py-2 text-sm focus:border-teal-500 focus:ring-teal-500 focus:ring-2 focus:ring-opacity-20 dark:bg-gray-700 dark:text-gray-100 shadow-sm transition-all duration-200"
               >
                 <option value="all">All Status</option>
                 <option value="read">Read</option>
@@ -94,7 +94,7 @@ const MessageFilters = ({
               id="property"
               value={propertyFilter}
               onChange={(e) => setPropertyFilter(e.target.value)}
-              className="block w-full rounded-lg border border-gray-300 dark:border-gray-700 pl-3 pr-10 py-2 text-sm focus:border-violet-500 focus:ring-violet-500 focus:ring-2 focus:ring-opacity-20 dark:bg-gray-700 dark:text-gray-100 shadow-sm transition-all duration-200"
+              className="block w-full rounded-lg border border-gray-300 dark:border-gray-700 pl-3 pr-10 py-2 text-sm focus:border-teal-500 focus:ring-teal-500 focus:ring-2 focus:ring-opacity-20 dark:bg-gray-700 dark:text-gray-100 shadow-sm transition-all duration-200"
             >
               <option value="all">All Properties</option>
               <option value="Sunset Apartments">Sunset Apartments</option>
@@ -121,7 +121,7 @@ const MessageFilters = ({
                     startDate: e.target.value,
                   }))
                 }
-                className="block w-full rounded-lg border border-gray-300 dark:border-gray-700 pl-3 pr-10 py-2 text-sm focus:border-violet-500 focus:ring-violet-500 focus:ring-2 focus:ring-opacity-20 dark:bg-gray-700 dark:text-gray-100 shadow-sm transition-all duration-200"
+                className="block w-full rounded-lg border border-gray-300 dark:border-gray-700 pl-3 pr-10 py-2 text-sm focus:border-teal-500 focus:ring-teal-500 focus:ring-2 focus:ring-opacity-20 dark:bg-gray-700 dark:text-gray-100 shadow-sm transition-all duration-200"
               />
             </div>
             <div>
@@ -141,7 +141,7 @@ const MessageFilters = ({
                     endDate: e.target.value,
                   }))
                 }
-                className="block w-full rounded-lg border border-gray-300 dark:border-gray-700 pl-3 pr-10 py-2 text-sm focus:border-violet-500 focus:ring-violet-500 focus:ring-2 focus:ring-opacity-20 dark:bg-gray-700 dark:text-gray-100 shadow-sm transition-all duration-200"
+                className="block w-full rounded-lg border border-gray-300 dark:border-gray-700 pl-3 pr-10 py-2 text-sm focus:border-teal-500 focus:ring-teal-500 focus:ring-2 focus:ring-opacity-20 dark:bg-gray-700 dark:text-gray-100 shadow-sm transition-all duration-200"
               />
             </div>
           </div>

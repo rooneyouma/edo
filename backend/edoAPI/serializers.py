@@ -73,7 +73,7 @@ class UserLoginSerializer(serializers.Serializer):
 class UnitSerializer(serializers.ModelSerializer):
     class Meta:
         model = Unit
-        fields = ['id', 'unit_id', 'floor', 'bedrooms', 'bathrooms', 'size', 'rent_amount', 'security_deposit', 'status', 'created_at', 'updated_at']
+        fields = ['id', 'property', 'unit_id', 'floor', 'bedrooms', 'bathrooms', 'size', 'rent_amount', 'security_deposit', 'status', 'created_at', 'updated_at']
         read_only_fields = ['id', 'created_at', 'updated_at']
     
     def __init__(self, *args, **kwargs):
@@ -286,3 +286,34 @@ class TenantInvitationSerializer(serializers.ModelSerializer):
         # Set the landlord to the current user
         validated_data['landlord'] = self.context['request'].user
         return super().create(validated_data)
+
+class LandlordListSerializer(serializers.ModelSerializer):
+    """
+    Serializer for landlord list view that includes landlord details and property count
+    """
+    property_count = serializers.SerializerMethodField()
+    full_name = serializers.SerializerMethodField()
+    
+    class Meta:
+        model = User
+        fields = ['id', 'email', 'first_name', 'last_name', 'full_name', 'property_count']
+    
+    def get_property_count(self, obj):
+        return obj.landlord_properties.count()
+    
+    def get_full_name(self, obj):
+        return f"{obj.first_name} {obj.last_name}".strip()
+
+class LandlordDetailSerializer(serializers.ModelSerializer):
+    """
+    Serializer for landlord detail view that includes properties
+    """
+    properties = LandlordPropertySerializer(source='landlord_properties', many=True, read_only=True)
+    full_name = serializers.SerializerMethodField()
+    
+    class Meta:
+        model = User
+        fields = ['id', 'email', 'first_name', 'last_name', 'full_name', 'properties']
+    
+    def get_full_name(self, obj):
+        return f"{obj.first_name} {obj.last_name}".strip()

@@ -6,7 +6,7 @@ from rest_framework_simplejwt.views import (
     TokenBlacklistView,
 )
 from rest_framework.routers import DefaultRouter
-from .views import UserListView, UserDetailView, UserRegistrationView, UserLoginView, UserProfileView, LandlordPropertyListCreateView, LandlordPropertyDetailView, LandlordPropertyUnitsView, become_landlord, become_tenant, become_host, OnboardRoleView, relinquish_role, UnitViewSet, TenantViewSet, TenantInvitationViewSet, LandlordMaintenanceViewSet, NoticeViewSet, create_tenant_invitation, accept_invitation, search_users_by_email, tenant_rentals, check_user_by_email, tenant_maintenance_requests, create_tenant_maintenance_request, landlord_maintenance_requests
+from .views import UserListView, UserDetailView, UserRegistrationView, UserLoginView, UserProfileView, LandlordPropertyListCreateView, LandlordPropertyDetailView, LandlordPropertyUnitsView, become_landlord, become_tenant, become_host, OnboardRoleView, relinquish_role, UnitViewSet, TenantViewSet, TenantInvitationViewSet, LandlordMaintenanceViewSet, NoticeViewSet, create_tenant_invitation, accept_invitation, search_users_by_email, tenant_rentals, check_user_by_email, tenant_maintenance_requests, create_tenant_maintenance_request, landlord_maintenance_requests, LandlordListView, LandlordDetailView
 
 # API v1 Router configuration
 v1_router = DefaultRouter()
@@ -33,6 +33,8 @@ v1_urlpatterns = [
     path('landlord/properties/', LandlordPropertyListCreateView.as_view(), name='v1_landlord-property-list-create'),
     path('landlord/properties/<int:id>/', LandlordPropertyDetailView.as_view(), name='v1_landlord-property-detail'),
     path('landlord/properties/<int:property_id>/units/', LandlordPropertyUnitsView.as_view(), name='v1_landlord-property-units'),
+    path('landlords/', LandlordListView.as_view(), name='v1_landlord-list'),
+    path('landlords/<int:id>/', LandlordDetailView.as_view(), name='v1_landlord-detail'),
     path('users/become_landlord/', become_landlord, name='v1_become_landlord'),
     path('users/become_tenant/', become_tenant, name='v1_become_tenant'),
     path('users/become_host/', become_host, name='v1_become_host'),
@@ -60,4 +62,3 @@ urlpatterns = [
     # Versioned API endpoints
     path('v1/', include(v1_urlpatterns)),
 ]
-
