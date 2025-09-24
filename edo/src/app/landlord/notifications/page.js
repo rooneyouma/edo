@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import TenantHeader from "@/partials/tenant/TenantHeader.jsx";
-import TenantSidebar from "@/partials/tenant/TenantSidebar.jsx";
+import LandlordHeader from "@/partials/dashboard/LandlordHeader.jsx";
+import LandlordSidebar from "@/partials/dashboard/LandlordSidebar.jsx";
 import {
   Bell,
   AlertTriangle,
@@ -11,6 +11,8 @@ import {
   Wrench,
   Filter,
   ChevronDown,
+  Home,
+  Users,
 } from "lucide-react";
 import { isAuthenticated } from "@/utils/api.js";
 import { useRouter } from "next/navigation";
@@ -26,14 +28,14 @@ const Notifications = () => {
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
 
-  // Mock notifications data - moved before conditional returns to maintain hook order
+  // Mock notifications data - landlord specific
   const [notifications, setNotifications] = useState([
     {
       id: 1,
       type: "maintenance",
-      title: "Maintenance Update",
+      title: "New Maintenance Request",
       message:
-        "Your maintenance request has been approved and scheduled for tomorrow",
+        "Tenant Sarah Johnson submitted a new maintenance request for HVAC repair",
       time: "2 hours ago",
       read: false,
       icon: Wrench,
@@ -41,8 +43,8 @@ const Notifications = () => {
     {
       id: 2,
       type: "payment",
-      title: "Payment Reminder",
-      message: "Rent payment of $1,200 is due in 5 days",
+      title: "Payment Received",
+      message: "Rent payment of $1,200 received from Michael Davis for Unit 3B",
       time: "1 day ago",
       read: true,
       icon: DollarSign,
@@ -50,20 +52,40 @@ const Notifications = () => {
     {
       id: 3,
       type: "notice",
-      title: "Building Maintenance Notice",
-      message: "Annual building maintenance will be conducted next week",
+      title: "Eviction Notice Sent",
+      message: "30-day eviction notice issued to Robert Wilson for non-payment",
       time: "2 days ago",
       read: false,
-      icon: FileText,
+      icon: AlertTriangle,
     },
     {
       id: 4,
-      type: "eviction",
-      title: "Eviction Notice",
-      message: "Notice of eviction proceedings for non-payment",
+      type: "property",
+      title: "Property Inspection Due",
+      message:
+        "Annual inspection required for Sunset Apartments by end of month",
       time: "3 days ago",
       read: false,
-      icon: AlertTriangle,
+      icon: Home,
+    },
+    {
+      id: 5,
+      type: "tenant",
+      title: "Lease Renewal Reminder",
+      message:
+        "Emily Chen's lease expires in 45 days - renewal discussion needed",
+      time: "4 days ago",
+      read: true,
+      icon: Users,
+    },
+    {
+      id: 6,
+      type: "payment",
+      title: "Overdue Payment Alert",
+      message: "Rent payment overdue for 5 days from David Brown - Unit 2A",
+      time: "5 days ago",
+      read: false,
+      icon: DollarSign,
     },
   ]);
 
@@ -133,6 +155,20 @@ const Notifications = () => {
           badge:
             "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300",
         };
+      case "property":
+        return {
+          container: "bg-purple-50 dark:bg-purple-900/20",
+          icon: "text-purple-600 dark:text-purple-400",
+          badge:
+            "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300",
+        };
+      case "tenant":
+        return {
+          container: "bg-indigo-50 dark:bg-indigo-900/20",
+          icon: "text-indigo-600 dark:text-indigo-400",
+          badge:
+            "bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-300",
+        };
       default:
         return {
           container: "bg-yellow-50 dark:bg-yellow-900/20",
@@ -150,13 +186,13 @@ const Notifications = () => {
 
   const sortedNotifications = [...filteredNotifications].sort((a, b) => {
     if (sortBy === "date") {
-      return a.time.localeCompare(b.time);
+      return new Date(b.time) - new Date(a.time); // Most recent first
     }
     if (sortBy === "unread") {
       if (a.read === b.read) {
-        return a.time.localeCompare(b.time);
+        return new Date(b.time) - new Date(a.time); // Most recent first
       }
-      return a.read ? 1 : -1;
+      return a.read ? 1 : -1; // Unread first
     }
     return 0;
   });
@@ -164,9 +200,12 @@ const Notifications = () => {
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-900">
       <div className="flex">
-        <TenantSidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+        <LandlordSidebar
+          sidebarOpen={isSidebarOpen}
+          setSidebarOpen={setIsSidebarOpen}
+        />
         <div className="flex-1 flex flex-col lg:ml-64">
-          <TenantHeader toggleSidebar={toggleSidebar} />
+          <LandlordHeader toggleSidebar={toggleSidebar} />
           {/* Main content */}
           <main className="flex-1 py-2 sm:py-4 pl-4 pr-8 sm:pl-6 sm:pr-12 lg:pl-8 lg:pr-16">
             {/* Page header - Title always at top on mobile */}
@@ -175,7 +214,7 @@ const Notifications = () => {
                 Notifications
               </h1>
               <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
-                View and manage your notifications
+                View and manage your landlord notifications
               </p>
             </div>
             {/* Controls row (filter/sort) - below title on mobile, right on desktop */}
@@ -185,7 +224,7 @@ const Notifications = () => {
                 <div className="relative">
                   <button
                     onClick={() => setIsFilterOpen(!isFilterOpen)}
-                    className="inline-flex items-center px-4 py-2 border border-slate-300 dark:border-slate-600 text-sm font-medium rounded-md text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0d9488]"
+                    className="inline-flex items-center px-4 py-2 border border-slate-300 dark:border-slate-600 text-sm font-medium rounded-md text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500"
                   >
                     <Filter className="h-4 w-4 mr-2" />
                     Filter
@@ -200,7 +239,7 @@ const Notifications = () => {
                         }}
                         className={`block w-full text-left px-4 py-2 text-sm ${
                           filterType === "all"
-                            ? "text-[#0d9488] dark:text-[#0d9488] bg-[#0d9488]/10 dark:bg-[#0d9488]/10"
+                            ? "text-teal-600 dark:text-teal-400 bg-teal-50 dark:bg-teal-900/20"
                             : "text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/50"
                         }`}
                       >
@@ -213,7 +252,7 @@ const Notifications = () => {
                         }}
                         className={`block w-full text-left px-4 py-2 text-sm ${
                           filterType === "eviction"
-                            ? "text-[#0d9488] dark:text-[#0d9488] bg-[#0d9488]/10 dark:bg-[#0d9488]/10"
+                            ? "text-teal-600 dark:text-teal-400 bg-teal-50 dark:bg-teal-900/20"
                             : "text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/50"
                         }`}
                       >
@@ -226,7 +265,7 @@ const Notifications = () => {
                         }}
                         className={`block w-full text-left px-4 py-2 text-sm ${
                           filterType === "maintenance"
-                            ? "text-[#0d9488] dark:text-[#0d9488] bg-[#0d9488]/10 dark:bg-[#0d9488]/10"
+                            ? "text-teal-600 dark:text-teal-400 bg-teal-50 dark:bg-teal-900/20"
                             : "text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/50"
                         }`}
                       >
@@ -239,7 +278,7 @@ const Notifications = () => {
                         }}
                         className={`block w-full text-left px-4 py-2 text-sm ${
                           filterType === "payment"
-                            ? "text-[#0d9488] dark:text-[#0d9488] bg-[#0d9488]/10 dark:bg-[#0d9488]/10"
+                            ? "text-teal-600 dark:text-teal-400 bg-teal-50 dark:bg-teal-900/20"
                             : "text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/50"
                         }`}
                       >
@@ -247,16 +286,29 @@ const Notifications = () => {
                       </button>
                       <button
                         onClick={() => {
-                          setFilterType("notice");
+                          setFilterType("property");
                           setIsFilterOpen(false);
                         }}
                         className={`block w-full text-left px-4 py-2 text-sm ${
-                          filterType === "notice"
-                            ? "text-[#0d9488] dark:text-[#0d9488] bg-[#0d9488]/10 dark:bg-[#0d9488]/10"
+                          filterType === "property"
+                            ? "text-teal-600 dark:text-teal-400 bg-teal-50 dark:bg-teal-900/20"
                             : "text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/50"
                         }`}
                       >
-                        General Notices
+                        Property Alerts
+                      </button>
+                      <button
+                        onClick={() => {
+                          setFilterType("tenant");
+                          setIsFilterOpen(false);
+                        }}
+                        className={`block w-full text-left px-4 py-2 text-sm ${
+                          filterType === "tenant"
+                            ? "text-teal-600 dark:text-teal-400 bg-teal-50 dark:bg-teal-900/20"
+                            : "text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/50"
+                        }`}
+                      >
+                        Tenant Updates
                       </button>
                     </div>
                   )}
@@ -307,53 +359,66 @@ const Notifications = () => {
 
             {/* Notifications list */}
             <div className="space-y-4">
-              {sortedNotifications.map((notification) => {
-                const styles = getNotificationStyles(notification.type);
-                const Icon = notification.icon;
-                return (
-                  <div
-                    key={notification.id}
-                    onClick={() => handleNotificationClick(notification.id)}
-                    className={`p-4 rounded-lg ${styles.container} ${
-                      !notification.read ? "border-l-4 border-teal-500" : ""
-                    } cursor-pointer hover:bg-opacity-75 transition-colors duration-200`}
-                  >
-                    <div className="flex items-start space-x-4">
-                      <div className="flex-shrink-0">
-                        <div className={`p-2 rounded-lg ${styles.container}`}>
-                          <Icon className={`h-6 w-6 ${styles.icon}`} />
-                        </div>
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center space-x-2">
-                            <span
-                              className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${styles.badge}`}
-                            >
-                              {notification.type.charAt(0).toUpperCase() +
-                                notification.type.slice(1)}
-                            </span>
-                            {!notification.read && (
-                              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-teal-100 text-teal-800 dark:bg-teal-900 dark:text-teal-300">
-                                New
-                              </span>
-                            )}
+              {sortedNotifications.length > 0 ? (
+                sortedNotifications.map((notification) => {
+                  const styles = getNotificationStyles(notification.type);
+                  const Icon = notification.icon;
+                  return (
+                    <div
+                      key={notification.id}
+                      onClick={() => handleNotificationClick(notification.id)}
+                      className={`p-4 rounded-lg ${styles.container} ${
+                        !notification.read ? "border-l-4 border-teal-500" : ""
+                      } cursor-pointer hover:bg-opacity-75 transition-colors duration-200`}
+                    >
+                      <div className="flex items-start space-x-4">
+                        <div className="flex-shrink-0">
+                          <div className={`p-2 rounded-lg ${styles.container}`}>
+                            <Icon className={`h-6 w-6 ${styles.icon}`} />
                           </div>
-                          <span className="text-sm text-slate-500 dark:text-slate-400">
-                            {notification.time}
-                          </span>
                         </div>
-                        <h3 className="mt-2 text-sm font-medium text-slate-900 dark:text-slate-100">
-                          {notification.title}
-                        </h3>
-                        <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
-                          {notification.message}
-                        </p>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center space-x-2">
+                              <span
+                                className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${styles.badge}`}
+                              >
+                                {notification.type.charAt(0).toUpperCase() +
+                                  notification.type.slice(1)}
+                              </span>
+                              {!notification.read && (
+                                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-teal-100 text-teal-800 dark:bg-teal-900 dark:text-teal-300">
+                                  New
+                                </span>
+                              )}
+                            </div>
+                            <span className="text-sm text-slate-500 dark:text-slate-400">
+                              {notification.time}
+                            </span>
+                          </div>
+                          <h3 className="mt-2 text-sm font-medium text-slate-900 dark:text-slate-100">
+                            {notification.title}
+                          </h3>
+                          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+                            {notification.message}
+                          </p>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                );
-              })}
+                  );
+                })
+              ) : (
+                <div className="text-center py-12">
+                  <Bell className="mx-auto h-12 w-12 text-slate-400" />
+                  <h3 className="mt-2 text-sm font-medium text-slate-900 dark:text-slate-100">
+                    No notifications
+                  </h3>
+                  <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+                    You're all caught up! Check back later for new
+                    notifications.
+                  </p>
+                </div>
+              )}
             </div>
           </main>
         </div>

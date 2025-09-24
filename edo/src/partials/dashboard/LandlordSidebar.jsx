@@ -93,6 +93,12 @@ function LandlordSidebar({ sidebarOpen, setSidebarOpen }) {
       current: pathname === "/landlord/payments",
     },
     {
+      name: "Notifications",
+      href: "/landlord/notifications",
+      icon: Bell,
+      current: pathname === "/landlord/notifications",
+    },
+    {
       name: "Settings",
       href: "/landlord/settings",
       icon: Settings,

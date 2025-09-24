@@ -103,6 +103,44 @@ const TenantHeader = ({ toggleSidebar }) => {
       path: "/tenant/notices",
       icon: FileText,
     },
+    {
+      id: 5,
+      type: "payment",
+      title: "Payment History",
+      description: "View your complete payment history and receipts",
+      date: "Always available",
+      path: "/tenant/payments",
+      icon: DollarSign,
+    },
+    {
+      id: 6,
+      type: "maintenance",
+      title: "Submit Maintenance Request",
+      description: "Report a new issue or problem with your unit",
+      date: "Available anytime",
+      path: "/tenant/maintenance",
+      icon: Wrench,
+    },
+    {
+      id: 7,
+      type: "notification",
+      title: "Lease Renewal Reminder",
+      description: "Your lease expires in 3 months - action required",
+      priority: "Important",
+      date: "1 week ago",
+      path: "/tenant/notifications",
+      icon: FileText,
+    },
+    {
+      id: 8,
+      type: "notice",
+      title: "Rent Increase Notice",
+      description: "Annual rent adjustment effective next month",
+      amount: "New rent: KES 1,300",
+      date: "5 days ago",
+      path: "/tenant/notices",
+      icon: AlertTriangle,
+    },
   ];
 
   const handleSearch = (e) => {
@@ -112,8 +150,11 @@ const TenantHeader = ({ toggleSidebar }) => {
   // Enhanced search filtering
   const filteredResults = searchResults.filter((result) => {
     const searchTerms = searchQuery.toLowerCase().split(" ");
-    const searchableText =
-      `${result.title} ${result.description} ${result.type}`.toLowerCase();
+    const searchableText = `${result.title} ${result.description} ${
+      result.type
+    } ${result.priority || ""} ${result.status || ""} ${
+      result.amount || ""
+    }`.toLowerCase();
     return searchTerms.every((term) => searchableText.includes(term));
   });
 
@@ -173,7 +214,7 @@ const TenantHeader = ({ toggleSidebar }) => {
             {/* Search */}
             <button
               type="button"
-              className="p-1 rounded-full text-slate-500 hover:text-slate-600 dark:text-slate-400 dark:hover:text-slate-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-violet-500"
+              className="p-1 rounded-full text-slate-500 hover:text-slate-600 dark:text-slate-400 dark:hover:text-slate-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500"
               onClick={() => setIsSearchOpen(true)}
             >
               <span className="sr-only">Search</span>
@@ -187,7 +228,7 @@ const TenantHeader = ({ toggleSidebar }) => {
             <div className="relative">
               <button
                 type="button"
-                className="p-1 rounded-full text-slate-500 hover:text-slate-600 dark:text-slate-400 dark:hover:text-slate-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-violet-500"
+                className="p-1 rounded-full text-slate-500 hover:text-slate-600 dark:text-slate-400 dark:hover:text-slate-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500"
                 onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}
               >
                 <span className="sr-only">View notifications</span>
@@ -211,7 +252,7 @@ const TenantHeader = ({ toggleSidebar }) => {
                         key={notification.id}
                         className={`px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-700/50 ${
                           !notification.read
-                            ? "bg-violet-50 dark:bg-violet-900/20"
+                            ? "bg-teal-50 dark:bg-teal-900/20"
                             : ""
                         }`}
                       >
@@ -233,7 +274,7 @@ const TenantHeader = ({ toggleSidebar }) => {
                     <div className="px-4 py-2 border-t border-slate-200 dark:border-slate-700">
                       <Link
                         href="/tenant/notifications"
-                        className="w-full text-sm text-violet-600 dark:text-violet-400 hover:text-violet-700 dark:hover:text-violet-300"
+                        className="w-full text-sm text-teal-600 dark:text-teal-400 hover:text-teal-700 dark:hover:text-teal-300"
                         onClick={() => setIsNotificationsOpen(false)}
                       >
                         View all notifications
@@ -248,7 +289,7 @@ const TenantHeader = ({ toggleSidebar }) => {
             <div className="relative">
               <button
                 type="button"
-                className="flex items-center max-w-xs rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-violet-500"
+                className="flex items-center max-w-xs rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500"
                 onClick={() => setIsProfileOpen(!isProfileOpen)}
               >
                 <span className="sr-only">Open user menu</span>
@@ -281,7 +322,7 @@ const TenantHeader = ({ toggleSidebar }) => {
                     {/* Profile info */}
                     <div className="px-4 py-3 border-b border-slate-200 dark:border-slate-700">
                       <div className="flex items-center">
-                        <div className="h-10 w-10 rounded-full bg-violet-600 flex items-center justify-center">
+                        <div className="h-10 w-10 rounded-full bg-teal-600 flex items-center justify-center">
                           <span className="text-sm font-medium text-white">
                             {isClient &&
                               user &&
@@ -352,8 +393,8 @@ const TenantHeader = ({ toggleSidebar }) => {
                         type="text"
                         value={searchQuery}
                         onChange={handleSearch}
-                        placeholder="Search for eviction notices, maintenance requests, payments..."
-                        className="block w-full pl-10 pr-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md leading-5 bg-white dark:bg-slate-800 placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent sm:text-sm"
+                        placeholder="Search notices, maintenance, payments, notifications, lease info..."
+                        className="block w-full pl-10 pr-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md leading-5 bg-white dark:bg-slate-800 placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent sm:text-sm"
                         autoFocus
                       />
                     </div>
@@ -381,7 +422,11 @@ const TenantHeader = ({ toggleSidebar }) => {
                                             ? "bg-blue-100 dark:bg-blue-900/30"
                                             : result.type === "notice"
                                             ? "bg-yellow-100 dark:bg-yellow-900/30"
-                                            : "bg-green-100 dark:bg-green-900/30"
+                                            : result.type === "payment"
+                                            ? "bg-green-100 dark:bg-green-900/30"
+                                            : result.type === "notification"
+                                            ? "bg-purple-100 dark:bg-purple-900/30"
+                                            : "bg-gray-100 dark:bg-gray-900/30"
                                         }`}
                                       >
                                         <Icon
@@ -392,7 +437,11 @@ const TenantHeader = ({ toggleSidebar }) => {
                                               ? "text-blue-600 dark:text-blue-400"
                                               : result.type === "notice"
                                               ? "text-yellow-600 dark:text-yellow-400"
-                                              : "text-green-600 dark:text-green-400"
+                                              : result.type === "payment"
+                                              ? "text-green-600 dark:text-green-400"
+                                              : result.type === "notification"
+                                              ? "text-purple-600 dark:text-purple-400"
+                                              : "text-gray-600 dark:text-gray-400"
                                           }`}
                                         />
                                       </div>
@@ -411,7 +460,16 @@ const TenantHeader = ({ toggleSidebar }) => {
                                       </p>
                                       <div className="mt-1 flex items-center space-x-2">
                                         {result.priority && (
-                                          <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300">
+                                          <span
+                                            className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${
+                                              result.priority === "Urgent"
+                                                ? "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300"
+                                                : result.priority ===
+                                                  "Important"
+                                                ? "bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-300"
+                                                : "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300"
+                                            }`}
+                                          >
                                             {result.priority}
                                           </span>
                                         )}
@@ -420,10 +478,15 @@ const TenantHeader = ({ toggleSidebar }) => {
                                             {result.status}
                                           </span>
                                         )}
-                                        {result.amount && (
+                                        {result.amount && result.dueDate && (
                                           <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300">
                                             {result.amount} due in{" "}
                                             {result.dueDate}
+                                          </span>
+                                        )}
+                                        {result.amount && !result.dueDate && (
+                                          <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300">
+                                            {result.amount}
                                           </span>
                                         )}
                                       </div>

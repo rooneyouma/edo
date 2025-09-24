@@ -150,8 +150,14 @@ const activityTimeline = [
 const LandlordDashboard = () => {
   const [showOnboardModal, setShowOnboardModal] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [isClient, setIsClient] = useState(false);
   const router = useRouter();
   const storedUser = getStoredUser();
+
+  // Initialize client-side state
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   // React Query for fetching user data
   const { data: user = storedUser } = useQuery({
@@ -207,10 +213,42 @@ const LandlordDashboard = () => {
             <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-100 mb-4">
               Property Manager
             </h2>
-            <p className="text-slate-600 dark:text-slate-400 mb-8">
-              Welcome back, {displayName}! Here's what's happening with your
-              properties today.
-            </p>
+
+            {/* Welcome Banner with Profile Picture */}
+            <div className="mb-6 flex items-center gap-4">
+              {isClient && user && user.profile_image_url ? (
+                <img
+                  src={user.profile_image_url}
+                  alt={user.first_name || user.name}
+                  className="h-12 w-12 rounded-full"
+                />
+              ) : (
+                <div className="h-12 w-12 rounded-full bg-teal-600 flex items-center justify-center text-white text-xl font-bold">
+                  {isClient &&
+                    user &&
+                    (user.first_name
+                      ? user.first_name.charAt(0)
+                      : user.name
+                      ? user.name.charAt(0)
+                      : "U")}
+                  {!isClient && "U"}
+                </div>
+              )}
+              <div>
+                <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">
+                  Welcome,{" "}
+                  {isClient && user
+                    ? `${user.first_name || ""} ${
+                        user.last_name || user.name || ""
+                      }`.trim()
+                    : ""}
+                  !
+                </h1>
+                <p className="text-sm text-slate-500 dark:text-slate-400">
+                  Here's what's happening with your properties today.
+                </p>
+              </div>
+            </div>
 
             {/* Quick Actions */}
             <div className="mb-8">

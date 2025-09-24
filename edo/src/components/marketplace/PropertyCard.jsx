@@ -83,7 +83,7 @@ const PropertyCard = memo(({ property, onBookmarkToggle }) => {
   const statusInfo = getStatusLabel(type);
 
   return (
-    <div className="group bg-gradient-to-br from-white via-gray-50/30 to-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl hover:scale-[1.02] transition-all duration-500 ease-out border border-gray-200/50 backdrop-blur-sm hover:border-[#009688]/20">
+    <div className="group bg-gradient-to-br from-white via-gray-50/30 to-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl hover:scale-[1.02] transition-all duration-500 ease-out border border-gray-200/50 backdrop-blur-sm hover:border-[#009688]/20 flex flex-col h-full">
       <div className="relative aspect-[4/3] overflow-hidden">
         <Link href={`/property/${id}`} className="block">
           <img
@@ -124,8 +124,8 @@ const PropertyCard = memo(({ property, onBookmarkToggle }) => {
         <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
       </div>
 
-      <div className="p-4 bg-gradient-to-br from-white to-gray-50/50">
-        <Link href={`/property/${id}`} className="block">
+      <div className="p-4 bg-gradient-to-br from-white to-gray-50/50 flex flex-col flex-grow">
+        <Link href={`/property/${id}`} className="block flex-grow">
           <h3 className="text-base font-bold text-gray-800 mb-2 line-clamp-2 group-hover:text-[#009688] transition-colors duration-300">
             {title}
           </h3>
@@ -141,11 +141,13 @@ const PropertyCard = memo(({ property, onBookmarkToggle }) => {
             </p>
           </div>
         </Link>
-        <Link href={`/property/${id}`} className="block">
-          <button className="w-full bg-gradient-to-r from-[#009688] to-[#33bbaa] text-white py-3 px-4 rounded-xl hover:from-[#00796b] hover:to-[#26a69a] transition-all duration-300 text-sm font-semibold shadow-md hover:shadow-lg transform hover:scale-[1.02]">
-            View Details
-          </button>
-        </Link>
+        <div className="mt-auto">
+          <Link href={`/property/${id}`} className="block">
+            <button className="w-full bg-gradient-to-r from-[#009688] to-[#33bbaa] text-white py-3 px-4 rounded-xl hover:from-[#00796b] hover:to-[#26a69a] transition-all duration-300 text-sm font-semibold shadow-md hover:shadow-lg transform hover:scale-[1.02]">
+              View Details
+            </button>
+          </Link>
+        </div>
       </div>
     </div>
   );

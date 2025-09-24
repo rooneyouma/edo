@@ -42,10 +42,8 @@ export default function ThemeProvider({ children }) {
       root.classList.add("dark");
     }
 
-    // Don't set colorScheme during hydration to avoid mismatch
-    if (mounted) {
-      root.style.colorScheme = theme;
-    }
+    // Set color scheme
+    root.style.colorScheme = theme;
   }, [theme, mounted]);
 
   // Prevent hydration mismatch by not rendering until mounted
