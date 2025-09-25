@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 
 const ChatList = ({
   conversations,
@@ -10,12 +10,23 @@ const ChatList = ({
   onSearchChange,
 }) => {
   // Filter conversations based on search query
-  const filteredConversations = conversations.filter(
-    (chat) =>
-      chat.propertyName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      chat.manager.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      chat.lastMessage.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredConversations = conversations.filter((chat) => {
+    // If no search query, show all conversations
+    if (!searchQuery) {
+      return true;
+    }
+
+    // If there is a search query, filter by property name, manager name, or message content
+    return (
+      (chat.propertyName &&
+        chat.propertyName.toLowerCase().includes(searchQuery.toLowerCase())) ||
+      (chat.manager &&
+        chat.manager.name &&
+        chat.manager.name.toLowerCase().includes(searchQuery.toLowerCase())) ||
+      (chat.lastMessage &&
+        chat.lastMessage.toLowerCase().includes(searchQuery.toLowerCase()))
+    );
+  });
 
   return (
     <div className="flex-1 flex flex-col h-full">
@@ -86,27 +97,33 @@ const ChatList = ({
                       <div className="flex-shrink-0">
                         <div className="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center">
                           <span className="text-sm font-medium text-gray-600 dark:text-gray-300">
-                            {chat.manager.name
-                              .split(" ")
-                              .map((n) => n[0])
-                              .join("")}
+                            {chat.manager && chat.manager.name
+                              ? chat.manager.name
+                                  .split(" ")
+                                  .map((n) => n[0])
+                                  .join("")
+                              : "M"}
                           </span>
                         </div>
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between">
                           <p className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
-                            {chat.manager.name}
+                            {chat.propertyName || "Property"}
                           </p>
                           <p className="text-xs text-gray-500 dark:text-gray-400">
-                            {formatDate(chat.lastMessageTime)}
+                            {chat.lastMessageTime
+                              ? formatDate(chat.lastMessageTime)
+                              : ""}
                           </p>
                         </div>
                         <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
-                          {chat.propertyName} - property manager
+                          {chat.manager && chat.manager.name
+                            ? `${chat.manager.name} - property manager`
+                            : "Property Manager"}
                         </p>
                         <p className="text-sm text-gray-500 dark:text-gray-400 truncate mt-1">
-                          {chat.lastMessage}
+                          {chat.lastMessage || "No messages yet"}
                         </p>
                       </div>
                     </div>
@@ -128,7 +145,8 @@ const ChatList = ({
             )}
             {filteredConversations.length === 0 &&
               !searchQuery &&
-              hasRentals && (
+              hasRentals &&
+              conversations.length === 0 && (
                 <div className="p-4 text-center text-gray-500 dark:text-gray-400">
                   No conversations yet.
                 </div>

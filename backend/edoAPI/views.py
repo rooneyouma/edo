@@ -519,6 +519,10 @@ class ChatMessageViewSet(viewsets.ModelViewSet):
             models.Q(sender=self.request.user) | models.Q(recipient=self.request.user)
         )
 
+    def perform_create(self, serializer):
+        # Set the sender to the current user
+        serializer.save(sender=self.request.user)
+
 class LandlordListView(ListAPIView):
     """
     View to list all landlords with their property counts
@@ -824,6 +828,7 @@ def tenant_rentals(request):
                 'lease_end_date': tenancy.end_date.isoformat() if tenancy.end_date else None,
                 'lease_type': tenancy.lease_type,
                 'status': unit.status,
+                'landlord_id': property_obj.landlord.id,
                 'landlord_name': f"{property_obj.landlord.first_name} {property_obj.landlord.last_name}",
                 'landlord_email': property_obj.landlord.email,
                 'landlord_phone': property_obj.landlord.phone,

@@ -6,7 +6,7 @@ from rest_framework_simplejwt.views import (
     TokenBlacklistView,
 )
 from rest_framework.routers import DefaultRouter
-from .views import UserListView, UserDetailView, UserRegistrationView, UserLoginView, UserProfileView, LandlordPropertyListCreateView, LandlordPropertyDetailView, LandlordPropertyUnitsView, become_landlord, become_tenant, become_host, OnboardRoleView, relinquish_role, UnitViewSet, TenantViewSet, TenantInvitationViewSet, LandlordMaintenanceViewSet, NoticeViewSet, create_tenant_invitation, accept_invitation, search_users_by_email, tenant_rentals, check_user_by_email, tenant_maintenance_requests, create_tenant_maintenance_request, landlord_maintenance_requests, LandlordListView, LandlordDetailView
+from .views import UserListView, UserDetailView, UserRegistrationView, UserLoginView, UserProfileView, LandlordPropertyListCreateView, LandlordPropertyDetailView, LandlordPropertyUnitsView, become_landlord, become_tenant, become_host, OnboardRoleView, relinquish_role, UnitViewSet, TenantViewSet, TenantInvitationViewSet, LandlordMaintenanceViewSet, NoticeViewSet, ChatMessageViewSet, create_tenant_invitation, accept_invitation, search_users_by_email, tenant_rentals, check_user_by_email, tenant_maintenance_requests, create_tenant_maintenance_request, landlord_maintenance_requests, LandlordListView, LandlordDetailView
 
 # API v1 Router configuration
 v1_router = DefaultRouter()
@@ -15,6 +15,7 @@ v1_router.register(r'tenants', TenantViewSet, basename='v1_tenant')
 v1_router.register(r'tenant-invitations', TenantInvitationViewSet, basename='v1_tenant-invitation')
 v1_router.register(r'landlord-maintenance', LandlordMaintenanceViewSet, basename='v1_landlord-maintenance')
 v1_router.register(r'notices', NoticeViewSet, basename='v1_notice')
+v1_router.register(r'chat-messages', ChatMessageViewSet, basename='v1_chat-message')
 
 # API v1 URL patterns
 v1_urlpatterns = [

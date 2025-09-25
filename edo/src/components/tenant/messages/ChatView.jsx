@@ -67,7 +67,7 @@ const ChatView = ({
         className="flex-1 min-h-0 overflow-y-auto p-4 space-y-4"
         style={{ maxHeight: "none" }}
       >
-        {messages[selectedChat.propertyId]?.map((message) => (
+        {messages[selectedChat.id]?.map((message) => (
           <div
             key={message.id}
             className={`flex ${
@@ -123,7 +123,7 @@ const ChatView = ({
           <button
             type="submit"
             disabled={!newChatMessage.trim()}
-            className="p-2 text-teal-600 dark:text-teal-400 hover:text-teal-700 dark:hover:text-teal-300"
+            className="p-2 text-teal-600 dark:text-teal-400 hover:text-teal-700 dark:hover:text-teal-300 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <svg
               className="w-5 h-5"

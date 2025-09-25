@@ -6,9 +6,8 @@ import TenantSidebar from "../../../partials/tenant/TenantSidebar.jsx";
 import { useSearchParams, useRouter } from "next/navigation";
 import ChatView from "../../../components/tenant/messages/ChatView.jsx";
 import ChatList from "../../../components/tenant/messages/ChatList.jsx";
-import { isAuthenticated } from "../../../utils/api.js";
+import { isAuthenticated, chatAPI, tenantAPI } from "../../../utils/api.js";
 import Link from "next/link";
-import { tenantAPI } from "../../../utils/api.js";
 
 const Messages = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -22,6 +21,8 @@ const Messages = () => {
   const [rentals, setRentals] = useState([]);
   const [loadingRentals, setLoadingRentals] = useState(true);
   const [error, setError] = useState(null);
+  const [conversations, setConversations] = useState([]);
+  const [messageHistory, setMessageHistory] = useState({});
 
   // Initialize client-side state
   useEffect(() => {
@@ -47,66 +48,188 @@ const Messages = () => {
     }
   }, []);
 
-  // Mock data for conversations - This should be replaced with actual API calls
-  const [conversations, setConversations] = useState([
-    {
-      id: 1,
-      propertyId: 1,
-      propertyName: "Sunset Apartments",
-      unit: "101",
-      manager: {
-        id: 1,
-        name: "John Smith",
-        email: "john@sunsetapts.com",
-      },
-      lastMessage: "Thank you for your maintenance request...",
-      lastMessageTime: "2024-02-20T10:30:00",
-      unread: true,
-    },
-    {
-      id: 2,
-      propertyId: 2,
-      propertyName: "Ocean View Condos",
-      unit: "302",
-      manager: {
-        id: 2,
-        name: "Sarah Johnson",
-        email: "sarah@oceanview.com",
-      },
-      lastMessage: "Your rent payment has been received...",
-      lastMessageTime: "2024-02-19T15:45:00",
-      unread: false,
-    },
-  ]);
+  // Fetch chat conversations and messages
+  useEffect(() => {
+    const fetchChatData = async () => {
+      try {
+        // Fetch chat messages
+        const chatMessages = await chatAPI.getMessages();
 
-  // Message history state
-  const [messageHistory, setMessageHistory] = useState({
-    1: [
-      {
-        id: 1,
-        sender: "manager",
-        content: "Hello! How can I help you today?",
-        timestamp: "2024-02-20T10:30:00",
-        read: true,
-      },
-      {
-        id: 2,
-        sender: "tenant",
-        content: "I have a question about my maintenance request.",
-        timestamp: "2024-02-20T10:31:00",
-        read: true,
-      },
-    ],
-    2: [
-      {
-        id: 1,
-        sender: "manager",
-        content: "Your rent payment has been received. Thank you!",
-        timestamp: "2024-02-19T15:45:00",
-        read: true,
-      },
-    ],
-  });
+        // Initialize with rentals as base conversations
+        const processedConversations = [];
+        const processedMessageHistory = {};
+
+        // Create conversation entries for each rental property
+        if (rentals.length > 0) {
+          rentals.forEach((rental, index) => {
+            processedConversations.push({
+              id: index + 1,
+              propertyId: rental.property_id,
+              propertyName: rental.property_name || "Property",
+              unit: rental.unit_id || "",
+              manager: {
+                id: rental.landlord_id || 1, // Placeholder ID
+                name: rental.landlord_name || "Property Manager",
+                email: rental.landlord_email || "manager@example.com",
+              },
+              lastMessage: "",
+              lastMessageTime: "",
+              unread: false,
+            });
+
+            // Initialize empty message history for this conversation
+            processedMessageHistory[index + 1] = [];
+          });
+        }
+
+        // If we have chat messages, update the conversations with actual message data
+        if (chatMessages && chatMessages.length > 0) {
+          // Group messages by property/recipient
+          const messageGroups = {};
+          chatMessages.forEach((msg) => {
+            // Use property ID to group messages
+            const conversationKey = msg.property || msg.recipient;
+
+            if (!messageGroups[conversationKey]) {
+              messageGroups[conversationKey] = [];
+            }
+            messageGroups[conversationKey].push(msg);
+          });
+
+          // Update conversations with actual message data
+          Object.keys(messageGroups).forEach((propertyId) => {
+            const messages = messageGroups[propertyId];
+            const latestMessage = messages[messages.length - 1];
+
+            // Find the conversation for this property
+            const conversationIndex = processedConversations.findIndex(
+              (conv) => conv.propertyId == propertyId
+            );
+
+            if (conversationIndex !== -1) {
+              // Update existing conversation with message data
+              processedConversations[conversationIndex] = {
+                ...processedConversations[conversationIndex],
+                lastMessage: latestMessage.message,
+                lastMessageTime: latestMessage.timestamp,
+                unread: !latestMessage.is_read,
+              };
+            }
+
+            // Store messages for this conversation
+            if (conversationIndex !== -1) {
+              processedMessageHistory[conversationIndex + 1] = messages.map(
+                (msg) => ({
+                  id: msg.id,
+                  sender: msg.sender_type === "tenant" ? "tenant" : "manager",
+                  content: msg.message,
+                  timestamp: msg.timestamp,
+                  read: msg.is_read,
+                })
+              );
+            }
+          });
+        }
+
+        setConversations(processedConversations);
+        setMessageHistory(processedMessageHistory);
+      } catch (err) {
+        console.error("Error fetching chat data:", err);
+        // Fallback to mock data if API fails
+        // Create conversation entries for each rental property
+        const fallbackConversations = [];
+        const fallbackMessageHistory = {};
+
+        if (rentals.length > 0) {
+          rentals.forEach((rental, index) => {
+            fallbackConversations.push({
+              id: index + 1,
+              propertyId: rental.property_id,
+              propertyName: rental.property_name || "Property",
+              unit: rental.unit_id || "",
+              manager: {
+                id: rental.landlord_id || 1,
+                name: rental.landlord_name || "Property Manager",
+                email: rental.landlord_email || "manager@example.com",
+              },
+              lastMessage: "",
+              lastMessageTime: "",
+              unread: false,
+            });
+
+            // Initialize empty message history for this conversation
+            fallbackMessageHistory[index + 1] = [];
+          });
+        } else {
+          // Fallback to original mock data if no rentals
+          fallbackConversations.push(
+            {
+              id: 1,
+              propertyId: 1,
+              propertyName: "Sunset Apartments",
+              unit: "101",
+              manager: {
+                id: 1,
+                name: "John Smith",
+                email: "john@sunsetapts.com",
+              },
+              lastMessage: "Thank you for your maintenance request...",
+              lastMessageTime: "2024-02-20T10:30:00",
+              unread: true,
+            },
+            {
+              id: 2,
+              propertyId: 2,
+              propertyName: "Ocean View Condos",
+              unit: "302",
+              manager: {
+                id: 2,
+                name: "Sarah Johnson",
+                email: "sarah@oceanview.com",
+              },
+              lastMessage: "Your rent payment has been received...",
+              lastMessageTime: "2024-02-19T15:45:00",
+              unread: false,
+            }
+          );
+
+          fallbackMessageHistory[1] = [
+            {
+              id: 1,
+              sender: "manager",
+              content: "Hello! How can I help you today?",
+              timestamp: "2024-02-20T10:30:00",
+              read: true,
+            },
+            {
+              id: 2,
+              sender: "tenant",
+              content: "I have a question about my maintenance request.",
+              timestamp: "2024-02-20T10:31:00",
+              read: true,
+            },
+          ];
+
+          fallbackMessageHistory[2] = [
+            {
+              id: 1,
+              sender: "manager",
+              content: "Your rent payment has been received. Thank you!",
+              timestamp: "2024-02-19T15:45:00",
+              read: true,
+            },
+          ];
+        }
+
+        setConversations(fallbackConversations);
+        setMessageHistory(fallbackMessageHistory);
+      }
+    };
+
+    if (isAuthenticated() && rentals.length > 0) {
+      fetchChatData();
+    }
+  }, [rentals]);
 
   // Handle managerId from URL
   useEffect(() => {
@@ -145,21 +268,28 @@ const Messages = () => {
 
     setIsLoading(true);
     try {
+      // Send message to backend
+      const messageData = {
+        recipient: selectedChat.manager.id,
+        message: messageInput.trim(),
+        property: selectedChat.propertyId,
+        unit: selectedChat.unit ? selectedChat.unit : null,
+      };
+
+      const response = await chatAPI.sendMessage(messageData);
+
       const newMessage = {
-        id: Date.now(),
+        id: response.id || Date.now(),
         sender: "tenant",
         content: messageInput.trim(),
-        timestamp: new Date().toISOString(),
-        read: true,
+        timestamp: response.timestamp || new Date().toISOString(),
+        read: false,
       };
 
       // Update message history
       setMessageHistory((prev) => ({
         ...prev,
-        [selectedChat.propertyId]: [
-          ...(prev[selectedChat.propertyId] || []),
-          newMessage,
-        ],
+        [selectedChat.id]: [...(prev[selectedChat.id] || []), newMessage],
       }));
 
       // Update conversation's last message
@@ -170,6 +300,7 @@ const Messages = () => {
                 ...conv,
                 lastMessage: newMessage.content,
                 lastMessageTime: newMessage.timestamp,
+                unread: false,
               }
             : conv
         )
@@ -189,7 +320,7 @@ const Messages = () => {
     // Mark all messages in this chat as read
     setMessageHistory((prev) => ({
       ...prev,
-      [chat.propertyId]: (prev[chat.propertyId] || []).map((msg) => ({
+      [chat.id]: (prev[chat.id] || []).map((msg) => ({
         ...msg,
         read: true,
       })),
@@ -303,14 +434,31 @@ const Messages = () => {
                         <span>Back to Chats</span>
                       </button>
                     </div>
-                    <ChatView
-                      selectedChat={selectedChat}
-                      messages={messageHistory}
-                      newChatMessage={messageInput}
-                      setNewChatMessage={setMessageInput}
-                      handleMessageSubmit={handleMessageSubmit}
-                      formatDate={formatDate}
-                    />
+                    {hasRentals ? (
+                      <ChatView
+                        selectedChat={selectedChat}
+                        messages={messageHistory}
+                        newChatMessage={messageInput}
+                        setNewChatMessage={setMessageInput}
+                        handleMessageSubmit={handleMessageSubmit}
+                        formatDate={formatDate}
+                      />
+                    ) : (
+                      <div className="h-full flex items-center justify-center bg-gray-50 dark:bg-gray-800">
+                        <div className="text-center">
+                          <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">
+                            No property managers
+                          </h3>
+                          <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
+                            You are not registered under any rental properties.
+                          </p>
+                          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                            Once you are assigned to a property, you can
+                            communicate with your property managers here.
+                          </p>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>

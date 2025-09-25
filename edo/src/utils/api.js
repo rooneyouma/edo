@@ -490,5 +490,20 @@ export const becomeTenant = async () => {
   return await apiRequest("/users/become_tenant/", { method: "POST" });
 };
 
+// Chat message API
+export const chatAPI = {
+  // Get chat messages
+  getMessages: async () => {
+    return await apiRequest("/chat-messages/", { method: "GET" });
+  },
+  // Send a chat message
+  sendMessage: async (messageData) => {
+    return await apiRequest("/chat-messages/", {
+      method: "POST",
+      body: JSON.stringify(messageData),
+    });
+  },
+};
+
 export { getToken };
 export { apiRequest };
