@@ -24,6 +24,7 @@ import {
 } from "lucide-react";
 import { isAuthenticated } from "../../../utils/api";
 import { useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 
 const Maintenance = () => {
@@ -45,11 +46,22 @@ const Maintenance = () => {
   const [isClient, setIsClient] = useState(false);
   const router = useRouter();
   const queryClient = useQueryClient();
+  const searchParams = useSearchParams();
 
   // Initialize client-side state
   useEffect(() => {
     setIsClient(true);
   }, []);
+
+  // Check for query parameter to open new request modal
+  useEffect(() => {
+    if (isClient) {
+      const openNewRequest = searchParams.get("openNewRequest");
+      if (openNewRequest === "true") {
+        setShowNewRequestModal(true);
+      }
+    }
+  }, [isClient, searchParams]);
 
   // React Query for fetching maintenance requests with optimized settings
   const {

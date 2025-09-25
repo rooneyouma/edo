@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import TenantHeader from "../../../partials/tenant/TenantHeader.jsx";
 import TenantSidebar from "../../../partials/tenant/TenantSidebar.jsx";
 import { useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { ArrowUpDown, Filter, ChevronDown } from "lucide-react";
 import { isAuthenticated } from "../../../utils/api.js";
 import { apiRequest } from "../../../utils/api.js";
@@ -22,11 +23,22 @@ const Notices = () => {
   const [error, setError] = useState(null);
   const [isClient, setIsClient] = useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   // Initialize client-side state
   useEffect(() => {
     setIsClient(true);
   }, []);
+
+  // Check for query parameter to open vacate notice form
+  useEffect(() => {
+    if (isClient) {
+      const openVacateNotice = searchParams.get("openVacateNotice");
+      if (openVacateNotice === "true") {
+        setShowVacateForm(true);
+      }
+    }
+  }, [isClient, searchParams]);
 
   // Mock data for tenant's properties (in a real app, this would come from your API)
   const tenantProperties = [
@@ -761,7 +773,7 @@ const Notices = () => {
                     <div>
                       <label
                         htmlFor="property"
-                        className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                        className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
                       >
                         Property
                       </label>
@@ -771,7 +783,7 @@ const Notices = () => {
                         value={formData.property}
                         onChange={handleInputChange}
                         required
-                        className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-gray-700 dark:text-gray-100 sm:text-sm"
+                        className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-gray-700 dark:text-gray-100 sm:text-sm py-2 px-3"
                       >
                         <option value="">Select a property</option>
                         {tenantProperties.map((property) => (
@@ -786,7 +798,7 @@ const Notices = () => {
                   <div>
                     <label
                       htmlFor="moveOutDate"
-                      className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                      className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
                     >
                       Move-Out Date
                     </label>
@@ -798,14 +810,14 @@ const Notices = () => {
                       onChange={handleInputChange}
                       required
                       min={new Date().toISOString().split("T")[0]}
-                      className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-gray-700 dark:text-gray-100 sm:text-sm"
+                      className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-gray-700 dark:text-gray-100 sm:text-sm py-2 px-3"
                     />
                   </div>
 
                   <div>
                     <label
                       htmlFor="reason"
-                      className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                      className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
                     >
                       Reason for Vacating
                     </label>
@@ -816,7 +828,7 @@ const Notices = () => {
                       value={formData.reason}
                       onChange={handleInputChange}
                       required
-                      className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-gray-700 dark:text-gray-100 sm:text-sm"
+                      className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-gray-700 dark:text-gray-100 sm:text-sm py-2 px-3"
                       placeholder="Please provide a detailed reason for vacating..."
                     />
                   </div>

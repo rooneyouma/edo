@@ -297,35 +297,7 @@ function Header({ toggleSidebar, variant = "default" }) {
             <hr className="w-px h-6 bg-gray-200 dark:bg-gray-700/60 border-none" />
 
             {/* Profile Menu */}
-            <UserMenu align="right">
-              <div className="py-1">
-                <Link
-                  href="/landlord/settings"
-                  className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800"
-                >
-                  <svg
-                    className="w-4 h-4 mr-3"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M19.714 14.7c-1.1-1.1-2.2-2.2-3.3-3.3l-1.6 1.6c1.1 1.1 2.2 2.2 3.3 3.3l1.6-1.6z"
-                      fill="currentColor"
-                    />
-                    <path
-                      d="M10.516 14.7c-1.1-1.1-2.2-2.2-3.3-3.3l-1.6 1.6c1.1 1.1 2.2 2.2 3.3 3.3l1.6-1.6z"
-                      fill="currentColor"
-                    />
-                    <path
-                      d="M6.457 14.7c-1.1-1.1-2.2-2.2-3.3-3.3l-1.6 1.6c1.1 1.1 2.2 2.2 3.3 3.3l1.6-1.6zM17.043 14.7c-1.1-1.1-2.2-2.2-3.3-3.3l-1.6 1.6c1.1 1.1 2.2 2.2 3.3 3.3l1.6-1.6z"
-                      fill="currentColor"
-                    />
-                  </svg>
-                  Settings
-                </Link>
-              </div>
-            </UserMenu>
+            <UserMenu align="right" />
           </div>
         </div>
       </div>

@@ -2,11 +2,12 @@ import React, { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import Transition from "../utils/Transition";
 import { getStoredUser } from "../utils/api";
+import { LogOut, Settings } from "lucide-react";
 
 // In Next.js, images in the public folder are referenced directly with a path starting with /
 const UserAvatar = "/images/user-avatar-32.png";
 
-function DropdownProfile({ align }) {
+function DropdownProfile({ align, children }) {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [user, setUser] = useState(null); // Initialize user state as null
 
@@ -74,21 +75,11 @@ function DropdownProfile({ align }) {
             </span>
           </div>
         )}
-        <div className="flex items-center truncate">
-          <span className="truncate ml-2 text-sm font-medium text-gray-600 dark:text-gray-100 group-hover:text-gray-800 dark:group-hover:text-white">
-            {user && (user.first_name || user.name)}
-          </span>
-          <svg
-            className="w-3 h-3 shrink-0 ml-1 fill-current text-gray-400 dark:text-gray-500"
-            viewBox="0 0 12 12"
-          >
-            <path d="M5.9 11.4L.5 6l1.4-1.4 4 4 4-4L11.3 6z" />
-          </svg>
-        </div>
+        {/* Removed the name next to the profile picture */}
       </button>
 
       <Transition
-        className={`origin-top-right z-10 absolute top-full min-w-44 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700/60 py-1.5 rounded-lg shadow-lg overflow-hidden mt-1 ${
+        className={`origin-top-right z-10 absolute top-full w-80 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700/60 py-1.5 rounded-lg shadow-lg overflow-hidden mt-1 ${
           align === "right" ? "right-0" : "left-0"
         }`}
         show={dropdownOpen}
@@ -104,34 +95,62 @@ function DropdownProfile({ align }) {
           onFocus={() => setDropdownOpen(true)}
           onBlur={() => setDropdownOpen(false)}
         >
-          <div className="pt-0.5 pb-2 px-3 mb-1 border-b border-gray-200 dark:border-gray-700/60">
-            <div className="font-medium text-gray-800 dark:text-gray-100">
-              {user?.company || "Acme Inc."}
-            </div>
-            <div className="text-xs text-gray-500 dark:text-gray-400 italic">
-              {user?.role || "Administrator"}
+          {/* Updated popover to match tenant header style */}
+          <div className="px-4 py-3 border-b border-slate-200 dark:border-slate-700">
+            <div className="flex items-center">
+              {user && user.profile_image_url ? (
+                <img
+                  className="w-10 h-10 rounded-full"
+                  src={user.profile_image_url}
+                  alt={user.first_name || user.name}
+                />
+              ) : (
+                <div className="w-10 h-10 rounded-full bg-teal-600 flex items-center justify-center">
+                  <span className="text-sm font-medium text-white">
+                    {user &&
+                      (user.first_name
+                        ? user.first_name.charAt(0)
+                        : user.name
+                        ? user.name.charAt(0)
+                        : "U")}
+                  </span>
+                </div>
+              )}
+              <div className="ml-3">
+                <p className="text-sm font-medium text-slate-900 dark:text-slate-100">
+                  {user && (user.first_name || user.name)}
+                </p>
+                <p className="text-xs text-slate-500 dark:text-slate-400">
+                  {user && user.email}
+                </p>
+              </div>
             </div>
           </div>
+
+          {/* Menu items */}
           <ul>
             <li>
               <Link
-                className="font-medium text-sm text-violet-500 hover:text-violet-600 dark:hover:text-violet-400 flex items-center py-1 px-3"
                 href="/landlord/settings"
-                onClick={() => setDropdownOpen(!dropdownOpen)}
+                className="flex items-center px-4 py-2 text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700/50"
+                onClick={() => setDropdownOpen(false)}
               >
+                <Settings className="h-5 w-5 mr-3 text-slate-400" />
                 Settings
               </Link>
             </li>
             <li>
               <Link
-                className="font-medium text-sm text-violet-500 hover:text-violet-600 dark:hover:text-violet-400 flex items-center py-1 px-3"
                 href="/auth/signin"
-                onClick={() => setDropdownOpen(!dropdownOpen)}
+                className="flex items-center px-4 py-2 text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700/50"
+                onClick={() => setDropdownOpen(false)}
               >
+                <LogOut className="h-5 w-5 mr-3 text-slate-400" />
                 Sign Out
               </Link>
             </li>
           </ul>
+          {children}
         </div>
       </Transition>
     </div>

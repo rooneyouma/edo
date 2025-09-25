@@ -194,18 +194,10 @@ const TenantHeader = ({ toggleSidebar }) => {
             <button
               className="text-gray-500 hover:text-gray-600 dark:hover:text-gray-400 lg:hidden"
               aria-controls="sidebar"
-              onClick={toggleSidebar}
+              onClick={() => toggleSidebar(true)}
             >
               <span className="sr-only">Open sidebar</span>
-              <svg
-                className="w-6 h-6 fill-current"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <rect x="4" y="5" width="16" height="2" />
-                <rect x="4" y="11" width="16" height="2" />
-                <rect x="4" y="17" width="16" height="2" />
-              </svg>
+              <Menu className="w-6 h-6" />
             </button>
           </div>
 
@@ -214,7 +206,7 @@ const TenantHeader = ({ toggleSidebar }) => {
             {/* Search */}
             <button
               type="button"
-              className="p-1 rounded-full text-slate-500 hover:text-slate-600 dark:text-slate-400 dark:hover:text-slate-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500"
+              className="p-1 rounded-full text-slate-500 hover:text-slate-600 dark:text-slate-400 dark:hover:text-slate-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 hover:bg-slate-100 dark:hover:bg-slate-700/50"
               onClick={() => setIsSearchOpen(true)}
             >
               <span className="sr-only">Search</span>
@@ -228,7 +220,7 @@ const TenantHeader = ({ toggleSidebar }) => {
             <div className="relative">
               <button
                 type="button"
-                className="p-1 rounded-full text-slate-500 hover:text-slate-600 dark:text-slate-400 dark:hover:text-slate-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500"
+                className="p-1 rounded-full text-slate-500 hover:text-slate-600 dark:text-slate-400 dark:hover:text-slate-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 hover:bg-slate-100 dark:hover:bg-slate-700/50"
                 onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}
               >
                 <span className="sr-only">View notifications</span>
@@ -285,11 +277,14 @@ const TenantHeader = ({ toggleSidebar }) => {
               )}
             </div>
 
+            {/* Divider */}
+            <hr className="w-px h-6 bg-gray-200 dark:bg-gray-700/60 border-none" />
+
             {/* Profile dropdown */}
             <div className="relative">
               <button
                 type="button"
-                className="flex items-center max-w-xs rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500"
+                className="flex items-center max-w-xs rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 hover:bg-slate-100 dark:hover:bg-slate-700/50"
                 onClick={() => setIsProfileOpen(!isProfileOpen)}
               >
                 <span className="sr-only">Open user menu</span>
@@ -322,18 +317,26 @@ const TenantHeader = ({ toggleSidebar }) => {
                     {/* Profile info */}
                     <div className="px-4 py-3 border-b border-slate-200 dark:border-slate-700">
                       <div className="flex items-center">
-                        <div className="h-10 w-10 rounded-full bg-teal-600 flex items-center justify-center">
-                          <span className="text-sm font-medium text-white">
-                            {isClient &&
-                              user &&
-                              (user.first_name
-                                ? user.first_name.charAt(0)
-                                : user.name
-                                ? user.name.charAt(0)
-                                : "U")}
-                            {!isClient && "U"}
-                          </span>
-                        </div>
+                        {isClient && user && user.profile_image_url ? (
+                          <img
+                            className="w-10 h-10 rounded-full"
+                            src={user.profile_image_url}
+                            alt={user.first_name || user.name}
+                          />
+                        ) : (
+                          <div className="w-10 h-10 rounded-full bg-teal-600 flex items-center justify-center">
+                            <span className="text-sm font-medium text-white">
+                              {isClient &&
+                                user &&
+                                (user.first_name
+                                  ? user.first_name.charAt(0)
+                                  : user.name
+                                  ? user.name.charAt(0)
+                                  : "U")}
+                              {!isClient && "U"}
+                            </span>
+                          </div>
+                        )}
                         <div className="ml-3">
                           <p className="text-sm font-medium text-slate-900 dark:text-slate-100">
                             {isClient && user && (user.first_name || user.name)}

@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect } from "react";
 
 const ChatView = ({
   selectedChat,
@@ -6,14 +6,14 @@ const ChatView = ({
   newChatMessage,
   setNewChatMessage,
   handleMessageSubmit,
-  formatDate
+  formatDate,
 }) => {
   const messagesContainerRef = useRef(null);
   const messagesEndRef = useRef(null);
 
   useEffect(() => {
     if (messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [messages, selectedChat]);
 
@@ -21,21 +21,31 @@ const ChatView = ({
     return (
       <div className="h-full flex items-center justify-center bg-gray-50 dark:bg-gray-800">
         <div className="text-center">
-          <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">Select a chat to start messaging</h3>
-          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">Choose a conversation from the list to view messages</p>
+          <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">
+            Select a chat to start messaging
+          </h3>
+          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+            Choose a conversation from the list to view messages
+          </p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="h-full flex flex-col bg-white dark:bg-slate-800 max-h-[60vh] sm:max-h-[80vh] w-full max-w-full" style={{ minHeight: 0 }}>
+    <div
+      className="h-full flex flex-col bg-white dark:bg-slate-800 max-h-[60vh] sm:max-h-[80vh] w-full max-w-full"
+      style={{ minHeight: 0 }}
+    >
       {/* Chat Header */}
       <div className="p-4 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between">
         <div className="flex items-center space-x-3">
           <div className="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center">
             <span className="text-sm font-medium text-gray-600 dark:text-gray-300">
-              {selectedChat.manager.name.split(' ').map(n => n[0]).join('')}
+              {selectedChat.manager.name
+                .split(" ")
+                .map((n) => n[0])
+                .join("")}
             </span>
           </div>
           <div>
@@ -43,7 +53,7 @@ const ChatView = ({
               {selectedChat.manager.name}
             </h3>
             <p className="text-xs text-slate-500 dark:text-slate-400">
-              {selectedChat.propertyName} - {selectedChat.unit}
+              {selectedChat.propertyName} - property manager
             </p>
           </div>
         </div>
@@ -55,27 +65,42 @@ const ChatView = ({
       <div
         ref={messagesContainerRef}
         className="flex-1 min-h-0 overflow-y-auto p-4 space-y-4"
-        style={{ maxHeight: 'none' }}
+        style={{ maxHeight: "none" }}
       >
         {messages[selectedChat.propertyId]?.map((message) => (
           <div
             key={message.id}
-            className={`flex ${message.sender === 'tenant' ? 'justify-end' : 'justify-start'}`}
+            className={`flex ${
+              message.sender === "tenant" ? "justify-end" : "justify-start"
+            }`}
           >
-            {message.sender === 'manager' && (
+            {message.sender === "manager" && (
               <div className="w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center">
                 <span className="text-xs font-medium text-gray-600 dark:text-gray-300">
-                  {selectedChat.manager.name.split(' ').map(n => n[0]).join('')}
+                  {selectedChat.manager.name
+                    .split(" ")
+                    .map((n) => n[0])
+                    .join("")}
                 </span>
               </div>
             )}
-            <div className={`max-w-xs px-4 py-2 rounded-lg text-sm ${message.sender === 'tenant' ? 'bg-teal-500 text-white' : 'bg-slate-200 dark:bg-slate-700 text-slate-900 dark:text-slate-100'}`}>
+            <div
+              className={`max-w-xs px-4 py-2 rounded-lg text-sm ${
+                message.sender === "tenant"
+                  ? "bg-teal-500 text-white"
+                  : "bg-slate-200 dark:bg-slate-700 text-slate-900 dark:text-slate-100"
+              }`}
+            >
               <div>{message.content}</div>
-              <div className="text-xs text-right mt-1 opacity-70">{formatDate(message.timestamp)}</div>
+              <div className="text-xs text-right mt-1 opacity-70">
+                {formatDate(message.timestamp)}
+              </div>
             </div>
-            {message.sender === 'tenant' && (
+            {message.sender === "tenant" && (
               <div className="w-8 h-8 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center order-2">
-                <span className="text-xs font-medium text-green-600 dark:text-green-400">Me</span>
+                <span className="text-xs font-medium text-green-600 dark:text-green-400">
+                  Me
+                </span>
               </div>
             )}
           </div>
@@ -84,7 +109,10 @@ const ChatView = ({
       </div>
       {/* Message Input */}
       <div className="p-4 border-t border-slate-200 dark:border-slate-700">
-        <form onSubmit={handleMessageSubmit} className="flex items-center space-x-2">
+        <form
+          onSubmit={handleMessageSubmit}
+          className="flex items-center space-x-2"
+        >
           <input
             type="text"
             value={newChatMessage}
@@ -97,8 +125,18 @@ const ChatView = ({
             disabled={!newChatMessage.trim()}
             className="p-2 text-teal-600 dark:text-teal-400 hover:text-teal-700 dark:hover:text-teal-300"
           >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+            <svg
+              className="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
+              />
             </svg>
           </button>
         </form>
@@ -107,4 +145,4 @@ const ChatView = ({
   );
 };
 
-export default ChatView; 
+export default ChatView;

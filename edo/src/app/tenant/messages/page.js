@@ -8,20 +8,43 @@ import ChatView from "../../../components/tenant/messages/ChatView.jsx";
 import ChatList from "../../../components/tenant/messages/ChatList.jsx";
 import { isAuthenticated } from "../../../utils/api.js";
 import Link from "next/link";
+import { tenantAPI } from "../../../utils/api.js";
 
 const Messages = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [selectedChat, setSelectedChat] = useState(null);
   const searchParams = useSearchParams();
   const router = useRouter();
-  const managerId = searchParams.get("managerId");
   const [messageInput, setMessageInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isClient, setIsClient] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [rentals, setRentals] = useState([]);
+  const [loadingRentals, setLoadingRentals] = useState(true);
+  const [error, setError] = useState(null);
 
   // Initialize client-side state
   useEffect(() => {
     setIsClient(true);
+  }, []);
+
+  // Fetch tenant rentals
+  useEffect(() => {
+    const fetchRentals = async () => {
+      try {
+        const data = await tenantAPI.getRentals();
+        setRentals(data.rentals || []);
+      } catch (err) {
+        setError("Failed to fetch rental information");
+        console.error("Error fetching rentals:", err);
+      } finally {
+        setLoadingRentals(false);
+      }
+    };
+
+    if (isAuthenticated()) {
+      fetchRentals();
+    }
   }, []);
 
   // Mock data for conversations - This should be replaced with actual API calls
@@ -87,15 +110,16 @@ const Messages = () => {
 
   // Handle managerId from URL
   useEffect(() => {
-    if (managerId) {
+    if (searchParams.get("managerId")) {
+      const managerId = parseInt(searchParams.get("managerId"));
       const conversation = conversations.find(
-        (conv) => conv.manager.id === parseInt(managerId)
+        (conv) => conv.manager.id === managerId
       );
       if (conversation) {
         setSelectedChat(conversation);
       }
     }
-  }, [managerId, conversations]);
+  }, [searchParams, conversations]);
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -180,39 +204,10 @@ const Messages = () => {
     router.push(`/tenant/messages?managerId=${chat.manager.id}`);
   };
 
-  // Simulate receiving a new manager message (for demonstration)
-  // In a real app, this would be triggered by a websocket or polling
-  useEffect(() => {
-    // Example: Add a new unread manager message to the first conversation after 10 seconds
-    const timer = setTimeout(() => {
-      setMessageHistory((prev) => ({
-        ...prev,
-        1: [
-          ...(prev[1] || []),
-          {
-            id: Date.now(),
-            sender: "manager",
-            content: "This is a new message from your manager.",
-            timestamp: new Date().toISOString(),
-            read: false,
-          },
-        ],
-      }));
-      setConversations((prev) =>
-        prev.map((conv) =>
-          conv.id === 1
-            ? {
-                ...conv,
-                unread: true,
-                lastMessage: "This is a new message from your manager.",
-                lastMessageTime: new Date().toISOString(),
-              }
-            : conv
-        )
-      );
-    }, 10000);
-    return () => clearTimeout(timer);
-  }, []);
+  // Function to handle search input change
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value);
+  };
 
   if (!isClient) {
     return (
@@ -236,6 +231,9 @@ const Messages = () => {
       </div>
     );
   }
+
+  // Check if tenant has rentals
+  const hasRentals = rentals.length > 0;
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-900">
@@ -266,16 +264,14 @@ const Messages = () => {
                     } min-h-0 h-full flex flex-col`}
                   >
                     <div className="h-full flex flex-col min-h-0">
-                      <div className="p-4 border-b border-slate-200 dark:border-slate-700">
-                        <h2 className="text-lg font-medium text-slate-900 dark:text-slate-100">
-                          Chats
-                        </h2>
-                      </div>
                       <ChatList
                         conversations={conversations}
                         selectedChat={selectedChat}
                         onChatSelect={handleChatSelect}
                         formatDate={formatDate}
+                        hasRentals={hasRentals}
+                        searchQuery={searchQuery}
+                        onSearchChange={handleSearchChange}
                       />
                     </div>
                   </div>

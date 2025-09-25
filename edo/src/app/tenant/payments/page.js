@@ -8,6 +8,7 @@ import Modal from "@/partials/Modal.jsx";
 import { isAuthenticated } from "@/utils/api.js";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 
 const Payments = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -22,11 +23,26 @@ const Payments = () => {
   const [selectedPayment, setSelectedPayment] = useState(null);
   const [isClient, setIsClient] = useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   // Initialize client-side state
   useEffect(() => {
     setIsClient(true);
   }, []);
+
+  // Check for query parameter to open pay rent modal
+  useEffect(() => {
+    if (isClient) {
+      const openPayRent = searchParams.get("openPayRent");
+      if (openPayRent === "true") {
+        // If only one property, auto-select it
+        if (properties.length === 1) {
+          setSelectedProperty(properties[0]);
+        }
+        setShowPaymentModal(true);
+      }
+    }
+  }, [isClient, searchParams]);
 
   if (!isClient) {
     return (
@@ -573,7 +589,7 @@ const Payments = () => {
                     <div>
                       <label
                         htmlFor="property"
-                        className="block text-sm font-medium text-slate-700 dark:text-slate-300"
+                        className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
                       >
                         Select Property
                       </label>
@@ -587,7 +603,7 @@ const Payments = () => {
                           );
                           setSelectedProperty(property);
                         }}
-                        className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100 sm:text-sm"
+                        className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100 sm:text-sm py-2 px-3"
                       >
                         <option value="">Select a property</option>
                         {properties.map((property) => (
@@ -667,7 +683,7 @@ const Payments = () => {
                           <div>
                             <label
                               htmlFor="cardNumber"
-                              className="block text-sm font-medium text-slate-700 dark:text-slate-300"
+                              className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
                             >
                               Card Number
                             </label>
@@ -675,14 +691,14 @@ const Payments = () => {
                               type="text"
                               id="cardNumber"
                               placeholder="1234 5678 9012 3456"
-                              className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100 sm:text-sm"
+                              className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100 sm:text-sm py-2 px-3"
                             />
                           </div>
                           <div className="grid grid-cols-2 gap-4">
                             <div>
                               <label
                                 htmlFor="expiry"
-                                className="block text-sm font-medium text-slate-700 dark:text-slate-300"
+                                className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
                               >
                                 Expiry Date
                               </label>
@@ -690,13 +706,13 @@ const Payments = () => {
                                 type="text"
                                 id="expiry"
                                 placeholder="MM/YY"
-                                className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100 sm:text-sm"
+                                className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100 sm:text-sm py-2 px-3"
                               />
                             </div>
                             <div>
                               <label
                                 htmlFor="cvv"
-                                className="block text-sm font-medium text-slate-700 dark:text-slate-300"
+                                className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
                               >
                                 CVV
                               </label>
@@ -704,7 +720,7 @@ const Payments = () => {
                                 type="text"
                                 id="cvv"
                                 placeholder="123"
-                                className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100 sm:text-sm"
+                                className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100 sm:text-sm py-2 px-3"
                               />
                             </div>
                           </div>
@@ -716,7 +732,7 @@ const Payments = () => {
                           <div>
                             <label
                               htmlFor="accountNumber"
-                              className="block text-sm font-medium text-slate-700 dark:text-slate-300"
+                              className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
                             >
                               Account Number
                             </label>
@@ -724,13 +740,13 @@ const Payments = () => {
                               type="text"
                               id="accountNumber"
                               placeholder="Enter your account number"
-                              className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100 sm:text-sm"
+                              className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100 sm:text-sm py-2 px-3"
                             />
                           </div>
                           <div>
                             <label
                               htmlFor="routingNumber"
-                              className="block text-sm font-medium text-slate-700 dark:text-slate-300"
+                              className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
                             >
                               Routing Number
                             </label>
@@ -738,7 +754,7 @@ const Payments = () => {
                               type="text"
                               id="routingNumber"
                               placeholder="Enter your routing number"
-                              className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100 sm:text-sm"
+                              className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100 sm:text-sm py-2 px-3"
                             />
                           </div>
                         </div>
@@ -749,7 +765,7 @@ const Payments = () => {
                           <div>
                             <label
                               htmlFor="phoneNumber"
-                              className="block text-sm font-medium text-slate-700 dark:text-slate-300"
+                              className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
                             >
                               M-PESA Phone Number
                             </label>
@@ -757,7 +773,7 @@ const Payments = () => {
                               type="tel"
                               id="phoneNumber"
                               placeholder="Enter your M-PESA phone number"
-                              className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100 sm:text-sm"
+                              className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100 sm:text-sm py-2 px-3"
                             />
                           </div>
                           <p className="text-sm text-slate-500 dark:text-slate-400">

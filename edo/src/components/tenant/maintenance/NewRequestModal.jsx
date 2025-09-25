@@ -114,7 +114,7 @@ const NewRequestModal = ({
                   <div>
                     <label
                       htmlFor="subject"
-                      className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                      className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
                     >
                       Subject
                     </label>
@@ -124,7 +124,7 @@ const NewRequestModal = ({
                       name="subject"
                       value={localFormData.subject}
                       onChange={handleInputChange}
-                      className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-teal-500 focus:ring-teal-500 sm:text-sm dark:bg-gray-700 dark:text-gray-100"
+                      className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-teal-500 focus:ring-teal-500 sm:text-sm dark:bg-gray-700 dark:text-gray-100 py-2 px-3"
                       placeholder="Brief description of the issue"
                       required
                     />
@@ -139,7 +139,7 @@ const NewRequestModal = ({
                   <div>
                     <label
                       htmlFor="description"
-                      className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                      className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
                     >
                       Description
                     </label>
@@ -149,7 +149,7 @@ const NewRequestModal = ({
                       rows={4}
                       value={localFormData.description}
                       onChange={handleInputChange}
-                      className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-teal-500 focus:ring-teal-500 sm:text-sm dark:bg-gray-700 dark:text-gray-100"
+                      className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-teal-500 focus:ring-teal-500 sm:text-sm dark:bg-gray-700 dark:text-gray-100 py-2 px-3"
                       placeholder="Please provide detailed information about the issue..."
                       required
                     />
@@ -164,7 +164,7 @@ const NewRequestModal = ({
                   <div>
                     <label
                       htmlFor="priority"
-                      className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                      className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
                     >
                       Priority
                     </label>
@@ -173,7 +173,7 @@ const NewRequestModal = ({
                       name="priority"
                       value={localFormData.priority}
                       onChange={handleInputChange}
-                      className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-teal-500 focus:ring-teal-500 sm:text-sm dark:bg-gray-700 dark:text-gray-100"
+                      className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-teal-500 focus:ring-teal-500 sm:text-sm dark:bg-gray-700 dark:text-gray-100 py-2 px-3"
                       required
                     >
                       <option value="">Select priority</option>
