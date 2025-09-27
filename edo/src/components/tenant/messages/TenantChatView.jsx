@@ -1,6 +1,6 @@
 import React from "react";
 
-const ChatView = ({
+const TenantChatView = ({
   selectedChat,
   messages,
   newChatMessage,
@@ -33,17 +33,18 @@ const ChatView = ({
         <div className="flex items-center space-x-3">
           <div className="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center">
             <span className="text-sm font-medium text-gray-600 dark:text-gray-300">
-              {selectedChat.tenant.charAt(0)}
+              {selectedChat.manager.name
+                .split(" ")
+                .map((n) => n[0])
+                .join("")}
             </span>
           </div>
           <div>
             <h3 className="text-sm font-medium text-slate-900 dark:text-slate-100">
-              {selectedChat.tenant}
+              {selectedChat.manager.name}
             </h3>
-            {/* Show tenant email instead of property - unit */}
             <p className="text-xs text-slate-500 dark:text-slate-400">
-              {selectedChat.tenantEmail ||
-                `${selectedChat.property} - ${selectedChat.unit}`}
+              {selectedChat.propertyName} - property manager
             </p>
           </div>
         </div>
@@ -56,9 +57,9 @@ const ChatView = ({
         className="flex-1 min-h-0 overflow-y-auto p-4 space-y-4"
         style={{ maxHeight: "none" }}
       >
-        {selectedChat.messages.map((message) => {
-          // Determine if the message was sent by the current landlord
-          const isCurrentUserMessage = message.sender === "landlord" || message.sender === "me";
+        {(messages[selectedChat.id] || []).map((message) => {
+          // Determine if the message was sent by the current tenant
+          const isCurrentUserMessage = message.sender === "tenant";
           
           return (
             <div
@@ -68,7 +69,10 @@ const ChatView = ({
               {!isCurrentUserMessage && (
                 <div className="w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center">
                   <span className="text-xs font-medium text-gray-600 dark:text-gray-300">
-                    {selectedChat.tenant.charAt(0)}
+                    {selectedChat.manager.name
+                      .split(" ")
+                      .map((n) => n[0])
+                      .join("")}
                   </span>
                 </div>
               )}
@@ -111,7 +115,7 @@ const ChatView = ({
           <button
             type="submit"
             disabled={!newChatMessage.trim()}
-            className="p-2 text-teal-600 dark:text-teal-400 hover:text-teal-700 dark:hover:text-teal-300"
+            className="p-2 text-teal-600 dark:text-teal-400 hover:text-teal-700 dark:hover:text-teal-300 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <svg
               className="w-5 h-5"
@@ -133,4 +137,4 @@ const ChatView = ({
   );
 };
 
-export default ChatView;
+export default TenantChatView;

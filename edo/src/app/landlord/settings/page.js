@@ -72,7 +72,7 @@ const LandlordSettings = () => {
     language: "en",
     dateFormat: "MM/DD/YYYY",
     timezone: "America/New_York",
-    currency: "USD",
+    currency: "KES",
   });
 
   // Initialize client-side state
@@ -466,7 +466,7 @@ const LandlordSettings = () => {
                             </div>
                             <div>
                               <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-                                Late Fee Amount ($)
+                                Late Fee Amount (KES)
                               </label>
                               <input
                                 type="number"
@@ -515,7 +515,7 @@ const LandlordSettings = () => {
                         {businessSettings.securityDepositRequired && (
                           <div className="ml-6">
                             <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-                              Default Security Deposit Amount ($)
+                              Default Security Deposit Amount (KES)
                             </label>
                             <input
                               type="number"
@@ -789,6 +789,7 @@ const LandlordSettings = () => {
                         className="w-full max-w-xs px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500 dark:bg-slate-700 dark:text-slate-100"
                       >
                         <option value="USD">USD - US Dollar</option>
+                        <option value="KES">KES - Kenyan Shilling</option>
                         <option value="EUR">EUR - Euro</option>
                         <option value="GBP">GBP - British Pound</option>
                         <option value="CAD">CAD - Canadian Dollar</option>

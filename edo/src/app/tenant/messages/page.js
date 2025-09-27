@@ -4,9 +4,14 @@ import React, { useState, useEffect } from "react";
 import TenantHeader from "../../../partials/tenant/TenantHeader.jsx";
 import TenantSidebar from "../../../partials/tenant/TenantSidebar.jsx";
 import { useSearchParams, useRouter } from "next/navigation";
-import ChatView from "../../../components/tenant/messages/ChatView.jsx";
+import TenantChatView from "../../../components/tenant/messages/TenantChatView.jsx";
 import ChatList from "../../../components/tenant/messages/ChatList.jsx";
-import { isAuthenticated, chatAPI, tenantAPI } from "../../../utils/api.js";
+import {
+  isAuthenticated,
+  chatAPI,
+  tenantAPI,
+  getStoredUser,
+} from "../../../utils/api.js";
 import Link from "next/link";
 
 const Messages = () => {
@@ -54,15 +59,18 @@ const Messages = () => {
       try {
         // Fetch chat messages
         const chatMessages = await chatAPI.getMessages();
+        console.log("Fetched chat messages:", chatMessages); // Debug log
+        console.log("Current user:", getStoredUser()); // Debug log
 
         // Initialize with rentals as base conversations
         const processedConversations = [];
         const processedMessageHistory = {};
 
         // Create conversation entries for each rental property
+        console.log("Creating conversations from rentals:", rentals); // Debug log
         if (rentals.length > 0) {
           rentals.forEach((rental, index) => {
-            processedConversations.push({
+            const conversation = {
               id: index + 1,
               propertyId: rental.property_id,
               propertyName: rental.property_name || "Property",
@@ -75,7 +83,9 @@ const Messages = () => {
               lastMessage: "",
               lastMessageTime: "",
               unread: false,
-            });
+            };
+            console.log("Created conversation:", conversation); // Debug log
+            processedConversations.push(conversation);
 
             // Initialize empty message history for this conversation
             processedMessageHistory[index + 1] = [];
@@ -86,25 +96,105 @@ const Messages = () => {
         if (chatMessages && chatMessages.length > 0) {
           // Group messages by property/recipient
           const messageGroups = {};
+          const currentUser = getStoredUser();
+          console.log("Current user:", currentUser); // Debug log
+          console.log("Chat messages:", chatMessages); // Debug log
           chatMessages.forEach((msg) => {
-            // Use property ID to group messages
-            const conversationKey = msg.property || msg.recipient;
+            // Group messages by property ID if available, otherwise group by the other participant
+            let conversationKey = msg.property;
+
+            // If no property ID, determine the conversation key based on sender/recipient relationship
+            if (!conversationKey) {
+              // If current user is the sender, group by recipient (the manager)
+              // If current user is the recipient, group by sender (the manager)
+              conversationKey =
+                msg.sender_email === currentUser?.email
+                  ? msg.recipient
+                  : msg.sender;
+            }
+
+            console.log("Grouping message:", msg, "with key:", conversationKey); // Debug log
 
             if (!messageGroups[conversationKey]) {
               messageGroups[conversationKey] = [];
             }
             messageGroups[conversationKey].push(msg);
           });
+          console.log("Message groups:", messageGroups); // Debug log
 
           // Update conversations with actual message data
-          Object.keys(messageGroups).forEach((propertyId) => {
-            const messages = messageGroups[propertyId];
+          Object.keys(messageGroups).forEach((key) => {
+            const messages = messageGroups[key];
+            // Sort messages by timestamp to ensure correct order
+            messages.sort(
+              (a, b) => new Date(a.timestamp) - new Date(b.timestamp)
+            );
             const latestMessage = messages[messages.length - 1];
 
-            // Find the conversation for this property
+            console.log("Processing message group:", key, messages); // Debug log
+
+            // Find the conversation for this property or manager
             const conversationIndex = processedConversations.findIndex(
-              (conv) => conv.propertyId == propertyId
+              (conv) => {
+                // Match by property ID if available
+                if (key && conv.propertyId && conv.propertyId == key) {
+                  console.log(
+                    "Matched conversation by property ID:",
+                    key,
+                    conv
+                  ); // Debug log
+                  return true;
+                }
+                // Match by manager ID for direct messages
+                console.log(
+                  "Checking manager ID match:",
+                  key,
+                  typeof key,
+                  conv.manager.id,
+                  typeof conv.manager.id,
+                  key == conv.manager.id
+                ); // Debug log
+                if (key && conv.manager.id && conv.manager.id == key) {
+                  console.log("Matched conversation by manager ID:", key, conv); // Debug log
+                  return true;
+                }
+                // For cases where we're matching by sender/recipient relationship
+                // Check if any message in this group is from the manager associated with this conversation
+                // We need to check both sender and recipient because:
+                // 1. If tenant sent the message, recipient will be the manager
+                // 2. If manager sent the message, sender will be the manager
+                console.log(
+                  "Checking sender/recipient relationship for messages:",
+                  messages,
+                  "conversation manager:",
+                  conv.manager.id
+                ); // Debug log
+                const match = messages.some((msg) => {
+                  // Check if the message sender or recipient matches the conversation manager
+                  const isMatch =
+                    msg.sender === conv.manager.id ||
+                    msg.recipient === conv.manager.id;
+                  console.log(
+                    "Checking message match:",
+                    msg.sender,
+                    msg.recipient,
+                    conv.manager.id,
+                    isMatch
+                  ); // Debug log
+                  return isMatch;
+                });
+                if (match) {
+                  console.log(
+                    "Matched conversation by sender/recipient relationship:",
+                    key,
+                    conv,
+                    messages
+                  ); // Debug log
+                }
+                return match;
+              }
             );
+            console.log("Found conversation index:", conversationIndex); // Debug log
 
             if (conversationIndex !== -1) {
               // Update existing conversation with message data
@@ -114,23 +204,162 @@ const Messages = () => {
                 lastMessageTime: latestMessage.timestamp,
                 unread: !latestMessage.is_read,
               };
+              console.log(
+                "Updated existing conversation:",
+                processedConversations[conversationIndex]
+              ); // Debug log
             }
 
             // Store messages for this conversation
             if (conversationIndex !== -1) {
               processedMessageHistory[conversationIndex + 1] = messages.map(
-                (msg) => ({
-                  id: msg.id,
-                  sender: msg.sender_type === "tenant" ? "tenant" : "manager",
-                  content: msg.message,
-                  timestamp: msg.timestamp,
-                  read: msg.is_read,
-                })
+                (msg) => {
+                  // Determine if the message was sent by the current tenant
+                  const currentUser = getStoredUser();
+                  const isTenantMessage =
+                    msg.sender_email === currentUser?.email;
+
+                  return {
+                    id: msg.id,
+                    sender: isTenantMessage ? "tenant" : "manager",
+                    content: msg.message,
+                    timestamp: msg.timestamp,
+                    read: msg.is_read,
+                  };
+                }
               );
+              console.log(
+                "Stored messages for conversation:",
+                conversationIndex + 1,
+                processedMessageHistory[conversationIndex + 1]
+              ); // Debug log
+            } else {
+              // Handle case where conversation doesn't exist yet but messages do
+              // This can happen when a landlord initiates a conversation
+              console.log(
+                "No existing conversation found for key:",
+                key,
+                "messages:",
+                messages
+              ); // Debug log
+              const currentUser = getStoredUser();
+
+              // Find messages from managers (not from current tenant)
+              const managerMessages = messages.filter(
+                (m) => m.sender_email !== currentUser?.email
+              );
+
+              // Also find messages from current tenant (to managers)
+              const tenantMessages = messages.filter(
+                (m) => m.sender_email === currentUser?.email
+              );
+
+              console.log("Manager messages:", managerMessages); // Debug log
+              console.log("Tenant messages:", tenantMessages); // Debug log
+
+              // Determine the manager ID from either sender (if manager sent message)
+              // or recipient (if tenant sent message)
+              let managerId = null;
+              let managerEmail = null;
+
+              if (managerMessages.length > 0) {
+                // Manager sent messages to tenant
+                managerId = managerMessages[0].sender;
+                managerEmail = managerMessages[0].sender_email;
+              } else if (tenantMessages.length > 0) {
+                // Tenant sent messages to manager
+                managerId = tenantMessages[0].recipient;
+                managerEmail = null; // We don't have recipient email in this case
+              }
+
+              console.log("Determined manager ID:", managerId); // Debug log
+
+              // Also check if we already have a conversation for this manager
+              const existingManagerConversationIndex =
+                processedConversations.findIndex(
+                  (conv) => conv.manager.id == managerId
+                );
+
+              console.log(
+                "Existing manager conversation index:",
+                existingManagerConversationIndex
+              ); // Debug log
+
+              if (existingManagerConversationIndex !== -1) {
+                // We already have a conversation for this manager, update it
+                console.log("Updating existing manager conversation"); // Debug log
+                processedConversations[existingManagerConversationIndex] = {
+                  ...processedConversations[existingManagerConversationIndex],
+                  lastMessage: latestMessage.message,
+                  lastMessageTime: latestMessage.timestamp,
+                  unread: !latestMessage.is_read,
+                };
+
+                processedMessageHistory[existingManagerConversationIndex + 1] =
+                  messages.map((msg) => {
+                    const isTenantMessage =
+                      msg.sender_email === currentUser?.email;
+                    return {
+                      id: msg.id,
+                      sender: isTenantMessage ? "tenant" : "manager",
+                      content: msg.message,
+                      timestamp: msg.timestamp,
+                      read: msg.is_read,
+                    };
+                  });
+                console.log(
+                  "Updated existing manager conversation messages:",
+                  existingManagerConversationIndex + 1,
+                  processedMessageHistory[existingManagerConversationIndex + 1]
+                ); // Debug log
+              } else if (managerId) {
+                const newConversationIndex = processedConversations.length;
+
+                // Create a new conversation for this manager
+                const newConversation = {
+                  id: newConversationIndex + 1,
+                  propertyId: null, // No property association for direct messages
+                  propertyName: "Direct Message",
+                  unit: "",
+                  manager: {
+                    id: managerId,
+                    name: "Property Manager", // Will be updated if we have manager info
+                    email: managerEmail || "manager@example.com",
+                  },
+                  lastMessage: latestMessage.message,
+                  lastMessageTime: latestMessage.timestamp,
+                  unread: !latestMessage.is_read,
+                };
+
+                processedConversations.push(newConversation);
+                console.log("Created new conversation:", newConversation); // Debug log
+
+                // Store messages for this new conversation
+                processedMessageHistory[newConversationIndex + 1] =
+                  messages.map((msg) => {
+                    const isTenantMessage =
+                      msg.sender_email === currentUser?.email;
+                    return {
+                      id: msg.id,
+                      sender: isTenantMessage ? "tenant" : "manager",
+                      content: msg.message,
+                      timestamp: msg.timestamp,
+                      read: msg.is_read,
+                    };
+                  });
+                console.log(
+                  "Stored messages for new conversation:",
+                  newConversationIndex + 1,
+                  processedMessageHistory[newConversationIndex + 1]
+                ); // Debug log
+              }
             }
           });
+          console.log("Message groups:", messageGroups); // Debug log
         }
 
+        console.log("Processed conversations:", processedConversations); // Debug log
+        console.log("Processed message history:", processedMessageHistory); // Debug log
         setConversations(processedConversations);
         setMessageHistory(processedMessageHistory);
       } catch (err) {
@@ -273,14 +502,15 @@ const Messages = () => {
         recipient: selectedChat.manager.id,
         message: messageInput.trim(),
         property: selectedChat.propertyId,
-        unit: selectedChat.unit ? selectedChat.unit : null,
+        // Fix: Send unit as integer ID or null, not as string
+        unit: selectedChat.unit ? parseInt(selectedChat.unit) : null,
       };
 
       const response = await chatAPI.sendMessage(messageData);
 
       const newMessage = {
         id: response.id || Date.now(),
-        sender: "tenant",
+        sender: "tenant", // Explicitly set sender as tenant for the tenant's view
         content: messageInput.trim(),
         timestamp: response.timestamp || new Date().toISOString(),
         read: false,
@@ -374,23 +604,74 @@ const Messages = () => {
           <TenantHeader toggleSidebar={toggleSidebar} />
           {/* Main content */}
           <main className="flex-1 transition-all duration-200">
-            <div className="pl-4 pr-8 sm:pl-6 sm:pr-12 lg:pl-8 lg:pr-16 py-2 md:py-8 h-full min-h-0 flex flex-col">
+            <div className="pl-4 pr-8 sm:pl-6 sm:pr-12 lg:pl-8 lg:pr-16 py-2 md:py-4 h-full min-h-0 flex flex-col">
               {/* Page header */}
-              <div className="mb-8">
-                <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">
-                  Messages
-                </h1>
-                <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
-                  Communicate with your property managers
-                </p>
+              <div className="sm:flex sm:items-center sm:justify-between mb-4">
+                <div className="sm:flex-auto">
+                  <div className="flex items-center space-x-2">
+                    <svg
+                      className="w-6 h-6 text-[#0d9488]"
+                      fill="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" />
+                    </svg>
+                    <h1 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
+                      Messages
+                    </h1>
+                  </div>
+                </div>
               </div>
 
-              {/* Messages container */}
-              <div className="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 flex-1 min-h-0 flex flex-col">
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 h-[65vh] md:h-[80vh] min-h-0">
+              {/* Mobile header for chat view */}
+              {selectedChat && (
+                <div className="lg:hidden p-4 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between bg-white dark:bg-slate-800 sticky top-0 z-10">
+                  <button
+                    onClick={() => setSelectedChat(null)}
+                    className="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-700"
+                  >
+                    <svg
+                      className="w-5 h-5 text-slate-600 dark:text-slate-400"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M15 19l-7-7 7-7"
+                      />
+                    </svg>
+                  </button>
+                  <div className="flex items-center space-x-3">
+                    <div className="w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center">
+                      <span className="text-xs font-medium text-gray-600 dark:text-gray-300">
+                        {selectedChat.manager && selectedChat.manager.name
+                          ? selectedChat.manager.name
+                              .split(" ")
+                              .map((n) => n[0])
+                              .join("")
+                          : "M"}
+                      </span>
+                    </div>
+                    <div>
+                      <h3 className="text-sm font-medium text-slate-900 dark:text-slate-100">
+                        {selectedChat.manager.name}
+                      </h3>
+                      <p className="text-xs text-slate-500 dark:text-slate-400 truncate max-w-[120px]">
+                        {selectedChat.propertyName}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="w-8 h-8"></div> {/* Spacer for alignment */}
+                </div>
+              )}
+              <div className="mt-4 h-[calc(100vh-10rem)]">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 h-full">
                   {/* Conversations list */}
                   <div
-                    className={`lg:col-span-4 border-r border-slate-200 dark:border-slate-700 ${
+                    className={`lg:col-span-4 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden ${
                       selectedChat ? "hidden lg:block" : "block"
                     } min-h-0 h-full flex flex-col`}
                   >
@@ -409,14 +690,14 @@ const Messages = () => {
 
                   {/* Chat area */}
                   <div
-                    className={`lg:col-span-8 ${
+                    className={`lg:col-span-8 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden ${
                       selectedChat ? "block" : "hidden lg:block"
                     } min-h-0 h-full flex flex-col`}
                   >
                     <div className="lg:hidden">
                       <button
                         onClick={() => setSelectedChat(null)}
-                        className="p-4 flex items-center space-x-2 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100"
+                        className="p-4 flex items-center space-x-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100"
                       >
                         <svg
                           className="w-5 h-5"
@@ -435,7 +716,7 @@ const Messages = () => {
                       </button>
                     </div>
                     {hasRentals ? (
-                      <ChatView
+                      <TenantChatView
                         selectedChat={selectedChat}
                         messages={messageHistory}
                         newChatMessage={messageInput}

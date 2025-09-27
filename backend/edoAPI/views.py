@@ -177,7 +177,14 @@ class IsLandlord(permissions.BasePermission):
         return request.user.is_authenticated and request.user.roles.filter(name='landlord').exists()
 
     def has_object_permission(self, request, view, obj):
-        return obj.landlord == request.user
+        # For Tenant objects, we need to check if the landlord of the property matches the request user
+        if hasattr(obj, 'unit') and hasattr(obj.unit, 'property'):
+            return obj.unit.property.landlord == request.user
+        # For other objects that have a direct landlord attribute
+        elif hasattr(obj, 'landlord'):
+            return obj.landlord == request.user
+        # Default to False if we can't determine the relationship
+        return False
 
 class IsHost(permissions.BasePermission):
     def has_permission(self, request, view):
@@ -337,6 +344,14 @@ class TenantViewSet(viewsets.ModelViewSet):
         unit.status = 'vacant'
         unit.save()
         instance.delete()
+
+    def destroy(self, request, *args, **kwargs):
+        """
+        Override destroy method to ensure proper JSON response
+        """
+        instance = self.get_object()
+        self.perform_destroy(instance)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
     def create(self, request, *args, **kwargs):
         try:

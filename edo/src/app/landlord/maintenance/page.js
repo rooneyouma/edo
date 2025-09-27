@@ -99,7 +99,7 @@ const LandlordMaintenance = () => {
     return [...filtered].sort((a, b) => {
       if (sortOrder === "latest") {
         return new Date(b.created_at) - new Date(a.created_at);
-      } else if (sortOrder === "oldest") {
+      } else if (sortOrder === "earliest") {
         return new Date(a.created_at) - new Date(b.created_at);
       } else if (sortOrder === "priority") {
         const priorityOrder = { high: 3, medium: 2, low: 1 };
@@ -171,24 +171,55 @@ const LandlordMaintenance = () => {
     setSidebarOpen(!sidebarOpen);
   }, [sidebarOpen]);
 
+  // Add the missing handler functions
+  const handleMarkComplete = useCallback(
+    async (request) => {
+      handleUpdateRequest(request.id, { status: "completed" });
+      setSelectedRequest(null);
+    },
+    [handleUpdateRequest]
+  );
+
+  const handleCancelRequest = useCallback(
+    async (request) => {
+      handleUpdateRequest(request.id, { status: "cancelled" });
+      setSelectedRequest(null);
+    },
+    [handleUpdateRequest]
+  );
+
+  const handleReopenRequest = useCallback(
+    async (request) => {
+      handleUpdateRequest(request.id, { status: "pending" });
+      setSelectedRequest(null);
+    },
+    [handleUpdateRequest]
+  );
+
   // Handle error state from React Query
   const error = queryError ? queryError.message : null;
 
   if (!isAuthenticated()) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-slate-50 dark:bg-slate-900">
-        <h2 className="text-2xl font-bold mb-4">Sign in required</h2>
-        <p className="mb-6">You must be signed in to access this page.</p>
-        <button
-          className="px-6 py-2 bg-teal-600 text-white rounded-lg font-semibold hover:bg-teal-700 transition"
-          onClick={() =>
-            router.push(
-              `/auth/signin?role=landlord&next=${encodeURIComponent(pathname)}`
-            )
-          }
-        >
-          Proceed
-        </button>
+      <div className="flex min-h-screen">
+        {/* Sidebar - even in unauthenticated state to maintain consistency */}
+        <LandlordSidebar sidebarOpen={false} setSidebarOpen={() => {}} />
+        <div className="flex-1 flex flex-col items-center justify-center bg-slate-50 dark:bg-slate-900 lg:ml-64">
+          <h2 className="text-2xl font-bold mb-4">Sign in required</h2>
+          <p className="mb-6">You must be signed in to access this page.</p>
+          <button
+            className="px-6 py-2 bg-teal-600 text-white rounded-lg font-semibold hover:bg-teal-700 transition"
+            onClick={() =>
+              router.push(
+                `/auth/signin?role=landlord&next=${encodeURIComponent(
+                  pathname
+                )}`
+              )
+            }
+          >
+            Proceed
+          </button>
+        </div>
       </div>
     );
   }
@@ -250,7 +281,7 @@ const LandlordMaintenance = () => {
           sidebarOpen={sidebarOpen}
           setSidebarOpen={setSidebarOpen}
         />
-        <div className="flex-1 flex flex-col min-w-0">
+        <div className="flex-1 flex flex-col min-w-0 bg-slate-50 dark:bg-slate-900 lg:ml-64">
           <LandlordHeader toggleSidebar={toggleSidebar} />
           <div className="flex-1 flex items-center justify-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-teal-600"></div>
@@ -261,13 +292,13 @@ const LandlordMaintenance = () => {
   }
 
   return (
-    <div className="flex h-screen overflow-hidden bg-slate-50 dark:bg-slate-900">
+    <div className="flex min-h-screen">
       {/* Sidebar */}
       <LandlordSidebar
         sidebarOpen={sidebarOpen}
         setSidebarOpen={setSidebarOpen}
       />
-      <div className="relative flex flex-col flex-1 overflow-y-auto overflow-x-hidden lg:ml-64">
+      <div className="relative flex flex-col flex-1 overflow-y-auto overflow-x-hidden bg-slate-50 dark:bg-slate-900 lg:ml-64">
         {/* Site header */}
         <LandlordHeader toggleSidebar={toggleSidebar} />
         <main className="flex-1 pl-4 pr-8 sm:pl-6 sm:pr-12 lg:pl-8 lg:pr-16 py-4 sm:py-6 lg:py-8 overflow-auto">
@@ -306,6 +337,8 @@ const LandlordMaintenance = () => {
               setPropertyFilter={setPropertyFilter}
               dateFilter={dateFilter}
               setDateFilter={setDateFilter}
+              sortOrder={sortOrder}
+              setSortOrder={setSortOrder}
             />
 
             {/* Results Count */}
@@ -370,8 +403,9 @@ const LandlordMaintenance = () => {
               request={selectedRequest}
               onClose={() => setSelectedRequest(null)}
               onAssignClick={handleAssignClick}
-              onStatusChange={handleStatusClick}
-              onDelete={handleDeleteClick}
+              onMarkComplete={handleMarkComplete}
+              onCancel={handleCancelRequest}
+              onReopen={handleReopenRequest}
             />
           )}
 

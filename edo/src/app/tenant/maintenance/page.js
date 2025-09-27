@@ -6,6 +6,7 @@ import TenantHeader from "../../../partials/tenant/TenantHeader.jsx";
 import TenantSidebar from "../../../partials/tenant/TenantSidebar.jsx";
 import MaintenanceTable from "../../../components/tenant/maintenance/MaintenanceTable.jsx";
 import NewRequestModal from "../../../components/tenant/maintenance/NewRequestModal.jsx";
+import TenantMaintenanceFilters from "../../../components/tenant/maintenance/TenantMaintenanceFilters.jsx";
 import {
   getStatusColor,
   getPriorityColor,
@@ -129,7 +130,7 @@ const Maintenance = () => {
       switch (sortOrder) {
         case "latest":
           return new Date(b.created_at) - new Date(a.created_at);
-        case "oldest":
+        case "earliest":
           return new Date(a.created_at) - new Date(b.created_at);
         case "priority":
           const priorityOrder = { emergency: 4, high: 3, medium: 2, low: 1 };
@@ -277,54 +278,16 @@ const Maintenance = () => {
             <div className="mb-6 flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between">
               {/* Search and Filters */}
               <div className="flex flex-col gap-4 flex-1 w-full lg:w-auto">
-                {/* Search */}
-                <div className="relative w-full lg:w-80">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
-                  <input
-                    type="text"
-                    placeholder="Search requests..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent dark:bg-slate-800 dark:border-slate-600 dark:text-slate-100"
-                  />
-                </div>
-
-                {/* Filters */}
-                <div className="flex flex-wrap gap-3">
-                  <select
-                    value={statusFilter}
-                    onChange={(e) => setStatusFilter(e.target.value)}
-                    className="min-w-[140px] pl-3 pr-10 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent dark:bg-slate-800 dark:border-slate-600 dark:text-slate-100 text-sm"
-                  >
-                    <option value="all">All Status</option>
-                    <option value="pending">Pending</option>
-                    <option value="in_progress">In Progress</option>
-                    <option value="completed">Completed</option>
-                    <option value="cancelled">Cancelled</option>
-                  </select>
-
-                  <select
-                    value={priorityFilter}
-                    onChange={(e) => setPriorityFilter(e.target.value)}
-                    className="min-w-[140px] pl-3 pr-10 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent dark:bg-slate-800 dark:border-slate-600 dark:text-slate-100 text-sm"
-                  >
-                    <option value="all">All Priority</option>
-                    <option value="low">Low</option>
-                    <option value="medium">Medium</option>
-                    <option value="high">High</option>
-                    <option value="emergency">Emergency</option>
-                  </select>
-
-                  <select
-                    value={sortOrder}
-                    onChange={(e) => setSortOrder(e.target.value)}
-                    className="min-w-[140px] pl-3 pr-10 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent dark:bg-slate-800 dark:border-slate-600 dark:text-slate-100 text-sm"
-                  >
-                    <option value="latest">Latest First</option>
-                    <option value="oldest">Oldest First</option>
-                    <option value="priority">Priority</option>
-                  </select>
-                </div>
+                <TenantMaintenanceFilters
+                  searchQuery={searchQuery}
+                  setSearchQuery={setSearchQuery}
+                  statusFilter={statusFilter}
+                  setStatusFilter={setStatusFilter}
+                  priorityFilter={priorityFilter}
+                  setPriorityFilter={setPriorityFilter}
+                  sortOrder={sortOrder}
+                  setSortOrder={setSortOrder}
+                />
               </div>
 
               {/* New Request Button */}

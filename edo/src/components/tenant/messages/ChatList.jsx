@@ -95,7 +95,7 @@ const ChatList = ({
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center space-x-3">
                       <div className="flex-shrink-0">
-                        <div className="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center">
+                        <div className="w-12 h-12 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center">
                           <span className="text-sm font-medium text-gray-600 dark:text-gray-300">
                             {chat.manager && chat.manager.name
                               ? chat.manager.name
@@ -107,16 +107,17 @@ const ChatList = ({
                         </div>
                       </div>
                       <div className="flex-1 min-w-0">
-                        <div className="flex items-center justify-between">
+                        <div className="flex items-baseline justify-between">
                           <p className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
                             {chat.propertyName || "Property"}
                           </p>
-                          <p className="text-xs text-gray-500 dark:text-gray-400">
-                            {chat.lastMessageTime
-                              ? formatDate(chat.lastMessageTime)
-                              : ""}
-                          </p>
+                          {chat.lastMessageTime && (
+                            <p className="text-xs text-gray-500 dark:text-gray-400 ml-2 whitespace-nowrap">
+                              {formatDate(chat.lastMessageTime)}
+                            </p>
+                          )}
                         </div>
+                        {/* Show property manager name instead of hardcoded text */}
                         <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
                           {chat.manager && chat.manager.name
                             ? `${chat.manager.name} - property manager`
@@ -129,8 +130,8 @@ const ChatList = ({
                     </div>
                   </div>
                   {chat.unread && (
-                    <div className="ml-2">
-                      <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-[#0d9488]/10 text-[#0d9488] dark:bg-[#0d9488]/30 dark:text-[#0d9488]">
+                    <div className="ml-2 flex-shrink-0">
+                      <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-[#0d9488] text-white">
                         New
                       </span>
                     </div>

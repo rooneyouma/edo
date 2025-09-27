@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import TenantHeader from "@/partials/tenant/TenantHeader.jsx";
 import TenantSidebar from "@/partials/tenant/TenantSidebar.jsx";
-import { isAuthenticated, tenantAPI } from "@/utils/api.js";
+import { isAuthenticated, tenantAPI, getStoredUser } from "@/utils/api.js";
 
 const MyRentals = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -81,6 +81,17 @@ const MyRentals = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
 
+  // Get user's preferred currency
+  const getUserCurrency = () => {
+    try {
+      const user = getStoredUser();
+      return user?.preferences?.currency || "KES";
+    } catch (e) {
+      // Fallback to KES if there's any error accessing user data
+      return "KES";
+    }
+  };
+
   // Format date for display
   const formatDate = (dateString) => {
     if (!dateString) return "N/A";
@@ -94,11 +105,39 @@ const MyRentals = () => {
 
   // Format currency
   const formatCurrency = (amount) => {
-    if (!amount) return "$0";
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "USD",
-    }).format(amount);
+    if (!amount) return "KES 0";
+
+    // Ensure amount is a number
+    const numericAmount =
+      typeof amount === "number" ? amount : parseFloat(amount);
+    if (isNaN(numericAmount)) return "KES 0";
+
+    const currency = getUserCurrency();
+
+    // Try to format with Intl.NumberFormat first
+    try {
+      return new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: currency,
+      }).format(numericAmount);
+    } catch (e) {
+      // Fallback to manual formatting if Intl fails
+      // Map currency codes to symbols for common currencies
+      const currencySymbols = {
+        USD: "$",
+        KES: "KES",
+        EUR: "€",
+        GBP: "£",
+        CAD: "C$",
+      };
+
+      const symbol = currencySymbols[currency] || currency;
+      // Special handling for KES to show "KES" symbol
+      if (currency === "KES") {
+        return `KES ${numericAmount.toLocaleString()}`;
+      }
+      return `${symbol}${numericAmount.toLocaleString()}`;
+    }
   };
 
   return (
@@ -163,88 +202,48 @@ const MyRentals = () => {
                   {rentals.map((rental) => (
                     <div
                       key={rental.id}
-                      className="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700"
+                      className="bg-white dark:bg-slate-800 rounded-xl shadow-md hover:shadow-lg transition-shadow duration-200 flex flex-col group"
                     >
-                      <div className="p-6">
-                        <div className="flex items-center justify-between mb-4">
-                          <div>
-                            <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
-                              {rental.property_name}
-                            </h3>
-                            <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
-                              {rental.unit_number}
-                            </p>
-                          </div>
-                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
-                            {rental.status}
+                      <div className="p-5 flex-1 flex flex-col">
+                        <h3 className="text-xl font-bold text-[#0d9488] dark:text-[#2dd4bf] mb-1 line-clamp-1">
+                          {rental.property_name}
+                        </h3>
+                        <p className="text-sm text-gray-700 dark:text-gray-300 mb-1 flex items-center">
+                          <span className="truncate">{rental.unit_number}</span>
+                        </p>
+                        <p className="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-2 uppercase tracking-wide">
+                          {rental.property_type}
+                        </p>
+                        <div className="flex items-center space-x-4 text-sm text-gray-600 dark:text-gray-300 mb-2">
+                          <span>Bed: {rental.bedrooms}</span>
+                          <span>Bath: {rental.bathrooms}</span>
+                        </div>
+                        <div className="flex items-center space-x-4 text-sm text-gray-600 dark:text-gray-300 mb-2">
+                          <span>
+                            Rent: {formatCurrency(rental.monthly_rent)}
                           </span>
                         </div>
-
-                        <div className="grid grid-cols-2 gap-4">
-                          <div>
-                            <p className="text-sm text-slate-500 dark:text-slate-400">
-                              Type
-                            </p>
-                            <p className="mt-1 text-sm font-medium text-slate-900 dark:text-slate-100">
-                              {rental.property_type}
-                            </p>
-                          </div>
-                          <div>
-                            <p className="text-sm text-slate-500 dark:text-slate-400">
-                              Unit
-                            </p>
-                            <p className="mt-1 text-sm font-medium text-slate-900 dark:text-slate-100">
-                              {rental.unit_number}
-                            </p>
-                          </div>
-                          <div>
-                            <p className="text-sm text-slate-500 dark:text-slate-400">
-                              Bedrooms
-                            </p>
-                            <p className="mt-1 text-sm font-medium text-slate-900 dark:text-slate-100">
-                              {rental.bedrooms}
-                            </p>
-                          </div>
-                          <div>
-                            <p className="text-sm text-slate-500 dark:text-slate-400">
-                              Bathrooms
-                            </p>
-                            <p className="mt-1 text-sm font-medium text-slate-900 dark:text-slate-100">
-                              {rental.bathrooms}
-                            </p>
-                          </div>
-                        </div>
-
-                        <div className="mt-6 border-t border-slate-200 dark:border-slate-700 pt-4">
-                          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0">
-                            <div>
-                              <p className="text-sm text-slate-500 dark:text-slate-400">
-                                Lease Ends
-                              </p>
-                              <p className="mt-1 text-sm font-medium text-slate-900 dark:text-slate-100">
-                                {formatDate(rental.lease_end_date)}
-                              </p>
-                            </div>
-                            <div className="flex space-x-2">
-                              <button
-                                onClick={() => setSelectedRental(rental)}
-                                className="inline-flex items-center px-3 py-1.5 border border-slate-200 dark:border-slate-700 rounded-md text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50"
-                              >
-                                View Details
-                              </button>
-                              <button
-                                onClick={() => {
-                                  router.push(
-                                    `/tenant/messages?managerId=${rental.property_id}`
-                                  );
-                                }}
-                                className="inline-flex items-center px-3 py-1.5 border border-transparent rounded-md text-sm font-medium text-white bg-[#0d9488] hover:bg-[#0f766e]"
-                              >
-                                Contact
-                              </button>
-                            </div>
-                          </div>
-                        </div>
+                        <p className="text-xs text-gray-500 dark:text-gray-400 mb-2 line-clamp-2">
+                          Lease ends: {formatDate(rental.lease_end_date)}
+                        </p>
+                      </div>
+                      <div className="flex justify-end gap-2 p-3 border-t border-gray-100 dark:border-gray-800 bg-white/60 dark:bg-slate-900/60">
+                        <button
+                          onClick={() => setSelectedRental(rental)}
+                          className="inline-flex items-center px-3 py-1.5 border border-slate-200 dark:border-slate-700 rounded-md text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50"
+                        >
+                          View Details
+                        </button>
+                        <button
+                          onClick={() => {
+                            router.push(
+                              `/tenant/messages?managerId=${rental.property_id}`
+                            );
+                          }}
+                          className="inline-flex items-center px-3 py-1.5 border border-transparent rounded-md text-sm font-medium text-white bg-[#0d9488] hover:bg-[#0f766e]"
+                        >
+                          Contact
+                        </button>
                       </div>
                     </div>
                   ))}
@@ -320,10 +319,18 @@ const MyRentals = () => {
                       </div>
                       <div>
                         <dt className="text-sm text-slate-500 dark:text-slate-400">
-                          Lease Type
+                          Agreement Type
                         </dt>
                         <dd className="mt-1 text-sm text-slate-900 dark:text-slate-100">
-                          {selectedRental.lease_type}
+                          {selectedRental.lease_type
+                            ?.toLowerCase()
+                            .includes("lease")
+                            ? "Lease Agreement"
+                            : selectedRental.lease_type
+                                ?.toLowerCase()
+                                .includes("rent")
+                            ? "Rental Agreement"
+                            : selectedRental.lease_type || "N/A"}
                         </dd>
                       </div>
                       <div>

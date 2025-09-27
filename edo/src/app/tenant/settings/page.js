@@ -56,6 +56,7 @@ const TenantSettings = () => {
     language: "en",
     dateFormat: "MM/DD/YYYY",
     timezone: "America/New_York",
+    currency: "KES",
   });
 
   // Initialize client-side state
@@ -88,6 +89,17 @@ const TenantSettings = () => {
         newPassword: "",
         confirmPassword: "",
       });
+
+      // Initialize preferences if they exist in user data
+      if (user.preferences) {
+        setPreferences({
+          theme: user.preferences.theme || "system",
+          language: user.preferences.language || "en",
+          dateFormat: user.preferences.date_format || "MM/DD/YYYY",
+          timezone: user.preferences.timezone || "America/New_York",
+          currency: user.preferences.currency || "KES",
+        });
+      }
     }
   }, [router, user, isClient]);
 
@@ -505,6 +517,28 @@ const TenantSettings = () => {
                               </option>
                             </select>
                           </div>
+                        </div>
+                        {/* Add this currency selection dropdown */}
+                        <div>
+                          <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                            Currency
+                          </label>
+                          <select
+                            value={preferences.currency}
+                            onChange={(e) =>
+                              setPreferences({
+                                ...preferences,
+                                currency: e.target.value,
+                              })
+                            }
+                            className="w-full max-w-xs px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500 dark:bg-slate-700 dark:text-slate-100"
+                          >
+                            <option value="USD">USD - US Dollar</option>
+                            <option value="KES">KES - Kenyan Shilling</option>
+                            <option value="EUR">EUR - Euro</option>
+                            <option value="GBP">GBP - British Pound</option>
+                            <option value="CAD">CAD - Canadian Dollar</option>
+                          </select>
                         </div>
                         <div className="flex justify-end">
                           <button

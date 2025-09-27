@@ -14,6 +14,8 @@ const ChatList = ({
   const filteredMessages = messages.filter(
     (chat) =>
       chat.tenant.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (chat.tenantEmail &&
+        chat.tenantEmail.toLowerCase().includes(searchQuery.toLowerCase())) ||
       chat.property.toLowerCase().includes(searchQuery.toLowerCase()) ||
       chat.unit.toLowerCase().includes(searchQuery.toLowerCase()) ||
       chat.lastMessage.toLowerCase().includes(searchQuery.toLowerCase())
@@ -94,8 +96,9 @@ const ChatList = ({
                           {formatDate(chat.lastMessageTime)}
                         </p>
                       </div>
+                      {/* Show tenant email instead of property - unit */}
                       <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
-                        {chat.property} - {chat.unit}
+                        {chat.tenantEmail || `${chat.property} - ${chat.unit}`}
                       </p>
                       <p className="text-sm text-gray-500 dark:text-gray-400 truncate mt-1">
                         {chat.lastMessage}
@@ -120,7 +123,7 @@ const ChatList = ({
           )}
           {filteredMessages.length === 0 && !searchQuery && (
             <div className="p-4 text-center text-gray-500 dark:text-gray-400">
-              No conversations yet. Start a new chat!
+              No conversations yet
             </div>
           )}
         </div>

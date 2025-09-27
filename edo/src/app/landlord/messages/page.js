@@ -13,106 +13,24 @@ import ChatList from "../../../components/landlord/messages/ChatList";
 import StartChatModal from "../../../components/landlord/messages/StartChatModal";
 import DeleteConfirmModal from "../../../components/landlord/maintenance/DeleteConfirmModal";
 import Modal from "../../../partials/Modal";
-import { isAuthenticated } from "../../../utils/api";
+import {
+  isAuthenticated,
+  chatAPI,
+  landlordTenantAPI,
+} from "../../../utils/api";
 
 const Messages = () => {
   const router = useRouter();
   const pathname = usePathname();
-  if (!isAuthenticated()) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-slate-50 dark:bg-slate-900">
-        <h2 className="text-2xl font-bold mb-4">Sign in required</h2>
-        <p className="mb-6">You must be signed in to access this page.</p>
-        <button
-          className="px-6 py-2 bg-teal-600 text-white rounded-lg font-semibold hover:bg-teal-700 transition"
-          onClick={() =>
-            router.push(
-              `/auth/signin?role=landlord&next=${encodeURIComponent(pathname)}`
-            )
-          }
-        >
-          Proceed
-        </button>
-      </div>
-    );
-  }
+  const [isClient, setIsClient] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [viewMode, setViewMode] = useState("email");
   const [selectedChat, setSelectedChat] = useState(null);
   const [newChatMessage, setNewChatMessage] = useState("");
-  const [messages, setMessages] = useState([
-    {
-      id: 1,
-      tenant: "John Doe",
-      property: "Sunset Apartments",
-      unit: "A101",
-      subject: "Maintenance Request",
-      messages: [
-        {
-          id: 1,
-          sender: "tenant",
-          content: "Hello, I have a question about my maintenance request.",
-          timestamp: "2024-03-20 10:30 AM",
-        },
-        {
-          id: 2,
-          sender: "landlord",
-          content: "Sure, what would you like to know?",
-          timestamp: "2024-03-20 10:31 AM",
-        },
-        {
-          id: 3,
-          sender: "tenant",
-          content:
-            "The kitchen sink is leaking and the AC is not working properly.",
-          timestamp: "2024-03-20 10:32 AM",
-        },
-        {
-          id: 4,
-          sender: "landlord",
-          content:
-            "I'll send a maintenance technician tomorrow between 9 AM and 12 PM.",
-          timestamp: "2024-03-20 10:33 AM",
-        },
-      ],
-      lastMessage:
-        "I'll send a maintenance technician tomorrow between 9 AM and 12 PM.",
-      lastMessageTime: "2024-03-20 10:33 AM",
-      unread: false,
-      status: "read",
-    },
-    {
-      id: 2,
-      tenant: "Jane Smith",
-      property: "Mountain View Condos",
-      unit: "B202",
-      subject: "Rent Payment Confirmation",
-      messages: [
-        {
-          id: 1,
-          sender: "landlord",
-          content: "Your rent payment has been received.",
-          timestamp: "2024-03-19 03:30 PM",
-        },
-        {
-          id: 2,
-          sender: "tenant",
-          content: "Thank you for confirming. Can I get a receipt?",
-          timestamp: "2024-03-19 03:35 PM",
-        },
-        {
-          id: 3,
-          sender: "landlord",
-          content: "I've sent the receipt to your email.",
-          timestamp: "2024-03-19 03:40 PM",
-        },
-      ],
-      lastMessage: "I've sent the receipt to your email.",
-      lastMessageTime: "2024-03-19 03:40 PM",
-      unread: true,
-      status: "unread",
-    },
-  ]);
+  const [messages, setMessages] = useState([]); // Start with empty array instead of mock data
+  const [tenants, setTenants] = useState([]); // Store actual tenants
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   // Email view state
   const [receivedSearchQuery, setReceivedSearchQuery] = useState("");
@@ -148,25 +66,118 @@ const Messages = () => {
   const [tenantSearchQuery, setTenantSearchQuery] = useState("");
   const [filteredTenants, setFilteredTenants] = useState([]);
 
-  // Mock tenant data - This should be replaced with actual API data
-  const mockTenants = [
-    {
-      id: 1,
-      name: "John Doe",
-      property: "Sunset Apartments",
-      unit: "A101",
-      email: "john.doe@example.com",
-    },
-    {
-      id: 2,
-      name: "Jane Smith",
-      property: "Mountain View Condos",
-      unit: "B202",
-      email: "jane.smith@example.com",
-    },
-  ];
-
   const itemsPerPage = 5;
+
+  // Add state for message tabs
+  const [messageTab, setMessageTab] = useState("received");
+
+  // Add state for start chat modal
+  const [showStartChatModal, setShowStartChatModal] = useState(false);
+
+  // Initialize client-side state
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  // Check authentication after client-side rendering
+  useEffect(() => {
+    if (isClient && !isAuthenticated()) {
+      router.push(
+        `/auth/signin?role=landlord&next=${encodeURIComponent(pathname)}`
+      );
+    }
+  }, [isClient, router, pathname]);
+
+  // Fetch chat messages and tenants when component mounts
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        // Fetch chat messages
+        const chatMessages = await chatAPI.getMessages();
+
+        // Fetch tenants
+        const tenantData = await landlordTenantAPI.list();
+        setTenants(tenantData);
+
+        // Process chat messages into the format expected by the UI
+        const processedMessages = processChatMessages(chatMessages, tenantData);
+        setMessages(processedMessages);
+      } catch (err) {
+        console.error("Error fetching data:", err);
+        setError("Failed to load messages and tenants");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (isClient && isAuthenticated()) {
+      fetchData();
+    }
+  }, [isClient]);
+
+  // Process chat messages into the format expected by the UI
+  const processChatMessages = (chatMessages, tenantData) => {
+    // Group messages by tenant
+    const tenantMessages = {};
+
+    chatMessages.forEach((msg) => {
+      // Find the tenant associated with this message
+      const tenant = tenantData.find(
+        (t) => t.user === msg.sender || t.user === msg.recipient
+      );
+
+      if (tenant) {
+        const tenantId = tenant.id;
+        if (!tenantMessages[tenantId]) {
+          tenantMessages[tenantId] = {
+            id: tenantId,
+            tenant: `${tenant.first_name} ${tenant.last_name}`,
+            tenantEmail: tenant.email,
+            property: tenant.unit?.property?.name || "N/A",
+            unit: tenant.unit?.unit_id || "N/A",
+            messages: [],
+            lastMessage: "",
+            lastMessageTime: "",
+            unread: false,
+            status: "read",
+          };
+        }
+
+        // Determine the sender type based on the current user context
+        // If the sender is the current landlord, mark as "landlord"
+        // If the sender is the tenant, mark as "tenant"
+        const senderType = msg.sender === msg.recipient ? "landlord" : "tenant";
+
+        // Add message to tenant's conversation
+        tenantMessages[tenantId].messages.push({
+          id: msg.id,
+          sender: senderType,
+          content: msg.message,
+          timestamp: msg.timestamp,
+          read: msg.is_read,
+        });
+
+        // Update last message info
+        if (
+          !tenantMessages[tenantId].lastMessageTime ||
+          new Date(msg.timestamp) >
+            new Date(tenantMessages[tenantId].lastMessageTime)
+        ) {
+          tenantMessages[tenantId].lastMessage = msg.message;
+          tenantMessages[tenantId].lastMessageTime = msg.timestamp;
+          tenantMessages[tenantId].unread =
+            !msg.is_read && msg.sender !== msg.recipient;
+          tenantMessages[tenantId].status = msg.is_read ? "read" : "unread";
+        }
+      }
+    });
+
+    // Convert to array and sort by last message time
+    return Object.values(tenantMessages).sort(
+      (a, b) => new Date(b.lastMessageTime) - new Date(a.lastMessageTime)
+    );
+  };
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
@@ -202,8 +213,8 @@ const Messages = () => {
   };
 
   // Helper function to format dates consistently
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
+  const formatDate = (timestamp) => {
+    const date = new Date(timestamp);
     return date.toLocaleString("en-US", {
       year: "numeric",
       month: "short",
@@ -355,100 +366,130 @@ const Messages = () => {
   // Filter tenants based on search query
   useEffect(() => {
     if (tenantSearchQuery) {
-      const filtered = mockTenants.filter(
+      const filtered = tenants.filter(
         (tenant) =>
-          tenant.name.toLowerCase().includes(tenantSearchQuery.toLowerCase()) ||
-          tenant.property
+          `${tenant.first_name} ${tenant.last_name}`
             .toLowerCase()
             .includes(tenantSearchQuery.toLowerCase()) ||
-          tenant.unit.toLowerCase().includes(tenantSearchQuery.toLowerCase())
+          tenant.unit?.property?.name
+            ?.toLowerCase()
+            .includes(tenantSearchQuery.toLowerCase()) ||
+          tenant.unit?.unit_id
+            ?.toLowerCase()
+            .includes(tenantSearchQuery.toLowerCase())
       );
       setFilteredTenants(filtered);
     } else {
       setFilteredTenants([]);
     }
-  }, [tenantSearchQuery]);
+  }, [tenantSearchQuery, tenants]);
 
-  const handleSendNewMessage = () => {
+  const handleSendNewMessage = async () => {
     if (!newMessage.recipient || !newMessage.message) {
       alert("Recipient and message cannot be empty.");
       return;
     }
 
-    const messageToSend = {
-      id: Date.now(),
-      sender: "landlord",
-      content: newMessage.message,
-      timestamp: new Date().toLocaleString("en-US", {
-        year: "numeric",
-        month: "short",
-        day: "numeric",
-        hour: "numeric",
-        minute: "numeric",
-        hour12: true,
-      }),
-      status: "sent",
-    };
+    try {
+      // Send message to backend
+      const messageData = {
+        recipient: parseInt(newMessage.recipient),
+        message: newMessage.message,
+        // Add property and unit if available
+        property: newMessage.property ? parseInt(newMessage.property) : null,
+        unit: newMessage.unit ? parseInt(newMessage.unit) : null,
+      };
 
-    setMessages((prevMessages) => {
-      let chatExists = false;
-      const updatedMessages = prevMessages.map((chat) => {
-        if (chat.tenant === newMessage.recipient) {
-          chatExists = true;
-          return {
-            ...chat,
-            messages: [...chat.messages, messageToSend],
-            lastMessage: messageToSend.content,
-            lastMessageTime: messageToSend.timestamp,
-          };
+      const response = await chatAPI.sendMessage(messageData);
+
+      // Update UI with new message
+      const newMessageObj = {
+        id: response.id,
+        sender: "landlord", // Explicitly set sender as landlord for the landlord's view
+        content: newMessage.message,
+        timestamp: response.timestamp,
+        status: "sent",
+      };
+
+      setMessages((prevMessages) => {
+        let chatExists = false;
+        const updatedMessages = prevMessages.map((chat) => {
+          if (chat.id === parseInt(newMessage.recipient)) {
+            chatExists = true;
+            return {
+              ...chat,
+              messages: [...chat.messages, newMessageObj],
+              lastMessage: newMessageObj.content,
+              lastMessageTime: newMessageObj.timestamp,
+            };
+          }
+          return chat;
+        });
+
+        if (!chatExists) {
+          // Create new chat if it doesn't exist
+          const tenant = tenants.find(
+            (t) => t.id === parseInt(newMessage.recipient)
+          );
+          if (tenant) {
+            const newChat = {
+              id: tenant.id,
+              tenant: `${tenant.first_name} ${tenant.last_name}`,
+              tenantEmail: tenant.email,
+              property: tenant.unit?.property?.name || "N/A",
+              unit: tenant.unit?.unit_id || "N/A",
+              messages: [newMessageObj],
+              lastMessage: newMessageObj.content,
+              lastMessageTime: newMessageObj.timestamp,
+              unread: false,
+              status: "read",
+            };
+            return [...updatedMessages, newChat];
+          }
         }
-        return chat;
+
+        return updatedMessages;
       });
 
-      if (!chatExists) {
-        const newChat = {
-          id: Date.now(),
-          tenant: newMessage.recipient,
-          property: newMessage.property || "N/A",
-          unit: newMessage.unit || "N/A",
-          messages: [messageToSend],
-          lastMessage: messageToSend.content,
-          lastMessageTime: messageToSend.timestamp,
-          unread: false,
-          status: "read",
-        };
-        return [...updatedMessages, newChat];
-      }
-
-      return updatedMessages;
-    });
-
-    setShowNewMessageModal(false);
-    setNewMessage({
-      recipient: "",
-      property: "",
-      unit: "",
-      message: "",
-    });
-    setTenantSearchQuery("");
-    setFilteredTenants([]);
+      setShowNewMessageModal(false);
+      setNewMessage({
+        recipient: "",
+        property: "",
+        unit: "",
+        message: "",
+      });
+      setTenantSearchQuery("");
+      setFilteredTenants([]);
+    } catch (error) {
+      console.error("Error sending message:", error);
+      alert("Failed to send message. Please try again.");
+    }
   };
 
-  const handleMessageSubmit = (e) => {
+  const handleMessageSubmit = async (e) => {
     e.preventDefault();
-    if (newChatMessage.trim() && selectedChat) {
+    if (!newChatMessage.trim() || !selectedChat) {
+      return;
+    }
+
+    try {
+      // Send message to backend
+      const messageData = {
+        recipient: selectedChat.id, // Tenant ID
+        message: newChatMessage.trim(),
+        property: selectedChat.property
+          ? parseInt(selectedChat.property)
+          : null,
+        unit: selectedChat.unit ? parseInt(selectedChat.unit) : null,
+      };
+
+      const response = await chatAPI.sendMessage(messageData);
+
       const newMessage = {
-        id: Date.now(),
-        sender: "landlord",
+        id: response.id,
+        sender: "landlord", // Explicitly set sender as landlord for the landlord's view
         content: newChatMessage.trim(),
-        timestamp: new Date().toLocaleString("en-US", {
-          year: "numeric",
-          month: "short",
-          day: "numeric",
-          hour: "numeric",
-          minute: "numeric",
-          hour12: true,
-        }),
+        timestamp: response.timestamp,
       };
 
       let updatedSelectedChat = null;
@@ -478,6 +519,9 @@ const Messages = () => {
           chatContainer.scrollTop = chatContainer.scrollHeight;
         }
       }, 100);
+    } catch (error) {
+      console.error("Error sending message:", error);
+      alert("Failed to send message. Please try again.");
     }
   };
 
@@ -493,16 +537,6 @@ const Messages = () => {
     );
   };
 
-  // Handle pre-filled message data (adapted for Next.js - would typically come from router.query or context)
-  // useEffect(() => {
-  //   // In Next.js, you would typically get this data from router.query or a context
-  //   // For now, we'll keep this as a placeholder
-  //   if (/* some condition based on router.query or context */) {
-  //     setNewMessage(/* prefillMessage data */);
-  //     setShowNewMessageModal(true);
-  //   }
-  // }, [/* dependencies */]);
-
   const handleReceivedPageChange = (pageNumber) => {
     setCurrentReceivedPage(pageNumber);
     setReceivedPageInputValue(pageNumber.toString());
@@ -513,11 +547,6 @@ const Messages = () => {
     setSentPageInputValue(pageNumber.toString());
   };
 
-  const [messageTab, setMessageTab] = useState("received");
-
-  // Add state for start chat modal
-  const [showStartChatModal, setShowStartChatModal] = useState(false);
-
   // Add function to handle starting a new chat
   const handleStartNewChat = () => {
     setShowStartChatModal(true);
@@ -526,7 +555,7 @@ const Messages = () => {
   // Add function to handle selecting a tenant for a new chat
   const handleSelectTenant = (tenant) => {
     // Check if a chat already exists with this tenant
-    const existingChat = messages.find((chat) => chat.tenant === tenant.name);
+    const existingChat = messages.find((chat) => chat.id === tenant.id);
 
     if (existingChat) {
       // If chat exists, select it
@@ -534,10 +563,11 @@ const Messages = () => {
     } else {
       // If chat doesn't exist, create a new one
       const newChat = {
-        id: Date.now(),
-        tenant: tenant.name,
-        property: tenant.property,
-        unit: tenant.unit,
+        id: tenant.id,
+        tenant: `${tenant.first_name} ${tenant.last_name}`,
+        tenantEmail: tenant.email,
+        property: tenant.unit?.property?.name || "N/A",
+        unit: tenant.unit?.unit_id || "N/A",
         messages: [],
         lastMessage: "",
         lastMessageTime: "",
@@ -551,6 +581,33 @@ const Messages = () => {
 
     setShowStartChatModal(false);
   };
+
+  if (!isClient) {
+    return (
+      <div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex items-center justify-center">
+        <div className="text-slate-600 dark:text-slate-400">Loading...</div>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated()) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen bg-slate-50 dark:bg-slate-900">
+        <h2 className="text-2xl font-bold mb-4">Sign in required</h2>
+        <p className="mb-6">You must be signed in to access this page.</p>
+        <button
+          className="px-6 py-2 bg-teal-600 text-white rounded-lg font-semibold hover:bg-teal-700 transition"
+          onClick={() =>
+            router.push(
+              `/auth/signin?role=landlord&next=${encodeURIComponent(pathname)}`
+            )
+          }
+        >
+          Proceed
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="flex h-screen overflow-hidden bg-[#F5F5DC] dark:bg-slate-900">
@@ -874,8 +931,8 @@ const Messages = () => {
                         selectedChat={selectedChat}
                         onChatSelect={handleChatSelect}
                         formatDate={formatDate}
-                        onStartNewChat={handleStartNewChat} // Add this prop
-                        mockTenants={mockTenants} // Add this prop
+                        onStartNewChat={handleStartNewChat}
+                        mockTenants={tenants} // Pass actual tenants instead of mock data
                       />
                     </div>
                   </div>
@@ -931,7 +988,7 @@ const Messages = () => {
       <StartChatModal
         isOpen={showStartChatModal}
         onClose={() => setShowStartChatModal(false)}
-        tenants={mockTenants}
+        tenants={tenants} // Pass actual tenants instead of mock data
         onSelectTenant={handleSelectTenant}
       />
 

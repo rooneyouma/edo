@@ -1,17 +1,13 @@
 import React, { useState } from "react";
 import { Search, Filter, X, ArrowUpDown } from "lucide-react";
 
-const MaintenanceFilters = ({
+const TenantMaintenanceFilters = ({
   searchQuery,
   setSearchQuery,
   statusFilter,
   setStatusFilter,
   priorityFilter,
   setPriorityFilter,
-  propertyFilter,
-  setPropertyFilter,
-  dateFilter,
-  setDateFilter,
   sortOrder,
   setSortOrder,
 }) => {
@@ -60,7 +56,7 @@ const MaintenanceFilters = ({
       </div>
 
       {isFilterOpen && (
-        <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           <div>
             <label
               htmlFor="status"
@@ -75,9 +71,10 @@ const MaintenanceFilters = ({
               onChange={(e) => setStatusFilter(e.target.value)}
             >
               <option value="all">All Status</option>
-              <option value="Pending">Pending</option>
-              <option value="In Progress">In Progress</option>
-              <option value="Completed">Completed</option>
+              <option value="pending">Pending</option>
+              <option value="in_progress">In Progress</option>
+              <option value="completed">Completed</option>
+              <option value="cancelled">Cancelled</option>
             </select>
           </div>
           <div>
@@ -94,49 +91,10 @@ const MaintenanceFilters = ({
               onChange={(e) => setPriorityFilter(e.target.value)}
             >
               <option value="all">All Priority</option>
-              <option value="High">High</option>
-              <option value="Medium">Medium</option>
-              <option value="Low">Low</option>
-            </select>
-          </div>
-          <div>
-            <label
-              htmlFor="property"
-              className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-            >
-              Property
-            </label>
-            <select
-              id="property"
-              className="block w-full rounded-lg border border-gray-300 dark:border-gray-700 pl-3 pr-10 py-2 text-sm focus:border-[#0d9488] focus:ring-[#0d9488] focus:ring-2 focus:ring-opacity-20 dark:bg-gray-700 dark:text-gray-100 shadow-sm transition-all duration-200"
-              value={propertyFilter}
-              onChange={(e) => setPropertyFilter(e.target.value)}
-            >
-              <option value="all">All Properties</option>
-              <option value="Sunset Apartments">Sunset Apartments</option>
-              <option value="Mountain View Condos">Mountain View Condos</option>
-              <option value="Riverside Townhomes">Riverside Townhomes</option>
-              <option value="Downtown Lofts">Downtown Lofts</option>
-              <option value="Garden Villas">Garden Villas</option>
-            </select>
-          </div>
-          <div>
-            <label
-              htmlFor="date"
-              className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-            >
-              Date
-            </label>
-            <select
-              id="date"
-              className="block w-full rounded-lg border border-gray-300 dark:border-gray-700 pl-3 pr-10 py-2 text-sm focus:border-[#0d9488] focus:ring-[#0d9488] focus:ring-2 focus:ring-opacity-20 dark:bg-gray-700 dark:text-gray-100 shadow-sm transition-all duration-200"
-              value={dateFilter}
-              onChange={(e) => setDateFilter(e.target.value)}
-            >
-              <option value="all">All Dates</option>
-              <option value="today">Today</option>
-              <option value="week">Last 7 Days</option>
-              <option value="month">Last 30 Days</option>
+              <option value="low">Low</option>
+              <option value="medium">Medium</option>
+              <option value="high">High</option>
+              <option value="emergency">Emergency</option>
             </select>
           </div>
         </div>
@@ -145,4 +103,4 @@ const MaintenanceFilters = ({
   );
 };
 
-export default MaintenanceFilters;
+export default TenantMaintenanceFilters;

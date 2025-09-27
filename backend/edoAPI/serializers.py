@@ -262,6 +262,7 @@ class ChatMessageSerializer(serializers.ModelSerializer):
     class Meta:
         model = ChatMessage
         fields = '__all__'
+        read_only_fields = ['sender']
 
 class TenantInvitationSerializer(serializers.ModelSerializer):
     landlord_name = serializers.CharField(source='landlord.get_full_name', read_only=True)
