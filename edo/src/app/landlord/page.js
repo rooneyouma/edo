@@ -17,6 +17,7 @@ import {
   BarChart2,
   CheckCircle,
   Calendar,
+  Bell,
 } from "lucide-react";
 import {
   isAuthenticated,
@@ -26,42 +27,27 @@ import {
   storeUser,
 } from "../../utils/api";
 import OnboardRoleModal from "../../components/OnboardRoleModal";
+import RentReminderModal from "../../components/landlord/modals/RentReminderModal";
+import AddPropertyModal from "../../components/landlord/modals/AddPropertyModal";
+import SendNoticeModal from "../../components/landlord/modals/SendNoticeModal";
 
 const quickActions = [
   {
     label: "Add Property",
     icon: <Plus className="h-6 w-6" />,
-    link: "/landlord/properties",
+    action: "openAddProperty",
     color: "bg-teal-600 text-white",
   },
   {
-    label: "View Properties",
-    icon: <Home className="h-6 w-6" />,
-    link: "/landlord/properties",
-    color: "bg-blue-600 text-white",
-  },
-  {
-    label: "Tenants",
-    icon: <Users className="h-6 w-6" />,
-    link: "/landlord/tenants",
-    color: "bg-yellow-500 text-white",
-  },
-  {
-    label: "Payments",
-    icon: <DollarSign className="h-6 w-6" />,
-    link: "/landlord/payments",
+    label: "Rent Reminders",
+    icon: <Bell className="h-6 w-6" />,
+    action: "openRentReminder",
     color: "bg-purple-600 text-white",
   },
   {
-    label: "Maintenance",
-    icon: <Wrench className="h-6 w-6" />,
-    link: "/landlord/maintenance",
-    color: "bg-pink-600 text-white",
-  },
-  {
-    label: "Notices",
+    label: "Send Notice",
     icon: <FileText className="h-6 w-6" />,
-    link: "/landlord/notices",
+    action: "openSendNotice",
     color: "bg-green-600 text-white",
   },
 ];
@@ -151,6 +137,9 @@ const LandlordDashboard = () => {
   const [showOnboardModal, setShowOnboardModal] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isClient, setIsClient] = useState(false);
+  const [showRentReminderModal, setShowRentReminderModal] = useState(false);
+  const [showAddPropertyModal, setShowAddPropertyModal] = useState(false);
+  const [showSendNoticeModal, setShowSendNoticeModal] = useState(false);
   const router = useRouter();
   const storedUser = getStoredUser();
 
@@ -255,18 +244,26 @@ const LandlordDashboard = () => {
               <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-200 mb-4">
                 Quick Actions
               </h3>
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-4">
                 {quickActions.map((action, index) => (
-                  <Link
+                  <div
                     key={index}
-                    href={action.link}
-                    className={`${action.color} rounded-lg p-4 flex flex-col items-center justify-center transition-transform hover:scale-105`}
+                    onClick={() => {
+                      if (action.action === "openAddProperty") {
+                        setShowAddPropertyModal(true);
+                      } else if (action.action === "openRentReminder") {
+                        setShowRentReminderModal(true);
+                      } else if (action.action === "openSendNotice") {
+                        setShowSendNoticeModal(true);
+                      }
+                    }}
+                    className={`${action.color} rounded-lg p-4 flex flex-col items-center justify-center transition-transform hover:scale-105 cursor-pointer`}
                   >
                     {action.icon}
                     <span className="mt-2 text-sm font-medium text-center">
                       {action.label}
                     </span>
-                  </Link>
+                  </div>
                 ))}
               </div>
             </div>
@@ -332,6 +329,32 @@ const LandlordDashboard = () => {
         onClose={() => setShowOnboardModal(false)}
         onSuccess={handleOnboardSuccess}
         roleName="landlord"
+      />
+
+      {/* Rent Reminder Modal */}
+      <RentReminderModal
+        isOpen={showRentReminderModal}
+        onClose={() => setShowRentReminderModal(false)}
+      />
+
+      {/* Add Property Modal */}
+      <AddPropertyModal
+        isOpen={showAddPropertyModal}
+        onClose={() => setShowAddPropertyModal(false)}
+        onSubmit={(data) => {
+          console.log("Add property data:", data);
+          // Here you would typically send the data to your backend
+        }}
+      />
+
+      {/* Send Notice Modal */}
+      <SendNoticeModal
+        isOpen={showSendNoticeModal}
+        onClose={() => setShowSendNoticeModal(false)}
+        onSubmit={(data) => {
+          console.log("Send notice data:", data);
+          // Here you would typically send the data to your backend
+        }}
       />
     </div>
   );

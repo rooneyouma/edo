@@ -610,7 +610,7 @@ const Messages = () => {
   }
 
   return (
-    <div className="flex h-screen overflow-hidden bg-[#F5F5DC] dark:bg-slate-900">
+    <div className="flex h-screen overflow-hidden bg-slate-50 dark:bg-slate-900">
       <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
 
       <div className="relative flex flex-col flex-1 overflow-y-auto overflow-x-hidden lg:ml-64">

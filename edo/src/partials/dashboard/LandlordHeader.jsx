@@ -16,7 +16,6 @@ import {
 } from "lucide-react";
 
 import UserMenu from "../../components/DropdownProfile";
-import ThemeToggle from "../../components/ThemeToggle";
 
 function Header({ toggleSidebar, variant = "default" }) {
   const router = useRouter();
@@ -228,9 +227,6 @@ function Header({ toggleSidebar, variant = "default" }) {
               <span className="sr-only">Search</span>
               <Search className="h-6 w-6" />
             </button>
-
-            {/* Theme Toggle */}
-            <ThemeToggle />
 
             {/* Notifications */}
             <div className="relative">

@@ -7,6 +7,7 @@ import TenantSidebar from "../../../partials/tenant/TenantSidebar.jsx";
 import MaintenanceTable from "../../../components/tenant/maintenance/MaintenanceTable.jsx";
 import NewRequestModal from "../../../components/tenant/maintenance/NewRequestModal.jsx";
 import TenantMaintenanceFilters from "../../../components/tenant/maintenance/TenantMaintenanceFilters.jsx";
+import RequestDetailsModal from "../../../components/tenant/maintenance/RequestDetailsModal.jsx";
 import {
   getStatusColor,
   getPriorityColor,

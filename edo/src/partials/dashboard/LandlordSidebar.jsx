@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -119,7 +121,7 @@ function LandlordSidebar({ sidebarOpen, setSidebarOpen }) {
       {/* Sidebar */}
       <aside
         className={`sidebar fixed inset-y-0 left-0 z-50 w-64 bg-white dark:bg-slate-800 shadow-lg transform transition-transform duration-200 ease-in-out lg:translate-x-0 ${
-          sidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
+          sidebarOpen ? "translate-x-0" : "-translate-x-full"
         } rounded-tr-2xl`}
       >
         <div className="h-full flex flex-col">
@@ -133,8 +135,8 @@ function LandlordSidebar({ sidebarOpen, setSidebarOpen }) {
             <button
               className="lg:hidden text-slate-500 hover:text-slate-600 dark:hover:text-slate-400"
               onClick={() => setSidebarOpen(false)}
+              aria-label="Close sidebar"
             >
-              <span className="sr-only">Close sidebar</span>
               <svg
                 className="w-6 h-6"
                 fill="none"

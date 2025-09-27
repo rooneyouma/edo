@@ -108,19 +108,23 @@ const Notices = () => {
 
   if (!isAuthenticated()) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-slate-50 dark:bg-slate-900">
-        <h2 className="text-2xl font-bold mb-4">Sign in required</h2>
-        <p className="mb-6">You must be signed in to access this page.</p>
-        <button
-          className="px-6 py-2 bg-teal-600 text-white rounded-lg font-semibold hover:bg-teal-700 transition"
-          onClick={() =>
-            router.push(
-              `/auth/signin?role=landlord&next=${encodeURIComponent(pathname)}`
-            )
-          }
-        >
-          Proceed
-        </button>
+      <div className="flex h-screen overflow-hidden bg-[#F5F5DC] dark:bg-slate-900">
+        <div className="flex flex-col items-center justify-center min-h-screen w-full bg-slate-50 dark:bg-slate-900">
+          <h2 className="text-2xl font-bold mb-4">Sign in required</h2>
+          <p className="mb-6">You must be signed in to access this page.</p>
+          <button
+            className="px-6 py-2 bg-teal-600 text-white rounded-lg font-semibold hover:bg-teal-700 transition"
+            onClick={() =>
+              router.push(
+                `/auth/signin?role=landlord&next=${encodeURIComponent(
+                  pathname
+                )}`
+              )
+            }
+          >
+            Proceed
+          </button>
+        </div>
       </div>
     );
   }
@@ -294,7 +298,12 @@ const Notices = () => {
         (audienceFilter === "allTenants" &&
           notice.audience === "All Tenants") ||
         (audienceFilter === "specificTenants" &&
-          mockTenants.some((tenant) => tenant.name === notice.audience)) ||
+          notice.tenant &&
+          mockTenants.some(
+            (tenant) =>
+              tenant.name ===
+              notice.tenant.first_name + " " + notice.tenant.last_name
+          )) ||
         (audienceFilter !== "all" &&
           audienceFilter !== "allTenants" &&
           audienceFilter !== "specificTenants" &&
@@ -303,8 +312,19 @@ const Notices = () => {
       return matchesSearch && matchesType && matchesAudience;
     })
     .sort((a, b) => {
-      const dateA = new Date(a.date);
-      const dateB = new Date(b.date);
+      // Handle different possible date field names
+      const getDateValue = (notice) => {
+        return notice.effective_date || notice.date_sent || notice.date || "";
+      };
+
+      const dateA = new Date(getDateValue(a));
+      const dateB = new Date(getDateValue(b));
+
+      // Handle invalid dates
+      if (isNaN(dateA.getTime()) && isNaN(dateB.getTime())) return 0;
+      if (isNaN(dateA.getTime())) return 1;
+      if (isNaN(dateB.getTime())) return -1;
+
       return noticeSortOrder === "latest" ? dateB - dateA : dateA - dateB;
     });
 
@@ -385,6 +405,7 @@ const Notices = () => {
         vacateRequestsStatusFilter === "all" ||
         request.status === vacateRequestsStatusFilter;
       const matchesProperty =
+        vacateRequestsPropertyFilter === "all" ||
         vacateRequestsPropertyFilter === "All Properties" ||
         request.property === vacateRequestsPropertyFilter;
       return matchesSearch && matchesStatus && matchesProperty;
@@ -536,9 +557,12 @@ const Notices = () => {
 
   const handleDeleteNotice = () => {
     if (noticeToDelete?.type === "notice") {
-      setNotices((prevNotices) =>
-        prevNotices.filter((notice) => notice.id !== noticeToDelete.id)
-      );
+      // For general notices, we would typically make an API call
+      // Since this is a mock implementation, we'll just close the modal
+      console.log(`Delete notice with ID: ${noticeToDelete.id}`);
+      // In a real app, you would call an API to delete the notice
+      // and then invalidate the query to refresh the data
+      // queryClient.invalidateQueries({ queryKey: ["notices"] });
     } else if (noticeToDelete?.type === "vacate") {
       setVacateRequests((prevRequests) =>
         prevRequests.filter((request) => request.id !== noticeToDelete.id)
@@ -635,7 +659,12 @@ const Notices = () => {
   const getEditModalContent = () => {
     if (!noticeToEdit) return null;
 
-    if (noticeToEdit.type) {
+    // Determine if it's a general notice or eviction notice based on the fields
+    // General notices have fields like title, type, message, etc.
+    // Eviction notices have fields like tenantName, property, reason, etc.
+    const isGeneralNotice = noticeToEdit.title && noticeToEdit.message;
+
+    if (isGeneralNotice) {
       // It's a general notice
       return (
         <div className="space-y-4">
@@ -645,13 +674,8 @@ const Notices = () => {
           <CreateNoticeForm
             initialData={noticeToEdit}
             onSubmit={(formData) => {
-              setNotices(
-                notices.map((notice) =>
-                  notice.id === noticeToEdit.id
-                    ? { ...notice, ...formData }
-                    : notice
-                )
-              );
+              // In a real app, you would make an API call here
+              // For now, we'll just close the modal
               setIsEditModalOpen(false);
               setNoticeToEdit(null);
             }}
@@ -694,7 +718,7 @@ const Notices = () => {
                     tenantName: e.target.value,
                   })
                 }
-                className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-gray-700 dark:text-gray-100 sm:text-sm"
+                className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-gray-700 dark:text-gray-100 py-2 px-3 sm:text-sm"
                 required
               />
             </div>
@@ -712,8 +736,25 @@ const Notices = () => {
                 onChange={(e) =>
                   setNoticeToEdit({ ...noticeToEdit, property: e.target.value })
                 }
-                className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-gray-700 dark:text-gray-100 sm:text-sm"
+                className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-gray-700 dark:text-gray-100 py-2 px-3 sm:text-sm"
                 required
+              />
+            </div>
+            <div>
+              <label
+                htmlFor="edit-unit"
+                className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+              >
+                Unit
+              </label>
+              <input
+                type="text"
+                id="edit-unit"
+                value={noticeToEdit.unit || ""}
+                onChange={(e) =>
+                  setNoticeToEdit({ ...noticeToEdit, unit: e.target.value })
+                }
+                className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-gray-700 dark:text-gray-100 py-2 px-3 sm:text-sm"
               />
             </div>
             <div>
@@ -730,7 +771,7 @@ const Notices = () => {
                   setNoticeToEdit({ ...noticeToEdit, reason: e.target.value })
                 }
                 rows={3}
-                className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-gray-700 dark:text-gray-100 sm:text-sm"
+                className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-gray-700 dark:text-gray-100 py-2 px-3 sm:text-sm"
                 required
               />
             </div>
@@ -752,7 +793,7 @@ const Notices = () => {
                   })
                 }
                 min={new Date().toISOString().split("T")[0]}
-                className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-gray-700 dark:text-gray-100 sm:text-sm"
+                className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-gray-700 dark:text-gray-100 py-2 px-3 sm:text-sm"
                 required
               />
             </div>
@@ -769,7 +810,7 @@ const Notices = () => {
                 onChange={(e) =>
                   setNoticeToEdit({ ...noticeToEdit, status: e.target.value })
                 }
-                className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-gray-700 dark:text-gray-100 sm:text-sm"
+                className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-gray-700 dark:text-gray-100 py-2 px-3 sm:text-sm"
               >
                 <option value="Pending">Pending</option>
                 <option value="Acknowledged">Acknowledged</option>
@@ -987,118 +1028,142 @@ const Notices = () => {
                   </div>
                 ) : (
                   <div className="overflow-x-auto">
-                    <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                      <thead className="bg-gray-50 dark:bg-gray-800">
-                        <tr>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Title
-                          </th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Type
-                          </th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Unit
-                          </th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Date
-                          </th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Audience
-                          </th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                            Actions
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
-                        {currentNotices.map((notice) => (
-                          <tr
-                            key={notice.id}
-                            onClick={() => handleNoticeClick(notice)}
-                            className="hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer"
-                          >
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
-                              {notice.title}
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
-                              <span
-                                className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getTypeColor(
-                                  notice.notice_type || notice.type
-                                )}`}
+                    <div className="inline-block min-w-full align-middle">
+                      <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
+                        <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                          <thead className="bg-gray-50 dark:bg-gray-800">
+                            <tr>
+                              <th
+                                scope="col"
+                                className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-100 sm:pl-6"
                               >
-                                {notice.notice_type || notice.type || "General"}
-                              </span>
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
-                              {notice.unit
-                                ? notice.unit.unit_number || notice.unit
-                                : "All"}
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
-                              {notice.effective_date ||
-                                notice.date_sent ||
-                                notice.date ||
-                                ""}
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
-                              {notice.tenant
-                                ? (notice.tenant.first_name || "") +
-                                  " " +
-                                  (notice.tenant.last_name || "")
-                                : "All"}
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                              <div className="flex items-center space-x-3">
-                                <button
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    setNoticeToEdit(notice);
-                                    setIsEditModalOpen(true);
-                                  }}
-                                  className="text-[#0d9488] hover:text-[#0f766e] dark:text-[#0d9488] dark:hover:text-[#0f766e]"
-                                >
-                                  <svg
-                                    className="w-5 h-5"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    viewBox="0 0 24 24"
+                                Title
+                              </th>
+                              <th
+                                scope="col"
+                                className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
+                              >
+                                Type
+                              </th>
+                              <th
+                                scope="col"
+                                className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
+                              >
+                                Unit
+                              </th>
+                              <th
+                                scope="col"
+                                className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
+                              >
+                                Date
+                              </th>
+                              <th
+                                scope="col"
+                                className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
+                              >
+                                Audience
+                              </th>
+                              <th
+                                scope="col"
+                                className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
+                              >
+                                Actions
+                              </th>
+                            </tr>
+                          </thead>
+                          <tbody className="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-900">
+                            {currentNotices.map((notice) => (
+                              <tr
+                                key={notice.id}
+                                onClick={() => handleNoticeClick(notice)}
+                                className="hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer"
+                              >
+                                <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 dark:text-gray-100 sm:pl-6">
+                                  {notice.title}
+                                </td>
+                                <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
+                                  <span
+                                    className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getTypeColor(
+                                      notice.notice_type || notice.type
+                                    )}`}
                                   >
-                                    <path
-                                      strokeLinecap="round"
-                                      strokeLinejoin="round"
-                                      strokeWidth={2}
-                                      d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-                                    />
-                                  </svg>
-                                </button>
-                                <button
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    setNoticeToDelete(notice);
-                                    setIsDeleteConfirmModalOpen(true);
-                                  }}
-                                  className="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300"
-                                >
-                                  <svg
-                                    className="w-5 h-5"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    viewBox="0 0 24 24"
-                                  >
-                                    <path
-                                      strokeLinecap="round"
-                                      strokeLinejoin="round"
-                                      strokeWidth={2}
-                                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                                    />
-                                  </svg>
-                                </button>
-                              </div>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
+                                    {notice.notice_type ||
+                                      notice.type ||
+                                      "General"}
+                                  </span>
+                                </td>
+                                <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
+                                  {notice.unit
+                                    ? notice.unit.unit_number || notice.unit
+                                    : "All"}
+                                </td>
+                                <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
+                                  {notice.effective_date ||
+                                    notice.date_sent ||
+                                    notice.date ||
+                                    ""}
+                                </td>
+                                <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
+                                  {notice.tenant
+                                    ? (notice.tenant.first_name || "") +
+                                      " " +
+                                      (notice.tenant.last_name || "")
+                                    : "All"}
+                                </td>
+                                <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
+                                  <div className="flex items-center space-x-3">
+                                    <button
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        setNoticeToEdit(notice);
+                                        setIsEditModalOpen(true);
+                                      }}
+                                      className="text-[#0d9488] hover:text-[#0f766e] dark:text-[#0d9488] dark:hover:text-[#0f766e]"
+                                    >
+                                      <svg
+                                        className="w-5 h-5"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        viewBox="0 0 24 24"
+                                      >
+                                        <path
+                                          strokeLinecap="round"
+                                          strokeLinejoin="round"
+                                          strokeWidth={2}
+                                          d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                                        />
+                                      </svg>
+                                    </button>
+                                    <button
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        setNoticeToDelete(notice);
+                                        setIsDeleteConfirmModalOpen(true);
+                                      }}
+                                      className="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300"
+                                    >
+                                      <svg
+                                        className="w-5 h-5"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        viewBox="0 0 24 24"
+                                      >
+                                        <path
+                                          strokeLinecap="round"
+                                          strokeLinejoin="round"
+                                          strokeWidth={2}
+                                          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                                        />
+                                      </svg>
+                                    </button>
+                                  </div>
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
                   </div>
                 )}
                 {/* Pagination for notices */}
@@ -1509,32 +1574,53 @@ const Notices = () => {
                           <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                             <thead className="bg-gray-50 dark:bg-gray-800">
                               <tr>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                <th
+                                  scope="col"
+                                  className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-100 sm:pl-6"
+                                >
                                   Tenant
                                 </th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                <th
+                                  scope="col"
+                                  className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
+                                >
                                   Property
                                 </th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                <th
+                                  scope="col"
+                                  className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
+                                >
                                   Unit
                                 </th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                <th
+                                  scope="col"
+                                  className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
+                                >
                                   Date Sent
                                 </th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                <th
+                                  scope="col"
+                                  className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
+                                >
                                   Reason
                                 </th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                <th
+                                  scope="col"
+                                  className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
+                                >
                                   Move-out Deadline
                                 </th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                <th
+                                  scope="col"
+                                  className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
+                                >
                                   Status
                                 </th>
                                 <th
                                   scope="col"
-                                  className="relative py-3.5 pl-3 pr-4 sm:pr-6"
+                                  className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
                                 >
-                                  <span className="sr-only">Actions</span>
+                                  Actions
                                 </th>
                               </tr>
                             </thead>
@@ -1636,13 +1722,12 @@ const Notices = () => {
                         </div>
                       </div>
                     </div>
-                    {/* Pagination for eviction notices */}
+                    {/* Pagination for notices */}
                     <div className="mt-4 flex items-center justify-between border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-4 py-3">
                       <div className="flex items-center justify-between w-full">
                         <div className="flex items-center space-x-4">
                           <span className="text-xs text-gray-700 dark:text-gray-200">
-                            Page {evictionNoticesPage} of{" "}
-                            {totalEvictionNoticesPages}
+                            Page {currentPage} of {totalPages}
                           </span>
                           <div className="flex items-center space-x-2">
                             <span className="text-xs text-gray-700 dark:text-gray-200">
@@ -1651,31 +1736,24 @@ const Notices = () => {
                             <input
                               type="number"
                               min="1"
-                              max={totalEvictionNoticesPages}
-                              value={evictionNoticesPageInput}
+                              max={totalPages}
+                              value={pageInputValue}
                               onChange={(e) => {
                                 const value = e.target.value;
-                                setEvictionNoticesPageInput(value);
+                                setPageInputValue(value);
                                 const page = parseInt(value);
-                                if (
-                                  page >= 1 &&
-                                  page <= totalEvictionNoticesPages
-                                ) {
-                                  handleEvictionNoticesPageChange(page);
+                                if (page >= 1 && page <= totalPages) {
+                                  handlePageChange(page);
                                 }
                               }}
                               onBlur={() => {
-                                const page = parseInt(evictionNoticesPageInput);
+                                const page = parseInt(pageInputValue);
                                 if (page < 1) {
-                                  setEvictionNoticesPageInput("1");
-                                  handleEvictionNoticesPageChange(1);
-                                } else if (page > totalEvictionNoticesPages) {
-                                  setEvictionNoticesPageInput(
-                                    totalEvictionNoticesPages.toString()
-                                  );
-                                  handleEvictionNoticesPageChange(
-                                    totalEvictionNoticesPages
-                                  );
+                                  setPageInputValue("1");
+                                  handlePageChange(1);
+                                } else if (page > totalPages) {
+                                  setPageInputValue(totalPages.toString());
+                                  handlePageChange(totalPages);
                                 }
                               }}
                               className="w-12 h-6 text-xs text-center rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-violet-500"
@@ -1684,12 +1762,8 @@ const Notices = () => {
                         </div>
                         <div className="flex items-center space-x-2">
                           <button
-                            onClick={() =>
-                              handleEvictionNoticesPageChange(
-                                evictionNoticesPage - 1
-                              )
-                            }
-                            disabled={evictionNoticesPage === 1}
+                            onClick={() => handlePageChange(currentPage - 1)}
+                            disabled={currentPage === 1}
                             className="inline-flex items-center p-1.5 text-xs font-medium rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
                           >
                             <svg
@@ -1707,14 +1781,8 @@ const Notices = () => {
                             </svg>
                           </button>
                           <button
-                            onClick={() =>
-                              handleEvictionNoticesPageChange(
-                                evictionNoticesPage + 1
-                              )
-                            }
-                            disabled={
-                              evictionNoticesPage === totalEvictionNoticesPages
-                            }
+                            onClick={() => handlePageChange(currentPage + 1)}
+                            disabled={currentPage === totalPages}
                             className="inline-flex items-center p-1.5 text-xs font-medium rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
                           >
                             <svg

@@ -1,7 +1,7 @@
 // tailwind.config.js
 module.exports = {
   content: ["./src/**/*.{js,jsx,ts,tsx}"],
-  darkMode: "class", // Enable class-based dark mode
+  // darkMode: "class", // Removed dark mode as theme functionality has been removed
   theme: {
     extend: {
       fontFamily: {

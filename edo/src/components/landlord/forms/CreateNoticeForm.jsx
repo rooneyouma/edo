@@ -7,17 +7,29 @@ const CreateNoticeForm = ({
   initialData = null,
 }) => {
   const [formData, setFormData] = useState(
-    initialData || {
-      title: "",
-      type: "general",
-      priority: "normal",
-      content: "",
-      startDate: "",
-      endDate: "",
-      targetAudience: "all", // 'all', 'property', 'tenant'
-      selectedProperties: [],
-      selectedTenants: [],
-    }
+    initialData
+      ? {
+          title: initialData.title || "",
+          type: initialData.notice_type || initialData.type || "general",
+          priority: initialData.priority || "normal",
+          content: initialData.message || "",
+          startDate: initialData.effective_date || initialData.startDate || "",
+          endDate: initialData.endDate || "",
+          targetAudience: initialData.targetAudience || "all", // 'all', 'property', 'tenant'
+          selectedProperties: initialData.selectedProperties || [],
+          selectedTenants: initialData.selectedTenants || [],
+        }
+      : {
+          title: "",
+          type: "general",
+          priority: "normal",
+          content: "",
+          startDate: "",
+          endDate: "",
+          targetAudience: "all", // 'all', 'property', 'tenant'
+          selectedProperties: [],
+          selectedTenants: [],
+        }
   );
 
   const [searchQuery, setSearchQuery] = useState("");
@@ -60,18 +72,18 @@ const CreateNoticeForm = ({
   const handlePropertySelect = (propertyId) => {
     setFormData((prev) => ({
       ...prev,
-      selectedProperties: prev.selectedProperties.includes(propertyId)
-        ? prev.selectedProperties.filter((id) => id !== propertyId)
-        : [...prev.selectedProperties, propertyId],
+      selectedProperties: (prev.selectedProperties || []).includes(propertyId)
+        ? (prev.selectedProperties || []).filter((id) => id !== propertyId)
+        : [...(prev.selectedProperties || []), propertyId],
     }));
   };
 
   const handleTenantSelect = (tenantId) => {
     setFormData((prev) => ({
       ...prev,
-      selectedTenants: prev.selectedTenants.includes(tenantId)
-        ? prev.selectedTenants.filter((id) => id !== tenantId)
-        : [...prev.selectedTenants, tenantId],
+      selectedTenants: (prev.selectedTenants || []).includes(tenantId)
+        ? (prev.selectedTenants || []).filter((id) => id !== tenantId)
+        : [...(prev.selectedTenants || []), tenantId],
     }));
   };
 
@@ -282,7 +294,7 @@ const CreateNoticeForm = ({
               }...`}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-gray-700 dark:text-gray-100 sm:text-sm"
+              className="mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-gray-700 dark:text-gray-100 py-2 px-3 sm:text-sm"
             />
           </div>
           <div className="max-h-[200px] overflow-y-auto">
@@ -307,7 +319,7 @@ const CreateNoticeForm = ({
                       <td className="px-6 py-4 whitespace-nowrap">
                         <input
                           type="checkbox"
-                          checked={formData.selectedProperties.includes(
+                          checked={(formData.selectedProperties || []).includes(
                             property.id
                           )}
                           onChange={() => handlePropertySelect(property.id)}
@@ -348,7 +360,9 @@ const CreateNoticeForm = ({
                       <td className="px-6 py-4 whitespace-nowrap">
                         <input
                           type="checkbox"
-                          checked={formData.selectedTenants.includes(tenant.id)}
+                          checked={(formData.selectedTenants || []).includes(
+                            tenant.id
+                          )}
                           onChange={() => handleTenantSelect(tenant.id)}
                           className="h-4 w-4 text-[#0d9488] focus:ring-[#0d9488] border-gray-300 dark:border-gray-600 rounded"
                         />

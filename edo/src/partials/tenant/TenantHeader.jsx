@@ -14,7 +14,6 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import ThemeToggle from "../../components/ThemeToggle";
 import { authAPI, getStoredUser } from "../../utils/api";
 
 const TenantHeader = ({ toggleSidebar }) => {
@@ -212,9 +211,6 @@ const TenantHeader = ({ toggleSidebar }) => {
               <span className="sr-only">Search</span>
               <Search className="h-6 w-6" />
             </button>
-
-            {/* Theme Toggle */}
-            <ThemeToggle />
 
             {/* Notifications */}
             <div className="relative">

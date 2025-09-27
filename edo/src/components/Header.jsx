@@ -1,5 +1,4 @@
-import { Menu } from 'lucide-react';
-import ThemeToggle from './ThemeToggle';
+import { Menu } from "lucide-react";
 
 const Header = ({ onMenuClick }) => {
   return (
@@ -16,12 +15,10 @@ const Header = ({ onMenuClick }) => {
         </button>
 
         {/* Right side buttons */}
-        <div className="flex items-center space-x-4">
-          <ThemeToggle />
-        </div>
+        <div className="flex items-center space-x-4"></div>
       </div>
     </header>
   );
 };
 
-export default Header; 
+export default Header;

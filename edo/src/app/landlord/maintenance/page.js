@@ -171,6 +171,33 @@ const LandlordMaintenance = () => {
     setSidebarOpen(!sidebarOpen);
   }, [sidebarOpen]);
 
+  // Add these missing handler functions
+  const handleRequestClick = useCallback((request) => {
+    setSelectedRequest(request);
+  }, []);
+
+  const handleDeleteClick = useCallback((request) => {
+    setSelectedRequestForAction(request);
+    setShowDeleteModal(true);
+  }, []);
+
+  const handleAssignClick = useCallback((request) => {
+    setSelectedRequestForAction(request);
+    setShowAssignModal(true);
+  }, []);
+
+  const handlePageChange = useCallback((newPage) => {
+    setCurrentPage(newPage);
+    setPageInputValue(newPage.toString());
+  }, []);
+
+  const closeModals = useCallback(() => {
+    setShowAssignModal(false);
+    setShowStatusModal(false);
+    setShowDeleteModal(false);
+    setSelectedRequestForAction(null);
+  }, []);
+
   // Add the missing handler functions
   const handleMarkComplete = useCallback(
     async (request) => {
@@ -201,90 +228,48 @@ const LandlordMaintenance = () => {
 
   if (!isAuthenticated()) {
     return (
-      <div className="flex min-h-screen">
-        {/* Sidebar - even in unauthenticated state to maintain consistency */}
+      <div className="flex h-screen overflow-hidden bg-slate-50 dark:bg-slate-900">
+        {/* Sidebar */}
         <LandlordSidebar sidebarOpen={false} setSidebarOpen={() => {}} />
-        <div className="flex-1 flex flex-col items-center justify-center bg-slate-50 dark:bg-slate-900 lg:ml-64">
-          <h2 className="text-2xl font-bold mb-4">Sign in required</h2>
-          <p className="mb-6">You must be signed in to access this page.</p>
-          <button
-            className="px-6 py-2 bg-teal-600 text-white rounded-lg font-semibold hover:bg-teal-700 transition"
-            onClick={() =>
-              router.push(
-                `/auth/signin?role=landlord&next=${encodeURIComponent(
-                  pathname
-                )}`
-              )
-            }
-          >
-            Proceed
-          </button>
+
+        {/* Content area */}
+        <div className="relative flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
+          <div className="lg:ml-64">
+            <div className="flex-1 flex flex-col items-center justify-center bg-slate-50 dark:bg-slate-900">
+              <h2 className="text-2xl font-bold mb-4">Sign in required</h2>
+              <p className="mb-6">You must be signed in to access this page.</p>
+              <button
+                className="px-6 py-2 bg-teal-600 text-white rounded-lg font-semibold hover:bg-teal-700 transition"
+                onClick={() =>
+                  router.push(
+                    `/auth/signin?role=landlord&next=${encodeURIComponent(
+                      pathname
+                    )}`
+                  )
+                }
+              >
+                Proceed
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     );
   }
 
-  // Pagination handlers
-  const handlePageChange = (pageNumber) => {
-    setCurrentPage(pageNumber);
-    setPageInputValue(pageNumber.toString());
-  };
-  const handlePageInputChange = (e) => {
-    const value = e.target.value;
-    setPageInputValue(value);
-    const page = parseInt(value);
-    if (page >= 1 && page <= totalPages) {
-      handlePageChange(page);
-    }
-  };
-  const handlePageInputBlur = () => {
-    const page = parseInt(pageInputValue);
-    if (page < 1) {
-      setPageInputValue("1");
-      handlePageChange(1);
-    } else if (page > totalPages) {
-      setPageInputValue(totalPages.toString());
-      handlePageChange(totalPages);
-    }
-  };
-
-  const handleRequestClick = (request) => {
-    setSelectedRequest(request);
-  };
-
-  const handleAssignClick = (request) => {
-    setSelectedRequestForAction(request);
-    setShowAssignModal(true);
-  };
-
-  const handleStatusClick = (request) => {
-    setSelectedRequestForAction(request);
-    setShowStatusModal(true);
-  };
-
-  const handleDeleteClick = (request) => {
-    setSelectedRequestForAction(request);
-    setShowDeleteModal(true);
-  };
-
-  const closeModals = () => {
-    setShowAssignModal(false);
-    setShowStatusModal(false);
-    setShowDeleteModal(false);
-    setSelectedRequestForAction(null);
-  };
-
   if (loading) {
     return (
-      <div className="flex min-h-screen">
+      <div className="flex h-screen overflow-hidden bg-slate-50 dark:bg-slate-900">
         <LandlordSidebar
           sidebarOpen={sidebarOpen}
           setSidebarOpen={setSidebarOpen}
         />
-        <div className="flex-1 flex flex-col min-w-0 bg-slate-50 dark:bg-slate-900 lg:ml-64">
-          <LandlordHeader toggleSidebar={toggleSidebar} />
-          <div className="flex-1 flex items-center justify-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-teal-600"></div>
+        <div className="relative flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
+          <div className="lg:ml-64">
+            <LandlordHeader toggleSidebar={toggleSidebar} />
+            <div className="flex-1 flex items-center justify-center">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-teal-600"></div>
+            </div>
           </div>
         </div>
       </div>
@@ -292,153 +277,155 @@ const LandlordMaintenance = () => {
   }
 
   return (
-    <div className="flex min-h-screen">
+    <div className="flex h-screen overflow-hidden bg-slate-50 dark:bg-slate-900">
       {/* Sidebar */}
       <LandlordSidebar
         sidebarOpen={sidebarOpen}
         setSidebarOpen={setSidebarOpen}
       />
-      <div className="relative flex flex-col flex-1 overflow-y-auto overflow-x-hidden bg-slate-50 dark:bg-slate-900 lg:ml-64">
-        {/* Site header */}
-        <LandlordHeader toggleSidebar={toggleSidebar} />
-        <main className="flex-1 pl-4 pr-8 sm:pl-6 sm:pr-12 lg:pl-8 lg:pr-16 py-4 sm:py-6 lg:py-8 overflow-auto">
-          <div>
-            {/* Header */}
-            <div className="mb-8">
-              <h1 className="text-2xl font-bold text-slate-800 dark:text-slate-100 mb-2">
-                Maintenance Requests
-              </h1>
-              <p className="text-slate-600 dark:text-slate-400">
-                Manage maintenance requests from your tenants
-              </p>
-            </div>
-
-            {/* Error Display */}
-            {error && (
-              <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg dark:bg-red-900/20 dark:border-red-800">
-                <div className="flex items-center">
-                  <AlertCircle className="h-5 w-5 text-red-500 mr-2" />
-                  <span className="text-red-700 dark:text-red-300">
-                    {error}
-                  </span>
-                </div>
+      <div className="relative flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
+        <div className="lg:ml-64">
+          {/* Site header */}
+          <LandlordHeader toggleSidebar={toggleSidebar} />
+          <main className="flex-1 pl-4 pr-8 sm:pl-6 sm:pr-12 lg:pl-8 lg:pr-16 py-4 sm:py-6 lg:py-8 overflow-auto">
+            <div>
+              {/* Header */}
+              <div className="mb-8">
+                <h1 className="text-2xl font-bold text-slate-800 dark:text-slate-100 mb-2">
+                  Maintenance Requests
+                </h1>
+                <p className="text-slate-600 dark:text-slate-400">
+                  Manage maintenance requests from your tenants
+                </p>
               </div>
-            )}
 
-            {/* Filters */}
-            <MaintenanceFilters
-              searchQuery={searchQuery}
-              setSearchQuery={setSearchQuery}
-              statusFilter={statusFilter}
-              setStatusFilter={setStatusFilter}
-              priorityFilter={priorityFilter}
-              setPriorityFilter={setPriorityFilter}
-              propertyFilter={propertyFilter}
-              setPropertyFilter={setPropertyFilter}
-              dateFilter={dateFilter}
-              setDateFilter={setDateFilter}
-              sortOrder={sortOrder}
-              setSortOrder={setSortOrder}
-            />
-
-            {/* Results Count */}
-            <div className="mb-4 text-sm text-slate-600 dark:text-slate-400">
-              {filteredAndSortedRequests.length} request
-              {filteredAndSortedRequests.length !== 1 ? "s" : ""} found
-            </div>
-
-            {/* Maintenance Table */}
-            <div className="mt-8">
-              {currentRequests.length > 0 ? (
-                <>
-                  <MaintenanceTable
-                    requests={currentRequests.map((request) => ({
-                      id: request.id,
-                      tenant: request.tenant_name,
-                      property: request.property_name,
-                      unit: request.unit_number,
-                      subject: request.subject,
-                      description: request.description,
-                      priority: request.priority_display,
-                      status: request.status_display,
-                      date: formatDate(request.created_at),
-                      assignedTo: request.assigned_to_name,
-                      contact: request.assignee_phone,
-                    }))}
-                    onRequestClick={handleRequestClick}
-                    onDeleteClick={handleDeleteClick}
-                    getStatusColor={getStatusColor}
-                    getPriorityColor={getPriorityColor}
-                  />
-                  {/* Pagination */}
-                  {totalPages > 1 && (
-                    <Pagination
-                      currentPage={currentPage}
-                      totalPages={totalPages}
-                      pageInputValue={pageInputValue}
-                      setPageInputValue={setPageInputValue}
-                      onPageChange={handlePageChange}
-                    />
-                  )}
-                </>
-              ) : (
-                <div className="text-center py-12">
-                  <div className="text-slate-400 dark:text-slate-500 mb-4">
-                    <Search className="h-12 w-12 mx-auto mb-4" />
-                    <p className="text-lg font-medium">
-                      No maintenance requests found
-                    </p>
-                    <p className="text-sm">
-                      Maintenance requests from your tenants will appear here
-                    </p>
+              {/* Error Display */}
+              {error && (
+                <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg dark:bg-red-900/20 dark:border-red-800">
+                  <div className="flex items-center">
+                    <AlertCircle className="h-5 w-5 text-red-500 mr-2" />
+                    <span className="text-red-700 dark:text-red-300">
+                      {error}
+                    </span>
                   </div>
                 </div>
               )}
+
+              {/* Filters */}
+              <MaintenanceFilters
+                searchQuery={searchQuery}
+                setSearchQuery={setSearchQuery}
+                statusFilter={statusFilter}
+                setStatusFilter={setStatusFilter}
+                priorityFilter={priorityFilter}
+                setPriorityFilter={setPriorityFilter}
+                propertyFilter={propertyFilter}
+                setPropertyFilter={setPropertyFilter}
+                dateFilter={dateFilter}
+                setDateFilter={setDateFilter}
+                sortOrder={sortOrder}
+                setSortOrder={setSortOrder}
+              />
+
+              {/* Results Count */}
+              <div className="mb-4 text-sm text-slate-600 dark:text-slate-400">
+                {filteredAndSortedRequests.length} request
+                {filteredAndSortedRequests.length !== 1 ? "s" : ""} found
+              </div>
+
+              {/* Maintenance Table */}
+              <div className="mt-8">
+                {currentRequests.length > 0 ? (
+                  <>
+                    <MaintenanceTable
+                      requests={currentRequests.map((request) => ({
+                        id: request.id,
+                        tenant: request.tenant_name,
+                        property: request.property_name,
+                        unit: request.unit_number,
+                        subject: request.subject,
+                        description: request.description,
+                        priority: request.priority_display,
+                        status: request.status_display,
+                        date: formatDate(request.created_at),
+                        assignedTo: request.assigned_to_name,
+                        contact: request.assignee_phone,
+                      }))}
+                      onRequestClick={handleRequestClick}
+                      onDeleteClick={handleDeleteClick}
+                      getStatusColor={getStatusColor}
+                      getPriorityColor={getPriorityColor}
+                    />
+                    {/* Pagination */}
+                    {totalPages > 1 && (
+                      <Pagination
+                        currentPage={currentPage}
+                        totalPages={totalPages}
+                        pageInputValue={pageInputValue}
+                        setPageInputValue={setPageInputValue}
+                        onPageChange={handlePageChange}
+                      />
+                    )}
+                  </>
+                ) : (
+                  <div className="text-center py-12">
+                    <div className="text-slate-400 dark:text-slate-500 mb-4">
+                      <Search className="h-12 w-12 mx-auto mb-4" />
+                      <p className="text-lg font-medium">
+                        No maintenance requests found
+                      </p>
+                      <p className="text-sm">
+                        Maintenance requests from your tenants will appear here
+                      </p>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
-          </div>
 
-          {/* Modals */}
-          {selectedRequest && (
-            <MaintenanceDetailModal
-              request={selectedRequest}
-              onClose={() => setSelectedRequest(null)}
-              onAssignClick={handleAssignClick}
-              onMarkComplete={handleMarkComplete}
-              onCancel={handleCancelRequest}
-              onReopen={handleReopenRequest}
-            />
-          )}
+            {/* Modals */}
+            {selectedRequest && (
+              <MaintenanceDetailModal
+                request={selectedRequest}
+                onClose={() => setSelectedRequest(null)}
+                onAssignClick={handleAssignClick}
+                onMarkComplete={handleMarkComplete}
+                onCancel={handleCancelRequest}
+                onReopen={handleReopenRequest}
+              />
+            )}
 
-          {showAssignModal && selectedRequestForAction && (
-            <AssignModal
-              request={selectedRequestForAction}
-              isOpen={showAssignModal}
-              onClose={closeModals}
-              onAssign={handleUpdateRequest}
-              updating={updateRequestMutation.isLoading}
-            />
-          )}
+            {showAssignModal && selectedRequestForAction && (
+              <AssignModal
+                request={selectedRequestForAction}
+                isOpen={showAssignModal}
+                onClose={closeModals}
+                onAssign={handleUpdateRequest}
+                updating={updateRequestMutation.isLoading}
+              />
+            )}
 
-          {showStatusModal && selectedRequestForAction && (
-            <StatusModal
-              request={selectedRequestForAction}
-              isOpen={showStatusModal}
-              onClose={closeModals}
-              onSubmit={handleUpdateRequest}
-              updating={updateRequestMutation.isLoading}
-            />
-          )}
+            {showStatusModal && selectedRequestForAction && (
+              <StatusModal
+                request={selectedRequestForAction}
+                isOpen={showStatusModal}
+                onClose={closeModals}
+                onSubmit={handleUpdateRequest}
+                updating={updateRequestMutation.isLoading}
+              />
+            )}
 
-          {showDeleteModal && selectedRequestForAction && (
-            <DeleteConfirmModal
-              request={selectedRequestForAction}
-              isOpen={showDeleteModal}
-              onClose={closeModals}
-              onConfirm={handleDeleteRequest}
-              updating={deleteRequestMutation.isLoading}
-            />
-          )}
-        </main>
+            {showDeleteModal && selectedRequestForAction && (
+              <DeleteConfirmModal
+                request={selectedRequestForAction}
+                isOpen={showDeleteModal}
+                onClose={closeModals}
+                onConfirm={handleDeleteRequest}
+                updating={deleteRequestMutation.isLoading}
+              />
+            )}
+          </main>
+        </div>
       </div>
     </div>
   );

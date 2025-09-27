@@ -13,7 +13,6 @@ import {
   Wrench,
 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
-import ThemeToggle from "../../components/ThemeToggle";
 import { authAPI, getStoredUser } from "../../utils/api";
 
 const HostHeader = ({ toggleSidebar }) => {
@@ -104,9 +103,6 @@ const HostHeader = ({ toggleSidebar }) => {
               <span className="sr-only">Search</span>
               <Search className="h-6 w-6" />
             </button>
-
-            {/* Theme toggle */}
-            <ThemeToggle />
 
             {/* Notifications */}
             <div className="relative">

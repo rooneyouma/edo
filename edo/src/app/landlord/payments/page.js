@@ -317,7 +317,7 @@ Payment Method: ${payment.paymentMethod}`;
   }
 
   return (
-    <div className="flex h-screen overflow-hidden bg-[#F5F5DC] dark:bg-slate-900">
+    <div className="flex h-screen overflow-hidden bg-slate-50 dark:bg-slate-900">
       {/* Sidebar */}
       <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
 
