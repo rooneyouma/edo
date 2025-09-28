@@ -762,13 +762,11 @@ const MarketplaceHome = () => {
           style={{ maxWidth: "85%" }}
         >
           <div className="text-center animate-fade-in-up">
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4 leading-tight drop-shadow-xl">
-              Discover Your Perfect Space
+            <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4 leading-tight drop-shadow-xl">
+              Find Your Dream Space
             </h1>
             <p className="text-lg sm:text-xl md:text-2xl text-white mb-6 max-w-3xl mx-auto leading-relaxed font-semibold drop-shadow-lg">
-              Explore premium properties, find your dream home, or discover
-              unique stays.
-              <span className="block mt-2">Your next chapter starts here.</span>
+              Explore wonderful and unique spaces with edo
             </p>
 
             {/* CTA Buttons */}
@@ -776,7 +774,7 @@ const MarketplaceHome = () => {
               <Link
                 href="#"
                 onClick={(e) => handlePropertyManagerClick(e)}
-                className="px-8 py-4 bg-white/95 backdrop-blur-md text-[#009688] border-2 border-white/60 rounded-2xl font-bold text-lg shadow-xl hover:shadow-2xl hover:bg-white hover:border-white transform hover:scale-105 transition-all duration-300 flex items-center"
+                className="px-8 py-4 bg-white/95 backdrop-blur-md text-[#009688] border-2 border-white/60 rounded-2xl font-bold text-lg shadow-xl hover:shadow-2xl hover:bg-white hover:border-white transform hover:scale-105 transition-all duration-300 flex items-center justify-center"
                 style={{ padding: "0.85rem 1.7rem", fontSize: "0.85rem" }}
               >
                 To Property Management
@@ -798,7 +796,7 @@ const MarketplaceHome = () => {
               <Link
                 href="#"
                 onClick={(e) => handleTenantClick(e)}
-                className="px-8 py-4 bg-white/95 backdrop-blur-md text-[#009688] border-2 border-white/60 rounded-2xl font-bold text-lg shadow-xl hover:shadow-2xl hover:bg-white hover:border-white transform hover:scale-105 transition-all duration-300 flex items-center"
+                className="px-8 py-4 bg-white/95 backdrop-blur-md text-[#009688] border-2 border-white/60 rounded-2xl font-bold text-lg shadow-xl hover:shadow-2xl hover:bg-white hover:border-white transform hover:scale-105 transition-all duration-300 flex items-center justify-center"
                 style={{ padding: "0.85rem 1.7rem", fontSize: "0.85rem" }}
               >
                 To Tenant Dashboard
@@ -865,14 +863,13 @@ const MarketplaceHome = () => {
             {propertyTabs.map((tab) => (
               <button
                 key={tab.value}
-                className={`flex-shrink-0 px-4 sm:px-6 py-3 rounded-xl text-sm font-semibold transition-all duration-300 whitespace-nowrap cursor-pointer transform hover:scale-105 ${
+                className={`flex-shrink-0 px-3 py-2 sm:px-4 sm:py-3 rounded-lg sm:rounded-xl text-xs sm:text-sm font-semibold transition-all duration-300 whitespace-nowrap cursor-pointer transform hover:scale-105 ${
                   activeTab === tab.value
                     ? "bg-gradient-to-r from-[#009688] to-[#33bbaa] text-white shadow-md"
                     : "bg-white/70 text-[#009688] hover:bg-white hover:text-[#00796b] shadow-sm"
                 }`}
                 onClick={() => setActiveTab(tab.value)}
                 type="button"
-                style={{ padding: "0.51rem 0.85rem", fontSize: "0.85rem" }}
               >
                 {tab.label}
               </button>

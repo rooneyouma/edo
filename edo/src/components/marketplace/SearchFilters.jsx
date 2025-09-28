@@ -57,19 +57,19 @@ const SearchFilters = memo(
 
     return (
       <div className="sticky top-0 z-40 py-4">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto px-2 sm:px-4 md:px-6 lg:px-8">
           {/* Floating Ceramic Tile Container */}
-          <div className="bg-white/95 backdrop-blur-lg rounded-3xl shadow-2xl border border-gray-200/50 p-6 transform hover:scale-[1.01] transition-all duration-300">
-            <div className="flex flex-col lg:flex-row gap-4 lg:gap-6">
+          <div className="bg-white/95 backdrop-blur-lg rounded-2xl sm:rounded-3xl shadow-2xl border border-gray-200/50 p-4 sm:p-6 transform hover:scale-[1.01] transition-all duration-300">
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 md:gap-6">
               {/* Search Bar */}
               <div className="flex-1">
                 <div className="relative group">
-                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                    <Search className="h-5 w-5 text-[#009688] group-focus-within:text-[#00796b] transition-colors duration-300" />
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none sm:pl-4">
+                    <Search className="h-4 w-4 text-[#009688] group-focus-within:text-[#00796b] transition-colors duration-300 sm:h-5 sm:w-5" />
                   </div>
                   <input
                     type="text"
-                    className="block w-full pl-12 pr-4 py-4 border border-gray-200 rounded-2xl leading-6 bg-gray-50/50 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#009688] focus:border-[#009688] focus:bg-white text-base font-medium transition-all duration-300"
+                    className="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-xl sm:rounded-2xl leading-6 bg-gray-50/50 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#009688] focus:border-[#009688] focus:bg-white text-sm font-medium transition-all duration-300 sm:pl-12 sm:pr-4 sm:py-4 sm:text-base md:py-3 md:pl-10 md:pr-4 md:text-sm"
                     placeholder="Search by location, property type, or keywords..."
                     value={searchQuery}
                     onChange={handleSearchChange}
@@ -80,18 +80,18 @@ const SearchFilters = memo(
               {/* Filter Button */}
               <button
                 onClick={toggleFilters}
-                className={`inline-flex items-center justify-center px-6 py-4 rounded-2xl text-base font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl ${
+                className={`inline-flex items-center justify-center px-4 py-3 rounded-xl text-sm font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl sm:px-6 sm:py-4 sm:text-base md:px-4 md:py-3 md:text-sm ${
                   showFilters
                     ? "bg-gradient-to-r from-[#009688] to-[#33bbaa] text-white"
                     : "bg-white text-[#009688] border border-[#009688]/30 hover:border-[#009688] hover:bg-[#009688]/5"
                 }`}
+                aria-label="Filter properties"
               >
-                <Filter className="h-5 w-5 mr-2" />
-                Filters
+                <Filter className="h-4 w-4 md:h-4 md:w-4" />
                 {showFilters ? (
-                  <ChevronUp className="h-5 w-5 ml-2" />
+                  <ChevronUp className="h-4 w-4 ml-1 md:ml-0 md:h-4 md:w-4" />
                 ) : (
-                  <ChevronDown className="h-5 w-5 ml-2" />
+                  <ChevronDown className="h-4 w-4 ml-1 md:ml-0 md:h-4 md:w-4" />
                 )}
               </button>
             </div>
@@ -99,14 +99,14 @@ const SearchFilters = memo(
             {/* Expandable Filter Panel */}
             {showFilters && (
               <div className="mt-6 animate-slide-down">
-                <div className="bg-gradient-to-br from-gray-50/50 to-white/50 rounded-2xl p-6 border border-gray-200/30">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div className="bg-gradient-to-br from-gray-50/50 to-white/50 rounded-2xl p-4 sm:p-6 border border-gray-200/30">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
                     <div className="space-y-2">
-                      <label className="block text-sm font-semibold text-gray-700">
+                      <label className="block text-xs sm:text-sm font-semibold text-gray-700">
                         Transaction Type
                       </label>
                       <select
-                        className="block w-full px-4 py-3 border border-gray-200 rounded-xl bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#009688] focus:border-[#009688] text-sm font-medium transition-all duration-300 hover:border-[#009688]/50"
+                        className="block w-full px-3 py-2 sm:px-4 sm:py-3 border border-gray-200 rounded-lg sm:rounded-xl bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#009688] focus:border-[#009688] text-xs sm:text-sm font-medium transition-all duration-300 hover:border-[#009688]/50"
                         value={transactionType}
                         onChange={handleTransactionTypeChange}
                       >
@@ -118,11 +118,11 @@ const SearchFilters = memo(
                     </div>
 
                     <div className="space-y-2">
-                      <label className="block text-sm font-semibold text-gray-700">
+                      <label className="block text-xs sm:text-sm font-semibold text-gray-700">
                         Bedrooms
                       </label>
                       <select
-                        className="block w-full px-4 py-3 border border-gray-200 rounded-xl bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#009688] focus:border-[#009688] text-sm font-medium transition-all duration-300 hover:border-[#009688]/50"
+                        className="block w-full px-3 py-2 sm:px-4 sm:py-3 border border-gray-200 rounded-lg sm:rounded-xl bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#009688] focus:border-[#009688] text-xs sm:text-sm font-medium transition-all duration-300 hover:border-[#009688]/50"
                         value={bedrooms}
                         onChange={handleBedroomsChange}
                       >
@@ -136,11 +136,11 @@ const SearchFilters = memo(
                     </div>
 
                     <div className="space-y-2">
-                      <label className="block text-sm font-semibold text-gray-700">
+                      <label className="block text-xs sm:text-sm font-semibold text-gray-700">
                         Bathrooms
                       </label>
                       <select
-                        className="block w-full px-4 py-3 border border-gray-200 rounded-xl bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#009688] focus:border-[#009688] text-sm font-medium transition-all duration-300 hover:border-[#009688]/50"
+                        className="block w-full px-3 py-2 sm:px-4 sm:py-3 border border-gray-200 rounded-lg sm:rounded-xl bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#009688] focus:border-[#009688] text-xs sm:text-sm font-medium transition-all duration-300 hover:border-[#009688]/50"
                         value={bathrooms}
                         onChange={handleBathroomsChange}
                       >
@@ -153,11 +153,11 @@ const SearchFilters = memo(
                     </div>
 
                     <div className="space-y-2">
-                      <label className="block text-sm font-semibold text-gray-700">
+                      <label className="block text-xs sm:text-sm font-semibold text-gray-700">
                         Property Type
                       </label>
                       <select
-                        className="block w-full px-4 py-3 border border-gray-200 rounded-xl bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#009688] focus:border-[#009688] text-sm font-medium transition-all duration-300 hover:border-[#009688]/50"
+                        className="block w-full px-3 py-2 sm:px-4 sm:py-3 border border-gray-200 rounded-lg sm:rounded-xl bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#009688] focus:border-[#009688] text-xs sm:text-sm font-medium transition-all duration-300 hover:border-[#009688]/50"
                         value={propertyType}
                         onChange={handlePropertyTypeChange}
                       >
@@ -174,27 +174,27 @@ const SearchFilters = memo(
                     </div>
                   </div>
 
-                  {/* Active Filter Tags */}
-                  <div className="mt-4 flex flex-wrap gap-2">
+                  {/* Active Filter Tags - Optimized for Mobile */}
+                  <div className="mt-4 flex flex-wrap gap-1 sm:gap-2">
                     {transactionType !== "all" && (
-                      <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-gradient-to-r from-[#009688] to-[#33bbaa] text-white">
+                      <span className="inline-flex items-center px-2 py-1 sm:px-3 sm:py-1 rounded-full text-xs font-semibold bg-gradient-to-r from-[#009688] to-[#33bbaa] text-white">
                         {transactionType.charAt(0).toUpperCase() +
                           transactionType.slice(1)}
                       </span>
                     )}
                     {propertyType !== "all" && (
-                      <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-gradient-to-r from-[#009688] to-[#33bbaa] text-white">
+                      <span className="inline-flex items-center px-2 py-1 sm:px-3 sm:py-1 rounded-full text-xs font-semibold bg-gradient-to-r from-[#009688] to-[#33bbaa] text-white">
                         {propertyType.charAt(0).toUpperCase() +
                           propertyType.slice(1)}
                       </span>
                     )}
                     {bedrooms !== "any" && (
-                      <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-gradient-to-r from-[#009688] to-[#33bbaa] text-white">
+                      <span className="inline-flex items-center px-2 py-1 sm:px-3 sm:py-1 rounded-full text-xs font-semibold bg-gradient-to-r from-[#009688] to-[#33bbaa] text-white">
                         {bedrooms}+ Bedrooms
                       </span>
                     )}
                     {bathrooms !== "any" && (
-                      <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-gradient-to-r from-[#009688] to-[#33bbaa] text-white">
+                      <span className="inline-flex items-center px-2 py-1 sm:px-3 sm:py-1 rounded-full text-xs font-semibold bg-gradient-to-r from-[#009688] to-[#33bbaa] text-white">
                         {bathrooms}+ Bathrooms
                       </span>
                     )}
