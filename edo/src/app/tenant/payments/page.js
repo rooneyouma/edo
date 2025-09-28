@@ -22,6 +22,8 @@ const Payments = () => {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [selectedPayment, setSelectedPayment] = useState(null);
   const [isClient, setIsClient] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageInputValue, setPageInputValue] = useState("1");
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -94,6 +96,8 @@ const Payments = () => {
       status: "Paid",
       method: "Bank Transfer",
       reference: "#PAY-001",
+      property: "Sunset Apartments",
+      unit: "A101",
     },
     {
       id: 2,
@@ -102,6 +106,8 @@ const Payments = () => {
       status: "Paid",
       method: "Credit Card",
       reference: "#PAY-002",
+      property: "Sunset Apartments",
+      unit: "A101",
     },
     {
       id: 3,
@@ -110,6 +116,98 @@ const Payments = () => {
       status: "Paid",
       method: "M-PESA",
       reference: "#PAY-003",
+      property: "Sunset Apartments",
+      unit: "A101",
+    },
+    {
+      id: 4,
+      date: "2023-12-01",
+      amount: 1200.0,
+      status: "Paid",
+      method: "Bank Transfer",
+      reference: "#PAY-004",
+      property: "Sunset Apartments",
+      unit: "A101",
+    },
+    {
+      id: 5,
+      date: "2023-11-01",
+      amount: 1200.0,
+      status: "Paid",
+      method: "Credit Card",
+      reference: "#PAY-005",
+      property: "Sunset Apartments",
+      unit: "A101",
+    },
+    {
+      id: 6,
+      date: "2023-10-01",
+      amount: 900.0,
+      status: "Paid",
+      method: "M-PESA",
+      reference: "#PAY-006",
+      property: "Mountain View Condos",
+      unit: "B202",
+    },
+    {
+      id: 7,
+      date: "2023-09-01",
+      amount: 900.0,
+      status: "Paid",
+      method: "Bank Transfer",
+      reference: "#PAY-007",
+      property: "Mountain View Condos",
+      unit: "B202",
+    },
+    {
+      id: 8,
+      date: "2023-08-01",
+      amount: 900.0,
+      status: "Paid",
+      method: "Credit Card",
+      reference: "#PAY-008",
+      property: "Mountain View Condos",
+      unit: "B202",
+    },
+    {
+      id: 9,
+      date: "2023-07-01",
+      amount: 900.0,
+      status: "Paid",
+      method: "M-PESA",
+      reference: "#PAY-009",
+      property: "Mountain View Condos",
+      unit: "B202",
+    },
+    {
+      id: 10,
+      date: "2023-06-01",
+      amount: 900.0,
+      status: "Paid",
+      method: "Bank Transfer",
+      reference: "#PAY-010",
+      property: "Mountain View Condos",
+      unit: "B202",
+    },
+    {
+      id: 11,
+      date: "2023-05-01",
+      amount: 1200.0,
+      status: "Paid",
+      method: "Credit Card",
+      reference: "#PAY-011",
+      property: "Sunset Apartments",
+      unit: "A101",
+    },
+    {
+      id: 12,
+      date: "2023-04-01",
+      amount: 1200.0,
+      status: "Paid",
+      method: "M-PESA",
+      reference: "#PAY-012",
+      property: "Sunset Apartments",
+      unit: "A101",
     },
   ];
 
@@ -119,6 +217,9 @@ const Payments = () => {
       const matchesSearch =
         payment.reference.toLowerCase().includes(searchQuery.toLowerCase()) ||
         payment.method.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        payment.property.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (payment.unit &&
+          payment.unit.toLowerCase().includes(searchQuery.toLowerCase())) ||
         payment.amount.toString().includes(searchQuery) ||
         payment.amount.toFixed(2).includes(searchQuery);
 
@@ -136,6 +237,20 @@ const Payments = () => {
       const dateB = new Date(b.date);
       return sortOrder === "latest" ? dateB - dateA : dateA - dateB;
     });
+
+  // Pagination
+  const itemsPerPage = 10;
+  const totalPages = Math.ceil(filteredPayments.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentPayments = filteredPayments.slice(startIndex, endIndex);
+
+  const handlePageChange = (pageNumber) => {
+    if (pageNumber >= 1 && pageNumber <= totalPages) {
+      setCurrentPage(pageNumber);
+      setPageInputValue(pageNumber.toString());
+    }
+  };
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -229,326 +344,443 @@ const Payments = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-900">
-      <div className="flex">
-        <TenantSidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
-        <div className="flex-1 flex flex-col lg:ml-64">
-          <TenantHeader toggleSidebar={toggleSidebar} />
-          {/* Main content */}
-          <main className="flex-1 transition-all duration-200">
-            <div className="w-full pl-2 pr-6 sm:pl-4 sm:pr-8 md:pl-6 md:pr-12 lg:pl-8 lg:pr-16 py-4 sm:py-8">
-              {/* Page header - Responsive, title always at top, button below on mobile */}
-              <div className="flex flex-col gap-2 sm:flex-row sm:justify-between sm:items-center mb-4">
-                <div>
-                  <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">
-                    Payments
-                  </h1>
-                  <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
-                    View and manage your rental payments
-                  </p>
-                </div>
-                <button
-                  onClick={handlePayRent}
-                  className="inline-flex items-center justify-center px-3 py-2 border border-transparent rounded-md shadow-sm text-xs sm:text-sm font-medium text-white bg-[#0d9488] hover:bg-[#0f766e] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0d9488] w-full sm:w-auto mt-2 sm:mt-0"
-                >
-                  Pay Rent
-                </button>
+    <div className="flex h-screen overflow-hidden bg-slate-50 dark:bg-slate-900">
+      <TenantSidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+      <div className="relative flex flex-col flex-1 overflow-y-auto overflow-x-hidden lg:ml-64">
+        <TenantHeader toggleSidebar={toggleSidebar} />
+        <main className="grow">
+          <div className="pl-4 pr-8 sm:pl-6 sm:pr-12 lg:pl-8 lg:pr-16 py-8 w-full">
+            {/* Page header - Responsive, title always at top, button below on mobile */}
+            <div className="flex flex-col gap-3 sm:flex-row sm:justify-between sm:items-center mb-6">
+              <div>
+                <h1 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-slate-100">
+                  Payments
+                </h1>
+                <p className="mt-1 text-xs sm:text-sm text-slate-500 dark:text-slate-400">
+                  View and manage your rental payments
+                </p>
               </div>
+              <button
+                onClick={handlePayRent}
+                className="inline-flex items-center justify-center px-3 py-2 border border-transparent rounded-md shadow-sm text-xs sm:text-sm font-medium text-white bg-[#0d9488] hover:bg-[#0f766e] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0d9488] w-full sm:w-auto"
+              >
+                Pay Rent
+              </button>
+            </div>
 
-              {/* Payment summary cards */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                {/* Total Paid */}
-                <div className="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm text-slate-500 dark:text-slate-400">
-                        Total Paid
-                      </p>
-                      <p className="mt-1 text-2xl font-semibold text-slate-900 dark:text-slate-100">
-                        $12,000
-                      </p>
-                    </div>
-                    <div className="p-3 bg-green-100 dark:bg-green-900/30 rounded-full">
-                      <svg
-                        className="w-6 h-6 text-green-600 dark:text-green-400"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="2"
-                          d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                        />
-                      </svg>
-                    </div>
+            {/* Payment summary cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+              {/* Total Paid */}
+              <div className="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 p-4 sm:p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
+                      Total Paid
+                    </p>
+                    <p className="mt-1 text-lg sm:text-2xl font-semibold text-slate-900 dark:text-slate-100">
+                      $12,000
+                    </p>
                   </div>
-                </div>
-
-                {/* Current Balance */}
-                <div className="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm text-slate-500 dark:text-slate-400">
-                        Current Balance
-                      </p>
-                      <p className="mt-1 text-2xl font-semibold text-slate-900 dark:text-slate-100">
-                        $1,200
-                      </p>
-                    </div>
-                    <div className="p-3 bg-blue-100 dark:bg-blue-900/30 rounded-full">
-                      <svg
-                        className="w-6 h-6 text-blue-600 dark:text-blue-400"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="2"
-                          d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"
-                        />
-                      </svg>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Next Payment */}
-                <div className="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm text-slate-500 dark:text-slate-400">
-                        Next Payment
-                      </p>
-                      <p className="mt-1 text-2xl font-semibold text-slate-900 dark:text-slate-100">
-                        $1,200
-                      </p>
-                      <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
-                        Due in 15 days
-                      </p>
-                    </div>
-                    <div className="p-3 bg-yellow-100 dark:bg-yellow-900/30 rounded-full">
-                      <svg
-                        className="w-6 h-6 text-yellow-600 dark:text-yellow-400"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="2"
-                          d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                        />
-                      </svg>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Payment History */}
-                <div className="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm text-slate-500 dark:text-slate-400">
-                        Payment History
-                      </p>
-                      <p className="mt-1 text-2xl font-semibold text-slate-900 dark:text-slate-100">
-                        10
-                      </p>
-                      <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
-                        Total payments
-                      </p>
-                    </div>
-                    <div className="p-3 bg-purple-100 dark:bg-purple-900/30 rounded-full">
-                      <svg
-                        className="w-6 h-6 text-purple-600 dark:text-purple-400"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="2"
-                          d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
-                        />
-                      </svg>
-                    </div>
+                  <div className="p-2 sm:p-3 bg-green-100 dark:bg-green-900/30 rounded-full">
+                    <svg
+                      className="w-5 h-5 sm:w-6 sm:h-6 text-green-600 dark:text-green-400"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                      />
+                    </svg>
                   </div>
                 </div>
               </div>
 
-              {/* Payment history table */}
-              <div className="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700">
-                <div className="p-6">
-                  <div className="flex flex-col sm:flex-row gap-4">
-                    <div className="flex-1">
-                      <div className="relative">
-                        <Search
-                          className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
-                          size={20}
-                        />
+              {/* Current Balance */}
+              <div className="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 p-4 sm:p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
+                      Current Balance
+                    </p>
+                    <p className="mt-1 text-lg sm:text-2xl font-semibold text-slate-900 dark:text-slate-100">
+                      $1,200
+                    </p>
+                  </div>
+                  <div className="p-2 sm:p-3 bg-blue-100 dark:bg-blue-900/30 rounded-full">
+                    <svg
+                      className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600 dark:text-blue-400"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"
+                      />
+                    </svg>
+                  </div>
+                </div>
+              </div>
+
+              {/* Next Payment */}
+              <div className="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 p-4 sm:p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
+                      Next Payment
+                    </p>
+                    <p className="mt-1 text-lg sm:text-2xl font-semibold text-slate-900 dark:text-slate-100">
+                      $1,200
+                    </p>
+                    <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                      Due in 15 days
+                    </p>
+                  </div>
+                  <div className="p-2 sm:p-3 bg-yellow-100 dark:bg-yellow-900/30 rounded-full">
+                    <svg
+                      className="w-5 h-5 sm:w-6 sm:h-6 text-yellow-600 dark:text-yellow-400"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                      />
+                    </svg>
+                  </div>
+                </div>
+              </div>
+
+              {/* Payment History */}
+              <div className="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 p-4 sm:p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
+                      Payment History
+                    </p>
+                    <p className="mt-1 text-lg sm:text-2xl font-semibold text-slate-900 dark:text-slate-100">
+                      10
+                    </p>
+                    <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                      Total payments
+                    </p>
+                  </div>
+                  <div className="p-2 sm:p-3 bg-purple-100 dark:bg-purple-900/30 rounded-full">
+                    <svg
+                      className="w-5 h-5 sm:w-6 sm:h-6 text-purple-600 dark:text-purple-400"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+                      />
+                    </svg>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Payment history table */}
+            <div className="p-4 sm:p-6">
+              <div className="flex flex-col sm:flex-row gap-4">
+                <div className="flex-1">
+                  <div className="relative">
+                    <Search
+                      className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                      size={20}
+                    />
+                    <input
+                      type="text"
+                      placeholder="Search payments..."
+                      className="w-full pl-10 pr-4 py-2 sm:py-2.5 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0d9488] focus:border-[#0d9488] dark:bg-gray-800 dark:text-gray-100"
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                    />
+                  </div>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <button
+                    onClick={() => setIsFilterOpen(!isFilterOpen)}
+                    className="inline-flex items-center px-4 py-2 border border-gray-200 dark:border-gray-700 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0d9488]"
+                  >
+                    <Filter className="h-4 w-4 mr-2" />
+                    Filter
+                    {isFilterOpen ? (
+                      <X className="h-4 w-4 ml-2" />
+                    ) : (
+                      <span className="ml-2">▼</span>
+                    )}
+                  </button>
+                  <button
+                    onClick={() =>
+                      setSortOrder(
+                        sortOrder === "latest" ? "earliest" : "latest"
+                      )
+                    }
+                    className="inline-flex items-center px-4 py-2 border border-gray-200 dark:border-gray-700 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0d9488]"
+                  >
+                    <ArrowUpDown className="h-4 w-4 mr-2" />
+                    {sortOrder === "latest" ? "Latest" : "Earliest"}
+                  </button>
+                </div>
+              </div>
+
+              {isFilterOpen && (
+                <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  <div>
+                    <label
+                      htmlFor="status"
+                      className="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                    >
+                      Status
+                    </label>
+                    <select
+                      id="status"
+                      className="block w-full rounded-md border-gray-300 dark:border-gray-600 pl-3 pr-10 py-2 text-xs sm:text-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-gray-700 dark:text-gray-100"
+                      value={statusFilter}
+                      onChange={(e) => setStatusFilter(e.target.value)}
+                    >
+                      <option value="all">All Status</option>
+                      <option value="paid">Paid</option>
+                      <option value="pending">Pending</option>
+                      <option value="failed">Failed</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label
+                      htmlFor="method"
+                      className="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                    >
+                      Payment Method
+                    </label>
+                    <select
+                      id="method"
+                      className="block w-full rounded-md border-gray-300 dark:border-gray-600 pl-3 pr-10 py-2 text-xs sm:text-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-gray-700 dark:text-gray-100"
+                      value={methodFilter}
+                      onChange={(e) => setMethodFilter(e.target.value)}
+                    >
+                      <option value="all">All Methods</option>
+                      <option value="bank transfer">Bank Transfer</option>
+                      <option value="credit card">Credit Card</option>
+                      <option value="m-pesa">M-PESA</option>
+                      <option value="paypal">PayPal</option>
+                    </select>
+                  </div>
+                </div>
+              )}
+
+              <div className="mt-6 flex flex-col">
+                <div className="-my-2 -mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8">
+                  <div className="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8">
+                    <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 rounded-lg md:rounded-lg">
+                      <table className="min-w-full divide-y divide-gray-300 dark:divide-gray-700">
+                        <thead className="bg-gray-50 dark:bg-gray-800">
+                          <tr>
+                            <th
+                              scope="col"
+                              className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-100 sm:pl-6"
+                            >
+                              Date
+                            </th>
+                            <th
+                              scope="col"
+                              className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
+                            >
+                              Property
+                            </th>
+                            <th
+                              scope="col"
+                              className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
+                            >
+                              Unit
+                            </th>
+                            <th
+                              scope="col"
+                              className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
+                            >
+                              Amount
+                            </th>
+                            <th
+                              scope="col"
+                              className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
+                            >
+                              Status
+                            </th>
+                            <th
+                              scope="col"
+                              className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
+                            >
+                              Method
+                            </th>
+                            <th
+                              scope="col"
+                              className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
+                            >
+                              Reference
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-900">
+                          {currentPayments.map((payment) => (
+                            <tr
+                              key={payment.id}
+                              className="hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer"
+                              onClick={() => setSelectedPayment(payment)}
+                            >
+                              <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 dark:text-gray-100 sm:pl-6">
+                                {new Date(payment.date).toLocaleDateString(
+                                  "en-US",
+                                  {
+                                    month: "short",
+                                    day: "numeric",
+                                    year: "numeric",
+                                  }
+                                )}
+                              </td>
+                              <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
+                                {payment.property}
+                              </td>
+                              <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
+                                {payment.unit || "-"}
+                              </td>
+                              <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
+                                ${payment.amount.toFixed(2)}
+                              </td>
+                              <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
+                                <span
+                                  className={`inline-flex rounded-full px-2 text-xs font-semibold leading-5 ${
+                                    payment.status === "Paid"
+                                      ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
+                                      : payment.status === "Pending"
+                                      ? "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200"
+                                      : "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200"
+                                  }`}
+                                >
+                                  {payment.status}
+                                </span>
+                              </td>
+                              <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
+                                {payment.method}
+                              </td>
+                              <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
+                                {payment.reference}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Pagination */}
+              {filteredPayments.length > 0 && (
+                <div className="mt-4 flex items-center justify-between border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-4 py-3">
+                  <div className="flex items-center justify-between w-full">
+                    <div className="flex items-center space-x-4">
+                      <span className="text-xs text-gray-700 dark:text-gray-200">
+                        Page {currentPage} of {totalPages}
+                      </span>
+                      <div className="flex items-center space-x-2">
+                        <span className="text-xs text-gray-700 dark:text-gray-200">
+                          Go to page:
+                        </span>
                         <input
-                          type="text"
-                          placeholder="Search payments..."
-                          className="w-full pl-10 pr-4 py-2.5 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0d9488] focus:border-[#0d9488] dark:bg-gray-800 dark:text-gray-100"
-                          value={searchQuery}
-                          onChange={(e) => setSearchQuery(e.target.value)}
+                          type="number"
+                          min="1"
+                          max={totalPages}
+                          value={pageInputValue}
+                          onChange={(e) => {
+                            const value = e.target.value;
+                            setPageInputValue(value);
+                            const page = parseInt(value);
+                            if (page >= 1 && page <= totalPages) {
+                              handlePageChange(page);
+                            }
+                          }}
+                          onBlur={() => {
+                            const page = parseInt(pageInputValue);
+                            if (page < 1) {
+                              setPageInputValue("1");
+                              handlePageChange(1);
+                            } else if (page > totalPages) {
+                              setPageInputValue(totalPages.toString());
+                              handlePageChange(totalPages);
+                            }
+                          }}
+                          className="w-12 h-6 text-xs text-center rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-violet-500"
                         />
                       </div>
                     </div>
                     <div className="flex items-center space-x-2">
                       <button
-                        onClick={() => setIsFilterOpen(!isFilterOpen)}
-                        className="inline-flex items-center px-4 py-2 border border-gray-200 dark:border-gray-700 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0d9488]"
+                        onClick={() => handlePageChange(currentPage - 1)}
+                        disabled={currentPage === 1}
+                        className="inline-flex items-center p-1.5 text-xs font-medium rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
                       >
-                        <Filter className="h-4 w-4 mr-2" />
-                        Filter
-                        {isFilterOpen ? (
-                          <X className="h-4 w-4 ml-2" />
-                        ) : (
-                          <span className="ml-2">▼</span>
-                        )}
+                        <svg
+                          className="w-4 h-4"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M15 19l-7-7 7-7"
+                          />
+                        </svg>
                       </button>
                       <button
-                        onClick={() =>
-                          setSortOrder(
-                            sortOrder === "latest" ? "earliest" : "latest"
-                          )
-                        }
-                        className="inline-flex items-center px-4 py-2 border border-gray-200 dark:border-gray-700 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0d9488]"
+                        onClick={() => handlePageChange(currentPage + 1)}
+                        disabled={currentPage === totalPages}
+                        className="inline-flex items-center p-1.5 text-xs font-medium rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
                       >
-                        <ArrowUpDown className="h-4 w-4 mr-2" />
-                        {sortOrder === "latest" ? "Latest" : "Earliest"}
+                        <svg
+                          className="w-4 h-4"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M9 5l7 7-7 7"
+                          />
+                        </svg>
                       </button>
                     </div>
                   </div>
-
-                  {isFilterOpen && (
-                    <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                      <div>
-                        <label
-                          htmlFor="status"
-                          className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-                        >
-                          Status
-                        </label>
-                        <select
-                          id="status"
-                          className="block w-full rounded-md border-gray-300 dark:border-gray-600 pl-3 pr-10 py-2 text-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-gray-700 dark:text-gray-100"
-                          value={statusFilter}
-                          onChange={(e) => setStatusFilter(e.target.value)}
-                        >
-                          <option value="all">All Status</option>
-                          <option value="paid">Paid</option>
-                          <option value="pending">Pending</option>
-                          <option value="failed">Failed</option>
-                        </select>
-                      </div>
-                      <div>
-                        <label
-                          htmlFor="method"
-                          className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-                        >
-                          Payment Method
-                        </label>
-                        <select
-                          id="method"
-                          className="block w-full rounded-md border-gray-300 dark:border-gray-600 pl-3 pr-10 py-2 text-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-gray-700 dark:text-gray-100"
-                          value={methodFilter}
-                          onChange={(e) => setMethodFilter(e.target.value)}
-                        >
-                          <option value="all">All Methods</option>
-                          <option value="bank transfer">Bank Transfer</option>
-                          <option value="credit card">Credit Card</option>
-                          <option value="m-pesa">M-PESA</option>
-                          <option value="paypal">PayPal</option>
-                        </select>
-                      </div>
-                    </div>
-                  )}
-
-                  <div className="mt-6 overflow-x-auto">
-                    <table className="w-full">
-                      <thead>
-                        <tr className="text-left border-b border-slate-200 dark:border-slate-700">
-                          <th className="pb-3 font-medium text-slate-500 dark:text-slate-400">
-                            Date
-                          </th>
-                          <th className="pb-3 font-medium text-slate-500 dark:text-slate-400">
-                            Amount
-                          </th>
-                          <th className="pb-3 font-medium text-slate-500 dark:text-slate-400">
-                            Status
-                          </th>
-                          <th className="pb-3 font-medium text-slate-500 dark:text-slate-400">
-                            Method
-                          </th>
-                          <th className="pb-3 font-medium text-slate-500 dark:text-slate-400">
-                            Reference
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-slate-200 dark:divide-slate-700">
-                        {filteredPayments.map((payment) => (
-                          <tr
-                            key={payment.id}
-                            className="cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700"
-                            onClick={() => setSelectedPayment(payment)}
-                          >
-                            <td className="py-4 text-sm text-slate-900 dark:text-slate-100">
-                              {new Date(payment.date).toLocaleDateString(
-                                "en-US",
-                                {
-                                  month: "short",
-                                  day: "numeric",
-                                  year: "numeric",
-                                }
-                              )}
-                            </td>
-                            <td className="py-4 text-sm text-slate-900 dark:text-slate-100">
-                              ${payment.amount.toFixed(2)}
-                            </td>
-                            <td className="py-4">
-                              <span
-                                className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                                  payment.status === "Paid"
-                                    ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
-                                    : payment.status === "Pending"
-                                    ? "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200"
-                                    : "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200"
-                                }`}
-                              >
-                                {payment.status}
-                              </span>
-                            </td>
-                            <td className="py-4 text-sm text-slate-900 dark:text-slate-100">
-                              {payment.method}
-                            </td>
-                            <td className="py-4 text-sm text-slate-900 dark:text-slate-100">
-                              {payment.reference}
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
                 </div>
-              </div>
+              )}
             </div>
-          </main>
-        </div>
+          </div>
+        </main>
       </div>
 
       {/* Payment Modal */}
       {showPaymentModal && (
         <div className="fixed inset-0 bg-gray-500/50 dark:bg-gray-900/50 z-40 transition-opacity">
           <div className="fixed inset-0 z-50 overflow-y-auto">
-            <div className="flex min-h-full items-center justify-center p-4 text-center">
-              <div className="relative transform overflow-hidden rounded-lg bg-white dark:bg-slate-800 px-4 pb-4 pt-5 text-left shadow-xl transition-all w-full max-w-lg">
-                <div className="absolute right-0 top-0 pr-4 pt-4">
+            <div className="flex min-h-full items-center justify-center p-2 sm:p-4 text-center">
+              <div className="relative transform overflow-hidden rounded-lg bg-white dark:bg-slate-800 px-3 pb-3 pt-4 sm:px-4 sm:pb-4 sm:pt-5 text-left shadow-xl transition-all w-full max-w-lg">
+                <div className="absolute right-0 top-0 pr-3 pt-3 sm:pr-4 sm:pt-4">
                   <button
                     type="button"
                     className="rounded-md bg-white dark:bg-slate-800 text-slate-400 hover:text-slate-500 focus:outline-none"
@@ -560,7 +792,7 @@ const Payments = () => {
                   >
                     <span className="sr-only">Close</span>
                     <svg
-                      className="h-6 w-6"
+                      className="h-5 w-5 sm:h-6 sm:w-6"
                       fill="none"
                       viewBox="0 0 24 24"
                       strokeWidth="1.5"
@@ -576,20 +808,20 @@ const Payments = () => {
                 </div>
 
                 <div className="sm:flex sm:items-start">
-                  <div className="mt-3 text-center sm:mt-0 sm:text-left w-full">
-                    <h3 className="text-lg font-semibold leading-6 text-slate-900 dark:text-slate-100">
+                  <div className="mt-2 text-center sm:mt-0 sm:text-left w-full">
+                    <h3 className="text-lg sm:text-xl font-semibold leading-6 text-slate-900 dark:text-slate-100">
                       Pay Rent
                     </h3>
                   </div>
                 </div>
 
-                <div className="mt-6 space-y-6">
+                <div className="mt-4 sm:mt-6 space-y-4 sm:space-y-6">
                   {/* Property Selection */}
                   {properties.length > 1 && (
                     <div>
                       <label
                         htmlFor="property"
-                        className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
+                        className="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
                       >
                         Select Property
                       </label>
@@ -603,7 +835,7 @@ const Payments = () => {
                           );
                           setSelectedProperty(property);
                         }}
-                        className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100 sm:text-sm py-2 px-3"
+                        className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100 text-xs sm:text-sm py-2 px-3"
                       >
                         <option value="">Select a property</option>
                         {properties.map((property) => (
@@ -618,19 +850,19 @@ const Payments = () => {
                   {/* Payment Amount */}
                   {selectedProperty && (
                     <div>
-                      <h4 className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                      <h4 className="text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
                         Payment Amount
                       </h4>
-                      <div className="bg-slate-50 dark:bg-slate-700/50 rounded-lg p-4">
+                      <div className="bg-slate-50 dark:bg-slate-700/50 rounded-lg p-3 sm:p-4">
                         <div className="flex justify-between items-center">
-                          <span className="text-slate-600 dark:text-slate-300">
+                          <span className="text-slate-600 dark:text-slate-300 text-xs sm:text-sm">
                             Monthly Rent
                           </span>
-                          <span className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+                          <span className="text-lg sm:text-xl font-semibold text-slate-900 dark:text-slate-100">
                             ${selectedProperty.rent.toLocaleString()}
                           </span>
                         </div>
-                        <div className="mt-2 text-sm text-slate-500 dark:text-slate-400">
+                        <div className="mt-2 text-xs sm:text-sm text-slate-500 dark:text-slate-400">
                           Due by{" "}
                           {new Date(
                             selectedProperty.dueDate
@@ -643,22 +875,22 @@ const Payments = () => {
                   {/* Payment Methods */}
                   {selectedProperty && (
                     <div>
-                      <h4 className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-4">
+                      <h4 className="text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-3 sm:mb-4">
                         Select Payment Method
                       </h4>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                         {paymentMethods.map((method) => (
                           <button
                             key={method.id}
                             onClick={() => setSelectedPaymentMethod(method.id)}
-                            className={`flex items-center p-4 rounded-lg border ${
+                            className={`flex items-center p-3 sm:p-4 rounded-lg border ${
                               selectedPaymentMethod === method.id
                                 ? "border-[#0d9488] bg-[#0d9488]/20"
                                 : "border-slate-200 dark:border-slate-700 hover:border-[#0d9488]"
                             }`}
                           >
                             <div
-                              className={`p-2 rounded-full ${
+                              className={`p-1.5 sm:p-2 rounded-full ${
                                 selectedPaymentMethod === method.id
                                   ? "bg-[#0d9488]/10 text-[#0d9488]"
                                   : "bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-400"
@@ -666,7 +898,7 @@ const Payments = () => {
                             >
                               {method.icon}
                             </div>
-                            <span className="ml-3 text-sm font-medium text-slate-900 dark:text-slate-100">
+                            <span className="ml-2 sm:ml-3 text-xs sm:text-sm font-medium text-slate-900 dark:text-slate-100">
                               {method.name}
                             </span>
                           </button>
@@ -677,13 +909,13 @@ const Payments = () => {
 
                   {/* Payment Form */}
                   {selectedPaymentMethod && selectedProperty && (
-                    <div className="mt-6">
+                    <div className="mt-4 sm:mt-6">
                       {selectedPaymentMethod === "card" && (
-                        <div className="space-y-4">
+                        <div className="space-y-3 sm:space-y-4">
                           <div>
                             <label
                               htmlFor="cardNumber"
-                              className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
+                              className="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
                             >
                               Card Number
                             </label>
@@ -691,14 +923,14 @@ const Payments = () => {
                               type="text"
                               id="cardNumber"
                               placeholder="1234 5678 9012 3456"
-                              className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100 sm:text-sm py-2 px-3"
+                              className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100 text-xs sm:text-sm py-2 px-3"
                             />
                           </div>
-                          <div className="grid grid-cols-2 gap-4">
+                          <div className="grid grid-cols-2 gap-3 sm:gap-4">
                             <div>
                               <label
                                 htmlFor="expiry"
-                                className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
+                                className="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
                               >
                                 Expiry Date
                               </label>
@@ -706,13 +938,13 @@ const Payments = () => {
                                 type="text"
                                 id="expiry"
                                 placeholder="MM/YY"
-                                className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100 sm:text-sm py-2 px-3"
+                                className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100 text-xs sm:text-sm py-2 px-3"
                               />
                             </div>
                             <div>
                               <label
                                 htmlFor="cvv"
-                                className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
+                                className="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
                               >
                                 CVV
                               </label>
@@ -720,7 +952,7 @@ const Payments = () => {
                                 type="text"
                                 id="cvv"
                                 placeholder="123"
-                                className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100 sm:text-sm py-2 px-3"
+                                className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100 text-xs sm:text-sm py-2 px-3"
                               />
                             </div>
                           </div>
@@ -728,11 +960,11 @@ const Payments = () => {
                       )}
 
                       {selectedPaymentMethod === "bank" && (
-                        <div className="space-y-4">
+                        <div className="space-y-3 sm:space-y-4">
                           <div>
                             <label
                               htmlFor="accountNumber"
-                              className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
+                              className="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
                             >
                               Account Number
                             </label>
@@ -740,13 +972,13 @@ const Payments = () => {
                               type="text"
                               id="accountNumber"
                               placeholder="Enter your account number"
-                              className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100 sm:text-sm py-2 px-3"
+                              className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100 text-xs sm:text-sm py-2 px-3"
                             />
                           </div>
                           <div>
                             <label
                               htmlFor="routingNumber"
-                              className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
+                              className="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
                             >
                               Routing Number
                             </label>
@@ -754,18 +986,18 @@ const Payments = () => {
                               type="text"
                               id="routingNumber"
                               placeholder="Enter your routing number"
-                              className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100 sm:text-sm py-2 px-3"
+                              className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100 text-xs sm:text-sm py-2 px-3"
                             />
                           </div>
                         </div>
                       )}
 
                       {selectedPaymentMethod === "mpesa" && (
-                        <div className="space-y-4">
+                        <div className="space-y-3 sm:space-y-4">
                           <div>
                             <label
                               htmlFor="phoneNumber"
-                              className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
+                              className="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
                             >
                               M-PESA Phone Number
                             </label>
@@ -773,10 +1005,10 @@ const Payments = () => {
                               type="tel"
                               id="phoneNumber"
                               placeholder="Enter your M-PESA phone number"
-                              className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100 sm:text-sm py-2 px-3"
+                              className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100 text-xs sm:text-sm py-2 px-3"
                             />
                           </div>
-                          <p className="text-sm text-slate-500 dark:text-slate-400">
+                          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
                             You will receive a prompt on your phone to confirm
                             the payment.
                           </p>
@@ -784,30 +1016,30 @@ const Payments = () => {
                       )}
 
                       {selectedPaymentMethod === "paypal" && (
-                        <div className="text-center py-4">
-                          <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">
+                        <div className="text-center py-3 sm:py-4">
+                          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mb-3 sm:mb-4">
                             You will be redirected to PayPal to complete your
                             payment.
                           </p>
                           <button
                             type="button"
-                            className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#0d9488] hover:bg-[#0f766e] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0d9488]"
+                            className="inline-flex items-center px-3 py-2 sm:px-4 sm:py-2 border border-transparent rounded-md shadow-sm text-xs sm:text-sm font-medium text-white bg-[#0d9488] hover:bg-[#0f766e] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0d9488]"
                           >
                             Continue with PayPal
                           </button>
                         </div>
                       )}
 
-                      <div className="mt-6 sm:mt-8 sm:flex sm:flex-row-reverse">
+                      <div className="mt-5 sm:mt-6 sm:flex sm:flex-row-reverse">
                         <button
                           type="button"
-                          className="inline-flex w-full justify-center rounded-md bg-[#0d9488] px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-[#0f766e] sm:ml-3 sm:w-auto"
+                          className="inline-flex w-full justify-center rounded-md bg-[#0d9488] px-3 py-2 text-xs sm:text-sm font-semibold text-white shadow-sm hover:bg-[#0f766e] sm:ml-3 sm:w-auto"
                         >
                           Pay ${selectedProperty.rent.toLocaleString()}
                         </button>
                         <button
                           type="button"
-                          className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 hover:bg-slate-50 dark:bg-slate-700 dark:text-slate-100 dark:ring-slate-600 dark:hover:bg-slate-600 sm:mt-0 sm:w-auto"
+                          className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-xs sm:text-sm font-semibold text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 hover:bg-slate-50 dark:bg-slate-700 dark:text-slate-100 dark:ring-slate-600 dark:hover:bg-slate-600 sm:mt-0 sm:w-auto"
                           onClick={() => {
                             setShowPaymentModal(false);
                             setSelectedPaymentMethod(null);
@@ -831,23 +1063,23 @@ const Payments = () => {
         onClose={() => setSelectedPayment(null)}
       >
         {selectedPayment && (
-          <div className="space-y-4">
+          <div className="space-y-4 sm:space-y-5">
             <div className="flex justify-between items-start">
               <div>
-                <h3 className="text-lg font-medium text-slate-900 dark:text-slate-100">
+                <h3 className="text-lg sm:text-xl font-medium text-slate-900 dark:text-slate-100">
                   Payment Details
                 </h3>
-                <p className="text-sm text-slate-500 dark:text-slate-400">
+                <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
                   Reference: {selectedPayment.reference}
                 </p>
               </div>
             </div>
             <div className="mt-4 space-y-4">
               <div>
-                <h4 className="text-sm font-medium text-slate-500 dark:text-slate-400">
+                <h4 className="text-xs sm:text-sm font-medium text-slate-500 dark:text-slate-400">
                   Date
                 </h4>
-                <p className="mt-1 text-sm text-slate-900 dark:text-slate-100">
+                <p className="mt-1 text-xs sm:text-sm text-slate-900 dark:text-slate-100">
                   {new Date(selectedPayment.date).toLocaleDateString("en-US", {
                     month: "long",
                     day: "numeric",
@@ -856,19 +1088,19 @@ const Payments = () => {
                 </p>
               </div>
               <div>
-                <h4 className="text-sm font-medium text-slate-500 dark:text-slate-400">
+                <h4 className="text-xs sm:text-sm font-medium text-slate-500 dark:text-slate-400">
                   Amount
                 </h4>
-                <p className="mt-1 text-sm text-slate-900 dark:text-slate-100">
+                <p className="mt-1 text-xs sm:text-sm text-slate-900 dark:text-slate-100">
                   ${selectedPayment.amount.toFixed(2)}
                 </p>
               </div>
               <div>
-                <h4 className="text-sm font-medium text-slate-500 dark:text-slate-400">
+                <h4 className="text-xs sm:text-sm font-medium text-slate-500 dark:text-slate-400">
                   Status
                 </h4>
                 <span
-                  className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                  className={`inline-flex items-center px-2 py-0.5 sm:px-2.5 sm:py-0.5 rounded-full text-xs font-medium mt-1 ${
                     selectedPayment.status === "Paid"
                       ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
                       : selectedPayment.status === "Pending"
@@ -880,18 +1112,18 @@ const Payments = () => {
                 </span>
               </div>
               <div>
-                <h4 className="text-sm font-medium text-slate-500 dark:text-slate-400">
+                <h4 className="text-xs sm:text-sm font-medium text-slate-500 dark:text-slate-400">
                   Payment Method
                 </h4>
-                <p className="mt-1 text-sm text-slate-900 dark:text-slate-100">
+                <p className="mt-1 text-xs sm:text-sm text-slate-900 dark:text-slate-100">
                   {selectedPayment.method}
                 </p>
               </div>
             </div>
-            <div className="flex justify-end space-x-3 pt-2">
+            <div className="flex justify-end space-x-2 sm:space-x-3 pt-2">
               <button
                 type="button"
-                className="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 text-sm font-medium rounded-md text-gray-700 dark:text-gray-200 bg-white dark:bg-slate-800 hover:bg-gray-50 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0d9488]"
+                className="inline-flex items-center px-3 py-1.5 sm:px-4 sm:py-2 border border-gray-300 dark:border-gray-600 text-xs sm:text-sm font-medium rounded-md text-gray-700 dark:text-gray-200 bg-white dark:bg-slate-800 hover:bg-gray-50 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0d9488]"
                 onClick={() => setSelectedPayment(null)}
               >
                 Close
@@ -899,7 +1131,7 @@ const Payments = () => {
               {selectedPayment.status === "Paid" && (
                 <button
                   type="button"
-                  className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-[#0d9488] hover:bg-[#0f766e] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0d9488]"
+                  className="inline-flex items-center px-3 py-1.5 sm:px-4 sm:py-2 border border-transparent text-xs sm:text-sm font-medium rounded-md text-white bg-[#0d9488] hover:bg-[#0f766e] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0d9488]"
                   onClick={() => alert("Download receipt (not implemented)")}
                 >
                   Download Receipt

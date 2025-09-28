@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { useRouter, usePathname } from "next/navigation";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { jsPDF } from "jspdf";
 import { Search, Filter, ChevronDown } from "lucide-react";
 import { isAuthenticated } from "../../../utils/api";
@@ -24,9 +24,11 @@ const Payments = () => {
   const [pageInputValue, setPageInputValue] = useState("1");
   const [isRecordPaymentModalOpen, setIsRecordPaymentModalOpen] =
     useState(false);
+  const [isClient, setIsClient] = useState(false); // Add client-side check
   const itemsPerPage = 10;
   const router = useRouter();
   const pathname = usePathname();
+  const searchParams = useSearchParams(); // Use Next.js hook instead of window.location.search
   const [sortOrder, setSortOrder] = useState("latest");
 
   const toggleSidebar = () => {
@@ -125,14 +127,20 @@ const Payments = () => {
     },
   ]);
 
-  // Check for search parameter in URL on component mount
+  // Initialize client-side state
   useEffect(() => {
-    const searchParams = new URLSearchParams(window.location.search);
-    const tenantName = searchParams.get("tenant");
-    if (tenantName) {
-      setSearchQuery(tenantName);
-    }
+    setIsClient(true);
   }, []);
+
+  // Check for search parameter in URL on component mount (client-side safe)
+  useEffect(() => {
+    if (isClient) {
+      const tenantName = searchParams.get("tenant");
+      if (tenantName) {
+        setSearchQuery(tenantName);
+      }
+    }
+  }, [isClient, searchParams]);
 
   // Filter and sort payments
   const filteredPayments = payments
@@ -297,6 +305,15 @@ Payment Method: ${payment.paymentMethod}`;
     setIsRecordPaymentModalOpen(false);
   };
 
+  // Add loading state to prevent hydration errors
+  if (!isClient) {
+    return (
+      <div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex items-center justify-center">
+        <div className="text-slate-600 dark:text-slate-400">Loading...</div>
+      </div>
+    );
+  }
+
   if (!isAuthenticated()) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-slate-50 dark:bg-slate-900">
@@ -346,7 +363,7 @@ Payment Method: ${payment.paymentMethod}`;
               <div className="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
                 <button
                   onClick={() => setIsRecordPaymentModalOpen(true)}
-                  className="inline-flex items-center justify-center rounded-md border border-transparent bg-[#0d9488] px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-[#0f766e] focus:outline-none focus:ring-2 focus:ring-[#0d9488] focus:ring-offset-2 sm:w-auto"
+                  className="inline-flex items-center justify-center px-3 py-2 border border-transparent rounded-md shadow-sm text-xs sm:text-sm font-medium text-white bg-[#0d9488] hover:bg-[#0f766e] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0d9488] w-full sm:w-auto"
                 >
                   Record Payment
                 </button>
@@ -376,168 +393,180 @@ Payment Method: ${payment.paymentMethod}`;
               ]}
             />
 
-            <div className="mt-8 flex flex-col">
-              <div className="-my-2 -mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8">
-                <div className="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8">
-                  <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
-                    <table className="min-w-full divide-y divide-gray-300 dark:divide-gray-700">
-                      <thead className="bg-gray-50 dark:bg-gray-800">
-                        <tr>
-                          <th
-                            scope="col"
-                            className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-100 sm:pl-6"
-                          >
-                            Tenant
-                          </th>
-                          <th
-                            scope="col"
-                            className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
-                          >
-                            Property
-                          </th>
-                          <th
-                            scope="col"
-                            className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
-                          >
-                            Amount
-                          </th>
-                          <th
-                            scope="col"
-                            className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
-                          >
-                            Date
-                          </th>
-                          <th
-                            scope="col"
-                            className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
-                          >
-                            Status
-                          </th>
-                          <th
-                            scope="col"
-                            className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
-                          >
-                            Payment Method
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-900">
-                        {currentPayments.map((payment) => (
-                          <tr
-                            key={payment.id}
-                            className="hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer"
-                            onClick={() => setSelectedPayment(payment)}
-                          >
-                            <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 dark:text-gray-100 sm:pl-6">
-                              {payment.tenant}
-                            </td>
-                            <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
-                              {payment.property} - {payment.unit}
-                            </td>
-                            <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
-                              ${payment.amount.toLocaleString()}
-                            </td>
-                            <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
-                              {payment.dueDate}
-                            </td>
-                            <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
-                              <span
-                                className={`inline-flex rounded-full px-2 text-xs font-semibold leading-5 ${getStatusColor(
-                                  payment.status
-                                )}`}
-                              >
-                                {payment.status}
-                              </span>
-                            </td>
-                            <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
-                              {payment.paymentMethod || "-"}
-                            </td>
+            {/* Payment history table */}
+            <div className="p-4 sm:p-6">
+              <div className="mt-6 flex flex-col">
+                <div className="-my-2 -mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8">
+                  <div className="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8">
+                    <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 rounded-lg md:rounded-lg">
+                      <table className="min-w-full divide-y divide-gray-300 dark:divide-gray-700">
+                        <thead className="bg-gray-50 dark:bg-gray-800">
+                          <tr>
+                            <th
+                              scope="col"
+                              className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-100 sm:pl-6"
+                            >
+                              Tenant
+                            </th>
+                            <th
+                              scope="col"
+                              className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
+                            >
+                              Property
+                            </th>
+                            <th
+                              scope="col"
+                              className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
+                            >
+                              Unit
+                            </th>
+                            <th
+                              scope="col"
+                              className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
+                            >
+                              Amount
+                            </th>
+                            <th
+                              scope="col"
+                              className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
+                            >
+                              Date
+                            </th>
+                            <th
+                              scope="col"
+                              className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
+                            >
+                              Status
+                            </th>
+                            <th
+                              scope="col"
+                              className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
+                            >
+                              Payment Method
+                            </th>
                           </tr>
-                        ))}
-                      </tbody>
-                    </table>
+                        </thead>
+                        <tbody className="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-900">
+                          {currentPayments.map((payment) => (
+                            <tr
+                              key={payment.id}
+                              className="hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer"
+                              onClick={() => setSelectedPayment(payment)}
+                            >
+                              <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 dark:text-gray-100 sm:pl-6">
+                                {payment.tenant}
+                              </td>
+                              <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
+                                {payment.property}
+                              </td>
+                              <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
+                                {payment.unit || "-"}
+                              </td>
+                              <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
+                                ${payment.amount.toLocaleString()}
+                              </td>
+                              <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
+                                {payment.dueDate}
+                              </td>
+                              <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
+                                <span
+                                  className={`inline-flex rounded-full px-2 text-xs font-semibold leading-5 ${getStatusColor(
+                                    payment.status
+                                  )}`}
+                                >
+                                  {payment.status}
+                                </span>
+                              </td>
+                              <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
+                                {payment.paymentMethod || "-"}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
 
-            {/* Pagination */}
-            <div className="mt-4 flex items-center justify-between border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-4 py-3">
-              <div className="flex items-center justify-between w-full">
-                <div className="flex items-center space-x-4">
-                  <span className="text-xs text-gray-700 dark:text-gray-200">
-                    Page {currentPage} of {totalPages}
-                  </span>
-                  <div className="flex items-center space-x-2">
+              {/* Pagination */}
+              <div className="mt-4 flex items-center justify-between border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-4 py-3">
+                <div className="flex items-center justify-between w-full">
+                  <div className="flex items-center space-x-4">
                     <span className="text-xs text-gray-700 dark:text-gray-200">
-                      Go to page:
+                      Page {currentPage} of {totalPages}
                     </span>
-                    <input
-                      type="number"
-                      min="1"
-                      max={totalPages}
-                      value={pageInputValue}
-                      onChange={(e) => {
-                        const value = e.target.value;
-                        setPageInputValue(value);
-                        const page = parseInt(value);
-                        if (page >= 1 && page <= totalPages) {
-                          handlePageChange(page);
-                        }
-                      }}
-                      onBlur={() => {
-                        const page = parseInt(pageInputValue);
-                        if (page < 1) {
-                          setPageInputValue("1");
-                          handlePageChange(1);
-                        } else if (page > totalPages) {
-                          setPageInputValue(totalPages.toString());
-                          handlePageChange(totalPages);
-                        }
-                      }}
-                      className="w-12 h-6 text-xs text-center rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-violet-500"
-                    />
+                    <div className="flex items-center space-x-2">
+                      <span className="text-xs text-gray-700 dark:text-gray-200">
+                        Go to page:
+                      </span>
+                      <input
+                        type="number"
+                        min="1"
+                        max={totalPages}
+                        value={pageInputValue}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          setPageInputValue(value);
+                          const page = parseInt(value);
+                          if (page >= 1 && page <= totalPages) {
+                            handlePageChange(page);
+                          }
+                        }}
+                        onBlur={() => {
+                          const page = parseInt(pageInputValue);
+                          if (page < 1) {
+                            setPageInputValue("1");
+                            handlePageChange(1);
+                          } else if (page > totalPages) {
+                            setPageInputValue(totalPages.toString());
+                            handlePageChange(totalPages);
+                          }
+                        }}
+                        className="w-12 h-6 text-xs text-center rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-violet-500"
+                      />
+                    </div>
                   </div>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <button
-                    onClick={() => handlePageChange(currentPage - 1)}
-                    disabled={currentPage === 1}
-                    className="inline-flex items-center p-1.5 text-xs font-medium rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    <svg
-                      className="w-4 h-4"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
+                  <div className="flex items-center space-x-2">
+                    <button
+                      onClick={() => handlePageChange(currentPage - 1)}
+                      disabled={currentPage === 1}
+                      className="inline-flex items-center p-1.5 text-xs font-medium rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M15 19l-7-7 7-7"
-                      />
-                    </svg>
-                  </button>
-                  <button
-                    onClick={() => handlePageChange(currentPage + 1)}
-                    disabled={currentPage === totalPages}
-                    className="inline-flex items-center p-1.5 text-xs font-medium rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    <svg
-                      className="w-4 h-4"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
+                      <svg
+                        className="w-4 h-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M15 19l-7-7 7-7"
+                        />
+                      </svg>
+                    </button>
+                    <button
+                      onClick={() => handlePageChange(currentPage + 1)}
+                      disabled={currentPage === totalPages}
+                      className="inline-flex items-center p-1.5 text-xs font-medium rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M9 5l7 7-7 7"
-                      />
-                    </svg>
-                  </button>
+                      <svg
+                        className="w-4 h-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M9 5l7 7-7 7"
+                        />
+                      </svg>
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -731,7 +760,7 @@ Payment Method: ${selectedPayment.paymentMethod}`;
                         strokeLinecap="round"
                         strokeLinejoin="round"
                         strokeWidth={2}
-                        d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+                        d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9 8s9 3.582 9 8z"
                       />
                     </svg>
                     Share via WhatsApp
