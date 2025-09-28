@@ -28,56 +28,30 @@ import {
   storeUser,
 } from "../../utils/api";
 import OnboardRoleModal from "../../components/OnboardRoleModal";
+import NewRequestModal from "../../components/tenant/maintenance/NewRequestModal";
+import PayRentModal from "../../components/tenant/payments/PayRentModal";
+import VacateNoticeModal from "../../components/tenant/notices/VacateNoticeModal";
 
 const sampleTenant = {
   name: "John Tenant",
   avatar: null,
 };
 
-const whatsNext = {
-  type: "payment",
-  message: "Your rent payment of $1,200 is due in 5 days!",
-  action: "Pay Rent",
-  link: "/tenant/payments",
-  icon: <DollarSign className="h-6 w-6 text-teal-600" />,
-};
-
 const quickActions = [
   {
     label: "Pay Rent",
     icon: <DollarSign className="h-6 w-6" />,
-    link: "/tenant/payments?openPayRent=true",
-    color: "bg-teal-600 text-white",
+    action: "openPayRent",
   },
   {
-    label: "View Rentals",
-    icon: <Home className="h-6 w-6" />,
-    link: "/tenant/rentals",
-    color: "bg-blue-600 text-white",
-  },
-  {
-    label: "Maintenance",
+    label: "Send Maintenance Request",
     icon: <Wrench className="h-6 w-6" />,
-    link: "/tenant/maintenance?openNewRequest=true",
-    color: "bg-pink-600 text-white",
-  },
-  {
-    label: "Notices",
-    icon: <FileText className="h-6 w-6" />,
-    link: "/tenant/notices",
-    color: "bg-yellow-500 text-white",
-  },
-  {
-    label: "Send Message",
-    icon: <MessageCircle className="h-6 w-6" />,
-    link: "/tenant/messages",
-    color: "bg-purple-600 text-white",
+    action: "openMaintenanceRequest",
   },
   {
     label: "Submit Vacate Notice",
     icon: <FileText className="h-6 w-6" />,
-    link: "/tenant/notices?openVacateNotice=true",
-    color: "bg-green-600 text-white",
+    action: "openVacateNotice",
   },
 ];
 
@@ -121,6 +95,15 @@ const TenantDashboard = () => {
   const [showSearchResults, setShowSearchResults] = useState(false);
   const [isClient, setIsClient] = useState(false);
   const [showOnboardModal, setShowOnboardModal] = useState(false);
+  const [showMaintenanceRequestModal, setShowMaintenanceRequestModal] =
+    useState(false);
+  const [maintenanceFormData, setMaintenanceFormData] = useState({});
+  const [maintenanceErrors, setMaintenanceErrors] = useState({});
+  const [submittingMaintenance, setSubmittingMaintenance] = useState(false);
+  const [showPayRentModal, setShowPayRentModal] = useState(false);
+  const [submittingPayRent, setSubmittingPayRent] = useState(false);
+  const [showVacateNoticeModal, setShowVacateNoticeModal] = useState(false);
+  const [submittingVacateNotice, setSubmittingVacateNotice] = useState(false);
   const router = useRouter();
   const storedUser = getStoredUser();
   const searchParams = useSearchParams();
@@ -137,13 +120,11 @@ const TenantDashboard = () => {
       const openVacateNotice = searchParams.get("openVacateNotice");
 
       if (openPayRent === "true") {
-        // We would need to trigger the pay rent modal here
-        // This would require passing a prop to the payments page
+        setShowPayRentModal(true);
       }
 
       if (openVacateNotice === "true") {
-        // We would need to trigger the vacate notice modal here
-        // This would require passing a prop to the notices page
+        setShowVacateNoticeModal(true);
       }
     }
   }, [isClient, searchParams]);
@@ -209,16 +190,6 @@ const TenantDashboard = () => {
       icon: Wrench,
     },
     {
-      id: 3,
-      type: "payment",
-      title: "Rent Payment Due",
-      description: "Rent payment of $1,200 due in 5 days",
-      amount: "$1,200",
-      dueDate: "5 days",
-      path: "/tenant/payments",
-      icon: DollarSign,
-    },
-    {
       id: 4,
       type: "notice",
       title: "Building Maintenance Notice",
@@ -243,6 +214,81 @@ const TenantDashboard = () => {
     router.push(result.path);
   };
 
+  const handleMaintenanceSubmit = async (formData) => {
+    setSubmittingMaintenance(true);
+    setMaintenanceErrors({});
+
+    try {
+      // TODO: Implement actual API call to submit maintenance request
+      console.log("Submitting maintenance request:", formData);
+
+      // Simulate API call
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      // Close modal on success
+      setShowMaintenanceRequestModal(false);
+
+      // Reset form
+      setMaintenanceFormData({});
+
+      // Show success message (you might want to add a toast notification here)
+      console.log("Maintenance request submitted successfully");
+    } catch (error) {
+      // Handle errors
+      setMaintenanceErrors({
+        general: "Failed to submit maintenance request. Please try again.",
+      });
+    } finally {
+      setSubmittingMaintenance(false);
+    }
+  };
+
+  const handlePayRentSubmit = async (formData) => {
+    setSubmittingPayRent(true);
+    
+    try {
+      // TODO: Implement actual API call to submit payment
+      console.log("Submitting payment:", formData);
+
+      // Simulate API call
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      // Close modal on success
+      setShowPayRentModal(false);
+
+      // Show success message (you might want to add a toast notification here)
+      console.log("Payment submitted successfully");
+    } catch (error) {
+      // Handle errors
+      console.error("Failed to submit payment:", error);
+    } finally {
+      setSubmittingPayRent(false);
+    }
+  };
+
+  const handleVacateNoticeSubmit = async (formData) => {
+    setSubmittingVacateNotice(true);
+    
+    try {
+      // TODO: Implement actual API call to submit vacate notice
+      console.log("Submitting vacate notice:", formData);
+
+      // Simulate API call
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      // Close modal on success
+      setShowVacateNoticeModal(false);
+
+      // Show success message (you might want to add a toast notification here)
+      console.log("Vacate notice submitted successfully");
+    } catch (error) {
+      // Handle errors
+      console.error("Failed to submit vacate notice:", error);
+    } finally {
+      setSubmittingVacateNotice(false);
+    }
+  };
+
   return (
     <div className="h-screen bg-slate-50 dark:bg-slate-900 overflow-hidden">
       <div className="flex">
@@ -251,13 +297,11 @@ const TenantDashboard = () => {
           <TenantHeader toggleSidebar={toggleSidebar} />
           <div className="h-[calc(100vh-4rem)]">
             <main className="h-full transition-all duration-200 overflow-y-auto">
-              <div className="pl-3 pr-6 sm:pl-4 sm:pr-8 md:pl-6 md:pr-12 lg:pl-8 lg:pr-16 py-4">
+              <div className="px-4 sm:px-6 lg:px-8 py-4">
                 {/* Dashboard Title */}
-                <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-100 mb-4">
-                  Tenant
-                </h2>
+
                 {/* Welcome Banner */}
-                <div className="mb-6 flex items-center gap-4">
+                <div className="mb-6 flex items-center gap-4 w-full">
                   {isClient && user && user.profile_image_url ? (
                     <img
                       src={user.profile_image_url}
@@ -277,7 +321,7 @@ const TenantDashboard = () => {
                     </div>
                   )}
                   <div>
-                    <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">
+                    <h1 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-slate-100">
                       Welcome,{" "}
                       {isClient && user
                         ? `${user.first_name || ""} ${
@@ -286,81 +330,50 @@ const TenantDashboard = () => {
                         : ""}
                       !
                     </h1>
-                    <p className="text-sm text-slate-500 dark:text-slate-400">
-                      Here's a summary of your rental and activity.
+                    <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
+                      Here's a summary of your rental activity.
                     </p>
-                  </div>
-                </div>
-                {/* What's Next */}
-                <div className="mb-8">
-                  <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-200 mb-4">
-                    What's Next?
-                  </h3>
-                  <div className="bg-white dark:bg-slate-800 shadow rounded-lg p-6 flex flex-col sm:flex-row items-center gap-4 hover:shadow-lg transition-shadow">
-                    <div className="flex-shrink-0">{whatsNext.icon}</div>
-                    <div className="flex-1 text-center sm:text-left">
-                      <div className="text-lg font-semibold text-slate-900 dark:text-slate-100">
-                        {whatsNext.message}
-                      </div>
-                    </div>
-                    <Link
-                      href={whatsNext.link}
-                      className="inline-flex items-center px-4 py-2 bg-teal-600 text-white rounded hover:bg-teal-700 transition text-sm font-medium"
-                    >
-                      {whatsNext.action}
-                      <ArrowRight className="h-4 w-4 ml-2" />
-                    </Link>
                   </div>
                 </div>
                 {/* Quick Actions */}
                 <div className="mb-8">
-                  <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-200 mb-4">
+                  <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-200 mb-4 text-center">
                     Quick Actions
                   </h3>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 max-w-4xl mx-auto">
                     {quickActions.map((action, index) => (
-                      <Link
+                      <div
                         key={index}
-                        href={action.link}
-                        className={`${action.color} rounded-lg p-4 flex flex-col items-center justify-center transition-transform hover:scale-105 min-h-[100px]`}
+                        onClick={() => {
+                          if (action.action === "openPayRent") {
+                            setShowPayRentModal(true);
+                          } else if (
+                            action.action === "openMaintenanceRequest"
+                          ) {
+                            setShowMaintenanceRequestModal(true);
+                          } else if (action.action === "openVacateNotice") {
+                            setShowVacateNoticeModal(true);
+                          }
+                        }}
+                        className="bg-teal-500/10 dark:bg-teal-500/20 border border-teal-200 dark:border-teal-800 rounded-md p-3 flex flex-col items-center justify-center transition-colors hover:opacity-90 cursor-pointer min-h-[80px]"
                       >
-                        {action.icon}
-                        <span className="mt-2 font-medium text-sm text-center">
+                        <div className="text-teal-700 dark:text-teal-300">
+                          {action.icon}
+                        </div>
+                        <span className="mt-2 font-medium text-xs text-slate-700 dark:text-slate-300 text-center">
                           {action.label}
                         </span>
-                      </Link>
+                      </div>
                     ))}
                   </div>
                 </div>
                 {/* Stats Grid */}
-                <div className="grid grid-cols-1 gap-3 sm:gap-4 sm:grid-cols-2 lg:grid-cols-4 mb-8">
-                  {/* Rent Due */}
-                  <div className="bg-teal-50 dark:bg-teal-900/30 overflow-hidden shadow rounded-lg hover:shadow-md transition-shadow">
-                    <div className="p-3">
-                      <div className="flex items-center">
-                        <div className="flex-shrink-0">
-                          <DollarSign className="h-6 w-6 text-teal-600 dark:text-teal-400" />
-                        </div>
-                        <div className="ml-4 w-0 flex-1">
-                          <dl>
-                            <dt className="text-sm font-medium text-teal-700 dark:text-teal-200 truncate">
-                              Rent Due
-                            </dt>
-                            <dd className="flex items-baseline">
-                              <div className="text-xl sm:text-2xl font-semibold text-teal-900 dark:text-teal-100">
-                                $1,200
-                              </div>
-                              <div className="ml-2 flex items-baseline text-xs sm:text-sm font-semibold text-green-600 dark:text-green-400">
-                                <span>Due in 5 days</span>
-                              </div>
-                            </dd>
-                          </dl>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 mb-8">
                   {/* Maintenance Requests */}
-                  <div className="bg-blue-50 dark:bg-blue-900/30 overflow-hidden shadow rounded-lg hover:shadow-md transition-shadow">
+                  <div
+                    onClick={() => router.push("/tenant/maintenance")}
+                    className="bg-blue-50 dark:bg-blue-900/30 overflow-hidden shadow-sm rounded-md hover:shadow-md transition-shadow cursor-pointer"
+                  >
                     <div className="p-3">
                       <div className="flex items-center">
                         <div className="flex-shrink-0">
@@ -375,7 +388,7 @@ const TenantDashboard = () => {
                               <div className="text-xl sm:text-2xl font-semibold text-blue-900 dark:text-blue-100">
                                 2
                               </div>
-                              <div className="ml-2 flex items-baseline text-xs sm:text-sm font-semibold text-yellow-600 dark:text-yellow-400">
+                              <div className="ml-2 flex items-baseline text-xs font-semibold text-yellow-600 dark:text-yellow-400">
                                 <span>In Progress</span>
                               </div>
                             </dd>
@@ -385,7 +398,10 @@ const TenantDashboard = () => {
                     </div>
                   </div>
                   {/* Notices */}
-                  <div className="bg-yellow-50 dark:bg-yellow-900/30 overflow-hidden shadow rounded-lg hover:shadow-md transition-shadow">
+                  <div
+                    onClick={() => router.push("/tenant/notices")}
+                    className="bg-yellow-50 dark:bg-yellow-900/30 overflow-hidden shadow-sm rounded-md hover:shadow-md transition-shadow cursor-pointer"
+                  >
                     <div className="p-3">
                       <div className="flex items-center">
                         <div className="flex-shrink-0">
@@ -400,7 +416,7 @@ const TenantDashboard = () => {
                               <div className="text-xl sm:text-2xl font-semibold text-yellow-900 dark:text-yellow-100">
                                 1
                               </div>
-                              <div className="ml-2 flex items-baseline text-xs sm:text-sm font-semibold text-yellow-600 dark:text-yellow-400">
+                              <div className="ml-2 flex items-baseline text-xs font-semibold text-yellow-600 dark:text-yellow-400">
                                 <span>New</span>
                               </div>
                             </dd>
@@ -410,7 +426,10 @@ const TenantDashboard = () => {
                     </div>
                   </div>
                   {/* Payment History */}
-                  <div className="bg-purple-50 dark:bg-purple-900/30 overflow-hidden shadow rounded-lg hover:shadow-md transition-shadow">
+                  <div
+                    onClick={() => router.push("/tenant/payments")}
+                    className="bg-purple-50 dark:bg-purple-900/30 overflow-hidden shadow-sm rounded-md hover:shadow-md transition-shadow cursor-pointer"
+                  >
                     <div className="p-3">
                       <div className="flex items-center">
                         <div className="flex-shrink-0">
@@ -425,7 +444,7 @@ const TenantDashboard = () => {
                               <div className="text-xl sm:text-2xl font-semibold text-purple-900 dark:text-purple-100">
                                 $7,200
                               </div>
-                              <div className="ml-2 flex items-baseline text-xs sm:text-sm font-semibold text-purple-600 dark:text-purple-400">
+                              <div className="ml-2 flex items-baseline text-xs font-semibold text-purple-600 dark:text-purple-400">
                                 <span>Last 6 months</span>
                               </div>
                             </dd>
@@ -435,31 +454,33 @@ const TenantDashboard = () => {
                     </div>
                   </div>
                 </div>
-                {/* Activity Timeline */}
-                <div className="mb-8 bg-white dark:bg-slate-800 shadow rounded-lg p-6 hover:shadow-lg transition-shadow">
-                  <div className="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-4">
+
+                {/* Recent Activity */}
+                <div className="mb-8">
+                  <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-200 mb-4">
                     Recent Activity
+                  </h3>
+                  <div className="bg-white dark:bg-slate-800 overflow-hidden shadow-sm rounded-md">
+                    <div className="p-3">
+                      <ul className="space-y-3">
+                        {activityTimeline.map((item, index) => (
+                          <li key={index} className="flex items-start">
+                            <div className="mr-2 mt-0.5 flex-shrink-0">
+                              {item.icon}
+                            </div>
+                            <div>
+                              <p className="text-xs font-medium text-slate-800 dark:text-slate-200 leading-tight">
+                                {item.label}
+                              </p>
+                              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                                {item.date}
+                              </p>
+                            </div>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
                   </div>
-                  <ol className="relative border-l border-slate-200 dark:border-slate-700 ml-6">
-                    {activityTimeline.map((item, idx) => (
-                      <li key={idx} className="mb-8 flex items-start relative">
-                        <span className="absolute -left-6 flex items-center justify-center w-8 h-8 bg-slate-100 dark:bg-slate-700 rounded-full ring-8 ring-slate-50 dark:ring-slate-900">
-                          {item.icon}
-                        </span>
-                        <div className="flex flex-col ml-4">
-                          <div className="flex items-center gap-2">
-                            <span className="font-medium text-slate-900 dark:text-slate-100">
-                              {item.label}
-                            </span>
-                            <CheckCircle className="h-4 w-4 text-green-400" />
-                          </div>
-                          <div className="text-xs text-slate-500 dark:text-slate-400">
-                            {item.date}
-                          </div>
-                        </div>
-                      </li>
-                    ))}
-                  </ol>
                 </div>
               </div>
             </main>
@@ -473,6 +494,36 @@ const TenantDashboard = () => {
         onClose={() => setShowOnboardModal(false)}
         onSuccess={handleOnboardSuccess}
         roleName="tenant"
+      />
+
+      {/* Maintenance Request Modal */}
+      <NewRequestModal
+        isOpen={showMaintenanceRequestModal}
+        onClose={() => {
+          setShowMaintenanceRequestModal(false);
+          setMaintenanceErrors({});
+        }}
+        onSubmit={handleMaintenanceSubmit}
+        formData={maintenanceFormData}
+        setFormData={setMaintenanceFormData}
+        errors={maintenanceErrors}
+        submitting={submittingMaintenance}
+      />
+
+      {/* Pay Rent Modal */}
+      <PayRentModal
+        isOpen={showPayRentModal}
+        onClose={() => setShowPayRentModal(false)}
+        onSubmit={handlePayRentSubmit}
+        submitting={submittingPayRent}
+      />
+      
+      {/* Vacate Notice Modal */}
+      <VacateNoticeModal
+        isOpen={showVacateNoticeModal}
+        onClose={() => setShowVacateNoticeModal(false)}
+        onSubmit={handleVacateNoticeSubmit}
+        submitting={submittingVacateNotice}
       />
     </div>
   );

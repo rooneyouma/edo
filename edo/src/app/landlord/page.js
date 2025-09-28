@@ -36,19 +36,16 @@ const quickActions = [
     label: "Add Property",
     icon: <Plus className="h-6 w-6" />,
     action: "openAddProperty",
-    color: "bg-teal-600 text-white",
   },
   {
     label: "Rent Reminders",
     icon: <Bell className="h-6 w-6" />,
     action: "openRentReminder",
-    color: "bg-purple-600 text-white",
   },
   {
     label: "Send Notice",
     icon: <FileText className="h-6 w-6" />,
     action: "openSendNotice",
-    color: "bg-green-600 text-white",
   },
 ];
 
@@ -198,13 +195,8 @@ const LandlordDashboard = () => {
         <Header toggleSidebar={toggleSidebar} />
         <main className="h-full transition-all duration-200 overflow-y-auto">
           <div className="pl-4 pr-8 sm:pl-6 sm:pr-12 lg:pl-8 lg:pr-16 py-8 w-full">
-            {/* Dashboard Title */}
-            <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-100 mb-4">
-              Property Manager
-            </h2>
-
             {/* Welcome Banner with Profile Picture */}
-            <div className="mb-6 flex items-center gap-4">
+            <div className="mb-6 flex items-center gap-4 w-full">
               {isClient && user && user.profile_image_url ? (
                 <img
                   src={user.profile_image_url}
@@ -224,7 +216,7 @@ const LandlordDashboard = () => {
                 </div>
               )}
               <div>
-                <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">
+                <h1 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-slate-100">
                   Welcome,{" "}
                   {isClient && user
                     ? `${user.first_name || ""} ${
@@ -233,7 +225,7 @@ const LandlordDashboard = () => {
                     : ""}
                   !
                 </h1>
-                <p className="text-sm text-slate-500 dark:text-slate-400">
+                <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
                   Here's what's happening with your properties today.
                 </p>
               </div>
@@ -241,10 +233,10 @@ const LandlordDashboard = () => {
 
             {/* Quick Actions */}
             <div className="mb-8">
-              <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-200 mb-4">
+              <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-200 mb-4 text-center">
                 Quick Actions
               </h3>
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 max-w-4xl mx-auto">
                 {quickActions.map((action, index) => (
                   <div
                     key={index}
@@ -257,10 +249,12 @@ const LandlordDashboard = () => {
                         setShowSendNoticeModal(true);
                       }
                     }}
-                    className={`${action.color} rounded-lg p-4 flex flex-col items-center justify-center transition-transform hover:scale-105 cursor-pointer`}
+                    className="bg-teal-500/10 dark:bg-teal-500/20 border border-teal-200 dark:border-teal-800 rounded-md p-3 flex flex-col items-center justify-center transition-colors hover:opacity-90 cursor-pointer min-h-[80px]"
                   >
-                    {action.icon}
-                    <span className="mt-2 text-sm font-medium text-center">
+                    <div className="text-teal-700 dark:text-teal-300">
+                      {action.icon}
+                    </div>
+                    <span className="mt-2 font-medium text-xs text-slate-700 dark:text-slate-300 text-center">
                       {action.label}
                     </span>
                   </div>

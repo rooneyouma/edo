@@ -14,7 +14,8 @@ const TenantMaintenanceFilters = ({
   const [isFilterOpen, setIsFilterOpen] = useState(false);
 
   return (
-    <div className="mt-4">
+    // Removed the mt-4 class that was causing the alignment issue
+    <div>
       <div className="flex flex-col sm:flex-row gap-4">
         <div className="relative flex-grow">
           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">

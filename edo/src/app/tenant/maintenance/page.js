@@ -276,29 +276,31 @@ const Maintenance = () => {
             )}
 
             {/* Controls */}
-            <div className="mb-6 flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between">
-              {/* Search and Filters */}
-              <div className="flex flex-col gap-4 flex-1 w-full lg:w-auto">
-                <TenantMaintenanceFilters
-                  searchQuery={searchQuery}
-                  setSearchQuery={setSearchQuery}
-                  statusFilter={statusFilter}
-                  setStatusFilter={setStatusFilter}
-                  priorityFilter={priorityFilter}
-                  setPriorityFilter={setPriorityFilter}
-                  sortOrder={sortOrder}
-                  setSortOrder={setSortOrder}
-                />
-              </div>
+            <div className="mb-6">
+              <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+                {/* Search and Filters */}
+                <div className="flex-1">
+                  <TenantMaintenanceFilters
+                    searchQuery={searchQuery}
+                    setSearchQuery={setSearchQuery}
+                    statusFilter={statusFilter}
+                    setStatusFilter={setStatusFilter}
+                    priorityFilter={priorityFilter}
+                    setPriorityFilter={setPriorityFilter}
+                    sortOrder={sortOrder}
+                    setSortOrder={setSortOrder}
+                  />
+                </div>
 
-              {/* New Request Button */}
-              <button
-                onClick={() => setShowNewRequestModal(true)}
-                className="flex items-center px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors"
-              >
-                <Plus className="h-4 w-4 mr-2" />
-                New Request
-              </button>
+                {/* New Request Button */}
+                <button
+                  onClick={() => setShowNewRequestModal(true)}
+                  className="flex items-center px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors whitespace-nowrap"
+                >
+                  <Plus className="h-4 w-4 mr-2" />
+                  New Request
+                </button>
+              </div>
             </div>
 
             {/* Results Count */}
