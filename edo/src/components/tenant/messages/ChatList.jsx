@@ -31,22 +31,22 @@ const ChatList = ({
   return (
     <div className="flex-1 flex flex-col h-full">
       {/* Header with title and search */}
-      <div className="p-4 border-b border-gray-200 dark:border-gray-700">
-        <h2 className="text-lg font-medium text-gray-900 dark:text-gray-100">
+      <div className="p-3 sm:p-4 border-b border-gray-200 dark:border-gray-700">
+        <h2 className="text-base sm:text-lg font-medium text-gray-900 dark:text-gray-100">
           Chats
         </h2>
         {/* Search input */}
-        <div className="relative mt-4">
+        <div className="relative mt-3 sm:mt-4">
           <input
             type="text"
             placeholder="Search chats..."
             value={searchQuery}
             onChange={onSearchChange}
-            className="w-full pl-10 pr-4 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+            className="w-full pl-9 sm:pl-10 pr-3 sm:pr-4 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent"
           />
-          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+          <div className="absolute inset-y-0 left-0 pl-2.5 sm:pl-3 flex items-center pointer-events-none">
             <svg
-              className="w-5 h-5 text-gray-400"
+              className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -67,13 +67,13 @@ const ChatList = ({
         {!hasRentals ? (
           // No property managers section
           <div className="p-4 text-center">
-            <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">
+            <h3 className="text-base sm:text-lg font-medium text-gray-900 dark:text-gray-100">
               No property managers
             </h3>
-            <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
+            <p className="mt-2 text-xs sm:text-sm text-gray-500 dark:text-gray-400">
               You are not registered under any rental properties.
             </p>
-            <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+            <p className="mt-1 text-xs sm:text-sm text-gray-500 dark:text-gray-400">
               Once you are assigned to a property, you can communicate with your
               property managers here.
             </p>
@@ -85,7 +85,7 @@ const ChatList = ({
               <button
                 key={chat.id}
                 onClick={() => onChatSelect(chat)}
-                className={`w-full p-4 text-left hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors ${
+                className={`w-full p-3 sm:p-4 text-left hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors ${
                   selectedChat?.id === chat.id
                     ? "bg-gray-50 dark:bg-gray-800/50"
                     : ""
@@ -95,7 +95,7 @@ const ChatList = ({
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center space-x-3">
                       <div className="flex-shrink-0">
-                        <div className="w-12 h-12 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center">
+                        <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center">
                           <span className="text-sm font-medium text-gray-600 dark:text-gray-300">
                             {chat.manager && chat.manager.name
                               ? chat.manager.name
@@ -107,23 +107,23 @@ const ChatList = ({
                         </div>
                       </div>
                       <div className="flex-1 min-w-0">
-                        <div className="flex items-baseline justify-between">
+                        <div className="flex items-baseline justify-between gap-2">
                           <p className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
                             {chat.propertyName || "Property"}
                           </p>
                           {chat.lastMessageTime && (
-                            <p className="text-xs text-gray-500 dark:text-gray-400 ml-2 whitespace-nowrap">
+                            <p className="text-xs text-gray-500 dark:text-gray-400 whitespace-nowrap">
                               {formatDate(chat.lastMessageTime)}
                             </p>
                           )}
                         </div>
                         {/* Show property manager name instead of hardcoded text */}
-                        <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
+                        <p className="text-xs text-gray-500 dark:text-gray-400 truncate mt-0.5">
                           {chat.manager && chat.manager.name
                             ? `${chat.manager.name} - property manager`
                             : "Property Manager"}
                         </p>
-                        <p className="text-sm text-gray-500 dark:text-gray-400 truncate mt-1">
+                        <p className="text-xs text-gray-500 dark:text-gray-400 truncate mt-1">
                           {chat.lastMessage || "No messages yet"}
                         </p>
                       </div>
@@ -131,7 +131,7 @@ const ChatList = ({
                   </div>
                   {chat.unread && (
                     <div className="ml-2 flex-shrink-0">
-                      <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-[#0d9488] text-white">
+                      <span className="inline-flex items-center px-1.5 sm:px-2 py-0.5 rounded-full text-xs font-medium bg-[#0d9488] text-white">
                         New
                       </span>
                     </div>

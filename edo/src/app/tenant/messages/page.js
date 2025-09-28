@@ -604,28 +604,44 @@ const Messages = () => {
           <TenantHeader toggleSidebar={toggleSidebar} />
           {/* Main content */}
           <main className="flex-1 transition-all duration-200">
-            <div className="pl-4 pr-8 sm:pl-6 sm:pr-12 lg:pl-8 lg:pr-16 py-2 md:py-4 h-full min-h-0 flex flex-col">
+            <div className="px-4 sm:px-6 lg:px-8 py-2 md:py-4 h-full min-h-0 flex flex-col">
               {/* Page header */}
-              <div className="sm:flex sm:items-center sm:justify-between mb-4">
-                <div className="sm:flex-auto">
-                  <div className="flex items-center space-x-2">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
+                <div className="flex items-center space-x-2">
+                  <svg
+                    className="w-5 h-5 sm:w-6 sm:h-6 text-[#0d9488] flex-shrink-0"
+                    fill="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" />
+                  </svg>
+                  <h1 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-gray-100">
+                    Messages
+                  </h1>
+                </div>
+                <div className="flex items-center justify-between sm:justify-end gap-2">
+                  {/* Mobile search toggle button */}
+                  <button className="sm:hidden p-2 rounded-md bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-500 dark:text-gray-400">
                     <svg
-                      className="w-6 h-6 text-[#0d9488]"
-                      fill="currentColor"
+                      className="w-5 h-5"
+                      fill="none"
+                      stroke="currentColor"
                       viewBox="0 0 24 24"
                     >
-                      <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" />
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                      />
                     </svg>
-                    <h1 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
-                      Messages
-                    </h1>
-                  </div>
+                  </button>
                 </div>
               </div>
 
               {/* Mobile header for chat view */}
               {selectedChat && (
-                <div className="lg:hidden p-4 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between bg-white dark:bg-slate-800 sticky top-0 z-10">
+                <div className="lg:hidden p-3 sm:p-4 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between bg-white dark:bg-slate-800 sticky top-0 z-10">
                   <button
                     onClick={() => setSelectedChat(null)}
                     className="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-700"
@@ -655,11 +671,11 @@ const Messages = () => {
                           : "M"}
                       </span>
                     </div>
-                    <div>
-                      <h3 className="text-sm font-medium text-slate-900 dark:text-slate-100">
+                    <div className="min-w-0 flex-1">
+                      <h3 className="text-sm font-medium text-slate-900 dark:text-slate-100 truncate">
                         {selectedChat.manager.name}
                       </h3>
-                      <p className="text-xs text-slate-500 dark:text-slate-400 truncate max-w-[120px]">
+                      <p className="text-xs text-slate-500 dark:text-slate-400 truncate">
                         {selectedChat.propertyName}
                       </p>
                     </div>
@@ -667,8 +683,8 @@ const Messages = () => {
                   <div className="w-8 h-8"></div> {/* Spacer for alignment */}
                 </div>
               )}
-              <div className="mt-4 h-[calc(100vh-10rem)]">
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 h-full">
+              <div className="mt-2 sm:mt-4 h-[calc(100vh-8rem)] sm:h-[calc(100vh-10rem)]">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 sm:gap-4 h-full">
                   {/* Conversations list */}
                   <div
                     className={`lg:col-span-4 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden ${
@@ -697,7 +713,7 @@ const Messages = () => {
                     <div className="lg:hidden">
                       <button
                         onClick={() => setSelectedChat(null)}
-                        className="p-4 flex items-center space-x-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100"
+                        className="p-3 sm:p-4 flex items-center space-x-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100"
                       >
                         <svg
                           className="w-5 h-5"
@@ -712,7 +728,7 @@ const Messages = () => {
                             d="M15 19l-7-7 7-7"
                           />
                         </svg>
-                        <span>Back to Chats</span>
+                        <span className="text-sm">Back to Chats</span>
                       </button>
                     </div>
                     {hasRentals ? (
@@ -725,15 +741,15 @@ const Messages = () => {
                         formatDate={formatDate}
                       />
                     ) : (
-                      <div className="h-full flex items-center justify-center bg-gray-50 dark:bg-gray-800">
-                        <div className="text-center">
-                          <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">
+                      <div className="h-full flex items-center justify-center bg-gray-50 dark:bg-gray-800 p-4">
+                        <div className="text-center max-w-xs">
+                          <h3 className="text-base sm:text-lg font-medium text-gray-900 dark:text-gray-100">
                             No property managers
                           </h3>
-                          <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
+                          <p className="mt-2 text-xs sm:text-sm text-gray-500 dark:text-gray-400">
                             You are not registered under any rental properties.
                           </p>
-                          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                          <p className="mt-1 text-xs sm:text-sm text-gray-500 dark:text-gray-400">
                             Once you are assigned to a property, you can
                             communicate with your property managers here.
                           </p>

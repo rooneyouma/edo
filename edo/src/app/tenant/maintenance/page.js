@@ -248,14 +248,14 @@ const Maintenance = () => {
       <div className="relative flex flex-col flex-1 overflow-y-auto overflow-x-hidden lg:ml-64">
         <TenantHeader toggleSidebar={toggleSidebar} />
 
-        <main className="flex-1 pl-4 pr-8 sm:pl-6 sm:pr-12 lg:pl-8 lg:pr-16 py-4 sm:py-8">
+        <main className="flex-1 px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
           <div>
             {/* Header */}
-            <div className="mb-8">
+            <div className="mb-6 sm:mb-8">
               <h1 className="text-2xl font-bold text-slate-800 dark:text-slate-100 mb-2">
                 Maintenance Requests
               </h1>
-              <p className="text-slate-600 dark:text-slate-400">
+              <p className="text-slate-600 dark:text-slate-400 text-sm sm:text-base">
                 Submit and track maintenance requests for your rental property
               </p>
             </div>
@@ -264,8 +264,8 @@ const Maintenance = () => {
             {error && (
               <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg dark:bg-red-900/20 dark:border-red-800">
                 <div className="flex items-center">
-                  <AlertCircle className="h-5 w-5 text-red-500 mr-2" />
-                  <span className="text-red-700 dark:text-red-300">
+                  <AlertCircle className="h-5 w-5 text-red-500 mr-2 flex-shrink-0" />
+                  <span className="text-red-700 dark:text-red-300 text-sm">
                     {error &&
                     error.toLowerCase().includes("rental property not found")
                       ? "No rental property found. Please contact your landlord to set up your tenancy."
@@ -277,9 +277,9 @@ const Maintenance = () => {
 
             {/* Controls */}
             <div className="mb-6">
-              <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-start sm:items-center justify-between">
                 {/* Search and Filters */}
-                <div className="flex-1">
+                <div className="w-full">
                   <TenantMaintenanceFilters
                     searchQuery={searchQuery}
                     setSearchQuery={setSearchQuery}
@@ -295,7 +295,7 @@ const Maintenance = () => {
                 {/* New Request Button */}
                 <button
                   onClick={() => setShowNewRequestModal(true)}
-                  className="flex items-center px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors whitespace-nowrap"
+                  className="flex items-center w-full sm:w-auto justify-center px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors whitespace-nowrap text-sm sm:text-base"
                 >
                   <Plus className="h-4 w-4 mr-2" />
                   New Request
@@ -311,32 +311,36 @@ const Maintenance = () => {
 
             {/* Maintenance Table */}
             {filteredAndSortedRequests.length > 0 ? (
-              <MaintenanceTable
-                requests={filteredAndSortedRequests.map((request) => ({
-                  id: request.id,
-                  property: request.property_name,
-                  unit: request.unit_number,
-                  subject: request.subject,
-                  description: request.description,
-                  priority: request.priority_display,
-                  status: request.status_display,
-                  date: formatDate(request.created_at),
-                  assignedTo: request.assigned_to_name,
-                  contact: request.assignee_phone,
-                }))}
-                hasMultipleProperties={hasMultipleProperties}
-                onRequestClick={handleRequestClick}
-                getStatusColor={getStatusColor}
-                getPriorityColor={getPriorityColor}
-              />
+              <div className="overflow-x-auto -mx-4 sm:mx-0">
+                <div className="inline-block min-w-full align-middle">
+                  <MaintenanceTable
+                    requests={filteredAndSortedRequests.map((request) => ({
+                      id: request.id,
+                      property: request.property_name,
+                      unit: request.unit_number,
+                      subject: request.subject,
+                      description: request.description,
+                      priority: request.priority_display,
+                      status: request.status_display,
+                      date: formatDate(request.created_at),
+                      assignedTo: request.assigned_to_name,
+                      contact: request.assignee_phone,
+                    }))}
+                    hasMultipleProperties={hasMultipleProperties}
+                    onRequestClick={handleRequestClick}
+                    getStatusColor={getStatusColor}
+                    getPriorityColor={getPriorityColor}
+                  />
+                </div>
+              </div>
             ) : (
-              <div className="text-center py-12">
+              <div className="text-center py-8 sm:py-12">
                 <div className="text-slate-400 dark:text-slate-500 mb-4">
-                  <Search className="h-12 w-12 mx-auto mb-4" />
-                  <p className="text-lg font-medium">
+                  <Search className="h-10 w-10 sm:h-12 sm:w-12 mx-auto mb-4" />
+                  <p className="text-base sm:text-lg font-medium">
                     No maintenance requests found
                   </p>
-                  <p className="text-sm">
+                  <p className="text-sm mt-1">
                     {error &&
                     error.toLowerCase().includes("rental property not found")
                       ? "Please contact your landlord to set up your tenancy."
@@ -347,7 +351,7 @@ const Maintenance = () => {
                 !error.toLowerCase().includes("rental property not found") ? (
                   <button
                     onClick={() => setShowNewRequestModal(true)}
-                    className="inline-flex items-center px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors"
+                    className="inline-flex items-center px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors text-sm"
                   >
                     <Plus className="h-4 w-4 mr-2" />
                     Create First Request

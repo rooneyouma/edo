@@ -617,28 +617,26 @@ const Messages = () => {
         <Header toggleSidebar={toggleSidebar} />
 
         <main className="grow">
-          <div className="pl-4 pr-8 sm:pl-6 sm:pr-12 lg:pl-8 lg:pr-16 py-8 w-full">
-            <div className="sm:flex sm:items-center sm:justify-between">
-              <div className="sm:flex-auto">
-                <div className="flex items-center space-x-2">
-                  <svg
-                    className="w-6 h-6 text-[#0d9488]"
-                    fill="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" />
-                  </svg>
-                  <h1 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
-                    Messages
-                  </h1>
-                </div>
+          <div className="px-4 sm:px-6 lg:px-8 py-4 sm:py-6 w-full">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-0">
+              <div className="flex items-center space-x-2">
+                <svg
+                  className="w-5 h-5 sm:w-6 sm:h-6 text-[#0d9488] flex-shrink-0"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" />
+                </svg>
+                <h1 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-gray-100">
+                  Messages
+                </h1>
               </div>
-              <div className="mt-4 sm:mt-0 sm:ml-16 sm:flex-none flex items-center space-x-4">
+              <div className="flex flex-wrap items-center gap-2 sm:gap-3">
                 <div className="flex rounded-md shadow-sm">
                   <button
                     type="button"
                     onClick={() => setViewMode("email")}
-                    className={`relative inline-flex items-center px-4 py-2 text-sm font-medium rounded-l-md border ${
+                    className={`relative inline-flex items-center px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-medium rounded-l-md border ${
                       viewMode === "email"
                         ? "bg-[#0d9488] text-white border-[#0d9488]"
                         : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600"
@@ -649,7 +647,7 @@ const Messages = () => {
                   <button
                     type="button"
                     onClick={() => setViewMode("chat")}
-                    className={`relative inline-flex items-center px-4 py-2 text-sm font-medium rounded-r-md border ${
+                    className={`relative inline-flex items-center px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-medium rounded-r-md border ${
                       viewMode === "chat"
                         ? "bg-[#0d9488] text-white border-[#0d9488]"
                         : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600"
@@ -660,7 +658,7 @@ const Messages = () => {
                 </div>
                 <button
                   onClick={() => setShowNewMessageModal(true)}
-                  className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-[#0d9488] hover:bg-[#0f766e] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0d9488]"
+                  className="inline-flex items-center px-3 py-1.5 sm:px-4 sm:py-2 border border-transparent text-xs sm:text-sm font-medium rounded-md shadow-sm text-white bg-[#0d9488] hover:bg-[#0f766e] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0d9488]"
                 >
                   New Message
                 </button>
@@ -670,7 +668,7 @@ const Messages = () => {
             {viewMode === "email" ? (
               <>
                 {/* Horizontal Status Menu for Received/Sent */}
-                <div className="border-b border-slate-200 dark:border-slate-700 mb-6 overflow-x-auto sm:overflow-x-visible">
+                <div className="border-b border-slate-200 dark:border-slate-700 mb-4 sm:mb-6 overflow-x-auto sm:overflow-x-visible">
                   <nav className="-mb-px flex space-x-4 sm:space-x-8 min-w-max">
                     <button
                       onClick={() => setMessageTab("received")}
@@ -719,15 +717,15 @@ const Messages = () => {
                       formatDate={formatDate}
                     />
                     {/* Received Messages Pagination */}
-                    <div className="mt-4 flex items-center justify-between border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-4 py-3">
-                      <div className="flex items-center justify-between w-full">
-                        <div className="flex items-center space-x-4">
+                    <div className="mt-4 flex flex-col sm:flex-row items-center justify-between gap-3 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-4 py-3">
+                      <div className="flex items-center justify-between w-full sm:w-auto">
+                        <div className="flex items-center space-x-3 sm:space-x-4">
                           <span className="text-xs text-gray-700 dark:text-gray-200">
                             Page {currentReceivedPage} of {totalReceivedPages}
                           </span>
                           <div className="flex items-center space-x-2">
-                            <span className="text-xs text-gray-700 dark:text-gray-200">
-                              Go to page:
+                            <span className="text-xs text-gray-700 dark:text-gray-200 hidden xs:inline">
+                              Go to:
                             </span>
                             <input
                               type="number"
@@ -758,52 +756,50 @@ const Messages = () => {
                             />
                           </div>
                         </div>
-                        <div className="flex items-center space-x-2">
-                          <button
-                            onClick={() =>
-                              handleReceivedPageChange(currentReceivedPage - 1)
-                            }
-                            disabled={currentReceivedPage === 1}
-                            className="inline-flex items-center p-1.5 text-xs font-medium rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <button
+                          onClick={() =>
+                            handleReceivedPageChange(currentReceivedPage - 1)
+                          }
+                          disabled={currentReceivedPage === 1}
+                          className="inline-flex items-center p-1.5 text-xs font-medium rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          <svg
+                            className="w-4 h-4"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
                           >
-                            <svg
-                              className="w-4 h-4"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M15 19l-7-7 7-7"
-                              />
-                            </svg>
-                          </button>
-                          <button
-                            onClick={() =>
-                              handleReceivedPageChange(currentReceivedPage + 1)
-                            }
-                            disabled={
-                              currentReceivedPage === totalReceivedPages
-                            }
-                            className="inline-flex items-center p-1.5 text-xs font-medium rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M15 19l-7-7 7-7"
+                            />
+                          </svg>
+                        </button>
+                        <button
+                          onClick={() =>
+                            handleReceivedPageChange(currentReceivedPage + 1)
+                          }
+                          disabled={currentReceivedPage === totalReceivedPages}
+                          className="inline-flex items-center p-1.5 text-xs font-medium rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          <svg
+                            className="w-4 h-4"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
                           >
-                            <svg
-                              className="w-4 h-4"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M9 5l7 7-7 7"
-                              />
-                            </svg>
-                          </button>
-                        </div>
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M9 5l7 7-7 7"
+                            />
+                          </svg>
+                        </button>
                       </div>
                     </div>
                   </>
@@ -829,15 +825,15 @@ const Messages = () => {
                       formatDate={formatDate}
                     />
                     {/* Sent Messages Pagination */}
-                    <div className="mt-4 flex items-center justify-between border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-4 py-3">
-                      <div className="flex items-center justify-between w-full">
-                        <div className="flex items-center space-x-4">
+                    <div className="mt-4 flex flex-col sm:flex-row items-center justify-between gap-3 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-4 py-3">
+                      <div className="flex items-center justify-between w-full sm:w-auto">
+                        <div className="flex items-center space-x-3 sm:space-x-4">
                           <span className="text-xs text-gray-700 dark:text-gray-200">
                             Page {currentSentPage} of {totalSentPages}
                           </span>
                           <div className="flex items-center space-x-2">
-                            <span className="text-xs text-gray-700 dark:text-gray-200">
-                              Go to page:
+                            <span className="text-xs text-gray-700 dark:text-gray-200 hidden xs:inline">
+                              Go to:
                             </span>
                             <input
                               type="number"
@@ -868,58 +864,58 @@ const Messages = () => {
                             />
                           </div>
                         </div>
-                        <div className="flex items-center space-x-2">
-                          <button
-                            onClick={() =>
-                              handleSentPageChange(currentSentPage - 1)
-                            }
-                            disabled={currentSentPage === 1}
-                            className="inline-flex items-center p-1.5 text-xs font-medium rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <button
+                          onClick={() =>
+                            handleSentPageChange(currentSentPage - 1)
+                          }
+                          disabled={currentSentPage === 1}
+                          className="inline-flex items-center p-1.5 text-xs font-medium rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          <svg
+                            className="w-4 h-4"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
                           >
-                            <svg
-                              className="w-4 h-4"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M15 19l-7-7 7-7"
-                              />
-                            </svg>
-                          </button>
-                          <button
-                            onClick={() =>
-                              handleSentPageChange(currentSentPage + 1)
-                            }
-                            disabled={currentSentPage === totalSentPages}
-                            className="inline-flex items-center p-1.5 text-xs font-medium rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M15 19l-7-7 7-7"
+                            />
+                          </svg>
+                        </button>
+                        <button
+                          onClick={() =>
+                            handleSentPageChange(currentSentPage + 1)
+                          }
+                          disabled={currentSentPage === totalSentPages}
+                          className="inline-flex items-center p-1.5 text-xs font-medium rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          <svg
+                            className="w-4 h-4"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
                           >
-                            <svg
-                              className="w-4 h-4"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M9 5l7 7-7 7"
-                              />
-                            </svg>
-                          </button>
-                        </div>
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M9 5l7 7-7 7"
+                            />
+                          </svg>
+                        </button>
                       </div>
                     </div>
                   </>
                 )}
               </>
             ) : (
-              <div className="mt-8 h-[calc(100vh-12rem)]">
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 h-full">
+              <div className="mt-4 sm:mt-6 h-[calc(100vh-8rem)] sm:h-[calc(100vh-10rem)]">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 sm:gap-4 h-full">
                   <div
                     className={`lg:col-span-4 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden ${
                       selectedChat ? "hidden lg:block" : "block"
@@ -939,12 +935,12 @@ const Messages = () => {
                   <div
                     className={`lg:col-span-8 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden ${
                       selectedChat ? "block" : "hidden lg:block"
-                    }`}
+                    } min-h-0 h-full flex flex-col`}
                   >
                     <div className="lg:hidden">
                       <button
                         onClick={() => setSelectedChat(null)}
-                        className="p-4 flex items-center space-x-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100"
+                        className="p-3 sm:p-4 flex items-center space-x-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100"
                       >
                         <svg
                           className="w-5 h-5"
@@ -959,7 +955,7 @@ const Messages = () => {
                             d="M15 19l-7-7 7-7"
                           />
                         </svg>
-                        <span>Back to Chats</span>
+                        <span className="text-sm">Back to Chats</span>
                       </button>
                     </div>
                     <ChatView

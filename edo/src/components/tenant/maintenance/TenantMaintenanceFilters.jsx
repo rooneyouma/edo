@@ -14,9 +14,8 @@ const TenantMaintenanceFilters = ({
   const [isFilterOpen, setIsFilterOpen] = useState(false);
 
   return (
-    // Removed the mt-4 class that was causing the alignment issue
     <div>
-      <div className="flex flex-col sm:flex-row gap-4">
+      <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
         <div className="relative flex-grow">
           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
             <Search className="h-5 w-5 text-gray-400 dark:text-gray-500" />
@@ -25,7 +24,7 @@ const TenantMaintenanceFilters = ({
             type="text"
             name="search"
             id="search"
-            className="block w-full rounded-lg border border-gray-300 dark:border-gray-700 pl-10 pr-4 py-2 focus:border-[#0d9488] focus:ring-[#0d9488] focus:ring-2 focus:ring-opacity-20 dark:bg-gray-800 dark:text-gray-100 sm:text-sm shadow-sm transition-all duration-200"
+            className="block w-full rounded-lg border border-gray-300 dark:border-gray-700 pl-10 pr-4 py-2 focus:border-[#0d9488] focus:ring-[#0d9488] focus:ring-2 focus:ring-opacity-20 dark:bg-gray-800 dark:text-gray-100 sm:text-sm shadow-sm transition-all duration-200 text-sm"
             placeholder="Search maintenance requests..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
@@ -34,30 +33,35 @@ const TenantMaintenanceFilters = ({
         <div className="flex items-center space-x-2">
           <button
             onClick={() => setIsFilterOpen(!isFilterOpen)}
-            className="inline-flex items-center px-4 py-2 border border-gray-200 dark:border-gray-700 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0d9488]"
+            className="inline-flex items-center px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0d9488]"
           >
-            <Filter className="h-4 w-4 mr-2" />
-            Filter
+            <Filter className="h-4 w-4 mr-1 sm:mr-2" />
+            <span className="hidden xs:inline">Filter</span>
             {isFilterOpen ? (
-              <X className="h-4 w-4 ml-2" />
+              <X className="h-4 w-4 ml-1 sm:ml-2" />
             ) : (
-              <span className="ml-2">▼</span>
+              <span className="ml-1 sm:ml-2">▼</span>
             )}
           </button>
           <button
             onClick={() =>
               setSortOrder(sortOrder === "latest" ? "earliest" : "latest")
             }
-            className="inline-flex items-center px-4 py-2 border border-gray-200 dark:border-gray-700 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0d9488]"
+            className="inline-flex items-center px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0d9488]"
           >
-            <ArrowUpDown className="h-4 w-4 mr-2" />
-            {sortOrder === "latest" ? "Latest" : "Earliest"}
+            <ArrowUpDown className="h-4 w-4 mr-1 sm:mr-2" />
+            <span className="hidden xs:inline">
+              {sortOrder === "latest" ? "Latest" : "Earliest"}
+            </span>
+            <span className="xs:hidden">
+              {sortOrder === "latest" ? "↑" : "↓"}
+            </span>
           </button>
         </div>
       </div>
 
       {isFilterOpen && (
-        <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
           <div>
             <label
               htmlFor="status"

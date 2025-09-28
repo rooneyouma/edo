@@ -299,20 +299,20 @@ const Notices = () => {
         <div className="flex-1 flex flex-col lg:ml-64">
           <TenantHeader toggleSidebar={toggleSidebar} />
           {/* Main content */}
-          <main className="flex-1 py-4 sm:py-8 pl-4 pr-8 sm:pl-6 sm:pr-12 lg:pl-8 lg:pr-16">
-            <div className="mb-8">
-              <div className="flex flex-col gap-2 sm:flex-row sm:justify-between sm:items-center">
+          <main className="flex-1 py-4 sm:py-6 px-4 sm:px-6 lg:px-8">
+            <div className="mb-6 sm:mb-8">
+              <div className="flex flex-col gap-3 sm:gap-0 sm:flex-row sm:justify-between sm:items-center">
                 <div>
-                  <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">
+                  <h1 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-slate-100">
                     Notices
                   </h1>
-                  <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+                  <p className="mt-1 text-xs sm:text-sm text-slate-500 dark:text-slate-400">
                     {isExpandedView
                       ? "All notices and announcements"
                       : "Recent notices and announcements"}
                   </p>
                 </div>
-                <div className="flex flex-col gap-2 w-full sm:w-auto sm:flex-row sm:items-center sm:space-x-4 mt-4 sm:mt-0">
+                <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:space-x-3 mt-3 sm:mt-0">
                   <button
                     onClick={() => setIsExpandedView(!isExpandedView)}
                     className="inline-flex items-center justify-center px-3 py-2 border border-[#0d9488] text-xs sm:text-sm font-medium rounded-md text-[#0d9488] hover:bg-[#0d9488]/10 dark:text-[#0d9488] dark:hover:bg-[#0d9488]/20 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0d9488] w-full sm:w-auto"
@@ -325,10 +325,10 @@ const Notices = () => {
 
             {/* Notices grid */}
             <div
-              className={`grid gap-6 ${
+              className={`grid gap-4 sm:gap-6 ${
                 isExpandedView
                   ? "grid-cols-1"
-                  : "grid-cols-1 md:grid-cols-2 lg:grid-cols-3"
+                  : "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
               }`}
             >
               {visibleNotices.map((notice) => {
@@ -340,14 +340,16 @@ const Notices = () => {
                     onClick={() => handleNoticeClick(notice)}
                   >
                     <div
-                      className={`p-6 ${
-                        isExpandedView ? "flex items-start space-x-6" : ""
+                      className={`p-4 sm:p-6 ${
+                        isExpandedView
+                          ? "flex flex-col sm:flex-row sm:items-start sm:space-x-4"
+                          : ""
                       }`}
                     >
                       {isExpandedView && (
-                        <div className="flex-shrink-0">
+                        <div className="flex-shrink-0 mb-3 sm:mb-0">
                           <div
-                            className={`p-3 rounded-lg ${
+                            className={`p-2 sm:p-3 rounded-lg ${
                               notice.type === "eviction"
                                 ? "bg-red-100 dark:bg-red-900/30"
                                 : notice.type === "important"
@@ -356,7 +358,7 @@ const Notices = () => {
                             }`}
                           >
                             <svg
-                              className={`w-6 h-6 ${
+                              className={`w-5 h-5 sm:w-6 sm:h-6 ${
                                 notice.type === "eviction"
                                   ? "text-red-600 dark:text-red-400"
                                   : notice.type === "important"
@@ -380,10 +382,10 @@ const Notices = () => {
                       <div
                         className={`flex-1 ${isExpandedView ? "min-w-0" : ""}`}
                       >
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center space-x-3">
+                        <div className="flex flex-wrap items-center justify-between gap-2">
+                          <div className="flex flex-wrap items-center gap-2">
                             <span
-                              className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${styles.badge}`}
+                              className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${styles.badge}`}
                             >
                               {notice.type === "eviction"
                                 ? "Eviction Notice"
@@ -391,22 +393,22 @@ const Notices = () => {
                                   notice.type.slice(1)}
                             </span>
                             {notice.priority === "urgent" && (
-                              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300">
+                              <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300">
                                 Urgent
                               </span>
                             )}
                           </div>
-                          <span className="text-sm text-slate-500 dark:text-slate-400">
+                          <span className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
                             {notice.date}
                           </span>
                         </div>
                         <h3
-                          className={`mt-4 text-lg font-medium ${styles.title}`}
+                          className={`mt-3 sm:mt-4 text-base sm:text-lg font-medium ${styles.title}`}
                         >
                           {notice.title}
                         </h3>
                         <p
-                          className={`mt-2 text-sm text-slate-500 dark:text-slate-400 ${
+                          className={`mt-2 text-xs sm:text-sm text-slate-500 dark:text-slate-400 ${
                             isExpandedView
                               ? "whitespace-pre-wrap"
                               : "line-clamp-2"
@@ -414,9 +416,9 @@ const Notices = () => {
                         >
                           {notice.content}
                         </p>
-                        <div className="mt-4 flex items-center justify-between">
+                        <div className="mt-4 flex flex-wrap items-center justify-between gap-2">
                           <button
-                            className={`text-sm font-medium ${styles.button}`}
+                            className={`text-xs sm:text-sm font-medium ${styles.button}`}
                             onClick={(e) => {
                               e.stopPropagation();
                               handleNoticeClick(notice);
@@ -426,7 +428,7 @@ const Notices = () => {
                               ? "View Details"
                               : "Read more"}
                           </button>
-                          <span className="text-sm text-slate-500 dark:text-slate-400">
+                          <span className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
                             By {notice.from}
                           </span>
                         </div>
@@ -441,8 +443,8 @@ const Notices = () => {
             {showNoticeModal && selectedNotice && (
               <div className="fixed inset-0 bg-gray-500/50 dark:bg-gray-900/50 z-40">
                 <div className="fixed inset-0 z-50 overflow-y-auto">
-                  <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
-                    <div className="relative transform overflow-hidden rounded-lg bg-white dark:bg-slate-800 px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:p-6">
+                  <div className="flex min-h-full items-end justify-center p-2 text-center sm:items-center sm:p-0">
+                    <div className="relative transform overflow-hidden rounded-lg bg-white dark:bg-slate-800 px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:p-6 w-full">
                       <div className="absolute right-0 top-0 pr-4 pt-4">
                         <button
                           type="button"
@@ -468,9 +470,9 @@ const Notices = () => {
 
                       <div className="sm:flex sm:items-start">
                         <div className="mt-3 text-center sm:mt-0 sm:text-left w-full">
-                          <div className="flex items-center space-x-3 mb-4">
+                          <div className="flex flex-wrap items-center gap-2 mb-3">
                             <span
-                              className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                              className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
                                 getNoticeTypeStyles(selectedNotice.type).badge
                               }`}
                             >
@@ -480,7 +482,7 @@ const Notices = () => {
                                   selectedNotice.type.slice(1)}
                             </span>
                             {selectedNotice.priority === "urgent" && (
-                              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300">
+                              <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300">
                                 Urgent
                               </span>
                             )}
@@ -498,19 +500,19 @@ const Notices = () => {
                         </div>
                       </div>
 
-                      <div className="mt-6">
+                      <div className="mt-4 sm:mt-6">
                         <div className="prose dark:prose-invert max-w-none">
-                          <p className="text-slate-600 dark:text-slate-300">
+                          <p className="text-slate-600 dark:text-slate-300 text-sm sm:text-base">
                             {selectedNotice.content}
                           </p>
                         </div>
                       </div>
 
-                      <div className="mt-6 flex justify-between items-center">
+                      <div className="mt-6 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
                         <span className="text-sm text-slate-500 dark:text-slate-400">
                           From: {selectedNotice.from}
                         </span>
-                        <div className="flex space-x-3">
+                        <div className="flex flex-col sm:flex-row sm:space-x-3 gap-2">
                           {selectedNotice.type === "eviction" && (
                             <button
                               type="button"
@@ -519,14 +521,14 @@ const Notices = () => {
                                   `/tenant/messages?managerId=${selectedNotice.managerId}`
                                 )
                               }
-                              className="inline-flex justify-center rounded-md border border-transparent bg-red-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+                              className="inline-flex justify-center rounded-md border border-transparent bg-red-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 w-full sm:w-auto"
                             >
                               Contact Property Manager
                             </button>
                           )}
                           <button
                             type="button"
-                            className="inline-flex justify-center rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 shadow-sm hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-[#0d9488] focus:ring-offset-2"
+                            className="inline-flex justify-center rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 shadow-sm hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-[#0d9488] focus:ring-offset-2 w-full sm:w-auto"
                             onClick={() => setShowNoticeModal(false)}
                           >
                             Close
@@ -555,7 +557,7 @@ const Notices = () => {
                 </button>
               </div>
               {/* Search, Sort, and Filter Controls */}
-              <div className="mb-6 flex flex-col sm:flex-row gap-4">
+              <div className="mb-6 flex flex-col sm:flex-row gap-3">
                 <div className="flex-1">
                   <div className="relative">
                     <svg
@@ -575,24 +577,24 @@ const Notices = () => {
                       type="text"
                       name="search"
                       id="search"
-                      className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0d9488] focus:border-[#0d9488] dark:bg-gray-700 dark:text-gray-100 sm:text-sm"
+                      className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0d9488] focus:border-[#0d9488] dark:bg-gray-700 dark:text-gray-100 text-sm sm:text-sm"
                       placeholder="Search by property, unit, or reason..."
                       value={vacateSearch}
                       onChange={(e) => setVacateSearch(e.target.value)}
                     />
                   </div>
                 </div>
-                <div className="flex items-center space-x-2">
+                <div className="flex flex-wrap items-center gap-2">
                   <button
                     type="button"
                     onClick={() => setShowVacateFilters((prev) => !prev)}
-                    className="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0d9488]"
+                    className="inline-flex items-center px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0d9488]"
                   >
-                    <Filter className="h-4 w-4 mr-2" />
-                    Filter
+                    <Filter className="h-4 w-4 mr-1 sm:mr-2" />
+                    <span className="hidden xs:inline">Filter</span>
                     {showVacateFilters ? (
                       <svg
-                        className="h-4 w-4 ml-2"
+                        className="h-4 w-4 ml-1 sm:ml-2"
                         fill="none"
                         viewBox="0 0 24 24"
                         strokeWidth="1.5"
@@ -605,7 +607,7 @@ const Notices = () => {
                         />
                       </svg>
                     ) : (
-                      <span className="ml-2">▼</span>
+                      <span className="ml-1 sm:ml-2">▼</span>
                     )}
                   </button>
                   <button
@@ -615,13 +617,13 @@ const Notices = () => {
                         vacateSortOrder === "latest" ? "oldest" : "latest"
                       )
                     }
-                    className="inline-flex items-center px-4 py-2 border border-gray-200 dark:border-gray-700 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0d9488]"
+                    className="inline-flex items-center px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0d9488]"
                   >
                     {typeof ArrowUpDown !== "undefined" ? (
-                      <ArrowUpDown className="h-4 w-4 mr-2" />
+                      <ArrowUpDown className="h-4 w-4 mr-1 sm:mr-2" />
                     ) : (
                       <svg
-                        className="h-4 w-4 mr-2"
+                        className="h-4 w-4 mr-1 sm:mr-2"
                         fill="none"
                         viewBox="0 0 24 24"
                         strokeWidth="1.5"
@@ -634,20 +636,25 @@ const Notices = () => {
                         />
                       </svg>
                     )}
-                    {vacateSortOrder === "latest" ? "Latest" : "Earliest"}
+                    <span className="hidden xs:inline">
+                      {vacateSortOrder === "latest" ? "Latest" : "Earliest"}
+                    </span>
+                    <span className="xs:hidden">
+                      {vacateSortOrder === "latest" ? "↑" : "↓"}
+                    </span>
                   </button>
                   {/* Desktop: Submit Vacate Notice button in controls */}
                   <button
                     type="button"
                     onClick={() => setShowVacateForm(true)}
-                    className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-[#0d9488] hover:bg-[#0f766e] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0d9488]"
+                    className="hidden sm:inline-flex items-center px-3 py-2 border border-transparent text-xs sm:text-sm font-medium rounded-lg shadow-sm text-white bg-[#0d9488] hover:bg-[#0f766e] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0d9488]"
                   >
                     Submit Vacate Notice
                   </button>
                 </div>
               </div>
               {showVacateFilters && (
-                <div className="mb-6 grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 bg-white dark:bg-gray-800 rounded-lg shadow border border-gray-200 dark:border-gray-700">
+                <div className="mb-6 grid grid-cols-1 sm:grid-cols-2 gap-3 p-4 bg-white dark:bg-gray-800 rounded-lg shadow border border-gray-200 dark:border-gray-700">
                   <div>
                     <select
                       className="block w-full rounded-md border-gray-300 dark:border-gray-600 pl-3 pr-10 py-2 text-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-gray-700 dark:text-gray-100"
@@ -679,39 +686,43 @@ const Notices = () => {
                 {filteredVacateRequests.map((request) => (
                   <div
                     key={request.id}
-                    className="w-full bg-white dark:bg-gray-900 shadow ring-1 ring-black ring-opacity-5 rounded-lg px-6 py-4 flex flex-col md:flex-row md:items-center md:justify-between cursor-pointer hover:ring-[#0d9488] transition"
+                    className="w-full bg-white dark:bg-gray-900 shadow ring-1 ring-black ring-opacity-5 rounded-lg px-4 py-3 sm:px-6 sm:py-4 flex flex-col gap-3 cursor-pointer hover:ring-[#0d9488] transition"
                     onClick={() => {
                       setSelectedVacateRequest(request);
                       setShowVacateModal(true);
                     }}
                   >
-                    <div className="flex-1 grid grid-cols-1 md:grid-cols-5 gap-4 md:gap-12 items-center w-full">
-                      <div className="text-sm text-gray-500 dark:text-gray-400 font-semibold truncate">
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <div className="text-sm font-semibold text-gray-900 dark:text-gray-100 truncate">
                         {request.property} - {request.unit}
                       </div>
-                      <div className="text-xs text-gray-400 dark:text-gray-500 truncate">
+                      <div>
+                        <span
+                          className={`inline-flex rounded-full px-2 py-1 text-xs font-semibold leading-4 ${getStatusColor(
+                            request.status
+                          )}`}
+                        >
+                          {request.status}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                      <div className="text-xs text-gray-500 dark:text-gray-400">
                         Request Date:{" "}
                         <span className="font-medium text-gray-700 dark:text-gray-200">
                           {request.requestDate}
                         </span>
                       </div>
-                      <div className="text-xs text-gray-400 dark:text-gray-500 truncate">
+                      <div className="text-xs text-gray-500 dark:text-gray-400">
                         Move-Out Date:{" "}
                         <span className="font-medium text-gray-700 dark:text-gray-200">
                           {request.moveOutDate}
                         </span>
                       </div>
-                      <div className="text-sm text-gray-600 dark:text-gray-300 truncate">
+                      <div className="text-xs text-gray-500 dark:text-gray-400 sm:col-span-3">
                         <span className="font-medium">Reason:</span>{" "}
-                        {request.reason}
-                      </div>
-                      <div>
-                        <span
-                          className={`inline-flex rounded-full px-2 text-xs font-semibold leading-5 ${getStatusColor(
-                            request.status
-                          )}`}
-                        >
-                          {request.status}
+                        <span className="text-gray-700 dark:text-gray-200">
+                          {request.reason}
                         </span>
                       </div>
                     </div>
