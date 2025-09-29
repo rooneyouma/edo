@@ -201,7 +201,7 @@ const Notices = () => {
   // Don't render anything until mounted to prevent hydration issues
   if (!mounted) {
     return (
-      <div className="flex h-screen overflow-hidden bg-[#F5F5DC] dark:bg-slate-900">
+      <div className="flex h-screen bg-[#F5F5DC] dark:bg-slate-900">
         {/* Sidebar */}
         <Sidebar sidebarOpen={false} setSidebarOpen={() => {}} />
 
@@ -237,7 +237,7 @@ const Notices = () => {
   // If not authenticated, show sign in prompt with consistent structure
   if (!authenticated) {
     return (
-      <div className="flex h-screen overflow-hidden bg-[#F5F5DC] dark:bg-slate-900">
+      <div className="flex h-screen bg-[#F5F5DC] dark:bg-slate-900">
         {/* Sidebar */}
         <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
 
@@ -994,15 +994,15 @@ const Notices = () => {
   );
 
   return (
-    <div className="flex h-screen overflow-hidden bg-[#F5F5DC] dark:bg-slate-900">
+    <div className="flex h-screen bg-[#F5F5DC] dark:bg-slate-900">
       {/* Sidebar */}
       <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
-      <div className="relative flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
+      <div className="relative flex flex-col flex-1">
         <div className="lg:ml-64">
           {/* Site header */}
           <Header toggleSidebar={toggleSidebar} />
 
-          <main className="flex-1 pl-4 pr-8 sm:pl-6 sm:pr-12 lg:pl-8 lg:pr-16 py-4 sm:py-6 lg:py-8 overflow-auto">
+          <main className="flex-1 pl-4 pr-8 sm:pl-6 sm:pr-12 lg:pl-8 lg:pr-16 py-4 sm:py-6 lg:py-8">
             <div className="w-full">
               {/* Page header - Fixed responsiveness */}
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
@@ -1012,7 +1012,7 @@ const Notices = () => {
               </div>
 
               {/* Notices Section - Fixed tab navigation responsiveness */}
-              <div className="border-b border-slate-200 dark:border-slate-700 mb-6 overflow-x-auto">
+              <div className="border-b border-slate-200 dark:border-slate-700 mb-6">
                 <nav className="-mb-px flex min-w-max space-x-6 md:space-x-8">
                   <button
                     onClick={() => setNoticeTab("general")}
