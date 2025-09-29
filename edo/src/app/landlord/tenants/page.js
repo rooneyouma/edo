@@ -250,35 +250,30 @@ const LandlordTenantsPage = () => {
         <main className="grow">
           <div className="pl-4 pr-8 sm:pl-6 sm:pr-12 lg:pl-8 lg:pr-16 py-8 w-full">
             {/* Page Title and Add Button */}
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-100">
-                Tenants
-              </h2>
-              {/* Always render the button but conditionally disable it during loading */}
-              <button
-                onClick={handleAddTenant}
-                disabled={isTenantsLoading}
-                className={`px-4 py-2 rounded-md text-sm font-medium flex items-center gap-2 ${
-                  isTenantsLoading
-                    ? "bg-gray-300 dark:bg-gray-600 text-gray-500 cursor-not-allowed"
-                    : "bg-[#0d9488] text-white hover:bg-[#0f766e] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0d9488]"
-                }`}
-              >
-                <svg
-                  className="w-4 h-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
+            <div className="sm:flex sm:items-center">
+              <div className="sm:flex-auto">
+                <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-100">
+                  Tenants
+                </h2>
+              </div>
+              <div className="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
+                {/* Always render the button but conditionally disable it during loading */}
+                <button
+                  onClick={handleAddTenant}
+                  disabled={isTenantsLoading}
+                  className={`inline-flex items-center justify-center px-3 py-2 border border-transparent rounded-md shadow-sm text-xs sm:text-sm font-medium text-white bg-[#0d9488] hover:bg-[#0f766e] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0d9488] w-full sm:w-auto ${
+                    isTenantsLoading ? "opacity-50 cursor-not-allowed" : ""
+                  }`}
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-                  />
-                </svg>
-                Add Tenant
-              </button>
+                  <svg
+                    className="w-4 h-4 fill-current opacity-50 shrink-0"
+                    viewBox="0 0 16 16"
+                  >
+                    <path d="M15 7H9V1c0-.6-.4-1-1-1S7 .4 7 1v6H1c-.6 0-1 .4-1 1s.4 1 1 1h6v6c0 .6.4 1 1 1s1-.4 1-1V9h6c.6 0 1-.4 1-1s-.4-1-1-1z" />
+                  </svg>
+                  <span className="ml-2">Add Tenant</span>
+                </button>
+              </div>
             </div>
 
             {/* Show badge if no tenants */}

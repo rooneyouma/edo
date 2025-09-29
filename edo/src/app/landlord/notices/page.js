@@ -73,61 +73,8 @@ const Notices = () => {
   const pathname = usePathname();
   const [createNoticeError, setCreateNoticeError] = useState(null);
   const queryClient = useQueryClient();
-
-  // React Query for fetching notices
-  const {
-    data: notices = [],
-    isLoading: loadingNotices,
-    error: noticesQueryError,
-  } = useQuery({
-    queryKey: ["notices"],
-    queryFn: () => apiRequest("/notices/", { method: "GET" }),
-    enabled: isAuthenticated(),
-  });
-
-  // React Query mutation for creating notices
-  const createNoticeMutation = useMutation({
-    mutationFn: (payload) =>
-      apiRequest("/notices/", {
-        method: "POST",
-        body: JSON.stringify(payload),
-      }),
-    onSuccess: (newNotice) => {
-      // Invalidate notices query to refresh the list
-      queryClient.invalidateQueries({ queryKey: ["notices"] });
-      setIsCreateNoticeModalOpen(false);
-      setCreateNoticeError(null);
-    },
-    onError: () => {
-      setCreateNoticeError("Failed to create notice. Please try again.");
-    },
-  });
-
-  // Handle error state from React Query
-  const noticesError = noticesQueryError ? "Could not load notices." : null;
-
-  if (!isAuthenticated()) {
-    return (
-      <div className="flex h-screen overflow-hidden bg-[#F5F5DC] dark:bg-slate-900">
-        <div className="flex flex-col items-center justify-center min-h-screen w-full bg-slate-50 dark:bg-slate-900">
-          <h2 className="text-2xl font-bold mb-4">Sign in required</h2>
-          <p className="mb-6">You must be signed in to access this page.</p>
-          <button
-            className="px-6 py-2 bg-teal-600 text-white rounded-lg font-semibold hover:bg-teal-700 transition"
-            onClick={() =>
-              router.push(
-                `/auth/signin?role=landlord&next=${encodeURIComponent(
-                  pathname
-                )}`
-              )
-            }
-          >
-            Proceed
-          </button>
-        </div>
-      </div>
-    );
-  }
+  // Add mounted state to prevent hydration errors
+  const [mounted, setMounted] = useState(false);
 
   // Initialize vacate requests state
   const [vacateRequests, setVacateRequests] = useState([
@@ -197,6 +144,43 @@ const Notices = () => {
     },
   ]);
 
+  // Set mounted to true after component mounts
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // React Query for fetching notices
+  const {
+    data: notices = [],
+    isLoading: loadingNotices,
+    error: noticesQueryError,
+  } = useQuery({
+    queryKey: ["notices"],
+    queryFn: () => apiRequest("/notices/", { method: "GET" }),
+    enabled: mounted && isAuthenticated(), // Only fetch when mounted and authenticated
+  });
+
+  // React Query mutation for creating notices
+  const createNoticeMutation = useMutation({
+    mutationFn: (payload) =>
+      apiRequest("/notices/", {
+        method: "POST",
+        body: JSON.stringify(payload),
+      }),
+    onSuccess: (newNotice) => {
+      // Invalidate notices query to refresh the list
+      queryClient.invalidateQueries({ queryKey: ["notices"] });
+      setIsCreateNoticeModalOpen(false);
+      setCreateNoticeError(null);
+    },
+    onError: () => {
+      setCreateNoticeError("Failed to create notice. Please try again.");
+    },
+  });
+
+  // Handle error state from React Query
+  const noticesError = noticesQueryError ? "Could not load notices." : null;
+
   // Add mock tenant data (in a real app, this would come from your API)
   const mockTenants = [
     { id: 1, name: "John Doe", email: "john@example.com" },
@@ -209,6 +193,98 @@ const Notices = () => {
       tenant.name.toLowerCase().includes(tenantSearchQuery.toLowerCase()) ||
       tenant.email.toLowerCase().includes(tenantSearchQuery.toLowerCase())
   );
+
+  const toggleSidebar = () => {
+    setSidebarOpen(!sidebarOpen);
+  };
+
+  // Don't render anything until mounted to prevent hydration issues
+  if (!mounted) {
+    return (
+      <div className="flex h-screen overflow-hidden bg-[#F5F5DC] dark:bg-slate-900">
+        {/* Sidebar */}
+        <Sidebar sidebarOpen={false} setSidebarOpen={() => {}} />
+
+        {/* Content area */}
+        <div className="relative flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
+          <div className="lg:ml-64">
+            {/* Site header */}
+            <Header toggleSidebar={toggleSidebar} />
+
+            {/* Main content area */}
+            <main className="flex-1 pl-4 pr-8 sm:pl-6 sm:pr-12 lg:pl-8 lg:pr-16 py-4 sm:py-6 lg:py-8 overflow-auto">
+              <div className="w-full">
+                {/* Page header */}
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
+                  <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">
+                    Notices
+                  </h1>
+                </div>
+                <div className="text-center text-gray-500 dark:text-gray-400 mt-12 text-lg">
+                  Loading...
+                </div>
+              </div>
+            </main>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Check authentication status
+  const authenticated = isAuthenticated();
+
+  // If not authenticated, show sign in prompt with consistent structure
+  if (!authenticated) {
+    return (
+      <div className="flex h-screen overflow-hidden bg-[#F5F5DC] dark:bg-slate-900">
+        {/* Sidebar */}
+        <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+
+        {/* Content area */}
+        <div className="relative flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
+          <div className="lg:ml-64">
+            {/* Site header */}
+            <Header toggleSidebar={toggleSidebar} />
+
+            {/* Main content area */}
+            <main className="flex-1 pl-4 pr-8 sm:pl-6 sm:pr-12 lg:pl-8 lg:pr-16 py-4 sm:py-6 lg:py-8 overflow-auto">
+              <div className="w-full">
+                {/* Page header */}
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
+                  <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">
+                    Notices
+                  </h1>
+                </div>
+                <div className="w-full">
+                  <div className="flex-1 flex flex-col items-center justify-center bg-slate-50 dark:bg-slate-900 rounded-lg">
+                    <h2 className="text-2xl font-bold mb-4">
+                      Sign in required
+                    </h2>
+                    <p className="mb-6">
+                      You must be signed in to access this page.
+                    </p>
+                    <button
+                      className="px-6 py-2 bg-teal-600 text-white rounded-lg font-semibold hover:bg-teal-700 transition"
+                      onClick={() =>
+                        router.push(
+                          `/auth/signin?role=landlord&next=${encodeURIComponent(
+                            pathname
+                          )}`
+                        )
+                      }
+                    >
+                      Proceed
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </main>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   const handleCreateNotice = async (formData) => {
     const basePayload = {
@@ -651,10 +727,6 @@ const Notices = () => {
     );
   };
 
-  const toggleSidebar = () => {
-    setSidebarOpen(!sidebarOpen);
-  };
-
   // Add edit modal content
   const getEditModalContent = () => {
     if (!noticeToEdit) return null;
@@ -877,16 +949,6 @@ const Notices = () => {
           </div>
           <div>
             <h4 className="text-sm font-medium text-gray-500 dark:text-gray-400">
-              Unit
-            </h4>
-            <p className="mt-1 text-sm text-gray-900 dark:text-gray-100">
-              {selectedNotice.unit
-                ? selectedNotice.unit.unit_number || selectedNotice.unit
-                : "All"}
-            </p>
-          </div>
-          <div>
-            <h4 className="text-sm font-medium text-gray-500 dark:text-gray-400">
               Audience
             </h4>
             <p className="mt-1 text-sm text-gray-900 dark:text-gray-100">
@@ -935,273 +997,275 @@ const Notices = () => {
     <div className="flex h-screen overflow-hidden bg-[#F5F5DC] dark:bg-slate-900">
       {/* Sidebar */}
       <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+      <div className="relative flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
+        <div className="lg:ml-64">
+          {/* Site header */}
+          <Header toggleSidebar={toggleSidebar} />
 
-      {/* Content area */}
-      <div className="relative flex flex-col flex-1 overflow-y-auto overflow-x-hidden lg:ml-64">
-        {/* Site header */}
-        <Header toggleSidebar={toggleSidebar} />
+          <main className="flex-1 pl-4 pr-8 sm:pl-6 sm:pr-12 lg:pl-8 lg:pr-16 py-4 sm:py-6 lg:py-8 overflow-auto">
+            <div className="w-full">
+              {/* Page header - Fixed responsiveness */}
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
+                <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">
+                  Notices
+                </h1>
+              </div>
 
-        <main className="grow">
-          <div className="pl-4 pr-8 sm:pl-6 sm:pr-12 lg:pl-8 lg:pr-16 py-8 w-full">
-            {/* Page header */}
-            <div className="flex justify-between items-center mb-6">
-              <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">
-                Notices
-              </h1>
-            </div>
+              {/* Notices Section - Fixed tab navigation responsiveness */}
+              <div className="border-b border-slate-200 dark:border-slate-700 mb-6 overflow-x-auto">
+                <nav className="-mb-px flex min-w-max space-x-6 md:space-x-8">
+                  <button
+                    onClick={() => setNoticeTab("general")}
+                    className={`whitespace-nowrap py-3 md:py-4 px-1 border-b-2 font-medium text-xs md:text-sm transition-colors duration-150 ${
+                      noticeTab === "general"
+                        ? "border-teal-500 text-teal-600 dark:text-teal-400"
+                        : "border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300"
+                    }`}
+                    style={{
+                      borderBottomWidth: noticeTab === "general" ? 3 : 2,
+                    }}
+                  >
+                    General Notices
+                  </button>
+                  <button
+                    onClick={() => setNoticeTab("vacate")}
+                    className={`whitespace-nowrap py-3 md:py-4 px-1 border-b-2 font-medium text-xs md:text-sm transition-colors duration-150 ${
+                      noticeTab === "vacate"
+                        ? "border-teal-500 text-teal-600 dark:text-teal-400"
+                        : "border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300"
+                    }`}
+                    style={{
+                      borderBottomWidth: noticeTab === "vacate" ? 3 : 2,
+                    }}
+                  >
+                    Vacate Requests
+                  </button>
+                  <button
+                    onClick={() => setNoticeTab("eviction")}
+                    className={`whitespace-nowrap py-3 md:py-4 px-1 border-b-2 font-medium text-xs md:text-sm transition-colors duration-150 ${
+                      noticeTab === "eviction"
+                        ? "border-teal-500 text-teal-600 dark:text-teal-400"
+                        : "border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300"
+                    }`}
+                    style={{
+                      borderBottomWidth: noticeTab === "eviction" ? 3 : 2,
+                    }}
+                  >
+                    Eviction Notices
+                  </button>
+                </nav>
+              </div>
 
-            {/* Notices Section */}
-            <div className="border-b border-slate-200 dark:border-slate-700 mb-6">
-              <nav className="-mb-px flex min-w-0 w-full">
-                <button
-                  onClick={() => setNoticeTab("general")}
-                  className={`flex-1 min-w-0 whitespace-nowrap py-3 sm:py-4 px-1 border-b-2 font-medium text-xs sm:text-sm transition-colors duration-150 ${
-                    noticeTab === "general"
-                      ? "border-teal-500 text-teal-600 dark:text-teal-400"
-                      : "border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300"
-                  }`}
-                  style={{ borderBottomWidth: noticeTab === "general" ? 3 : 2 }}
-                >
-                  General Notices
-                </button>
-                <button
-                  onClick={() => setNoticeTab("vacate")}
-                  className={`flex-1 min-w-0 whitespace-nowrap py-3 sm:py-4 px-1 border-b-2 font-medium text-xs sm:text-sm transition-colors duration-150 ${
-                    noticeTab === "vacate"
-                      ? "border-teal-500 text-teal-600 dark:text-teal-400"
-                      : "border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300"
-                  }`}
-                  style={{ borderBottomWidth: noticeTab === "vacate" ? 3 : 2 }}
-                >
-                  Vacate Requests
-                </button>
-                <button
-                  onClick={() => setNoticeTab("eviction")}
-                  className={`flex-1 min-w-0 whitespace-nowrap py-3 sm:py-4 px-1 border-b-2 font-medium text-xs sm:text-sm transition-colors duration-150 ${
-                    noticeTab === "eviction"
-                      ? "border-teal-500 text-teal-600 dark:text-teal-400"
-                      : "border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300"
-                  }`}
-                  style={{
-                    borderBottomWidth: noticeTab === "eviction" ? 3 : 2,
-                  }}
-                >
-                  Eviction Notices
-                </button>
-              </nav>
-            </div>
-
-            {/* Conditionally render the content for each tab based on noticeTab */}
-            {noticeTab === "general" && (
-              <>
-                <div className="mb-8">
-                  <div className="flex justify-between items-center mb-4">
-                    <button
-                      onClick={() => setIsCreateNoticeModalOpen(true)}
-                      className="btn bg-[#0d9488] hover:bg-[#0f766e] text-white px-4 py-2 rounded-md flex items-center transition-colors duration-200 z-10 relative"
-                    >
-                      <span>Create Notice</span>
-                    </button>
-                  </div>
-                  <NoticeFilters
-                    searchQuery={searchQuery}
-                    setSearchQuery={setSearchQuery}
-                    noticeTypeFilter={noticeTypeFilter}
-                    setNoticeTypeFilter={setNoticeTypeFilter}
-                    audienceFilter={audienceFilter}
-                    setAudienceFilter={setAudienceFilter}
-                    sortOrder={noticeSortOrder}
-                    setSortOrder={setNoticeSortOrder}
-                  />
-                </div>
-                {loadingNotices ? (
-                  <div className="text-center text-gray-500 dark:text-gray-400 mt-12 text-lg">
-                    Loading notices...
-                  </div>
-                ) : noticesError ? (
-                  <div className="text-center text-red-500 mt-12 text-lg">
-                    {noticesError}
-                  </div>
-                ) : currentNotices.length === 0 ? (
-                  <div className="text-center text-gray-500 dark:text-gray-400 mt-12 text-lg">
-                    No notices found.
-                  </div>
-                ) : (
-                  <div className="overflow-x-auto">
-                    <div className="inline-block min-w-full align-middle">
-                      <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
-                        <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                          <thead className="bg-gray-50 dark:bg-gray-800">
-                            <tr>
-                              <th
-                                scope="col"
-                                className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-100 sm:pl-6"
-                              >
-                                Title
-                              </th>
-                              <th
-                                scope="col"
-                                className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
-                              >
-                                Type
-                              </th>
-                              <th
-                                scope="col"
-                                className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
-                              >
-                                Unit
-                              </th>
-                              <th
-                                scope="col"
-                                className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
-                              >
-                                Date
-                              </th>
-                              <th
-                                scope="col"
-                                className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
-                              >
-                                Audience
-                              </th>
-                              <th
-                                scope="col"
-                                className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
-                              >
-                                Actions
-                              </th>
-                            </tr>
-                          </thead>
-                          <tbody className="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-900">
-                            {currentNotices.map((notice) => (
-                              <tr
-                                key={notice.id}
-                                onClick={() => handleNoticeClick(notice)}
-                                className="hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer"
-                              >
-                                <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 dark:text-gray-100 sm:pl-6">
-                                  {notice.title}
-                                </td>
-                                <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
-                                  <span
-                                    className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getTypeColor(
-                                      notice.notice_type || notice.type
-                                    )}`}
-                                  >
-                                    {notice.notice_type ||
-                                      notice.type ||
-                                      "General"}
-                                  </span>
-                                </td>
-                                <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
-                                  {notice.unit
-                                    ? notice.unit.unit_number || notice.unit
-                                    : "All"}
-                                </td>
-                                <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
-                                  {notice.effective_date ||
-                                    notice.date_sent ||
-                                    notice.date ||
-                                    ""}
-                                </td>
-                                <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
-                                  {notice.tenant
-                                    ? (notice.tenant.first_name || "") +
-                                      " " +
-                                      (notice.tenant.last_name || "")
-                                    : "All"}
-                                </td>
-                                <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
-                                  <div className="flex items-center space-x-3">
-                                    <button
-                                      onClick={(e) => {
-                                        e.stopPropagation();
-                                        setNoticeToEdit(notice);
-                                        setIsEditModalOpen(true);
-                                      }}
-                                      className="text-[#0d9488] hover:text-[#0f766e] dark:text-[#0d9488] dark:hover:text-[#0f766e]"
-                                    >
-                                      <svg
-                                        className="w-5 h-5"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        viewBox="0 0 24 24"
-                                      >
-                                        <path
-                                          strokeLinecap="round"
-                                          strokeLinejoin="round"
-                                          strokeWidth={2}
-                                          d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-                                        />
-                                      </svg>
-                                    </button>
-                                    <button
-                                      onClick={(e) => {
-                                        e.stopPropagation();
-                                        setNoticeToDelete(notice);
-                                        setIsDeleteConfirmModalOpen(true);
-                                      }}
-                                      className="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300"
-                                    >
-                                      <svg
-                                        className="w-5 h-5"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        viewBox="0 0 24 24"
-                                      >
-                                        <path
-                                          strokeLinecap="round"
-                                          strokeLinejoin="round"
-                                          strokeWidth={2}
-                                          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                                        />
-                                      </svg>
-                                    </button>
-                                  </div>
-                                </td>
-                              </tr>
-                            ))}
-                          </tbody>
-                        </table>
+              {/* Conditionally render the content for each tab based on noticeTab */}
+              {noticeTab === "general" && (
+                <>
+                  <div className="mb-8">
+                    <div className="sm:flex sm:items-center">
+                      <div className="sm:flex-auto">
+                        <div className="flex items-center space-x-2">
+                          <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                            General Notices
+                          </h2>
+                        </div>
+                      </div>
+                      <div className="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
+                        <button
+                          onClick={() => setIsCreateNoticeModalOpen(true)}
+                          className="inline-flex items-center justify-center px-3 py-2 border border-transparent rounded-md shadow-sm text-xs sm:text-sm font-medium text-white bg-[#0d9488] hover:bg-[#0f766e] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0d9488] w-full sm:w-auto"
+                        >
+                          <span>Create Notice</span>
+                        </button>
                       </div>
                     </div>
+                    <NoticeFilters
+                      searchQuery={searchQuery}
+                      setSearchQuery={setSearchQuery}
+                      noticeTypeFilter={noticeTypeFilter}
+                      setNoticeTypeFilter={setNoticeTypeFilter}
+                      audienceFilter={audienceFilter}
+                      setAudienceFilter={setAudienceFilter}
+                      sortOrder={noticeSortOrder}
+                      setSortOrder={setNoticeSortOrder}
+                    />
                   </div>
-                )}
-                {/* Pagination for notices */}
-                <div className="mt-4 flex items-center justify-between border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-4 py-3">
-                  <div className="flex items-center justify-between w-full">
-                    <div className="flex items-center space-x-4">
-                      <span className="text-xs text-gray-700 dark:text-gray-200">
-                        Page {currentPage} of {totalPages}
-                      </span>
-                      <div className="flex items-center space-x-2">
-                        <span className="text-xs text-gray-700 dark:text-gray-200">
-                          Go to page:
+                  {loadingNotices ? (
+                    <div className="text-center text-gray-500 dark:text-gray-400 mt-12 text-lg">
+                      Loading notices...
+                    </div>
+                  ) : noticesError ? (
+                    <div className="text-center text-red-500 mt-12 text-lg">
+                      {noticesError}
+                    </div>
+                  ) : currentNotices.length === 0 ? (
+                    <div className="text-center text-gray-500 dark:text-gray-400 mt-12 text-lg">
+                      No notices found.
+                    </div>
+                  ) : (
+                    <div className="overflow-x-auto">
+                      <div className="inline-block min-w-full align-middle">
+                        <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
+                          <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                            <thead className="bg-gray-50 dark:bg-gray-800">
+                              <tr>
+                                <th
+                                  scope="col"
+                                  className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-100 sm:pl-6"
+                                >
+                                  Title
+                                </th>
+                                <th
+                                  scope="col"
+                                  className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
+                                >
+                                  Type
+                                </th>
+                                <th
+                                  scope="col"
+                                  className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
+                                >
+                                  Date
+                                </th>
+                                <th
+                                  scope="col"
+                                  className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
+                                >
+                                  Audience
+                                </th>
+                                <th
+                                  scope="col"
+                                  className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
+                                >
+                                  Actions
+                                </th>
+                              </tr>
+                            </thead>
+                            <tbody className="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-900">
+                              {currentNotices.map((notice) => (
+                                <tr
+                                  key={notice.id}
+                                  onClick={() => handleNoticeClick(notice)}
+                                  className="hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer"
+                                >
+                                  <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 dark:text-gray-100 sm:pl-6">
+                                    {notice.title}
+                                  </td>
+                                  <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
+                                    <span
+                                      className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getTypeColor(
+                                        notice.notice_type || notice.type
+                                      )}`}
+                                    >
+                                      {notice.notice_type ||
+                                        notice.type ||
+                                        "General"}
+                                    </span>
+                                  </td>
+                                  <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
+                                    {notice.effective_date ||
+                                      notice.date_sent ||
+                                      notice.date ||
+                                      ""}
+                                  </td>
+                                  <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
+                                    {notice.tenant
+                                      ? (notice.tenant.first_name || "") +
+                                        " " +
+                                        (notice.tenant.last_name || "")
+                                      : "All"}
+                                  </td>
+                                  <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
+                                    <div className="flex items-center space-x-3">
+                                      <button
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          setNoticeToEdit(notice);
+                                          setIsEditModalOpen(true);
+                                        }}
+                                        className="text-[#0d9488] hover:text-[#0f766e] dark:text-[#0d9488] dark:hover:text-[#0f766e]"
+                                      >
+                                        <svg
+                                          className="w-5 h-5"
+                                          fill="none"
+                                          stroke="currentColor"
+                                          viewBox="0 0 24 24"
+                                        >
+                                          <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth={2}
+                                            d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                                          />
+                                        </svg>
+                                      </button>
+                                      <button
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          setNoticeToDelete(notice);
+                                          setIsDeleteConfirmModalOpen(true);
+                                        }}
+                                        className="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300"
+                                      >
+                                        <svg
+                                          className="w-5 h-5"
+                                          fill="none"
+                                          stroke="currentColor"
+                                          viewBox="0 0 24 24"
+                                        >
+                                          <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth={2}
+                                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                                          />
+                                        </svg>
+                                      </button>
+                                    </div>
+                                  </td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                  {/* Pagination for notices */}
+                  <div className="mt-4 flex flex-col sm:flex-row items-center justify-between gap-3 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-4 py-3">
+                    <div className="flex flex-col sm:flex-row items-center justify-between w-full sm:w-auto gap-3">
+                      <div className="flex items-center space-x-2 sm:space-x-4">
+                        <span className="text-xs text-gray-700 dark:text-gray-200 whitespace-nowrap">
+                          Page {currentPage} of {totalPages}
                         </span>
-                        <input
-                          type="number"
-                          min="1"
-                          max={totalPages}
-                          value={pageInputValue}
-                          onChange={(e) => {
-                            const value = e.target.value;
-                            setPageInputValue(value);
-                            const page = parseInt(value);
-                            if (page >= 1 && page <= totalPages) {
-                              handlePageChange(page);
-                            }
-                          }}
-                          onBlur={() => {
-                            const page = parseInt(pageInputValue);
-                            if (page < 1) {
-                              setPageInputValue("1");
-                              handlePageChange(1);
-                            } else if (page > totalPages) {
-                              setPageInputValue(totalPages.toString());
-                              handlePageChange(totalPages);
-                            }
-                          }}
-                          className="w-12 h-6 text-xs text-center rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-violet-500"
-                        />
+                        <div className="flex items-center space-x-2">
+                          <span className="text-xs text-gray-700 dark:text-gray-200 hidden xs:inline">
+                            Go to:
+                          </span>
+                          <input
+                            type="number"
+                            min="1"
+                            max={totalPages}
+                            value={pageInputValue}
+                            onChange={(e) => {
+                              const value = e.target.value;
+                              setPageInputValue(value);
+                              const page = parseInt(value);
+                              if (page >= 1 && page <= totalPages) {
+                                handlePageChange(page);
+                              }
+                            }}
+                            onBlur={() => {
+                              const page = parseInt(pageInputValue);
+                              if (page < 1) {
+                                setPageInputValue("1");
+                                handlePageChange(1);
+                              } else if (page > totalPages) {
+                                setPageInputValue(totalPages.toString());
+                                handlePageChange(totalPages);
+                              }
+                            }}
+                            className="w-12 h-6 text-xs text-center rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-violet-500"
+                          />
+                        </div>
                       </div>
                     </div>
                     <div className="flex items-center space-x-2">
@@ -1245,245 +1309,264 @@ const Notices = () => {
                       </button>
                     </div>
                   </div>
-                </div>
-              </>
-            )}
+                </>
+              )}
 
-            {noticeTab === "vacate" && (
-              <>
-                <div className="mb-8">
-                  <div className="flex justify-between items-center mb-4"></div>
-                  <VacateRequestFilters
-                    searchQuery={vacateRequestsSearch}
-                    setSearchQuery={setVacateRequestsSearch}
-                    statusFilter={vacateRequestsStatusFilter}
-                    setStatusFilter={setVacateRequestsStatusFilter}
-                    propertyFilter={vacateRequestsPropertyFilter}
-                    setPropertyFilter={setVacateRequestsPropertyFilter}
-                    sortOrder={vacateRequestSortOrder}
-                    setSortOrder={setVacateRequestSortOrder}
-                    propertyOptions={vacateRequestsProperties}
-                  />
-                  <div className="mt-8">
-                    <div className="overflow-x-auto">
-                      <div className="inline-block min-w-full align-middle">
-                        <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
-                          <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                            <thead className="bg-gray-50 dark:bg-gray-800">
-                              <tr>
-                                <th
-                                  scope="col"
-                                  className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-100 sm:pl-6"
-                                >
-                                  Tenant Name
-                                </th>
-                                <th
-                                  scope="col"
-                                  className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
-                                >
-                                  Property
-                                </th>
-                                <th
-                                  scope="col"
-                                  className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
-                                >
-                                  Request Date
-                                </th>
-                                <th
-                                  scope="col"
-                                  className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
-                                >
-                                  Move-Out Date
-                                </th>
-                                <th
-                                  scope="col"
-                                  className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
-                                >
-                                  Reason
-                                </th>
-                                <th
-                                  scope="col"
-                                  className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
-                                >
-                                  Status
-                                </th>
-                                <th
-                                  scope="col"
-                                  className="relative py-3.5 pl-3 pr-4 sm:pr-6"
-                                >
-                                  <span className="sr-only">Actions</span>
-                                </th>
-                              </tr>
-                            </thead>
-                            <tbody className="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-900">
-                              {currentVacateRequests.map((request) => (
-                                <tr
-                                  key={request.id}
-                                  className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800"
-                                  onClick={() => {
-                                    setSelectedVacateRequest(request);
-                                    setIsVacateRequestModalOpen(true);
-                                  }}
-                                >
-                                  <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 dark:text-gray-100 sm:pl-6">
-                                    {request.tenantName}
-                                  </td>
-                                  <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
-                                    {request.property}
-                                  </td>
-                                  <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
-                                    {request.requestDate}
-                                  </td>
-                                  <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
-                                    {request.moveOutDate}
-                                  </td>
-                                  <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
-                                    {request.reason}
-                                  </td>
-                                  <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
-                                    <span
-                                      className={`inline-flex rounded-full px-2 text-xs font-semibold leading-5 ${getStatusColor(
-                                        request.status
-                                      )}`}
-                                    >
-                                      {request.status}
-                                    </span>
-                                  </td>
-                                  <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
-                                    <div
-                                      className="flex items-center space-x-2"
-                                      onClick={(e) => e.stopPropagation()}
-                                    >
-                                      {request.status === "Pending" && (
-                                        <>
-                                          <button
-                                            onClick={(e) => {
-                                              e.stopPropagation();
-                                              handleVacateRequestAction(
-                                                request.id,
-                                                "approve"
-                                              );
-                                            }}
-                                            className="text-[#0d9488] hover:text-[#0f766e] dark:text-[#0d9488] dark:hover:text-[#0f766e]"
-                                          >
-                                            <svg
-                                              className="w-5 h-5"
-                                              fill="none"
-                                              stroke="currentColor"
-                                              viewBox="0 0 24 24"
-                                            >
-                                              <path
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                strokeWidth={2}
-                                                d="M5 13l4 4L19 7"
-                                              />
-                                            </svg>
-                                          </button>
-                                          <button
-                                            onClick={(e) => {
-                                              e.stopPropagation();
-                                              handleVacateRequestAction(
-                                                request.id,
-                                                "decline"
-                                              );
-                                            }}
-                                            className="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300"
-                                          >
-                                            <svg
-                                              className="w-5 h-5"
-                                              fill="none"
-                                              stroke="currentColor"
-                                              viewBox="0 0 24 24"
-                                            >
-                                              <path
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                strokeWidth={2}
-                                                d="M6 18L18 6M6 6l12 12"
-                                              />
-                                            </svg>
-                                          </button>
-                                        </>
-                                      )}
-                                      <button
-                                        onClick={(e) => {
-                                          e.stopPropagation();
-                                          setNoticeToDelete({
-                                            id: request.id,
-                                            type: "vacate",
-                                          });
-                                          setIsDeleteConfirmModalOpen(true);
-                                        }}
-                                        className="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300"
-                                      >
-                                        <svg
-                                          className="w-5 h-5"
-                                          fill="none"
-                                          stroke="currentColor"
-                                          viewBox="0 0 24 24"
-                                        >
-                                          <path
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            strokeWidth={2}
-                                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                                          />
-                                        </svg>
-                                      </button>
-                                    </div>
-                                  </td>
-                                </tr>
-                              ))}
-                            </tbody>
-                          </table>
+              {noticeTab === "vacate" && (
+                <>
+                  <div className="mb-8">
+                    <div className="sm:flex sm:items-center">
+                      <div className="sm:flex-auto">
+                        <div className="flex items-center space-x-2">
+                          <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                            Vacate Requests
+                          </h2>
                         </div>
                       </div>
                     </div>
-                    {/* Pagination for vacate requests */}
-                    <div className="mt-4 flex items-center justify-between border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-4 py-3">
-                      <div className="flex items-center justify-between w-full">
-                        <div className="flex items-center space-x-4">
-                          <span className="text-xs text-gray-700 dark:text-gray-200">
-                            Page {vacateRequestsPage} of{" "}
-                            {totalVacateRequestsPages}
-                          </span>
-                          <div className="flex items-center space-x-2">
-                            <span className="text-xs text-gray-700 dark:text-gray-200">
-                              Go to page:
+                    <VacateRequestFilters
+                      searchQuery={vacateRequestsSearch}
+                      setSearchQuery={setVacateRequestsSearch}
+                      statusFilter={vacateRequestsStatusFilter}
+                      setStatusFilter={setVacateRequestsStatusFilter}
+                      propertyFilter={vacateRequestsPropertyFilter}
+                      setPropertyFilter={setVacateRequestsPropertyFilter}
+                      sortOrder={vacateRequestSortOrder}
+                      setSortOrder={setVacateRequestSortOrder}
+                      propertyOptions={vacateRequestsProperties}
+                    />
+                    <div className="mt-8">
+                      <div className="overflow-x-auto">
+                        <div className="inline-block min-w-full align-middle">
+                          <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
+                            <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                              <thead className="bg-gray-50 dark:bg-gray-800">
+                                <tr>
+                                  <th
+                                    scope="col"
+                                    className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-100 sm:pl-6"
+                                  >
+                                    Tenant Name
+                                  </th>
+                                  <th
+                                    scope="col"
+                                    className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
+                                  >
+                                    Property
+                                  </th>
+                                  <th
+                                    scope="col"
+                                    className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
+                                  >
+                                    Unit
+                                  </th>
+                                  <th
+                                    scope="col"
+                                    className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
+                                  >
+                                    Request Date
+                                  </th>
+                                  <th
+                                    scope="col"
+                                    className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
+                                  >
+                                    Move-Out Date
+                                  </th>
+                                  <th
+                                    scope="col"
+                                    className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
+                                  >
+                                    Reason
+                                  </th>
+                                  <th
+                                    scope="col"
+                                    className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
+                                  >
+                                    Status
+                                  </th>
+                                  <th
+                                    scope="col"
+                                    className="relative py-3.5 pl-3 pr-4 sm:pr-6"
+                                  >
+                                    <span className="sr-only">Actions</span>
+                                  </th>
+                                </tr>
+                              </thead>
+                              <tbody className="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-900">
+                                {currentVacateRequests.map((request) => (
+                                  <tr
+                                    key={request.id}
+                                    className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800"
+                                    onClick={() => {
+                                      setSelectedVacateRequest(request);
+                                      setIsVacateRequestModalOpen(true);
+                                    }}
+                                  >
+                                    <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 dark:text-gray-100 sm:pl-6">
+                                      {request.tenantName}
+                                    </td>
+                                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
+                                      {request.property}
+                                    </td>
+                                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
+                                      {request.unit}
+                                    </td>
+                                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
+                                      {request.requestDate}
+                                    </td>
+                                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
+                                      {request.moveOutDate}
+                                    </td>
+                                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
+                                      {request.reason}
+                                    </td>
+                                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
+                                      <span
+                                        className={`inline-flex rounded-full px-2 text-xs font-semibold leading-5 ${getStatusColor(
+                                          request.status
+                                        )}`}
+                                      >
+                                        {request.status}
+                                      </span>
+                                    </td>
+                                    <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
+                                      <div
+                                        className="flex items-center space-x-2"
+                                        onClick={(e) => e.stopPropagation()}
+                                      >
+                                        {request.status === "Pending" && (
+                                          <>
+                                            <button
+                                              onClick={(e) => {
+                                                e.stopPropagation();
+                                                handleVacateRequestAction(
+                                                  request.id,
+                                                  "approve"
+                                                );
+                                              }}
+                                              className="text-[#0d9488] hover:text-[#0f766e] dark:text-[#0d9488] dark:hover:text-[#0f766e]"
+                                            >
+                                              <svg
+                                                className="w-5 h-5"
+                                                fill="none"
+                                                stroke="currentColor"
+                                                viewBox="0 0 24 24"
+                                              >
+                                                <path
+                                                  strokeLinecap="round"
+                                                  strokeLinejoin="round"
+                                                  strokeWidth={2}
+                                                  d="M5 13l4 4L19 7"
+                                                />
+                                              </svg>
+                                            </button>
+                                            <button
+                                              onClick={(e) => {
+                                                e.stopPropagation();
+                                                handleVacateRequestAction(
+                                                  request.id,
+                                                  "decline"
+                                                );
+                                              }}
+                                              className="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300"
+                                            >
+                                              <svg
+                                                className="w-5 h-5"
+                                                fill="none"
+                                                stroke="currentColor"
+                                                viewBox="0 0 24 24"
+                                              >
+                                                <path
+                                                  strokeLinecap="round"
+                                                  strokeLinejoin="round"
+                                                  strokeWidth={2}
+                                                  d="M6 18L18 6M6 6l12 12"
+                                                />
+                                              </svg>
+                                            </button>
+                                          </>
+                                        )}
+                                        <button
+                                          onClick={(e) => {
+                                            e.stopPropagation();
+                                            setNoticeToDelete({
+                                              id: request.id,
+                                              type: "vacate",
+                                            });
+                                            setIsDeleteConfirmModalOpen(true);
+                                          }}
+                                          className="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300"
+                                        >
+                                          <svg
+                                            className="w-5 h-5"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            viewBox="0 0 24 24"
+                                          >
+                                            <path
+                                              strokeLinecap="round"
+                                              strokeLinejoin="round"
+                                              strokeWidth={2}
+                                              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                                            />
+                                          </svg>
+                                        </button>
+                                      </div>
+                                    </td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                      </div>
+                      {/* Pagination for vacate requests */}
+                      <div className="mt-4 flex flex-col sm:flex-row items-center justify-between gap-3 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-4 py-3">
+                        <div className="flex flex-col sm:flex-row items-center justify-between w-full sm:w-auto gap-3">
+                          <div className="flex items-center space-x-2 sm:space-x-4">
+                            <span className="text-xs text-gray-700 dark:text-gray-200 whitespace-nowrap">
+                              Page {vacateRequestsPage} of{" "}
+                              {totalVacateRequestsPages}
                             </span>
-                            <input
-                              type="number"
-                              min="1"
-                              max={totalVacateRequestsPages}
-                              value={vacateRequestsPageInput}
-                              onChange={(e) => {
-                                const value = e.target.value;
-                                setVacateRequestsPageInput(value);
-                                const page = parseInt(value);
-                                if (
-                                  page >= 1 &&
-                                  page <= totalVacateRequestsPages
-                                ) {
-                                  handleVacateRequestsPageChange(page);
-                                }
-                              }}
-                              onBlur={() => {
-                                const page = parseInt(vacateRequestsPageInput);
-                                if (page < 1) {
-                                  setVacateRequestsPageInput("1");
-                                  handleVacateRequestsPageChange(1);
-                                } else if (page > totalVacateRequestsPages) {
-                                  setVacateRequestsPageInput(
-                                    totalVacateRequestsPages.toString()
+                            <div className="flex items-center space-x-2">
+                              <span className="text-xs text-gray-700 dark:text-gray-200 hidden xs:inline">
+                                Go to:
+                              </span>
+                              <input
+                                type="number"
+                                min="1"
+                                max={totalVacateRequestsPages}
+                                value={vacateRequestsPageInput}
+                                onChange={(e) => {
+                                  const value = e.target.value;
+                                  setVacateRequestsPageInput(value);
+                                  const page = parseInt(value);
+                                  if (
+                                    page >= 1 &&
+                                    page <= totalVacateRequestsPages
+                                  ) {
+                                    handleVacateRequestsPageChange(page);
+                                  }
+                                }}
+                                onBlur={() => {
+                                  const page = parseInt(
+                                    vacateRequestsPageInput
                                   );
-                                  handleVacateRequestsPageChange(
-                                    totalVacateRequestsPages
-                                  );
-                                }
-                              }}
-                              className="w-12 h-6 text-xs text-center rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-violet-500"
-                            />
+                                  if (page < 1) {
+                                    setVacateRequestsPageInput("1");
+                                    handleVacateRequestsPageChange(1);
+                                  } else if (page > totalVacateRequestsPages) {
+                                    setVacateRequestsPageInput(
+                                      totalVacateRequestsPages.toString()
+                                    );
+                                    handleVacateRequestsPageChange(
+                                      totalVacateRequestsPages
+                                    );
+                                  }
+                                }}
+                                className="w-12 h-6 text-xs text-center rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-violet-500"
+                              />
+                            </div>
                           </div>
                         </div>
                         <div className="flex items-center space-x-2">
@@ -1539,231 +1622,254 @@ const Notices = () => {
                       </div>
                     </div>
                   </div>
-                </div>
-              </>
-            )}
+                </>
+              )}
 
-            {noticeTab === "eviction" && (
-              <>
-                <div className="mb-8">
-                  <div className="flex justify-between items-center mb-4">
-                    <button
-                      onClick={() => setIsNewEvictionNoticeModalOpen(true)}
-                      className="btn bg-[#0d9488] hover:bg-[#0f766e] text-white px-4 py-2 rounded-md flex items-center transition-colors duration-200 z-10 relative"
-                    >
-                      <span>Send Eviction Notice</span>
-                    </button>
-                  </div>
-                  <EvictionNoticeFilters
-                    searchQuery={evictionNoticesSearch}
-                    setSearchQuery={setEvictionNoticesSearch}
-                    statusFilter={evictionNoticesStatusFilter}
-                    setStatusFilter={setEvictionNoticesStatusFilter}
-                    propertyFilter={evictionNoticesPropertyFilter}
-                    setPropertyFilter={(value) =>
-                      setEvictionNoticesPropertyFilter(value)
-                    }
-                    sortOrder={evictionNoticeSortOrder}
-                    setSortOrder={setEvictionNoticeSortOrder}
-                    propertyOptions={evictionNoticesProperties}
-                  />
-                  <div className="mt-8">
-                    <div className="overflow-x-auto">
-                      <div className="inline-block min-w-full align-middle">
-                        <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
-                          <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                            <thead className="bg-gray-50 dark:bg-gray-800">
-                              <tr>
-                                <th
-                                  scope="col"
-                                  className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-100 sm:pl-6"
-                                >
-                                  Tenant
-                                </th>
-                                <th
-                                  scope="col"
-                                  className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
-                                >
-                                  Property
-                                </th>
-                                <th
-                                  scope="col"
-                                  className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
-                                >
-                                  Unit
-                                </th>
-                                <th
-                                  scope="col"
-                                  className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
-                                >
-                                  Date Sent
-                                </th>
-                                <th
-                                  scope="col"
-                                  className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
-                                >
-                                  Reason
-                                </th>
-                                <th
-                                  scope="col"
-                                  className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
-                                >
-                                  Move-out Deadline
-                                </th>
-                                <th
-                                  scope="col"
-                                  className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
-                                >
-                                  Status
-                                </th>
-                                <th
-                                  scope="col"
-                                  className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
-                                >
-                                  Actions
-                                </th>
-                              </tr>
-                            </thead>
-                            <tbody className="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-900">
-                              {currentEvictionNotices.map((notice) => (
-                                <tr
-                                  key={notice.id}
-                                  className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800"
-                                  onClick={() => {
-                                    setSelectedEvictionNotice(notice);
-                                    setIsEvictionNoticeModalOpen(true);
-                                  }}
-                                >
-                                  <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 dark:text-gray-100 sm:pl-6">
-                                    {notice.tenantName}
-                                  </td>
-                                  <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
-                                    {notice.property}
-                                  </td>
-                                  <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
-                                    {notice.unit}
-                                  </td>
-                                  <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
-                                    {notice.dateSent}
-                                  </td>
-                                  <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
-                                    {notice.reason}
-                                  </td>
-                                  <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
-                                    {notice.moveOutDeadline}
-                                  </td>
-                                  <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
-                                    <span
-                                      className={`inline-flex rounded-full px-2 text-xs font-semibold leading-5 ${getStatusColor(
-                                        notice.status
-                                      )}`}
-                                    >
-                                      {notice.status}
-                                    </span>
-                                  </td>
-                                  <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
-                                    <div
-                                      className="flex items-center space-x-2"
-                                      onClick={(e) => e.stopPropagation()}
-                                    >
-                                      <button
-                                        onClick={(e) => {
-                                          e.stopPropagation();
-                                          setNoticeToEdit(notice);
-                                          setIsEditModalOpen(true);
-                                        }}
-                                        className="text-[#0d9488] hover:text-[#0f766e] dark:text-[#0d9488] dark:hover:text-[#0f766e]"
-                                      >
-                                        <svg
-                                          className="w-5 h-5"
-                                          fill="none"
-                                          stroke="currentColor"
-                                          viewBox="0 0 24 24"
-                                        >
-                                          <path
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            strokeWidth={2}
-                                            d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-                                          />
-                                        </svg>
-                                      </button>
-                                      <button
-                                        onClick={(e) => {
-                                          e.stopPropagation();
-                                          setNoticeToDelete({
-                                            id: notice.id,
-                                            type: "eviction",
-                                          });
-                                          setIsDeleteConfirmModalOpen(true);
-                                        }}
-                                        className="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300"
-                                      >
-                                        <svg
-                                          className="w-5 h-5"
-                                          fill="none"
-                                          stroke="currentColor"
-                                          viewBox="0 0 24 24"
-                                        >
-                                          <path
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            strokeWidth={2}
-                                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                                          />
-                                        </svg>
-                                      </button>
-                                    </div>
-                                  </td>
-                                </tr>
-                              ))}
-                            </tbody>
-                          </table>
+              {noticeTab === "eviction" && (
+                <>
+                  <div className="mb-8">
+                    <div className="sm:flex sm:items-center">
+                      <div className="sm:flex-auto">
+                        <div className="flex items-center space-x-2">
+                          <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                            Eviction Notices
+                          </h2>
                         </div>
                       </div>
+                      <div className="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
+                        <button
+                          onClick={() => setIsNewEvictionNoticeModalOpen(true)}
+                          className="inline-flex items-center justify-center px-3 py-2 border border-transparent rounded-md shadow-sm text-xs sm:text-sm font-medium text-white bg-[#0d9488] hover:bg-[#0f766e] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0d9488] w-full sm:w-auto"
+                        >
+                          <span>Send Eviction Notice</span>
+                        </button>
+                      </div>
                     </div>
-                    {/* Pagination for notices */}
-                    <div className="mt-4 flex items-center justify-between border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-4 py-3">
-                      <div className="flex items-center justify-between w-full">
-                        <div className="flex items-center space-x-4">
-                          <span className="text-xs text-gray-700 dark:text-gray-200">
-                            Page {currentPage} of {totalPages}
-                          </span>
-                          <div className="flex items-center space-x-2">
-                            <span className="text-xs text-gray-700 dark:text-gray-200">
-                              Go to page:
+                    <EvictionNoticeFilters
+                      searchQuery={evictionNoticesSearch}
+                      setSearchQuery={setEvictionNoticesSearch}
+                      statusFilter={evictionNoticesStatusFilter}
+                      setStatusFilter={setEvictionNoticesStatusFilter}
+                      propertyFilter={evictionNoticesPropertyFilter}
+                      setPropertyFilter={(value) =>
+                        setEvictionNoticesPropertyFilter(value)
+                      }
+                      sortOrder={evictionNoticeSortOrder}
+                      setSortOrder={setEvictionNoticeSortOrder}
+                      propertyOptions={evictionNoticesProperties}
+                    />
+                    <div className="mt-8">
+                      <div className="overflow-x-auto">
+                        <div className="inline-block min-w-full align-middle">
+                          <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
+                            <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                              <thead className="bg-gray-50 dark:bg-gray-800">
+                                <tr>
+                                  <th
+                                    scope="col"
+                                    className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-100 sm:pl-6"
+                                  >
+                                    Tenant
+                                  </th>
+                                  <th
+                                    scope="col"
+                                    className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
+                                  >
+                                    Property
+                                  </th>
+                                  <th
+                                    scope="col"
+                                    className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
+                                  >
+                                    Unit
+                                  </th>
+                                  <th
+                                    scope="col"
+                                    className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
+                                  >
+                                    Date Sent
+                                  </th>
+                                  <th
+                                    scope="col"
+                                    className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
+                                  >
+                                    Reason
+                                  </th>
+                                  <th
+                                    scope="col"
+                                    className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
+                                  >
+                                    Move-out Deadline
+                                  </th>
+                                  <th
+                                    scope="col"
+                                    className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
+                                  >
+                                    Status
+                                  </th>
+                                  <th
+                                    scope="col"
+                                    className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
+                                  >
+                                    Actions
+                                  </th>
+                                </tr>
+                              </thead>
+                              <tbody className="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-900">
+                                {currentEvictionNotices.map((notice) => (
+                                  <tr
+                                    key={notice.id}
+                                    className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800"
+                                    onClick={() => {
+                                      setSelectedEvictionNotice(notice);
+                                      setIsEvictionNoticeModalOpen(true);
+                                    }}
+                                  >
+                                    <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 dark:text-gray-100 sm:pl-6">
+                                      {notice.tenantName}
+                                    </td>
+                                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
+                                      {notice.property}
+                                    </td>
+                                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
+                                      {notice.unit}
+                                    </td>
+                                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
+                                      {notice.dateSent}
+                                    </td>
+                                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
+                                      {notice.reason}
+                                    </td>
+                                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
+                                      {notice.moveOutDeadline}
+                                    </td>
+                                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
+                                      <span
+                                        className={`inline-flex rounded-full px-2 text-xs font-semibold leading-5 ${getStatusColor(
+                                          notice.status
+                                        )}`}
+                                      >
+                                        {notice.status}
+                                      </span>
+                                    </td>
+                                    <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
+                                      <div
+                                        className="flex items-center space-x-2"
+                                        onClick={(e) => e.stopPropagation()}
+                                      >
+                                        <button
+                                          onClick={(e) => {
+                                            e.stopPropagation();
+                                            setNoticeToEdit(notice);
+                                            setIsEditModalOpen(true);
+                                          }}
+                                          className="text-[#0d9488] hover:text-[#0f766e] dark:text-[#0d9488] dark:hover:text-[#0f766e]"
+                                        >
+                                          <svg
+                                            className="w-5 h-5"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            viewBox="0 0 24 24"
+                                          >
+                                            <path
+                                              strokeLinecap="round"
+                                              strokeLinejoin="round"
+                                              strokeWidth={2}
+                                              d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                                            />
+                                          </svg>
+                                        </button>
+                                        <button
+                                          onClick={(e) => {
+                                            e.stopPropagation();
+                                            setNoticeToDelete({
+                                              id: notice.id,
+                                              type: "eviction",
+                                            });
+                                            setIsDeleteConfirmModalOpen(true);
+                                          }}
+                                          className="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300"
+                                        >
+                                          <svg
+                                            className="w-5 h-5"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            viewBox="0 0 24 24"
+                                          >
+                                            <path
+                                              strokeLinecap="round"
+                                              strokeLinejoin="round"
+                                              strokeWidth={2}
+                                              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                                            />
+                                          </svg>
+                                        </button>
+                                      </div>
+                                    </td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                      </div>
+                      {/* Pagination for eviction notices */}
+                      <div className="mt-4 flex flex-col sm:flex-row items-center justify-between gap-3 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-4 py-3">
+                        <div className="flex flex-col sm:flex-row items-center justify-between w-full sm:w-auto gap-3">
+                          <div className="flex items-center space-x-2 sm:space-x-4">
+                            <span className="text-xs text-gray-700 dark:text-gray-200 whitespace-nowrap">
+                              Page {evictionNoticesPage} of{" "}
+                              {totalEvictionNoticesPages}
                             </span>
-                            <input
-                              type="number"
-                              min="1"
-                              max={totalPages}
-                              value={pageInputValue}
-                              onChange={(e) => {
-                                const value = e.target.value;
-                                setPageInputValue(value);
-                                const page = parseInt(value);
-                                if (page >= 1 && page <= totalPages) {
-                                  handlePageChange(page);
-                                }
-                              }}
-                              onBlur={() => {
-                                const page = parseInt(pageInputValue);
-                                if (page < 1) {
-                                  setPageInputValue("1");
-                                  handlePageChange(1);
-                                } else if (page > totalPages) {
-                                  setPageInputValue(totalPages.toString());
-                                  handlePageChange(totalPages);
-                                }
-                              }}
-                              className="w-12 h-6 text-xs text-center rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-violet-500"
-                            />
+                            <div className="flex items-center space-x-2">
+                              <span className="text-xs text-gray-700 dark:text-gray-200 hidden xs:inline">
+                                Go to:
+                              </span>
+                              <input
+                                type="number"
+                                min="1"
+                                max={totalEvictionNoticesPages}
+                                value={evictionNoticesPageInput}
+                                onChange={(e) => {
+                                  const value = e.target.value;
+                                  setEvictionNoticesPageInput(value);
+                                  const page = parseInt(value);
+                                  if (
+                                    page >= 1 &&
+                                    page <= totalEvictionNoticesPages
+                                  ) {
+                                    handleEvictionNoticesPageChange(page);
+                                  }
+                                }}
+                                onBlur={() => {
+                                  const page = parseInt(
+                                    evictionNoticesPageInput
+                                  );
+                                  if (page < 1) {
+                                    setEvictionNoticesPageInput("1");
+                                    handleEvictionNoticesPageChange(1);
+                                  } else if (page > totalEvictionNoticesPages) {
+                                    setEvictionNoticesPageInput(
+                                      totalEvictionNoticesPages.toString()
+                                    );
+                                    handleEvictionNoticesPageChange(
+                                      totalEvictionNoticesPages
+                                    );
+                                  }
+                                }}
+                                className="w-12 h-6 text-xs text-center rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-violet-500"
+                              />
+                            </div>
                           </div>
                         </div>
                         <div className="flex items-center space-x-2">
                           <button
-                            onClick={() => handlePageChange(currentPage - 1)}
-                            disabled={currentPage === 1}
+                            onClick={() =>
+                              handleEvictionNoticesPageChange(
+                                evictionNoticesPage - 1
+                              )
+                            }
+                            disabled={evictionNoticesPage === 1}
                             className="inline-flex items-center p-1.5 text-xs font-medium rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
                           >
                             <svg
@@ -1781,8 +1887,14 @@ const Notices = () => {
                             </svg>
                           </button>
                           <button
-                            onClick={() => handlePageChange(currentPage + 1)}
-                            disabled={currentPage === totalPages}
+                            onClick={() =>
+                              handleEvictionNoticesPageChange(
+                                evictionNoticesPage + 1
+                              )
+                            }
+                            disabled={
+                              evictionNoticesPage === totalEvictionNoticesPages
+                            }
                             className="inline-flex items-center p-1.5 text-xs font-medium rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
                           >
                             <svg
@@ -1803,11 +1915,11 @@ const Notices = () => {
                       </div>
                     </div>
                   </div>
-                </div>
-              </>
-            )}
-          </div>
-        </main>
+                </>
+              )}
+            </div>
+          </main>
+        </div>
       </div>
 
       {/* Modals */}

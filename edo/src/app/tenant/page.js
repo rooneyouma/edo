@@ -301,7 +301,7 @@ const TenantDashboard = () => {
                 {/* Dashboard Title */}
 
                 {/* Welcome Banner */}
-                <div className="mb-6 flex items-center gap-4 w-full">
+                <div className="mb-6 flex flex-col sm:flex-row items-start sm:items-center gap-4 w-full">
                   {isClient && user && user.profile_image_url ? (
                     <img
                       src={user.profile_image_url}

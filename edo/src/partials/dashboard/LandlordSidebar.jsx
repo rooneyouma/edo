@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -18,12 +18,19 @@ import EdoLogo from "../../components/EdoLogo";
 
 function LandlordSidebar({ sidebarOpen, setSidebarOpen }) {
   const pathname = usePathname();
+  const [mounted, setMounted] = useState(false);
+
+  // Set mounted to true after component mounts to prevent hydration issues
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Close sidebar on click outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
         sidebarOpen &&
+        mounted &&
         !event.target.closest(".sidebar") &&
         !event.target.closest(".sidebar-toggle")
       ) {
@@ -31,25 +38,33 @@ function LandlordSidebar({ sidebarOpen, setSidebarOpen }) {
       }
     };
 
-    document.addEventListener("mousedown", handleClickOutside);
+    if (mounted) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
+      if (mounted) {
+        document.removeEventListener("mousedown", handleClickOutside);
+      }
     };
-  }, [sidebarOpen, setSidebarOpen]);
+  }, [sidebarOpen, setSidebarOpen, mounted]);
 
   // Close sidebar on escape key
   useEffect(() => {
     const handleEscape = (event) => {
-      if (event.key === "Escape" && sidebarOpen) {
+      if (event.key === "Escape" && sidebarOpen && mounted) {
         setSidebarOpen(false);
       }
     };
 
-    document.addEventListener("keydown", handleEscape);
+    if (mounted) {
+      document.addEventListener("keydown", handleEscape);
+    }
     return () => {
-      document.removeEventListener("keydown", handleEscape);
+      if (mounted) {
+        document.removeEventListener("keydown", handleEscape);
+      }
     };
-  }, [sidebarOpen, setSidebarOpen]);
+  }, [sidebarOpen, setSidebarOpen, mounted]);
 
   const navigation = [
     {
@@ -107,6 +122,51 @@ function LandlordSidebar({ sidebarOpen, setSidebarOpen }) {
       current: pathname === "/landlord/settings",
     },
   ];
+
+  // Don't render anything until mounted to prevent hydration issues
+  if (!mounted) {
+    return (
+      <aside
+        className={`sidebar fixed inset-y-0 left-0 z-50 w-64 bg-white dark:bg-slate-800 shadow-lg transform transition-transform duration-200 ease-in-out lg:translate-x-0 ${
+          sidebarOpen ? "translate-x-0" : "-translate-x-full"
+        } rounded-tr-2xl`}
+      >
+        <div className="h-full flex flex-col">
+          {/* Sidebar Header */}
+          <div className="h-16 flex items-center justify-between px-4">
+            <div className="flex-1 flex justify-center">
+              <div className="h-8 w-auto" /> {/* Placeholder for logo */}
+            </div>
+            <div className="lg:hidden">
+              <div className="w-6 h-6" /> {/* Placeholder for close button */}
+            </div>
+          </div>
+
+          {/* Sidebar Navigation */}
+          <nav className="flex-1 px-4 py-4 space-y-1">
+            {navigation.map((item) => (
+              <div
+                key={item.name}
+                className="flex items-center px-4 py-2 text-sm font-medium rounded-md"
+              >
+                <div className="w-5 h-5 mr-3" /> {/* Placeholder for icon */}
+                {item.name}
+              </div>
+            ))}
+          </nav>
+
+          {/* Sidebar Footer */}
+          <div className="p-4 mt-auto">
+            <div className="border-t border-slate-200 dark:border-slate-700 mb-4"></div>
+            <div className="flex items-center w-full px-4 py-2 text-sm font-medium rounded-md">
+              <div className="w-5 h-5 mr-3" /> {/* Placeholder for icon */}
+              Sign Out
+            </div>
+          </div>
+        </div>
+      </aside>
+    );
+  }
 
   return (
     <>

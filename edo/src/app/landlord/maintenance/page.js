@@ -235,7 +235,7 @@ const LandlordMaintenance = () => {
         {/* Content area */}
         <div className="relative flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
           <div className="lg:ml-64">
-            <div className="flex-1 flex flex-col items-center justify-center bg-slate-50 dark:bg-slate-900">
+            <div className="w-full">
               <h2 className="text-2xl font-bold mb-4">Sign in required</h2>
               <p className="mb-6">You must be signed in to access this page.</p>
               <button

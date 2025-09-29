@@ -192,7 +192,7 @@ const Properties = () => {
                 <div className="mt-4 sm:mt-0">
                   <button
                     onClick={() => setIsAddPropertyModalOpen(true)}
-                    className="btn bg-[#0d9488] hover:bg-[#0f766e] text-white px-4 py-2 rounded-md flex items-center transition-colors duration-200 z-10 relative"
+                    className="inline-flex items-center justify-center px-3 py-2 border border-transparent rounded-md shadow-sm text-xs sm:text-sm font-medium text-white bg-[#0d9488] hover:bg-[#0f766e] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0d9488] w-full sm:w-auto"
                   >
                     <svg
                       className="w-4 h-4 fill-current opacity-50 shrink-0"
