@@ -59,8 +59,6 @@ const Messages = () => {
   const [showNewMessageModal, setShowNewMessageModal] = useState(false);
   const [newMessage, setNewMessage] = useState({
     recipient: "",
-    property: "",
-    unit: "",
     message: "",
   });
   const [tenantSearchQuery, setTenantSearchQuery] = useState("");
@@ -98,6 +96,7 @@ const Messages = () => {
 
         // Fetch tenants
         const tenantData = await landlordTenantAPI.list();
+        console.log("Tenant data structure:", tenantData[0]); // Debug log
         setTenants(tenantData);
 
         // Process chat messages into the format expected by the UI
@@ -134,7 +133,7 @@ const Messages = () => {
             id: tenantId,
             tenant: `${tenant.first_name} ${tenant.last_name}`,
             tenantEmail: tenant.email,
-            property: tenant.unit?.property?.name || "N/A",
+            property: tenant.unit?.property?.name || tenant.property || "N/A",
             unit: tenant.unit?.unit_id || "N/A",
             messages: [],
             lastMessage: "",
@@ -321,6 +320,15 @@ const Messages = () => {
     currentSentPage * itemsPerPage
   );
 
+  // Extract available properties from messages for dynamic filtering
+  const availableProperties = [
+    ...new Set(
+      transformMessagesForTable(messages)
+        .map((message) => message.property)
+        .filter((property) => property && property !== "N/A")
+    ),
+  ].sort();
+
   // Handle message actions
   const handleEmailMessageClick = (message) => {
     setSelectedEmailMessage(message);
@@ -366,18 +374,26 @@ const Messages = () => {
   // Filter tenants based on search query
   useEffect(() => {
     if (tenantSearchQuery) {
-      const filtered = tenants.filter(
-        (tenant) =>
-          `${tenant.first_name} ${tenant.last_name}`
-            .toLowerCase()
-            .includes(tenantSearchQuery.toLowerCase()) ||
-          tenant.unit?.property?.name
-            ?.toLowerCase()
-            .includes(tenantSearchQuery.toLowerCase()) ||
-          tenant.unit?.unit_id
-            ?.toLowerCase()
-            .includes(tenantSearchQuery.toLowerCase())
-      );
+      const filtered = tenants
+        .filter(
+          (tenant) =>
+            `${tenant.first_name} ${tenant.last_name}`
+              .toLowerCase()
+              .includes(tenantSearchQuery.toLowerCase()) ||
+            tenant.email
+              ?.toLowerCase()
+              .includes(tenantSearchQuery.toLowerCase()) ||
+            tenant.unit?.unit_id
+              ?.toLowerCase()
+              .includes(tenantSearchQuery.toLowerCase())
+        )
+        .map((tenant) => ({
+          id: tenant.id,
+          name: `${tenant.first_name} ${tenant.last_name}`,
+          email: tenant.email,
+          property: tenant.unit?.property?.name || tenant.property || "N/A",
+          unit: tenant.unit?.unit_id || "N/A",
+        }));
       setFilteredTenants(filtered);
     } else {
       setFilteredTenants([]);
@@ -391,13 +407,21 @@ const Messages = () => {
     }
 
     try {
+      // Find the selected tenant to get property and unit info
+      const selectedTenant = tenants.find(
+        (t) => t.id === parseInt(newMessage.recipient)
+      );
+
       // Send message to backend
       const messageData = {
         recipient: parseInt(newMessage.recipient),
         message: newMessage.message,
-        // Add property and unit if available
-        property: newMessage.property ? parseInt(newMessage.property) : null,
-        unit: newMessage.unit ? parseInt(newMessage.unit) : null,
+        // Get property and unit from selected tenant
+        property:
+          selectedTenant?.unit?.property?.id ||
+          selectedTenant?.property_id ||
+          null,
+        unit: selectedTenant?.unit?.id || selectedTenant?.unit_id || null,
       };
 
       const response = await chatAPI.sendMessage(messageData);
@@ -436,7 +460,7 @@ const Messages = () => {
               id: tenant.id,
               tenant: `${tenant.first_name} ${tenant.last_name}`,
               tenantEmail: tenant.email,
-              property: tenant.unit?.property?.name || "N/A",
+              property: tenant.unit?.property?.name || tenant.property || "N/A",
               unit: tenant.unit?.unit_id || "N/A",
               messages: [newMessageObj],
               lastMessage: newMessageObj.content,
@@ -454,8 +478,6 @@ const Messages = () => {
       setShowNewMessageModal(false);
       setNewMessage({
         recipient: "",
-        property: "",
-        unit: "",
         message: "",
       });
       setTenantSearchQuery("");
@@ -477,19 +499,22 @@ const Messages = () => {
       const messageData = {
         recipient: selectedChat.id, // Tenant ID
         message: newChatMessage.trim(),
-        property: selectedChat.property
+        property: selectedChat.property && !isNaN(selectedChat.property)
           ? parseInt(selectedChat.property)
           : null,
-        unit: selectedChat.unit ? parseInt(selectedChat.unit) : null,
+        unit: selectedChat.unit && !isNaN(selectedChat.unit)
+          ? parseInt(selectedChat.unit)
+          : null,
       };
 
       const response = await chatAPI.sendMessage(messageData);
 
       const newMessage = {
-        id: response.id,
+        id: response.id || Date.now(), // Fallback ID if response doesn't provide one
         sender: "landlord", // Explicitly set sender as landlord for the landlord's view
         content: newChatMessage.trim(),
-        timestamp: response.timestamp,
+        timestamp: response.timestamp || new Date().toISOString(),
+        read: true,
       };
 
       let updatedSelectedChat = null;
@@ -564,13 +589,13 @@ const Messages = () => {
       // If chat doesn't exist, create a new one
       const newChat = {
         id: tenant.id,
-        tenant: `${tenant.first_name} ${tenant.last_name}`,
-        tenantEmail: tenant.email,
-        property: tenant.unit?.property?.name || "N/A",
-        unit: tenant.unit?.unit_id || "N/A",
+        tenant: tenant.name || `${tenant.first_name || ''} ${tenant.last_name || ''}`.trim() || "Unknown Tenant",
+        tenantEmail: tenant.email || "",
+        property: tenant.property || "Unknown Property",
+        unit: tenant.unit || "Unknown Unit",
         messages: [],
         lastMessage: "",
-        lastMessageTime: "",
+        lastMessageTime: new Date().toISOString(),
         unread: false,
         status: "read",
       };
@@ -617,7 +642,7 @@ const Messages = () => {
         <Header toggleSidebar={toggleSidebar} />
 
         <main className="grow">
-          <div className="px-4 sm:px-6 lg:px-8 py-4 sm:py-6 w-full">
+          <div className="px-4 sm:pl-6 sm:pr-12 lg:pl-8 lg:pr-16 py-4 sm:py-6 w-full">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-0">
               <div className="flex items-center space-x-2">
                 <svg
@@ -668,27 +693,31 @@ const Messages = () => {
             {viewMode === "email" ? (
               <>
                 {/* Horizontal Status Menu for Received/Sent */}
-                <div className="border-b border-slate-200 dark:border-slate-700 mb-4 sm:mb-6 overflow-x-auto sm:overflow-x-visible">
-                  <nav className="-mb-px flex space-x-4 sm:space-x-8 min-w-max">
+                <div className="border-b border-slate-200 dark:border-slate-700 mb-4 sm:mb-6 overflow-x-auto scrollbar-none">
+                  <nav className="-mb-px flex space-x-4 sm:space-x-6 md:space-x-8 min-w-max">
                     <button
                       onClick={() => setMessageTab("received")}
-                      className={`whitespace-nowrap py-3 sm:py-4 px-1 border-b-2 font-medium text-xs sm:text-sm ${
+                      className={`whitespace-nowrap py-3 sm:py-4 px-2 sm:px-1 border-b-2 font-medium text-sm sm:text-sm ${
                         messageTab === "received"
                           ? "border-teal-500 text-teal-600 dark:text-teal-400"
                           : "border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300"
                       }`}
                     >
-                      Received
+                      <span className="hidden sm:inline">
+                        Received Messages
+                      </span>
+                      <span className="sm:hidden">Received</span>
                     </button>
                     <button
                       onClick={() => setMessageTab("sent")}
-                      className={`whitespace-nowrap py-3 sm:py-4 px-1 border-b-2 font-medium text-xs sm:text-sm ${
+                      className={`whitespace-nowrap py-3 sm:py-4 px-2 sm:px-1 border-b-2 font-medium text-sm sm:text-sm ${
                         messageTab === "sent"
                           ? "border-teal-500 text-teal-600 dark:text-teal-400"
                           : "border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300"
                       }`}
                     >
-                      Sent
+                      <span className="hidden sm:inline">Sent Messages</span>
+                      <span className="sm:hidden">Sent</span>
                     </button>
                   </nav>
                 </div>
@@ -706,6 +735,7 @@ const Messages = () => {
                       setDateFilter={setDateFilter}
                       sortOrder={receivedSortOrder}
                       setSortOrder={setReceivedSortOrder}
+                      availableProperties={availableProperties}
                     />
                     <MessageTable
                       messages={currentReceivedMessages}
@@ -719,12 +749,12 @@ const Messages = () => {
                     {/* Received Messages Pagination */}
                     <div className="mt-4 flex flex-col sm:flex-row items-center justify-between gap-3 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-4 py-3">
                       <div className="flex items-center justify-between w-full sm:w-auto">
-                        <div className="flex items-center space-x-3 sm:space-x-4">
+                        <div className="flex items-center space-x-1 sm:space-x-2">
                           <span className="text-xs text-gray-700 dark:text-gray-200">
                             Page {currentReceivedPage} of {totalReceivedPages}
                           </span>
-                          <div className="flex items-center space-x-2">
-                            <span className="text-xs text-gray-700 dark:text-gray-200 hidden xs:inline">
+                          <div className="flex items-center space-x-1 sm:space-x-2">
+                            <span className="text-xs text-gray-700 dark:text-gray-200 hidden sm:inline">
                               Go to:
                             </span>
                             <input
@@ -752,18 +782,18 @@ const Messages = () => {
                                   handleReceivedPageChange(totalReceivedPages);
                                 }
                               }}
-                              className="w-12 h-6 text-xs text-center rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-[#0d9488]"
+                              className="w-12 h-7 text-xs text-center rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-[#0d9488]"
                             />
                           </div>
                         </div>
                       </div>
-                      <div className="flex items-center space-x-2">
+                      <div className="flex items-center space-x-1 sm:space-x-2">
                         <button
                           onClick={() =>
                             handleReceivedPageChange(currentReceivedPage - 1)
                           }
                           disabled={currentReceivedPage === 1}
-                          className="inline-flex items-center p-1.5 text-xs font-medium rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="inline-flex items-center p-2 sm:p-1.5 text-xs font-medium rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                           <svg
                             className="w-4 h-4"
@@ -784,7 +814,7 @@ const Messages = () => {
                             handleReceivedPageChange(currentReceivedPage + 1)
                           }
                           disabled={currentReceivedPage === totalReceivedPages}
-                          className="inline-flex items-center p-1.5 text-xs font-medium rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="inline-flex items-center p-2 sm:p-1.5 text-xs font-medium rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                           <svg
                             className="w-4 h-4"
@@ -814,6 +844,8 @@ const Messages = () => {
                       setDateFilter={setSentDateFilter}
                       sortOrder={sentSortOrder}
                       setSortOrder={setSentSortOrder}
+                      isSent={true}
+                      availableProperties={availableProperties}
                     />
                     <MessageTable
                       messages={currentSentMessages}
@@ -823,16 +855,17 @@ const Messages = () => {
                         setIsDeleteConfirmModalOpen(true);
                       }}
                       formatDate={formatDate}
+                      isSent={true}
                     />
                     {/* Sent Messages Pagination */}
                     <div className="mt-4 flex flex-col sm:flex-row items-center justify-between gap-3 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-4 py-3">
                       <div className="flex items-center justify-between w-full sm:w-auto">
-                        <div className="flex items-center space-x-3 sm:space-x-4">
+                        <div className="flex items-center space-x-1 sm:space-x-2">
                           <span className="text-xs text-gray-700 dark:text-gray-200">
                             Page {currentSentPage} of {totalSentPages}
                           </span>
-                          <div className="flex items-center space-x-2">
-                            <span className="text-xs text-gray-700 dark:text-gray-200 hidden xs:inline">
+                          <div className="flex items-center space-x-1 sm:space-x-2">
+                            <span className="text-xs text-gray-700 dark:text-gray-200 hidden sm:inline">
                               Go to:
                             </span>
                             <input
@@ -860,18 +893,18 @@ const Messages = () => {
                                   handleSentPageChange(totalSentPages);
                                 }
                               }}
-                              className="w-12 h-6 text-xs text-center rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-[#0d9488]"
+                              className="w-12 h-7 text-xs text-center rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-[#0d9488]"
                             />
                           </div>
                         </div>
                       </div>
-                      <div className="flex items-center space-x-2">
+                      <div className="flex items-center space-x-1 sm:space-x-2">
                         <button
                           onClick={() =>
                             handleSentPageChange(currentSentPage - 1)
                           }
                           disabled={currentSentPage === 1}
-                          className="inline-flex items-center p-1.5 text-xs font-medium rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="inline-flex items-center p-2 sm:p-1.5 text-xs font-medium rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                           <svg
                             className="w-4 h-4"
@@ -892,7 +925,7 @@ const Messages = () => {
                             handleSentPageChange(currentSentPage + 1)
                           }
                           disabled={currentSentPage === totalSentPages}
-                          className="inline-flex items-center p-1.5 text-xs font-medium rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="inline-flex items-center p-2 sm:p-1.5 text-xs font-medium rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                           <svg
                             className="w-4 h-4"
@@ -937,10 +970,10 @@ const Messages = () => {
                       selectedChat ? "block" : "hidden lg:block"
                     } min-h-0 h-full flex flex-col`}
                   >
-                    <div className="lg:hidden">
+                    <div className="lg:hidden border-b border-gray-200 dark:border-gray-700">
                       <button
                         onClick={() => setSelectedChat(null)}
-                        className="p-3 sm:p-4 flex items-center space-x-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100"
+                        className="w-full p-3 sm:p-4 flex items-center space-x-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
                       >
                         <svg
                           className="w-5 h-5"
@@ -955,7 +988,9 @@ const Messages = () => {
                             d="M15 19l-7-7 7-7"
                           />
                         </svg>
-                        <span className="text-sm">Back to Chats</span>
+                        <span className="text-sm font-medium">
+                          Back to Chats
+                        </span>
                       </button>
                     </div>
                     <ChatView
@@ -984,7 +1019,20 @@ const Messages = () => {
       <StartChatModal
         isOpen={showStartChatModal}
         onClose={() => setShowStartChatModal(false)}
-        tenants={tenants} // Pass actual tenants instead of mock data
+        tenants={tenants.filter(tenant => 
+          // Only include tenants with valid data
+          tenant.first_name && tenant.last_name
+        ).map((tenant) => ({
+          id: tenant.id,
+          name: `${tenant.first_name} ${tenant.last_name}`,
+          property: tenant.property_name || 
+                   tenant.property?.name || 
+                   (tenant.unit && tenant.unit.property && tenant.unit.property.name) || 
+                   tenant.property || 
+                   "Unknown Property",
+          unit: tenant.unit_id || (tenant.unit && tenant.unit.unit_id) || "Unit",
+          email: tenant.email || "",
+        }))}
         onSelectTenant={handleSelectTenant}
       />
 
@@ -994,8 +1042,6 @@ const Messages = () => {
           setShowNewMessageModal(false);
           setNewMessage({
             recipient: "",
-            property: "",
-            unit: "",
             message: "",
           });
           setTenantSearchQuery("");
@@ -1008,8 +1054,6 @@ const Messages = () => {
             setShowNewMessageModal(false);
             setNewMessage({
               recipient: "",
-              property: "",
-              unit: "",
               message: "",
             });
             setTenantSearchQuery("");

@@ -53,21 +53,22 @@ const ChatView = ({
       </div>
       {/* Messages */}
       <div
-        className="flex-1 min-h-0 overflow-y-auto p-3 sm:p-4 space-y-3 sm:space-y-4"
+        className="flex-1 min-h-0 overflow-y-auto p-3 sm:p-4 space-y-3 sm:space-y-4 chat-messages"
         style={{ maxHeight: "none" }}
       >
-        {selectedChat.messages.map((message) => {
-          // Determine if the message was sent by the current landlord
-          const isCurrentUserMessage =
-            message.sender === "landlord" || message.sender === "me";
+        {selectedChat.messages && selectedChat.messages.length > 0 ? (
+          selectedChat.messages.map((message) => {
+            // Determine if the message was sent by the current landlord
+            const isCurrentUserMessage =
+              message.sender === "landlord" || message.sender === "me";
 
-          return (
-            <div
-              key={message.id}
-              className={`flex ${
-                isCurrentUserMessage ? "justify-end" : "justify-start"
-              }`}
-            >
+            return (
+              <div
+                key={message.id || `msg-${Date.now()}-${Math.random()}`}
+                className={`flex ${
+                  isCurrentUserMessage ? "justify-end" : "justify-start"
+                }`}
+              >
               {!isCurrentUserMessage && (
                 <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center flex-shrink-0 mr-2 sm:mr-3">
                   <span className="text-xs font-medium text-gray-600 dark:text-gray-300">
@@ -96,7 +97,11 @@ const ChatView = ({
               )}
             </div>
           );
-        })}
+        })) : (
+          <div className="text-center py-8">
+            <p className="text-gray-500 dark:text-gray-400">No messages yet. Start the conversation!</p>
+          </div>
+        )}
       </div>
       {/* Message Input */}
       <div className="p-3 sm:p-4 border-t border-slate-200 dark:border-slate-700 flex-shrink-0">

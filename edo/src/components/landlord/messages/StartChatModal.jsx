@@ -1,132 +1,143 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { Search, X } from "lucide-react";
 
-const StartChatModal = ({
-  isOpen,
-  onClose,
-  tenants,
-  onSelectTenant,
-  onSearch,
-}) => {
+const StartChatModal = ({ isOpen, onClose, tenants = [], onSelectTenant }) => {
   const [searchQuery, setSearchQuery] = useState("");
+  const [filteredTenants, setFilteredTenants] = useState(tenants);
 
-  // Filter tenants based on search query
-  const filteredTenants = tenants.filter(
-    (tenant) =>
-      tenant.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      tenant.property.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      tenant.unit.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  useEffect(() => {
+    if (tenants && Array.isArray(tenants)) {
+      if (searchQuery.trim() === "") {
+        // If search query is empty, show all tenants
+        const sorted = [...tenants].sort((a, b) => {
+          const nameA = a.name || "";
+          const nameB = b.name || "";
+          return nameA.localeCompare(nameB);
+        });
+        setFilteredTenants(sorted);
+      } else {
+        // Filter tenants based on search query
+        const filtered = tenants.filter(
+          (tenant) => {
+            // Convert all values to lowercase strings for comparison
+            const query = searchQuery.toLowerCase();
+            const name = (tenant.name || "").toLowerCase();
+            const email = (tenant.email || "").toLowerCase();
+            const property = (tenant.property || "").toLowerCase();
+            const unit = (tenant.unit || "").toLowerCase();
+            
+            // Check if any field contains the search query
+            return name.includes(query) || 
+                   email.includes(query) || 
+                   property.includes(query) || 
+                   unit.includes(query);
+          }
+        );
+        
+        // Sort filtered results
+        const sorted = filtered.sort((a, b) => {
+          const nameA = a.name || "";
+          const nameB = b.name || "";
+          return nameA.localeCompare(nameB);
+        });
+        
+        setFilteredTenants(sorted);
+      }
+    }
+  }, [searchQuery, tenants]);
 
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto">
-      <div className="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
-        {/* Background overlay */}
-        <div className="fixed inset-0 transition-opacity" aria-hidden="true">
-          <div
-            className="absolute inset-0 bg-gray-500 opacity-75 dark:bg-gray-900 dark:opacity-90"
-            onClick={onClose}
-          ></div>
-        </div>
+      <div className="flex min-h-full items-center justify-center p-4 text-center">
+        {/* Backdrop */}
+        <div
+          className="fixed inset-0 bg-gray-900/30 dark:bg-gray-900/60 transition-opacity"
+          onClick={onClose}
+        />
 
-        {/* Modal container */}
-        <div className="inline-block align-bottom bg-white dark:bg-gray-800 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
-          <div className="px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-            <div className="sm:flex sm:items-start">
-              <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
-                <h3 className="text-lg leading-6 font-medium text-gray-900 dark:text-gray-100">
-                  Start New Chat
-                </h3>
-                <div className="mt-4">
-                  <div className="relative">
-                    <input
-                      type="text"
-                      placeholder="Search tenants..."
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      className="w-full pl-10 pr-4 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-                    />
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <svg
-                        className="w-5 h-5 text-gray-400"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                        />
-                      </svg>
-                    </div>
-                  </div>
+        {/* Modal */}
+        <div className="relative transform overflow-hidden rounded-lg bg-white dark:bg-gray-800 text-left shadow-xl transition-all w-full max-w-lg">
+          {/* Header */}
+          <div className="flex items-center justify-between border-b border-gray-200 dark:border-gray-700 px-6 py-4">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+              Start New Chat
+            </h3>
+            <button
+              onClick={onClose}
+              className="rounded-full p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-gray-700 dark:hover:text-gray-300"
+            >
+              <X className="h-5 w-5" />
+            </button>
+          </div>
 
-                  <div className="mt-4 max-h-60 overflow-y-auto">
-                    {filteredTenants.length > 0 ? (
-                      <ul className="divide-y divide-gray-200 dark:divide-gray-700">
-                        {filteredTenants.map((tenant) => (
-                          <li key={tenant.id} className="py-2">
-                            <button
-                              onClick={() => onSelectTenant(tenant)}
-                              className="w-full flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-left"
-                            >
-                              <div className="flex-shrink-0">
-                                <div className="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-600 flex items-center justify-center">
-                                  <span className="text-sm font-medium text-gray-600 dark:text-gray-300">
-                                    {tenant.name.charAt(0)}
-                                  </span>
-                                </div>
-                              </div>
-                              <div className="flex-1 min-w-0">
-                                <p className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
-                                  {tenant.name}
-                                </p>
-                                <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
-                                  {tenant.property} - {tenant.unit}
-                                </p>
-                              </div>
-                            </button>
-                          </li>
-                        ))}
-                      </ul>
-                    ) : (
-                      <div className="py-8 text-center">
-                        <svg
-                          className="mx-auto h-12 w-12 text-gray-400"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                          />
-                        </svg>
-                        <h3 className="mt-2 text-sm font-medium text-gray-900 dark:text-gray-100">
-                          No tenants found
-                        </h3>
-                        <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                          {searchQuery
-                            ? "No tenants match your search."
-                            : "You have no tenants to chat with."}
-                        </p>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
+          {/* Search */}
+          <div className="px-6 py-4">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Search tenants..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full rounded-lg border border-gray-300 bg-white py-2 pl-10 pr-4 text-sm text-gray-900 placeholder-gray-500 focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400"
+              />
             </div>
           </div>
-          <div className="bg-gray-50 dark:bg-gray-700 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+
+          {/* Tenant List */}
+          <div className="h-64 overflow-y-auto px-6 pb-4">
+            {filteredTenants.length > 0 ? (
+              <ul className="space-y-2">
+                {filteredTenants.map((tenant) => (
+                  <li key={tenant.id}>
+                    <button
+                      onClick={() => {
+                        onSelectTenant(tenant);
+                        onClose();
+                      }}
+                      className="flex w-full items-center space-x-3 rounded-lg p-3 hover:bg-gray-50 dark:hover:bg-gray-700"
+                    >
+                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-teal-100 text-teal-600 dark:bg-teal-900 dark:text-teal-400">
+                        <span className="text-sm font-medium">
+                          {tenant.name?.charAt(0)?.toUpperCase()}
+                        </span>
+                      </div>
+                      <div className="flex-1 text-left">
+                        <p className="text-sm font-medium text-gray-900 dark:text-white">
+                          {tenant.name}
+                        </p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">
+                          {tenant.property} - {tenant.unit}
+                        </p>
+                      </div>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <div className="py-8 text-center">
+                <div className="mx-auto h-12 w-12 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center">
+                  <Search className="h-6 w-6 text-gray-400" />
+                </div>
+                <h3 className="mt-2 text-sm font-medium text-gray-900 dark:text-white">
+                  No tenants found
+                </h3>
+                <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                  {searchQuery
+                    ? "No tenants match your search criteria."
+                    : "You don't have any tenants to chat with yet."}
+                </p>
+              </div>
+            )}
+          </div>
+
+          {/* Footer */}
+          <div className="flex justify-end border-t border-gray-200 dark:border-gray-700 px-6 py-4">
             <button
-              type="button"
               onClick={onClose}
-              className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 dark:border-gray-600 shadow-sm px-4 py-2 bg-white dark:bg-gray-600 text-base font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
+              className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600"
             >
               Cancel
             </button>

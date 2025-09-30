@@ -9,7 +9,6 @@ const NewMessageModal = ({
   tenantSearchQuery,
   setTenantSearchQuery,
   filteredTenants,
-  setFilteredTenants,
 }) => {
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = useRef(null);
@@ -45,9 +44,7 @@ const NewMessageModal = ({
   const handleTenantSelect = (tenant) => {
     setNewMessage({
       ...newMessage,
-      recipient: tenant.name,
-      property: tenant.property,
-      unit: tenant.unit || "",
+      recipient: tenant.id, // Store tenant ID
     });
     setTenantSearchQuery(tenant.name);
     setShowDropdown(false);
@@ -74,7 +71,7 @@ const NewMessageModal = ({
       style={{ pointerEvents: isOpen ? "auto" : "none" }}
     >
       <div
-        className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-2xl w-full max-h-[80vh] flex flex-col"
+        className="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-[95%] max-w-[95vw] sm:max-w-2xl max-h-[80vh] flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="p-6 flex-shrink-0">
@@ -125,7 +122,7 @@ const NewMessageModal = ({
                   value={tenantSearchQuery}
                   onChange={handleChange}
                   className="block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-violet-500 focus:ring-violet-500 sm:text-sm dark:bg-gray-700 dark:text-gray-100 py-2 px-3"
-                  placeholder="Search by tenant name, property, or unit..."
+                  placeholder="Search by name, email, or unit..."
                   required
                 />
                 {showDropdown &&
@@ -143,50 +140,19 @@ const NewMessageModal = ({
                             {tenant.name}
                           </div>
                           <div className="text-xs text-gray-500 dark:text-gray-400">
+                            {tenant.email}
+                          </div>
+                          <div className="text-xs text-gray-500 dark:text-gray-400">
                             {tenant.property}{" "}
-                            {tenant.unit && `- Unit ${tenant.unit}`}
+                            {tenant.unit &&
+                              tenant.unit !== "N/A" &&
+                              `- Unit ${tenant.unit}`}
                           </div>
                         </button>
                       ))}
                     </div>
                   )}
               </div>
-            </div>
-
-            <div>
-              <label
-                htmlFor="property"
-                className="block text-sm font-medium text-gray-700 dark:text-gray-300"
-              >
-                Property
-              </label>
-              <input
-                type="text"
-                id="property"
-                name="property"
-                value={newMessage.property}
-                onChange={handleChange}
-                className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-violet-500 focus:ring-violet-500 sm:text-sm dark:bg-gray-700 dark:text-gray-100 py-2 px-3"
-                readOnly
-              />
-            </div>
-
-            <div>
-              <label
-                htmlFor="unit"
-                className="block text-sm font-medium text-gray-700 dark:text-gray-300"
-              >
-                Unit
-              </label>
-              <input
-                type="text"
-                id="unit"
-                name="unit"
-                value={newMessage.unit}
-                onChange={handleChange}
-                className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-violet-500 focus:ring-violet-500 sm:text-sm dark:bg-gray-700 dark:text-gray-100 py-2 px-3"
-                readOnly
-              />
             </div>
 
             <div>
@@ -209,19 +175,19 @@ const NewMessageModal = ({
           </div>
         </form>
 
-        <div className="px-6 py-4 bg-gray-50 dark:bg-gray-800/50 border-t border-gray-200 dark:border-gray-700">
-          <div className="flex justify-end space-x-3">
+        <div className="px-4 sm:px-6 py-4 bg-gray-50 dark:bg-gray-800/50 border-t border-gray-200 dark:border-gray-700">
+          <div className="flex flex-col sm:flex-row justify-end gap-3 sm:gap-0 sm:space-x-3">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md"
+              className="w-full sm:w-auto px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md border border-gray-300 dark:border-gray-600"
             >
               Cancel
             </button>
             <button
               type="submit"
               form="new-message-form"
-              className="px-4 py-2 text-sm font-medium text-white bg-[#0d9488] hover:bg-[#0f766e] rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0d9488]"
+              className="w-full sm:w-auto px-4 py-2 text-sm font-medium text-white bg-[#0d9488] hover:bg-[#0f766e] rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0d9488]"
             >
               Send Message
             </button>
