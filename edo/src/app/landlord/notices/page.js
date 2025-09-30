@@ -212,7 +212,7 @@ const Notices = () => {
             <Header toggleSidebar={toggleSidebar} />
 
             {/* Main content area */}
-            <main className="flex-1 pl-4 pr-8 sm:pl-6 sm:pr-12 lg:pl-8 lg:pr-16 py-4 sm:py-6 lg:py-8 overflow-auto">
+            <main className="flex-1 px-4 sm:pl-6 sm:pr-12 lg:pl-8 lg:pr-16 py-4 sm:py-6 lg:py-8 overflow-auto">
               <div className="w-full">
                 {/* Page header */}
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
@@ -248,7 +248,7 @@ const Notices = () => {
             <Header toggleSidebar={toggleSidebar} />
 
             {/* Main content area */}
-            <main className="flex-1 pl-4 pr-8 sm:pl-6 sm:pr-12 lg:pl-8 lg:pr-16 py-4 sm:py-6 lg:py-8 overflow-auto">
+            <main className="flex-1 px-4 sm:pl-6 sm:pr-12 lg:pl-8 lg:pr-16 py-4 sm:py-6 lg:py-8 overflow-auto">
               <div className="w-full">
                 {/* Page header */}
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
@@ -575,7 +575,7 @@ const Notices = () => {
             aria-hidden="true"
           />
           <div
-            className="relative transform overflow-hidden rounded-lg bg-white dark:bg-gray-800 px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 w-[95%] sm:w-full sm:max-w-2xl"
+            className="relative transform overflow-hidden rounded-lg bg-white dark:bg-gray-800 px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 w-[95%] max-w-[95vw] sm:w-full sm:max-w-2xl"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="absolute right-0 top-0 pr-4 pt-4">
@@ -1002,7 +1002,7 @@ const Notices = () => {
           {/* Site header */}
           <Header toggleSidebar={toggleSidebar} />
 
-          <main className="flex-1 pl-4 pr-8 sm:pl-6 sm:pr-12 lg:pl-8 lg:pr-16 py-4 sm:py-6 lg:py-8">
+          <main className="flex-1 px-4 sm:pl-6 sm:pr-12 lg:pl-8 lg:pr-16 py-4 sm:py-6 lg:py-8">
             <div className="w-full">
               {/* Page header - Fixed responsiveness */}
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
@@ -1011,48 +1011,53 @@ const Notices = () => {
                 </h1>
               </div>
 
-              {/* Notices Section - Fixed tab navigation responsiveness */}
+              {/* Notices Section - Improved mobile tab navigation */}
               <div className="border-b border-slate-200 dark:border-slate-700 mb-6">
-                <nav className="-mb-px flex min-w-max space-x-6 md:space-x-8">
-                  <button
-                    onClick={() => setNoticeTab("general")}
-                    className={`whitespace-nowrap py-3 md:py-4 px-1 border-b-2 font-medium text-xs md:text-sm transition-colors duration-150 ${
-                      noticeTab === "general"
-                        ? "border-teal-500 text-teal-600 dark:text-teal-400"
-                        : "border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300"
-                    }`}
-                    style={{
-                      borderBottomWidth: noticeTab === "general" ? 3 : 2,
-                    }}
-                  >
-                    General Notices
-                  </button>
-                  <button
-                    onClick={() => setNoticeTab("vacate")}
-                    className={`whitespace-nowrap py-3 md:py-4 px-1 border-b-2 font-medium text-xs md:text-sm transition-colors duration-150 ${
-                      noticeTab === "vacate"
-                        ? "border-teal-500 text-teal-600 dark:text-teal-400"
-                        : "border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300"
-                    }`}
-                    style={{
-                      borderBottomWidth: noticeTab === "vacate" ? 3 : 2,
-                    }}
-                  >
-                    Vacate Requests
-                  </button>
-                  <button
-                    onClick={() => setNoticeTab("eviction")}
-                    className={`whitespace-nowrap py-3 md:py-4 px-1 border-b-2 font-medium text-xs md:text-sm transition-colors duration-150 ${
-                      noticeTab === "eviction"
-                        ? "border-teal-500 text-teal-600 dark:text-teal-400"
-                        : "border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300"
-                    }`}
-                    style={{
-                      borderBottomWidth: noticeTab === "eviction" ? 3 : 2,
-                    }}
-                  >
-                    Eviction Notices
-                  </button>
+                <nav className="-mb-px flex overflow-x-auto scrollbar-none">
+                  <div className="flex space-x-4 sm:space-x-6 md:space-x-8 min-w-max px-1">
+                    <button
+                      onClick={() => setNoticeTab("general")}
+                      className={`whitespace-nowrap py-3 md:py-4 px-2 sm:px-1 border-b-2 font-medium text-xs sm:text-sm transition-colors duration-150 ${
+                        noticeTab === "general"
+                          ? "border-teal-500 text-teal-600 dark:text-teal-400"
+                          : "border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300"
+                      }`}
+                      style={{
+                        borderBottomWidth: noticeTab === "general" ? 3 : 2,
+                      }}
+                    >
+                      <span className="hidden sm:inline">General Notices</span>
+                      <span className="sm:hidden">General</span>
+                    </button>
+                    <button
+                      onClick={() => setNoticeTab("vacate")}
+                      className={`whitespace-nowrap py-3 md:py-4 px-2 sm:px-1 border-b-2 font-medium text-xs sm:text-sm transition-colors duration-150 ${
+                        noticeTab === "vacate"
+                          ? "border-teal-500 text-teal-600 dark:text-teal-400"
+                          : "border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300"
+                      }`}
+                      style={{
+                        borderBottomWidth: noticeTab === "vacate" ? 3 : 2,
+                      }}
+                    >
+                      <span className="hidden sm:inline">Vacate Requests</span>
+                      <span className="sm:hidden">Vacate</span>
+                    </button>
+                    <button
+                      onClick={() => setNoticeTab("eviction")}
+                      className={`whitespace-nowrap py-3 md:py-4 px-2 sm:px-1 border-b-2 font-medium text-xs sm:text-sm transition-colors duration-150 ${
+                        noticeTab === "eviction"
+                          ? "border-teal-500 text-teal-600 dark:text-teal-400"
+                          : "border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300"
+                      }`}
+                      style={{
+                        borderBottomWidth: noticeTab === "eviction" ? 3 : 2,
+                      }}
+                    >
+                      <span className="hidden sm:inline">Eviction Notices</span>
+                      <span className="sm:hidden">Eviction</span>
+                    </button>
+                  </div>
                 </nav>
               </div>
 
@@ -1101,143 +1106,248 @@ const Notices = () => {
                       No notices found.
                     </div>
                   ) : (
-                    <div className="overflow-x-auto">
-                      <div className="inline-block min-w-full align-middle">
-                        <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
-                          <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                            <thead className="bg-gray-50 dark:bg-gray-800">
-                              <tr>
-                                <th
-                                  scope="col"
-                                  className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-100 sm:pl-6"
+                    <>
+                      {/* Mobile Card Layout */}
+                      <div className="block md:hidden space-y-4">
+                        {currentNotices.map((notice) => (
+                          <div
+                            key={notice.id}
+                            onClick={() => handleNoticeClick(notice)}
+                            className="bg-white dark:bg-gray-800 rounded-lg shadow border border-gray-200 dark:border-gray-700 p-4 cursor-pointer hover:shadow-md transition-shadow"
+                          >
+                            <div className="flex items-start justify-between mb-3">
+                              <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100 flex-1 pr-2">
+                                {notice.title}
+                              </h3>
+                              <div className="flex items-center space-x-2 flex-shrink-0">
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setNoticeToEdit(notice);
+                                    setIsEditModalOpen(true);
+                                  }}
+                                  className="text-[#0d9488] hover:text-[#0f766e] p-1"
                                 >
-                                  Title
-                                </th>
-                                <th
-                                  scope="col"
-                                  className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
+                                  <svg
+                                    className="w-4 h-4"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                  >
+                                    <path
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      strokeWidth={2}
+                                      d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                                    />
+                                  </svg>
+                                </button>
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setNoticeToDelete(notice);
+                                    setIsDeleteConfirmModalOpen(true);
+                                  }}
+                                  className="text-red-600 hover:text-red-900 p-1"
                                 >
-                                  Type
-                                </th>
-                                <th
-                                  scope="col"
-                                  className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
+                                  <svg
+                                    className="w-4 h-4"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                  >
+                                    <path
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      strokeWidth={2}
+                                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                                    />
+                                  </svg>
+                                </button>
+                              </div>
+                            </div>
+                            <div className="space-y-2">
+                              <div className="flex items-center justify-between">
+                                <span className="text-xs text-gray-500 dark:text-gray-400">
+                                  Type:
+                                </span>
+                                <span
+                                  className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getTypeColor(
+                                    notice.notice_type || notice.type
+                                  )}`}
                                 >
-                                  Date
-                                </th>
-                                <th
-                                  scope="col"
-                                  className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
-                                >
-                                  Audience
-                                </th>
-                                <th
-                                  scope="col"
-                                  className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
-                                >
-                                  Actions
-                                </th>
-                              </tr>
-                            </thead>
-                            <tbody className="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-900">
-                              {currentNotices.map((notice) => (
-                                <tr
-                                  key={notice.id}
-                                  onClick={() => handleNoticeClick(notice)}
-                                  className="hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer"
-                                >
-                                  <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 dark:text-gray-100 sm:pl-6">
-                                    {notice.title}
-                                  </td>
-                                  <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
-                                    <span
-                                      className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getTypeColor(
-                                        notice.notice_type || notice.type
-                                      )}`}
-                                    >
-                                      {notice.notice_type ||
-                                        notice.type ||
-                                        "General"}
-                                    </span>
-                                  </td>
-                                  <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
-                                    {notice.effective_date ||
-                                      notice.date_sent ||
-                                      notice.date ||
-                                      ""}
-                                  </td>
-                                  <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
-                                    {notice.tenant
-                                      ? (notice.tenant.first_name || "") +
-                                        " " +
-                                        (notice.tenant.last_name || "")
-                                      : "All"}
-                                  </td>
-                                  <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
-                                    <div className="flex items-center space-x-3">
-                                      <button
-                                        onClick={(e) => {
-                                          e.stopPropagation();
-                                          setNoticeToEdit(notice);
-                                          setIsEditModalOpen(true);
-                                        }}
-                                        className="text-[#0d9488] hover:text-[#0f766e] dark:text-[#0d9488] dark:hover:text-[#0f766e]"
-                                      >
-                                        <svg
-                                          className="w-5 h-5"
-                                          fill="none"
-                                          stroke="currentColor"
-                                          viewBox="0 0 24 24"
-                                        >
-                                          <path
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            strokeWidth={2}
-                                            d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-                                          />
-                                        </svg>
-                                      </button>
-                                      <button
-                                        onClick={(e) => {
-                                          e.stopPropagation();
-                                          setNoticeToDelete(notice);
-                                          setIsDeleteConfirmModalOpen(true);
-                                        }}
-                                        className="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300"
-                                      >
-                                        <svg
-                                          className="w-5 h-5"
-                                          fill="none"
-                                          stroke="currentColor"
-                                          viewBox="0 0 24 24"
-                                        >
-                                          <path
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            strokeWidth={2}
-                                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                                          />
-                                        </svg>
-                                      </button>
-                                    </div>
-                                  </td>
+                                  {notice.notice_type ||
+                                    notice.type ||
+                                    "General"}
+                                </span>
+                              </div>
+                              <div className="flex items-center justify-between">
+                                <span className="text-xs text-gray-500 dark:text-gray-400">
+                                  Date:
+                                </span>
+                                <span className="text-xs text-gray-900 dark:text-gray-100">
+                                  {notice.effective_date ||
+                                    notice.date_sent ||
+                                    notice.date ||
+                                    ""}
+                                </span>
+                              </div>
+                              <div className="flex items-center justify-between">
+                                <span className="text-xs text-gray-500 dark:text-gray-400">
+                                  Audience:
+                                </span>
+                                <span className="text-xs text-gray-900 dark:text-gray-100">
+                                  {notice.tenant
+                                    ? (notice.tenant.first_name || "") +
+                                      " " +
+                                      (notice.tenant.last_name || "")
+                                    : "All"}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* Desktop Table Layout */}
+                      <div className="hidden md:block overflow-x-auto">
+                        <div className="inline-block min-w-full align-middle">
+                          <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
+                            <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                              <thead className="bg-gray-50 dark:bg-gray-800">
+                                <tr>
+                                  <th
+                                    scope="col"
+                                    className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-100 sm:pl-6"
+                                  >
+                                    Title
+                                  </th>
+                                  <th
+                                    scope="col"
+                                    className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
+                                  >
+                                    Type
+                                  </th>
+                                  <th
+                                    scope="col"
+                                    className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
+                                  >
+                                    Date
+                                  </th>
+                                  <th
+                                    scope="col"
+                                    className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
+                                  >
+                                    Audience
+                                  </th>
+                                  <th
+                                    scope="col"
+                                    className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
+                                  >
+                                    Actions
+                                  </th>
                                 </tr>
-                              ))}
-                            </tbody>
-                          </table>
+                              </thead>
+                              <tbody className="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-900">
+                                {currentNotices.map((notice) => (
+                                  <tr
+                                    key={notice.id}
+                                    onClick={() => handleNoticeClick(notice)}
+                                    className="hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer"
+                                  >
+                                    <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 dark:text-gray-100 sm:pl-6">
+                                      {notice.title}
+                                    </td>
+                                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
+                                      <span
+                                        className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getTypeColor(
+                                          notice.notice_type || notice.type
+                                        )}`}
+                                      >
+                                        {notice.notice_type ||
+                                          notice.type ||
+                                          "General"}
+                                      </span>
+                                    </td>
+                                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
+                                      {notice.effective_date ||
+                                        notice.date_sent ||
+                                        notice.date ||
+                                        ""}
+                                    </td>
+                                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
+                                      {notice.tenant
+                                        ? (notice.tenant.first_name || "") +
+                                          " " +
+                                          (notice.tenant.last_name || "")
+                                        : "All"}
+                                    </td>
+                                    <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
+                                      <div className="flex items-center space-x-3">
+                                        <button
+                                          onClick={(e) => {
+                                            e.stopPropagation();
+                                            setNoticeToEdit(notice);
+                                            setIsEditModalOpen(true);
+                                          }}
+                                          className="text-[#0d9488] hover:text-[#0f766e] dark:text-[#0d9488] dark:hover:text-[#0f766e]"
+                                        >
+                                          <svg
+                                            className="w-5 h-5"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            viewBox="0 0 24 24"
+                                          >
+                                            <path
+                                              strokeLinecap="round"
+                                              strokeLinejoin="round"
+                                              strokeWidth={2}
+                                              d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                                            />
+                                          </svg>
+                                        </button>
+                                        <button
+                                          onClick={(e) => {
+                                            e.stopPropagation();
+                                            setNoticeToDelete(notice);
+                                            setIsDeleteConfirmModalOpen(true);
+                                          }}
+                                          className="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300"
+                                        >
+                                          <svg
+                                            className="w-5 h-5"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            viewBox="0 0 24 24"
+                                          >
+                                            <path
+                                              strokeLinecap="round"
+                                              strokeLinejoin="round"
+                                              strokeWidth={2}
+                                              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                                            />
+                                          </svg>
+                                        </button>
+                                      </div>
+                                    </td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          </div>
                         </div>
                       </div>
-                    </div>
+                    </>
                   )}
                   {/* Pagination for notices */}
-                  <div className="mt-4 flex flex-col sm:flex-row items-center justify-between gap-3 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-4 py-3">
+                  <div className="mt-4 flex flex-col sm:flex-row items-center justify-between gap-3 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-3 sm:px-4 py-3">
                     <div className="flex flex-col sm:flex-row items-center justify-between w-full sm:w-auto gap-3">
                       <div className="flex items-center space-x-2 sm:space-x-4">
                         <span className="text-xs text-gray-700 dark:text-gray-200 whitespace-nowrap">
                           Page {currentPage} of {totalPages}
                         </span>
                         <div className="flex items-center space-x-2">
-                          <span className="text-xs text-gray-700 dark:text-gray-200 hidden xs:inline">
+                          <span className="text-xs text-gray-700 dark:text-gray-200 hidden sm:inline">
                             Go to:
                           </span>
                           <input
@@ -1263,16 +1373,16 @@ const Notices = () => {
                                 handlePageChange(totalPages);
                               }
                             }}
-                            className="w-12 h-6 text-xs text-center rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-violet-500"
+                            className="w-12 h-7 text-xs text-center rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-violet-500"
                           />
                         </div>
                       </div>
                     </div>
-                    <div className="flex items-center space-x-2">
+                    <div className="flex items-center space-x-1 sm:space-x-2">
                       <button
                         onClick={() => handlePageChange(currentPage - 1)}
                         disabled={currentPage === 1}
-                        className="inline-flex items-center p-1.5 text-xs font-medium rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="inline-flex items-center p-2 sm:p-1.5 text-xs font-medium rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         <svg
                           className="w-4 h-4"
@@ -1291,7 +1401,7 @@ const Notices = () => {
                       <button
                         onClick={() => handlePageChange(currentPage + 1)}
                         disabled={currentPage === totalPages}
-                        className="inline-flex items-center p-1.5 text-xs font-medium rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="inline-flex items-center p-2 sm:p-1.5 text-xs font-medium rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         <svg
                           className="w-4 h-4"
@@ -1336,7 +1446,151 @@ const Notices = () => {
                       propertyOptions={vacateRequestsProperties}
                     />
                     <div className="mt-8">
-                      <div className="overflow-x-auto">
+                      {/* Mobile Card Layout for Vacate Requests */}
+                      <div className="block md:hidden space-y-4">
+                        {currentVacateRequests.map((request) => (
+                          <div
+                            key={request.id}
+                            onClick={() => {
+                              setSelectedVacateRequest(request);
+                              setIsVacateRequestModalOpen(true);
+                            }}
+                            className="bg-white dark:bg-gray-800 rounded-lg shadow border border-gray-200 dark:border-gray-700 p-4 cursor-pointer hover:shadow-md transition-shadow"
+                          >
+                            <div className="flex items-start justify-between mb-3">
+                              <div className="flex-1">
+                                <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                                  {request.tenantName}
+                                </h3>
+                                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                                  {request.property} - Unit {request.unit}
+                                </p>
+                              </div>
+                              <span
+                                className={`inline-flex rounded-full px-2 text-xs font-semibold leading-5 ${getStatusColor(
+                                  request.status
+                                )} flex-shrink-0`}
+                              >
+                                {request.status}
+                              </span>
+                            </div>
+                            <div className="space-y-2 mb-3">
+                              <div className="flex items-center justify-between">
+                                <span className="text-xs text-gray-500 dark:text-gray-400">
+                                  Request Date:
+                                </span>
+                                <span className="text-xs text-gray-900 dark:text-gray-100">
+                                  {request.requestDate}
+                                </span>
+                              </div>
+                              <div className="flex items-center justify-between">
+                                <span className="text-xs text-gray-500 dark:text-gray-400">
+                                  Move-Out Date:
+                                </span>
+                                <span className="text-xs text-gray-900 dark:text-gray-100">
+                                  {request.moveOutDate}
+                                </span>
+                              </div>
+                              <div className="flex items-start justify-between">
+                                <span className="text-xs text-gray-500 dark:text-gray-400">
+                                  Reason:
+                                </span>
+                                <span className="text-xs text-gray-900 dark:text-gray-100 text-right max-w-[60%]">
+                                  {request.reason}
+                                </span>
+                              </div>
+                            </div>
+                            <div
+                              className="flex items-center justify-end space-x-2 pt-2 border-t border-gray-200 dark:border-gray-700"
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              {request.status === "Pending" && (
+                                <>
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      handleVacateRequestAction(
+                                        request.id,
+                                        "approve"
+                                      );
+                                    }}
+                                    className="text-[#0d9488] hover:text-[#0f766e] p-1"
+                                    title="Approve"
+                                  >
+                                    <svg
+                                      className="w-4 h-4"
+                                      fill="none"
+                                      stroke="currentColor"
+                                      viewBox="0 0 24 24"
+                                    >
+                                      <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth={2}
+                                        d="M5 13l4 4L19 7"
+                                      />
+                                    </svg>
+                                  </button>
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      handleVacateRequestAction(
+                                        request.id,
+                                        "decline"
+                                      );
+                                    }}
+                                    className="text-red-600 hover:text-red-900 p-1"
+                                    title="Decline"
+                                  >
+                                    <svg
+                                      className="w-4 h-4"
+                                      fill="none"
+                                      stroke="currentColor"
+                                      viewBox="0 0 24 24"
+                                    >
+                                      <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth={2}
+                                        d="M6 18L18 6M6 6l12 12"
+                                      />
+                                    </svg>
+                                  </button>
+                                </>
+                              )}
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setNoticeToDelete({
+                                    id: request.id,
+                                    type: "vacate",
+                                  });
+                                  setIsDeleteConfirmModalOpen(true);
+                                }}
+                                className="text-red-600 hover:text-red-900 p-1"
+                                title="Delete"
+                              >
+                                <svg
+                                  className="w-4 h-4"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                                  />
+                                </svg>
+                              </button>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* Desktop Table Layout for Vacate Requests */}
+                      <div className="hidden md:block overflow-x-auto">
                         <div className="inline-block min-w-full align-middle">
                           <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
                             <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
@@ -1564,7 +1818,7 @@ const Notices = () => {
                                     );
                                   }
                                 }}
-                                className="w-12 h-6 text-xs text-center rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-violet-500"
+                                className="w-12 h-7 text-xs text-center rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-violet-500"
                               />
                             </div>
                           </div>
@@ -1577,7 +1831,7 @@ const Notices = () => {
                               )
                             }
                             disabled={vacateRequestsPage === 1}
-                            className="inline-flex items-center p-1.5 text-xs font-medium rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="inline-flex items-center p-2 sm:p-1.5 text-xs font-medium rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
                           >
                             <svg
                               className="w-4 h-4"
@@ -1602,7 +1856,7 @@ const Notices = () => {
                             disabled={
                               vacateRequestsPage === totalVacateRequestsPages
                             }
-                            className="inline-flex items-center p-1.5 text-xs font-medium rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="inline-flex items-center p-2 sm:p-1.5 text-xs font-medium rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
                           >
                             <svg
                               className="w-4 h-4"
@@ -1659,7 +1913,120 @@ const Notices = () => {
                       propertyOptions={evictionNoticesProperties}
                     />
                     <div className="mt-8">
-                      <div className="overflow-x-auto">
+                      {/* Mobile Card Layout for Eviction Notices */}
+                      <div className="block md:hidden space-y-4">
+                        {currentEvictionNotices.map((notice) => (
+                          <div
+                            key={notice.id}
+                            onClick={() => {
+                              setSelectedEvictionNotice(notice);
+                              setIsEvictionNoticeModalOpen(true);
+                            }}
+                            className="bg-white dark:bg-gray-800 rounded-lg shadow border border-gray-200 dark:border-gray-700 p-4 cursor-pointer hover:shadow-md transition-shadow"
+                          >
+                            <div className="flex items-start justify-between mb-3">
+                              <div className="flex-1">
+                                <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                                  {notice.tenantName}
+                                </h3>
+                                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                                  {notice.property} - Unit {notice.unit}
+                                </p>
+                              </div>
+                              <span
+                                className={`inline-flex rounded-full px-2 text-xs font-semibold leading-5 ${getStatusColor(
+                                  notice.status
+                                )} flex-shrink-0`}
+                              >
+                                {notice.status}
+                              </span>
+                            </div>
+                            <div className="space-y-2 mb-3">
+                              <div className="flex items-center justify-between">
+                                <span className="text-xs text-gray-500 dark:text-gray-400">
+                                  Date Sent:
+                                </span>
+                                <span className="text-xs text-gray-900 dark:text-gray-100">
+                                  {notice.dateSent}
+                                </span>
+                              </div>
+                              <div className="flex items-center justify-between">
+                                <span className="text-xs text-gray-500 dark:text-gray-400">
+                                  Move-out Deadline:
+                                </span>
+                                <span className="text-xs text-gray-900 dark:text-gray-100">
+                                  {notice.moveOutDeadline}
+                                </span>
+                              </div>
+                              <div className="flex items-start justify-between">
+                                <span className="text-xs text-gray-500 dark:text-gray-400">
+                                  Reason:
+                                </span>
+                                <span className="text-xs text-gray-900 dark:text-gray-100 text-right max-w-[60%]">
+                                  {notice.reason}
+                                </span>
+                              </div>
+                            </div>
+                            <div
+                              className="flex items-center justify-end space-x-2 pt-2 border-t border-gray-200 dark:border-gray-700"
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setNoticeToEdit(notice);
+                                  setIsEditModalOpen(true);
+                                }}
+                                className="text-[#0d9488] hover:text-[#0f766e] p-1"
+                                title="Edit"
+                              >
+                                <svg
+                                  className="w-4 h-4"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                                  />
+                                </svg>
+                              </button>
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setNoticeToDelete({
+                                    id: notice.id,
+                                    type: "eviction",
+                                  });
+                                  setIsDeleteConfirmModalOpen(true);
+                                }}
+                                className="text-red-600 hover:text-red-900 p-1"
+                                title="Delete"
+                              >
+                                <svg
+                                  className="w-4 h-4"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                                  />
+                                </svg>
+                              </button>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* Desktop Table Layout for Eviction Notices */}
+                      <div className="hidden md:block overflow-x-auto">
                         <div className="inline-block min-w-full align-middle">
                           <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
                             <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
@@ -1857,7 +2224,7 @@ const Notices = () => {
                                     );
                                   }
                                 }}
-                                className="w-12 h-6 text-xs text-center rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-violet-500"
+                                className="w-12 h-7 text-xs text-center rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-violet-500"
                               />
                             </div>
                           </div>
@@ -1870,7 +2237,7 @@ const Notices = () => {
                               )
                             }
                             disabled={evictionNoticesPage === 1}
-                            className="inline-flex items-center p-1.5 text-xs font-medium rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="inline-flex items-center p-2 sm:p-1.5 text-xs font-medium rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
                           >
                             <svg
                               className="w-4 h-4"
@@ -1895,7 +2262,7 @@ const Notices = () => {
                             disabled={
                               evictionNoticesPage === totalEvictionNoticesPages
                             }
-                            className="inline-flex items-center p-1.5 text-xs font-medium rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="inline-flex items-center p-2 sm:p-1.5 text-xs font-medium rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
                           >
                             <svg
                               className="w-4 h-4"
