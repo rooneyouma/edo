@@ -7,7 +7,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import authenticate
 from .models import User, LandlordProperty, Role, Unit, Tenant, Payment, Notice, LandlordMaintenance, MaintenanceMessage, ChatMessage, TenantInvitation
 from .serializers import UserSerializer, UserRegistrationSerializer, UserLoginSerializer, LandlordPropertySerializer, UnitSerializer, TenantSerializer, PaymentSerializer, NoticeSerializer, LandlordMaintenanceSerializer, MaintenanceMessageSerializer, ChatMessageSerializer, TenantInvitationSerializer, LandlordListSerializer, LandlordDetailSerializer
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes, action
 from django.db import models
 from django.utils import timezone
 from django.core.mail import send_mail
@@ -537,6 +537,47 @@ class ChatMessageViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         # Set the sender to the current user
         serializer.save(sender=self.request.user)
+        
+    def destroy(self, request, *args, **kwargs):
+        # Get the message instance
+        instance = self.get_object()
+        
+        # Check if the user is the sender of the message
+        if instance.sender != request.user:
+            return Response(
+                {"detail": "You can only delete messages you have sent."},
+                status=status.HTTP_403_FORBIDDEN
+            )
+            
+        # Delete the message
+        self.perform_destroy(instance)
+        return Response(status=status.HTTP_204_NO_CONTENT)
+        
+    @action(detail=False, methods=['post'])
+    def delete_multiple(self, request):
+        # Get message IDs from request data
+        message_ids = request.data.get('message_ids', [])
+        
+        if not message_ids:
+            return Response(
+                {"detail": "No message IDs provided."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+            
+        # Get messages that belong to the user
+        messages = ChatMessage.objects.filter(
+            id__in=message_ids,
+            sender=request.user
+        )
+        
+        # Delete the messages
+        deleted_count = messages.count()
+        messages.delete()
+        
+        return Response(
+            {"detail": f"Successfully deleted {deleted_count} messages."},
+            status=status.HTTP_200_OK
+        )
 
 class LandlordListView(ListAPIView):
     """

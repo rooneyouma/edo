@@ -503,6 +503,19 @@ export const chatAPI = {
       body: JSON.stringify(messageData),
     });
   },
+  // Delete a single message
+  deleteMessage: async (messageId) => {
+    return await apiRequest(`/chat-messages/${messageId}/`, {
+      method: "DELETE",
+    });
+  },
+  // Delete multiple messages
+  deleteMultipleMessages: async (messageIds) => {
+    return await apiRequest("/chat-messages/delete_multiple/", {
+      method: "POST",
+      body: JSON.stringify({ message_ids: messageIds }),
+    });
+  },
 };
 
 export { getToken };

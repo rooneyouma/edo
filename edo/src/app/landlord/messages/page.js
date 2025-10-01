@@ -17,6 +17,7 @@ import {
   isAuthenticated,
   chatAPI,
   landlordTenantAPI,
+  getStoredUser,
 } from "../../../utils/api";
 
 const Messages = () => {
@@ -28,9 +29,21 @@ const Messages = () => {
   const [selectedChat, setSelectedChat] = useState(null);
   const [newChatMessage, setNewChatMessage] = useState("");
   const [messages, setMessages] = useState([]); // Start with empty array instead of mock data
+  const [sentMessages, setSentMessages] = useState([]); // For sent messages in email view
+  const [receivedMessages, setReceivedMessages] = useState([]); // For received messages in email view
   const [tenants, setTenants] = useState([]); // Store actual tenants
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  
+  // Message selection and deletion states
+  const [selectedMessages, setSelectedMessages] = useState([]);
+  const [isSelectionMode, setIsSelectionMode] = useState(false);
+  const [longPressTimer, setLongPressTimer] = useState(null);
+  const [isMobile, setIsMobile] = useState(false);
+  
+  // Table message selection and deletion states
+  const [selectedTableMessages, setSelectedTableMessages] = useState([]);
+  const [isTableSelectionMode, setIsTableSelectionMode] = useState(false);
 
   // Email view state
   const [receivedSearchQuery, setReceivedSearchQuery] = useState("");
@@ -75,6 +88,11 @@ const Messages = () => {
   // Initialize client-side state
   useEffect(() => {
     setIsClient(true);
+    // Check if device is mobile
+    setIsMobile(window.innerWidth <= 768);
+    const handleResize = () => setIsMobile(window.innerWidth <= 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   // Check authentication after client-side rendering
@@ -346,28 +364,118 @@ const Messages = () => {
     }
   };
 
-  const handleDeleteMessage = () => {
+  const handleDeleteMessage = async () => {
     if (messageToDelete) {
       const [chatId, messageId] = messageToDelete.id.split("-");
+      
+      try {
+        // Delete message from the database
+        await chatAPI.deleteMessage(parseInt(messageId));
+        
+        // Update local state
+        setMessages((prevMessages) =>
+          prevMessages.map((chat) => {
+            if (chat.id === parseInt(chatId)) {
+              const filteredMessages = chat.messages.filter(
+                (msg) => msg.id !== parseInt(messageId)
+              );
+              return {
+                ...chat,
+                messages: filteredMessages,
+                lastMessage:
+                  filteredMessages[filteredMessages.length - 1]?.content || "",
+                lastMessageTime:
+                  filteredMessages[filteredMessages.length - 1]?.timestamp || "",
+              };
+            }
+            return chat;
+          })
+        );
+        
+        // Also update sent and received messages tables
+        if (viewMode === "sent") {
+          setSentMessages((prev) => prev.filter(msg => msg.id !== parseInt(messageId)));
+        } else if (viewMode === "received") {
+          setReceivedMessages((prev) => prev.filter(msg => msg.id !== parseInt(messageId)));
+        }
+        
+        setIsDeleteConfirmModalOpen(false);
+        setMessageToDelete(null);
+      } catch (error) {
+        console.error("Error deleting message:", error);
+      }
+    }
+  };
+  
+  // Table message selection and deletion functions
+  const toggleTableMessageSelection = (messageId) => {
+    setSelectedTableMessages((prevSelected) => {
+      if (prevSelected.includes(messageId)) {
+        return prevSelected.filter((id) => id !== messageId);
+      } else {
+        return [...prevSelected, messageId];
+      }
+    });
+  };
+  
+  const enterTableSelectionMode = (messageId) => {
+    setIsTableSelectionMode(true);
+    setSelectedTableMessages([messageId]);
+  };
+  
+  const exitTableSelectionMode = () => {
+    setIsTableSelectionMode(false);
+    setSelectedTableMessages([]);
+  };
+  
+  const deleteSelectedTableMessages = async () => {
+    if (selectedTableMessages.length === 0) return;
+    
+    try {
+      if (selectedTableMessages.length === 1) {
+        // Delete single message
+        await chatAPI.deleteMessage(selectedTableMessages[0]);
+      } else {
+        // Delete multiple messages
+        await chatAPI.deleteMultipleMessages(selectedTableMessages);
+      }
+      
+      // Update local state based on current view
+      if (viewMode === "sent") {
+        setSentMessages((prev) => 
+          prev.filter(msg => !selectedTableMessages.includes(msg.id))
+        );
+      } else if (viewMode === "received") {
+        setReceivedMessages((prev) => 
+          prev.filter(msg => !selectedTableMessages.includes(msg.id))
+        );
+      }
+      
+      // Also update chat messages if applicable
       setMessages((prevMessages) =>
         prevMessages.map((chat) => {
-          if (chat.id === parseInt(chatId)) {
+          const filteredMessages = chat.messages.filter(
+            (msg) => !selectedTableMessages.includes(msg.id)
+          );
+          
+          if (filteredMessages.length !== chat.messages.length) {
             return {
               ...chat,
-              messages: chat.messages.filter(
-                (msg) => msg.id !== parseInt(messageId)
-              ),
+              messages: filteredMessages,
               lastMessage:
-                chat.messages[chat.messages.length - 2]?.content || "",
+                filteredMessages[filteredMessages.length - 1]?.content || "",
               lastMessageTime:
-                chat.messages[chat.messages.length - 2]?.timestamp || "",
+                filteredMessages[filteredMessages.length - 1]?.timestamp || "",
             };
           }
           return chat;
         })
       );
-      setIsDeleteConfirmModalOpen(false);
-      setMessageToDelete(null);
+      
+      // Exit selection mode
+      exitTableSelectionMode();
+    } catch (error) {
+      console.error("Error deleting messages:", error);
     }
   };
 
@@ -435,6 +543,7 @@ const Messages = () => {
         status: "sent",
       };
 
+      // Update chat conversations
       setMessages((prevMessages) => {
         let chatExists = false;
         const updatedMessages = prevMessages.map((chat) => {
@@ -475,6 +584,21 @@ const Messages = () => {
         return updatedMessages;
       });
 
+      // Update sent messages table
+      const sentMessageObj = {
+        id: response.id,
+        sender: "landlord",
+        tenant: selectedTenant ? `${selectedTenant.first_name} ${selectedTenant.last_name}` : "Unknown",
+        property: selectedTenant?.unit?.property?.name || selectedTenant?.property || "N/A",
+        unit: selectedTenant?.unit?.unit_id || selectedTenant?.unit_id || "N/A",
+        content: newMessage.message,
+        timestamp: response.timestamp,
+        status: "sent",
+      };
+      
+      // Add to sent messages list
+      setSentMessages((prev) => [sentMessageObj, ...prev]);
+
       setShowNewMessageModal(false);
       setNewMessage({
         recipient: "",
@@ -498,6 +622,7 @@ const Messages = () => {
       // Send message to backend
       const messageData = {
         recipient: selectedChat.id, // Tenant ID
+        recipient_email: selectedChat.email, // Add recipient email for proper routing
         message: newChatMessage.trim(),
         property: selectedChat.property && !isNaN(selectedChat.property)
           ? parseInt(selectedChat.property)
@@ -507,16 +632,22 @@ const Messages = () => {
           : null,
       };
 
+      console.log("Sending message with data:", messageData); // Debug log
       const response = await chatAPI.sendMessage(messageData);
 
       const newMessage = {
         id: response.id || Date.now(), // Fallback ID if response doesn't provide one
         sender: "landlord", // Explicitly set sender as landlord for the landlord's view
+        sender_id: getStoredUser()?.id, // Add sender ID for proper routing
+        sender_email: getStoredUser()?.email, // Add sender email for proper routing
+        recipient_id: selectedChat.id, // Add recipient ID
+        recipient_email: selectedChat.email, // Add recipient email
         content: newChatMessage.trim(),
         timestamp: response.timestamp || new Date().toISOString(),
         read: true,
       };
 
+      // Update chat conversations
       let updatedSelectedChat = null;
       const updatedMessages = messages.map((chat) => {
         if (chat.id === selectedChat.id) {
@@ -532,6 +663,21 @@ const Messages = () => {
         }
         return chat;
       });
+      
+      // Update sent messages table
+      const sentMessageObj = {
+        id: response.id || Date.now(),
+        sender: "landlord",
+        tenant: selectedChat.tenant,
+        property: selectedChat.property,
+        unit: selectedChat.unit,
+        content: newChatMessage.trim(),
+        timestamp: response.timestamp || new Date().toISOString(),
+        status: "sent",
+      };
+      
+      // Add to sent messages list
+      setSentMessages((prev) => [sentMessageObj, ...prev]);
 
       setMessages(updatedMessages);
       setSelectedChat(updatedSelectedChat);
@@ -575,6 +721,81 @@ const Messages = () => {
   // Add function to handle starting a new chat
   const handleStartNewChat = () => {
     setShowStartChatModal(true);
+  };
+  
+  // Message selection and deletion functions
+  const toggleMessageSelection = (messageId) => {
+    setSelectedMessages(prev => {
+      if (prev.includes(messageId)) {
+        return prev.filter(id => id !== messageId);
+      } else {
+        return [...prev, messageId];
+      }
+    });
+  };
+  
+  const handleLongPress = (messageId) => {
+    if (!isSelectionMode) {
+      setIsSelectionMode(true);
+      setSelectedMessages([messageId]);
+    } else {
+      toggleMessageSelection(messageId);
+    }
+  };
+  
+  const startLongPress = (messageId) => {
+    if (isMobile) {
+      const timer = setTimeout(() => {
+        handleLongPress(messageId);
+      }, 500); // 500ms for long press
+      setLongPressTimer(timer);
+    }
+  };
+  
+  const cancelLongPress = () => {
+    if (longPressTimer) {
+      clearTimeout(longPressTimer);
+      setLongPressTimer(null);
+    }
+  };
+  
+  const exitSelectionMode = () => {
+    setIsSelectionMode(false);
+    setSelectedMessages([]);
+  };
+  
+  const deleteSelectedMessages = async () => {
+    if (selectedMessages.length === 0) return;
+    
+    try {
+      if (selectedMessages.length === 1) {
+        await chatAPI.deleteMessage(selectedMessages[0]);
+      } else {
+        await chatAPI.deleteMultipleMessages(selectedMessages);
+      }
+      
+      // Update UI by removing deleted messages
+      setMessages(prevMessages => {
+        return prevMessages.map(chat => {
+          if (chat.id === selectedChat?.id) {
+            return {
+              ...chat,
+              messages: chat.messages.filter(msg => !selectedMessages.includes(msg.id))
+            };
+          }
+          return chat;
+        });
+      });
+      
+      // Also remove from sent messages table if applicable
+      setSentMessages(prev => prev.filter(msg => !selectedMessages.includes(msg.id)));
+      
+      // Exit selection mode
+      exitSelectionMode();
+    } catch (error) {
+      console.error("Error deleting messages:", error);
+      alert("Failed to delete messages. Please try again.");
+    }
   };
 
   // Add function to handle selecting a tenant for a new chat
@@ -745,6 +966,12 @@ const Messages = () => {
                         setIsDeleteConfirmModalOpen(true);
                       }}
                       formatDate={formatDate}
+                      isSelectionMode={isTableSelectionMode}
+                      selectedMessages={selectedTableMessages}
+                      toggleMessageSelection={toggleTableMessageSelection}
+                      enterSelectionMode={enterTableSelectionMode}
+                      exitSelectionMode={exitTableSelectionMode}
+                      deleteSelectedMessages={deleteSelectedTableMessages}
                     />
                     {/* Received Messages Pagination */}
                     <div className="mt-4 flex flex-col sm:flex-row items-center justify-between gap-3 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-4 py-3">
@@ -856,6 +1083,12 @@ const Messages = () => {
                       }}
                       formatDate={formatDate}
                       isSent={true}
+                      isSelectionMode={isTableSelectionMode}
+                      selectedMessages={selectedTableMessages}
+                      toggleMessageSelection={toggleTableMessageSelection}
+                      enterSelectionMode={enterTableSelectionMode}
+                      exitSelectionMode={exitTableSelectionMode}
+                      deleteSelectedMessages={deleteSelectedTableMessages}
                     />
                     {/* Sent Messages Pagination */}
                     <div className="mt-4 flex flex-col sm:flex-row items-center justify-between gap-3 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-4 py-3">
@@ -1000,6 +1233,14 @@ const Messages = () => {
                       setNewChatMessage={setNewChatMessage}
                       handleMessageSubmit={handleMessageSubmit}
                       formatDate={formatDate}
+                      isSelectionMode={isSelectionMode}
+                      selectedMessages={selectedMessages}
+                      toggleMessageSelection={toggleMessageSelection}
+                      startLongPress={startLongPress}
+                      cancelLongPress={cancelLongPress}
+                      deleteSelectedMessages={deleteSelectedMessages}
+                      exitSelectionMode={exitSelectionMode}
+                      isMobile={isMobile}
                     />
                   </div>
                 </div>

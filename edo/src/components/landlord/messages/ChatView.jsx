@@ -7,6 +7,14 @@ const ChatView = ({
   setNewChatMessage,
   handleMessageSubmit,
   formatDate,
+  isSelectionMode,
+  selectedMessages,
+  toggleMessageSelection,
+  startLongPress,
+  cancelLongPress,
+  deleteSelectedMessages,
+  exitSelectionMode,
+  isMobile,
 }) => {
   if (!selectedChat) {
     return (
@@ -30,26 +38,52 @@ const ChatView = ({
     >
       {/* Chat Header */}
       <div className="p-3 sm:p-4 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between flex-shrink-0">
-        <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center">
-            <span className="text-sm font-medium text-gray-600 dark:text-gray-300">
-              {selectedChat.tenant.charAt(0)}
+        {isSelectionMode ? (
+          <div className="flex items-center space-x-3">
+            <button 
+              onClick={exitSelectionMode}
+              className="text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clipRule="evenodd" />
+              </svg>
+            </button>
+            <span className="text-sm font-medium text-slate-900 dark:text-slate-100">
+              {selectedMessages.length} selected
             </span>
           </div>
-          <div className="min-w-0 flex-1">
-            <h3 className="text-sm font-medium text-slate-900 dark:text-slate-100 truncate">
-              {selectedChat.tenant}
-            </h3>
-            {/* Show tenant email instead of property - unit */}
-            <p className="text-xs text-slate-500 dark:text-slate-400 truncate">
-              {selectedChat.tenantEmail ||
-                `${selectedChat.property} - ${selectedChat.unit}`}
-            </p>
+        ) : (
+          <div className="flex items-center space-x-3">
+            <div className="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center">
+              <span className="text-sm font-medium text-gray-600 dark:text-gray-300">
+                {selectedChat.tenant.charAt(0)}
+              </span>
+            </div>
+            <div className="min-w-0 flex-1">
+              <h3 className="text-sm font-medium text-slate-900 dark:text-slate-100 truncate">
+                {selectedChat.tenant}
+              </h3>
+              {/* Show tenant email instead of property - unit */}
+              <p className="text-xs text-slate-500 dark:text-slate-400 truncate">
+                {selectedChat.tenantEmail ||
+                  `${selectedChat.property} - ${selectedChat.unit}`}
+              </p>
+            </div>
           </div>
-        </div>
-        <div className="text-xs text-slate-500 dark:text-slate-400 max-w-[80px] sm:max-w-[120px] truncate">
-          {formatDate(selectedChat.lastMessageTime)}
-        </div>
+        )}
+        
+        {isSelectionMode ? (
+          <button 
+            onClick={deleteSelectedMessages}
+            className="text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 font-medium text-sm"
+          >
+            Delete
+          </button>
+        ) : (
+          <div className="text-xs text-slate-500 dark:text-slate-400 max-w-[80px] sm:max-w-[120px] truncate">
+            {formatDate(selectedChat.lastMessageTime)}
+          </div>
+        )}
       </div>
       {/* Messages */}
       <div
@@ -67,8 +101,21 @@ const ChatView = ({
                 key={message.id || `msg-${Date.now()}-${Math.random()}`}
                 className={`flex ${
                   isCurrentUserMessage ? "justify-end" : "justify-start"
-                }`}
+                } ${isSelectionMode ? "items-center" : ""}`}
+                onTouchStart={() => isMobile && startLongPress(message.id)}
+                onTouchEnd={() => isMobile && cancelLongPress()}
+                onTouchMove={() => isMobile && cancelLongPress()}
               >
+              {isSelectionMode && (
+                <div className="flex-shrink-0 mr-2">
+                  <input
+                    type="checkbox"
+                    checked={selectedMessages.includes(message.id)}
+                    onChange={() => toggleMessageSelection(message.id)}
+                    className="h-4 w-4 text-teal-500 focus:ring-teal-400 border-gray-300 rounded"
+                  />
+                </div>
+              )}
               {!isCurrentUserMessage && (
                 <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center flex-shrink-0 mr-2 sm:mr-3">
                   <span className="text-xs font-medium text-gray-600 dark:text-gray-300">
@@ -81,7 +128,14 @@ const ChatView = ({
                   isCurrentUserMessage
                     ? "bg-teal-500 text-white"
                     : "bg-slate-200 dark:bg-slate-700 text-slate-900 dark:text-slate-100"
-                }`}
+                } ${isSelectionMode ? "cursor-pointer" : ""}`}
+                onClick={() => isSelectionMode && toggleMessageSelection(message.id)}
+                onContextMenu={(e) => {
+                  if (isCurrentUserMessage) {
+                    e.preventDefault();
+                    handleLongPress(message.id);
+                  }
+                }}
               >
                 <div>{message.content}</div>
                 <div className="text-xs text-right mt-1 opacity-70">

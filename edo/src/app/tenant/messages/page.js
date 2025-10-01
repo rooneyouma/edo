@@ -28,10 +28,26 @@ const Messages = () => {
   const [error, setError] = useState(null);
   const [conversations, setConversations] = useState([]);
   const [messageHistory, setMessageHistory] = useState({});
+  const [selectedMessages, setSelectedMessages] = useState([]);
+  const [isSelectionMode, setIsSelectionMode] = useState(false);
+  const [longPressTimer, setLongPressTimer] = useState(null);
+  const [isMobile, setIsMobile] = useState(false);
 
   // Initialize client-side state
   useEffect(() => {
     setIsClient(true);
+    
+    // Check if device is mobile
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    return () => {
+      window.removeEventListener('resize', checkMobile);
+    };
   }, []);
 
   // Fetch tenant rentals
@@ -490,6 +506,81 @@ const Messages = () => {
     });
   };
 
+  // Message selection and deletion functions
+  const toggleMessageSelection = (messageId) => {
+    setSelectedMessages((prevSelected) => {
+      if (prevSelected.includes(messageId)) {
+        return prevSelected.filter((id) => id !== messageId);
+      } else {
+        return [...prevSelected, messageId];
+      }
+    });
+  };
+
+  const handleLongPress = (messageId) => {
+    if (!isSelectionMode) {
+      setIsSelectionMode(true);
+      setSelectedMessages([messageId]);
+    } else {
+      toggleMessageSelection(messageId);
+    }
+  };
+
+  const startLongPress = (messageId) => {
+    if (isSelectionMode) {
+      toggleMessageSelection(messageId);
+      return;
+    }
+    
+    const timer = setTimeout(() => {
+      handleLongPress(messageId);
+    }, 500); // 500ms for long press
+    
+    setLongPressTimer(timer);
+  };
+
+  const cancelLongPress = () => {
+    if (longPressTimer) {
+      clearTimeout(longPressTimer);
+      setLongPressTimer(null);
+    }
+  };
+
+  const exitSelectionMode = () => {
+    setIsSelectionMode(false);
+    setSelectedMessages([]);
+  };
+
+  const deleteSelectedMessages = async () => {
+    if (selectedMessages.length === 0) return;
+    
+    try {
+      if (selectedMessages.length === 1) {
+        // Delete single message
+        await chatAPI.deleteMessage(selectedMessages[0]);
+      } else {
+        // Delete multiple messages
+        await chatAPI.deleteMultipleMessages(selectedMessages);
+      }
+      
+      // Update local state to remove deleted messages
+      setMessageHistory((prevHistory) => {
+        const updatedHistory = { ...prevHistory };
+        if (updatedHistory[selectedChat.id]) {
+          updatedHistory[selectedChat.id] = updatedHistory[selectedChat.id].filter(
+            (msg) => !selectedMessages.includes(msg.id)
+          );
+        }
+        return updatedHistory;
+      });
+      
+      // Exit selection mode
+      exitSelectionMode();
+    } catch (error) {
+      console.error("Error deleting messages:", error);
+    }
+  };
+
   // Function to handle sending a message
   const handleMessageSubmit = async (e) => {
     e.preventDefault();
@@ -506,14 +597,19 @@ const Messages = () => {
         unit: selectedChat.unit ? parseInt(selectedChat.unit) : null,
       };
 
+      // This will send the message to the backend, which will:
+      // 1. Store it in the database
+      // 2. Make it available for the landlord to see in their received messages
+      // 3. Make it appear in the landlord's chat with this tenant
       const response = await chatAPI.sendMessage(messageData);
 
+      // Create message object for tenant's UI
       const newMessage = {
         id: response.id || Date.now(),
         sender: "tenant", // Explicitly set sender as tenant for the tenant's view
         content: messageInput.trim(),
         timestamp: response.timestamp || new Date().toISOString(),
-        read: false,
+        read: false, // Tenant's sent message starts as unread by landlord
       };
 
       // Update message history
@@ -739,6 +835,14 @@ const Messages = () => {
                         setNewChatMessage={setMessageInput}
                         handleMessageSubmit={handleMessageSubmit}
                         formatDate={formatDate}
+                        isSelectionMode={isSelectionMode}
+                        selectedMessages={selectedMessages}
+                        toggleMessageSelection={toggleMessageSelection}
+                        startLongPress={startLongPress}
+                        cancelLongPress={cancelLongPress}
+                        deleteSelectedMessages={deleteSelectedMessages}
+                        exitSelectionMode={exitSelectionMode}
+                        isMobile={isMobile}
                       />
                     ) : (
                       <div className="h-full flex items-center justify-center bg-gray-50 dark:bg-gray-800 p-4">

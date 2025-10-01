@@ -6,6 +6,12 @@ const MessageTable = ({
   onDeleteClick,
   formatDate,
   isSent = false,
+  isSelectionMode = false,
+  selectedMessages = [],
+  toggleMessageSelection,
+  enterSelectionMode,
+  exitSelectionMode,
+  deleteSelectedMessages,
 }) => {
   // Helper function to determine message priority based on keywords
   const getMessagePriority = (content) => {
@@ -63,26 +69,86 @@ const MessageTable = ({
 
   return (
     <div className="mt-4">
+      {/* Selection Mode Header */}
+      {isSelectionMode && (
+        <div className="bg-white dark:bg-gray-800 p-3 mb-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 flex items-center justify-between">
+          <div className="flex items-center space-x-3">
+            <button 
+              onClick={exitSelectionMode}
+              className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clipRule="evenodd" />
+              </svg>
+            </button>
+            <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
+              {selectedMessages.length} selected
+            </span>
+          </div>
+          <button 
+            onClick={deleteSelectedMessages}
+            className="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 text-sm font-medium"
+            disabled={selectedMessages.length === 0}
+          >
+            Delete
+          </button>
+        </div>
+      )}
+      
       {/* Mobile Card Layout */}
       <div className="block md:hidden space-y-4">
         {messages.map((message) => {
           const priority = getMessagePriority(message.content);
+          const isSelected = selectedMessages.includes(message.id);
+          
           return (
             <div
               key={message.id}
               className={`bg-white dark:bg-gray-800 rounded-lg shadow-sm border overflow-hidden hover:shadow-md transition-shadow cursor-pointer ${
-                priority === "urgent"
+                isSelected
+                  ? "border-blue-500 dark:border-blue-400 ring-2 ring-blue-300 dark:ring-blue-700"
+                  : priority === "urgent"
                   ? "border-red-300 dark:border-red-600"
                   : priority === "important"
                   ? "border-orange-300 dark:border-orange-600"
                   : "border-gray-200 dark:border-gray-700"
               }`}
-              onClick={() => onMessageClick(message)}
+              onClick={(e) => {
+                if (isSelectionMode) {
+                  toggleMessageSelection(message.id);
+                } else {
+                  // Long press (right click) to enter selection mode
+                  if (e.type === 'contextmenu') {
+                    e.preventDefault();
+                    enterSelectionMode(message.id);
+                  } else {
+                    onMessageClick(message);
+                  }
+                }
+              }}
+              onContextMenu={(e) => {
+                e.preventDefault();
+                if (!isSelectionMode) {
+                  enterSelectionMode(message.id);
+                } else {
+                  toggleMessageSelection(message.id);
+                }
+              }}
             >
               {/* Card Header */}
               <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
+                    {isSelectionMode && (
+                      <div className="flex items-center mr-2" onClick={(e) => e.stopPropagation()}>
+                        <input
+                          type="checkbox"
+                          checked={isSelected}
+                          onChange={() => toggleMessageSelection(message.id)}
+                          className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                        />
+                      </div>
+                    )}
                     <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
                       {isSent
                         ? `To: ${message.tenant}`
@@ -154,6 +220,14 @@ const MessageTable = ({
             <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
               <thead className="bg-gray-50 dark:bg-gray-800">
                 <tr>
+                  {isSelectionMode && (
+                    <th
+                      scope="col"
+                      className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-100 sm:pl-6 w-10"
+                    >
+                      <span className="sr-only">Select</span>
+                    </th>
+                  )}
                   <th
                     scope="col"
                     className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-100 sm:pl-6"
@@ -194,18 +268,46 @@ const MessageTable = ({
               <tbody className="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-900">
                 {messages.map((message) => {
                   const priority = getMessagePriority(message.content);
+                  const isSelected = selectedMessages.includes(message.id);
                   return (
                     <tr
                       key={message.id}
                       className={`hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer ${
-                        priority === "urgent"
+                        isSelected
+                          ? "bg-blue-50 dark:bg-blue-900/20"
+                          : priority === "urgent"
                           ? "bg-red-50 dark:bg-red-900/10"
                           : priority === "important"
                           ? "bg-orange-50 dark:bg-orange-900/10"
                           : ""
                       }`}
-                      onClick={() => onMessageClick(message)}
+                      onClick={(e) => {
+                        if (isSelectionMode) {
+                          toggleMessageSelection(message.id);
+                        } else {
+                          onMessageClick(message);
+                        }
+                      }}
+                      onContextMenu={(e) => {
+                        e.preventDefault();
+                        if (!isSelectionMode) {
+                          enterSelectionMode(message.id);
+                        } else {
+                          toggleMessageSelection(message.id);
+                        }
+                      }}
                     >
+                      {isSelectionMode && (
+                        <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 dark:text-gray-100 sm:pl-6">
+                          <input
+                            type="checkbox"
+                            checked={isSelected}
+                            onChange={() => toggleMessageSelection(message.id)}
+                            onClick={(e) => e.stopPropagation()}
+                            className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                          />
+                        </td>
+                      )}
                       <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 dark:text-gray-100 sm:pl-6">
                         {message.tenant}
                       </td>
