@@ -2,7 +2,7 @@
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useState } from "react";
-// ThemeProvider import removed
+import { ThemeProvider } from "../contexts/ThemeContext";
 
 export default function ClientProviders({ children }) {
   const [queryClient] = useState(
@@ -25,7 +25,8 @@ export default function ClientProviders({ children }) {
   );
 
   return (
-    // ThemeProvider removed
-    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+    <ThemeProvider>
+      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+    </ThemeProvider>
   );
 }

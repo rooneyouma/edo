@@ -9,6 +9,7 @@ import { isAuthenticated } from "@/utils/api.js";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
+import { jsPDF } from "jspdf";
 
 const Payments = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -256,6 +257,85 @@ const Payments = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
 
+  const generateReceiptPDF = (payment) => {
+    const doc = new jsPDF();
+
+    // Add logo or header
+    doc.setFontSize(20);
+    doc.text("Payment Receipt", 105, 20, { align: "center" });
+
+    // Add receipt details
+    doc.setFontSize(12);
+    doc.text(`Receipt ID: ${payment.reference}`, 20, 40);
+    doc.text(`Date: ${payment.date}`, 20, 50);
+
+    // Property Information
+    doc.setFontSize(14);
+    doc.text("Property Information", 20, 70);
+    doc.setFontSize(12);
+    doc.text(`Property: ${payment.property}`, 20, 80);
+    doc.text(`Unit: ${payment.unit || "N/A"}`, 20, 90);
+
+    // Payment Information
+    doc.setFontSize(14);
+    doc.text("Payment Information", 20, 110);
+    doc.setFontSize(12);
+    doc.text(`Amount: $${payment.amount.toFixed(2)}`, 20, 120);
+    doc.text(`Payment Method: ${payment.method}`, 20, 130);
+    doc.text(`Status: ${payment.status}`, 20, 140);
+
+    // Add footer
+    doc.setFontSize(10);
+    doc.text("Thank you for your payment!", 105, 180, { align: "center" });
+    doc.text("This is an official receipt", 105, 190, { align: "center" });
+
+    return doc;
+  };
+
+  const handleSharePDF = (payment, method) => {
+    const doc = generateReceiptPDF(payment);
+    const pdfBlob = doc.output("blob");
+    const pdfUrl = URL.createObjectURL(pdfBlob);
+
+    if (method === "email") {
+      // First save the PDF
+      doc.save(`receipt_${payment.reference}.pdf`);
+
+      // Then open email client with instructions
+      const emailSubject = `Payment Receipt - ${payment.reference}`;
+      const emailBody = `I've downloaded the receipt as a PDF file. Please manually attach the file "receipt_${
+        payment.reference
+      }.pdf" from your downloads folder to this email.\n\nPayment Details:\nProperty: ${
+        payment.property
+      } - ${payment.unit || "N/A"}\nAmount: $${payment.amount.toFixed(
+        2
+      )}\nPayment Date: ${payment.date}\nPayment Method: ${payment.method}`;
+      window.location.href = `mailto:?subject=${encodeURIComponent(
+        emailSubject
+      )}&body=${encodeURIComponent(emailBody)}`;
+    } else if (method === "whatsapp") {
+      // First save the PDF
+      doc.save(`receipt_${payment.reference}.pdf`);
+
+      // Then open WhatsApp with a message
+      const whatsappText = `Payment Receipt - ${payment.reference}
+
+I've downloaded the receipt as a PDF file. Please manually attach the file "receipt_${
+        payment.reference
+      }.pdf" from your downloads folder to this message.
+
+Payment Details:
+Property: ${payment.property} - ${payment.unit || "N/A"}
+Amount: $${payment.amount.toFixed(2)}
+Payment Date: ${payment.date}
+Payment Method: ${payment.method}`;
+      window.open(
+        `https://wa.me/?text=${encodeURIComponent(whatsappText)}`,
+        "_blank"
+      );
+    }
+  };
+
   const handlePayRent = () => {
     // If only one property, auto-select it
     if (properties.length === 1) {
@@ -369,21 +449,21 @@ const Payments = () => {
             </div>
 
             {/* Payment summary cards */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8">
               {/* Total Paid */}
-              <div className="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 p-4 sm:p-6">
+              <div className="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 p-3 sm:p-4 lg:p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
+                    <p className="text-xs text-slate-500 dark:text-slate-400">
                       Total Paid
                     </p>
-                    <p className="mt-1 text-lg sm:text-2xl font-semibold text-slate-900 dark:text-slate-100">
+                    <p className="mt-1 text-base sm:text-lg lg:text-2xl font-semibold text-slate-900 dark:text-slate-100">
                       $12,000
                     </p>
                   </div>
-                  <div className="p-2 sm:p-3 bg-green-100 dark:bg-green-900/30 rounded-full">
+                  <div className="p-1.5 sm:p-2 lg:p-3 bg-green-100 dark:bg-green-900/30 rounded-full">
                     <svg
-                      className="w-5 h-5 sm:w-6 sm:h-6 text-green-600 dark:text-green-400"
+                      className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-green-600 dark:text-green-400"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -400,19 +480,19 @@ const Payments = () => {
               </div>
 
               {/* Current Balance */}
-              <div className="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 p-4 sm:p-6">
+              <div className="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 p-3 sm:p-4 lg:p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
+                    <p className="text-xs text-slate-500 dark:text-slate-400">
                       Current Balance
                     </p>
-                    <p className="mt-1 text-lg sm:text-2xl font-semibold text-slate-900 dark:text-slate-100">
+                    <p className="mt-1 text-base sm:text-lg lg:text-2xl font-semibold text-slate-900 dark:text-slate-100">
                       $1,200
                     </p>
                   </div>
-                  <div className="p-2 sm:p-3 bg-blue-100 dark:bg-blue-900/30 rounded-full">
+                  <div className="p-1.5 sm:p-2 lg:p-3 bg-blue-100 dark:bg-blue-900/30 rounded-full">
                     <svg
-                      className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600 dark:text-blue-400"
+                      className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-blue-600 dark:text-blue-400"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -429,22 +509,22 @@ const Payments = () => {
               </div>
 
               {/* Next Payment */}
-              <div className="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 p-4 sm:p-6">
+              <div className="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 p-3 sm:p-4 lg:p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
+                    <p className="text-xs text-slate-500 dark:text-slate-400">
                       Next Payment
                     </p>
-                    <p className="mt-1 text-lg sm:text-2xl font-semibold text-slate-900 dark:text-slate-100">
+                    <p className="mt-1 text-base sm:text-lg lg:text-2xl font-semibold text-slate-900 dark:text-slate-100">
                       $1,200
                     </p>
                     <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
                       Due in 15 days
                     </p>
                   </div>
-                  <div className="p-2 sm:p-3 bg-yellow-100 dark:bg-yellow-900/30 rounded-full">
+                  <div className="p-1.5 sm:p-2 lg:p-3 bg-yellow-100 dark:bg-yellow-900/30 rounded-full">
                     <svg
-                      className="w-5 h-5 sm:w-6 sm:h-6 text-yellow-600 dark:text-yellow-400"
+                      className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-yellow-600 dark:text-yellow-400"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -461,22 +541,22 @@ const Payments = () => {
               </div>
 
               {/* Payment History */}
-              <div className="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 p-4 sm:p-6">
+              <div className="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 p-3 sm:p-4 lg:p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
+                    <p className="text-xs text-slate-500 dark:text-slate-400">
                       Payment History
                     </p>
-                    <p className="mt-1 text-lg sm:text-2xl font-semibold text-slate-900 dark:text-slate-100">
+                    <p className="mt-1 text-base sm:text-lg lg:text-2xl font-semibold text-slate-900 dark:text-slate-100">
                       10
                     </p>
                     <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
                       Total payments
                     </p>
                   </div>
-                  <div className="p-2 sm:p-3 bg-purple-100 dark:bg-purple-900/30 rounded-full">
+                  <div className="p-1.5 sm:p-2 lg:p-3 bg-purple-100 dark:bg-purple-900/30 rounded-full">
                     <svg
-                      className="w-5 h-5 sm:w-6 sm:h-6 text-purple-600 dark:text-purple-400"
+                      className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-purple-600 dark:text-purple-400"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -582,65 +662,54 @@ const Payments = () => {
                 </div>
               )}
 
-              <div className="mt-6 flex flex-col">
-                <div className="-my-2 -mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8">
-                  <div className="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8">
-                    <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 rounded-lg md:rounded-lg">
-                      <table className="min-w-full divide-y divide-gray-300 dark:divide-gray-700">
-                        <thead className="bg-gray-50 dark:bg-gray-800">
-                          <tr>
-                            <th
-                              scope="col"
-                              className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-100 sm:pl-6"
+              {/* Payment history - responsive card layout for mobile, table for desktop */}
+              <div className="mt-6">
+                {/* Mobile Card Layout */}
+                <div className="block md:hidden">
+                  <div className="grid gap-4">
+                    {currentPayments.map((payment) => (
+                      <div
+                        key={payment.id}
+                        className="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 cursor-pointer hover:shadow-md transition-shadow duration-200"
+                        onClick={() => setSelectedPayment(payment)}
+                      >
+                        <div className="p-4">
+                          <div className="flex items-start justify-between mb-3">
+                            <div className="flex-1">
+                              <h3 className="text-sm font-medium text-slate-900 dark:text-slate-100">
+                                {payment.reference}
+                              </h3>
+                              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                                {payment.property} - {payment.unit || "N/A"}
+                              </p>
+                            </div>
+                            <span
+                              className={`inline-flex rounded-full px-2 py-1 text-xs font-semibold leading-4 ${
+                                payment.status === "Paid"
+                                  ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
+                                  : payment.status === "Pending"
+                                  ? "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200"
+                                  : "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200"
+                              }`}
                             >
-                              Date
-                            </th>
-                            <th
-                              scope="col"
-                              className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
-                            >
-                              Property
-                            </th>
-                            <th
-                              scope="col"
-                              className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
-                            >
-                              Unit
-                            </th>
-                            <th
-                              scope="col"
-                              className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
-                            >
-                              Amount
-                            </th>
-                            <th
-                              scope="col"
-                              className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
-                            >
-                              Status
-                            </th>
-                            <th
-                              scope="col"
-                              className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
-                            >
-                              Method
-                            </th>
-                            <th
-                              scope="col"
-                              className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
-                            >
-                              Reference
-                            </th>
-                          </tr>
-                        </thead>
-                        <tbody className="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-900">
-                          {currentPayments.map((payment) => (
-                            <tr
-                              key={payment.id}
-                              className="hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer"
-                              onClick={() => setSelectedPayment(payment)}
-                            >
-                              <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 dark:text-gray-100 sm:pl-6">
+                              {payment.status}
+                            </span>
+                          </div>
+
+                          <div className="grid grid-cols-2 gap-4 text-sm">
+                            <div>
+                              <span className="text-slate-500 dark:text-slate-400">
+                                Amount:
+                              </span>
+                              <span className="ml-1 font-medium text-slate-900 dark:text-slate-100">
+                                ${payment.amount.toFixed(2)}
+                              </span>
+                            </div>
+                            <div>
+                              <span className="text-slate-500 dark:text-slate-400">
+                                Date:
+                              </span>
+                              <span className="ml-1 text-slate-900 dark:text-slate-100">
                                 {new Date(payment.date).toLocaleDateString(
                                   "en-US",
                                   {
@@ -649,39 +718,125 @@ const Payments = () => {
                                     year: "numeric",
                                   }
                                 )}
-                              </td>
-                              <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
-                                {payment.property}
-                              </td>
-                              <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
-                                {payment.unit || "-"}
-                              </td>
-                              <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
-                                ${payment.amount.toFixed(2)}
-                              </td>
-                              <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
-                                <span
-                                  className={`inline-flex rounded-full px-2 text-xs font-semibold leading-5 ${
-                                    payment.status === "Paid"
-                                      ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
-                                      : payment.status === "Pending"
-                                      ? "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200"
-                                      : "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200"
-                                  }`}
-                                >
-                                  {payment.status}
-                                </span>
-                              </td>
-                              <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
+                              </span>
+                            </div>
+                            <div>
+                              <span className="text-slate-500 dark:text-slate-400">
+                                Method:
+                              </span>
+                              <span className="ml-1 text-slate-900 dark:text-slate-100">
                                 {payment.method}
-                              </td>
-                              <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
-                                {payment.reference}
-                              </td>
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Desktop Table Layout */}
+                <div className="hidden md:block">
+                  <div className="-my-2 -mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8">
+                    <div className="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8">
+                      <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 rounded-lg md:rounded-lg">
+                        <table className="min-w-full divide-y divide-gray-300 dark:divide-gray-700">
+                          <thead className="bg-gray-50 dark:bg-gray-800">
+                            <tr>
+                              <th
+                                scope="col"
+                                className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-100 sm:pl-6"
+                              >
+                                Date
+                              </th>
+                              <th
+                                scope="col"
+                                className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
+                              >
+                                Property
+                              </th>
+                              <th
+                                scope="col"
+                                className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
+                              >
+                                Unit
+                              </th>
+                              <th
+                                scope="col"
+                                className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
+                              >
+                                Amount
+                              </th>
+                              <th
+                                scope="col"
+                                className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
+                              >
+                                Status
+                              </th>
+                              <th
+                                scope="col"
+                                className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
+                              >
+                                Method
+                              </th>
+                              <th
+                                scope="col"
+                                className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
+                              >
+                                Reference
+                              </th>
                             </tr>
-                          ))}
-                        </tbody>
-                      </table>
+                          </thead>
+                          <tbody className="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-900">
+                            {currentPayments.map((payment) => (
+                              <tr
+                                key={payment.id}
+                                className="hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer"
+                                onClick={() => setSelectedPayment(payment)}
+                              >
+                                <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 dark:text-gray-100 sm:pl-6">
+                                  {new Date(payment.date).toLocaleDateString(
+                                    "en-US",
+                                    {
+                                      month: "short",
+                                      day: "numeric",
+                                      year: "numeric",
+                                    }
+                                  )}
+                                </td>
+                                <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
+                                  {payment.property}
+                                </td>
+                                <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
+                                  {payment.unit || "-"}
+                                </td>
+                                <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
+                                  ${payment.amount.toFixed(2)}
+                                </td>
+                                <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
+                                  <span
+                                    className={`inline-flex rounded-full px-2 text-xs font-semibold leading-5 ${
+                                      payment.status === "Paid"
+                                        ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
+                                        : payment.status === "Pending"
+                                        ? "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200"
+                                        : "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200"
+                                    }`}
+                                  >
+                                    {payment.status}
+                                  </span>
+                                </td>
+                                <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
+                                  {payment.method}
+                                </td>
+                                <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
+                                  {payment.reference}
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -1129,13 +1284,71 @@ const Payments = () => {
                 Close
               </button>
               {selectedPayment.status === "Paid" && (
-                <button
-                  type="button"
-                  className="inline-flex items-center px-3 py-1.5 sm:px-4 sm:py-2 border border-transparent text-xs sm:text-sm font-medium rounded-md text-white bg-[#0d9488] hover:bg-[#0f766e] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0d9488]"
-                  onClick={() => alert("Download receipt (not implemented)")}
-                >
-                  Download Receipt
-                </button>
+                <>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const doc = generateReceiptPDF(selectedPayment);
+                      doc.save(`receipt_${selectedPayment.reference}.pdf`);
+                    }}
+                    className="inline-flex items-center px-3 py-1.5 sm:px-4 sm:py-2 border border-transparent text-xs sm:text-sm font-medium rounded-md text-white bg-[#0d9488] hover:bg-[#0f766e] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0d9488]"
+                  >
+                    <svg
+                      className="w-4 h-4 mr-2"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"
+                      />
+                    </svg>
+                    Download PDF
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleSharePDF(selectedPayment, "email")}
+                    className="inline-flex items-center px-3 py-1.5 sm:px-4 sm:py-2 border border-transparent text-xs sm:text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-800"
+                  >
+                    <svg
+                      className="w-4 h-4 mr-2"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                      />
+                    </svg>
+                    Share via Email
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleSharePDF(selectedPayment, "whatsapp")}
+                    className="inline-flex items-center px-3 py-1.5 sm:px-4 sm:py-2 border border-transparent text-xs sm:text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 dark:focus:ring-offset-gray-800"
+                  >
+                    <svg
+                      className="w-4 h-4 mr-2"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+                      />
+                    </svg>
+                    Share via WhatsApp
+                  </button>
+                </>
               )}
             </div>
           </div>

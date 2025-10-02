@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useTheme } from "../../contexts/ThemeContext";
 import {
   Bell,
   Search,
@@ -13,12 +14,15 @@ import {
   Wrench,
   Home,
   Users,
+  Sun,
+  Moon,
 } from "lucide-react";
 
 import UserMenu from "../../components/DropdownProfile";
 
 function Header({ toggleSidebar, variant = "default" }) {
   const router = useRouter();
+  const { theme, toggleTheme } = useTheme();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -288,6 +292,20 @@ function Header({ toggleSidebar, variant = "default" }) {
                 </div>
               )}
             </div>
+
+            {/* Theme Toggle */}
+            <button
+              type="button"
+              className="p-1 rounded-full text-slate-500 hover:text-slate-600 dark:text-slate-400 dark:hover:text-slate-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500"
+              onClick={toggleTheme}
+            >
+              <span className="sr-only">Toggle theme</span>
+              {theme === "light" ? (
+                <Moon className="h-6 w-6" />
+              ) : (
+                <Sun className="h-6 w-6" />
+              )}
+            </button>
 
             {/*  Divider */}
             <hr className="w-px h-6 bg-gray-200 dark:bg-gray-700/60 border-none" />

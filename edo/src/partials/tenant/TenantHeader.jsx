@@ -11,13 +11,17 @@ import {
   FileText,
   DollarSign,
   Wrench,
+  Sun,
+  Moon,
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { authAPI, getStoredUser } from "../../utils/api";
+import { useTheme } from "../../contexts/ThemeContext";
 
 const TenantHeader = ({ toggleSidebar }) => {
   const router = useRouter();
+  const { theme, toggleTheme } = useTheme();
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -272,6 +276,20 @@ const TenantHeader = ({ toggleSidebar }) => {
                 </div>
               )}
             </div>
+
+            {/* Theme Toggle */}
+            <button
+              type="button"
+              className="p-1 rounded-full text-slate-500 hover:text-slate-600 dark:text-slate-400 dark:hover:text-slate-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 hover:bg-slate-100 dark:hover:bg-slate-700/50"
+              onClick={toggleTheme}
+            >
+              <span className="sr-only">Toggle theme</span>
+              {theme === "light" ? (
+                <Moon className="h-6 w-6" />
+              ) : (
+                <Sun className="h-6 w-6" />
+              )}
+            </button>
 
             {/* Divider */}
             <hr className="w-px h-6 bg-gray-200 dark:bg-gray-700/60 border-none" />

@@ -393,9 +393,78 @@ Payment Method: ${payment.paymentMethod}`;
               ]}
             />
 
-            {/* Payment history table */}
-            <div className="p-4 sm:p-6">
-              <div className="mt-6 flex flex-col">
+            {/* Payment history - responsive card layout for mobile, table for desktop */}
+            <div className="mt-6">
+              {/* Mobile Card Layout */}
+              <div className="block md:hidden">
+                <div className="grid gap-4">
+                  {currentPayments.map((payment) => (
+                    <div
+                      key={payment.id}
+                      className="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 cursor-pointer hover:shadow-md transition-shadow duration-200"
+                      onClick={() => setSelectedPayment(payment)}
+                    >
+                      <div className="p-4">
+                        <div className="flex items-start justify-between mb-3">
+                          <div className="flex-1">
+                            <h3 className="text-sm font-medium text-slate-900 dark:text-slate-100">
+                              {payment.tenant}
+                            </h3>
+                            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                              {payment.property} - {payment.unit || "N/A"}
+                            </p>
+                          </div>
+                          <span
+                            className={`inline-flex rounded-full px-2 py-1 text-xs font-semibold leading-4 ${getStatusColor(
+                              payment.status
+                            )}`}
+                          >
+                            {payment.status}
+                          </span>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-4 text-sm">
+                          <div>
+                            <span className="text-slate-500 dark:text-slate-400">
+                              Amount:
+                            </span>
+                            <span className="ml-1 font-medium text-slate-900 dark:text-slate-100">
+                              ${payment.amount.toLocaleString()}
+                            </span>
+                          </div>
+                          <div>
+                            <span className="text-slate-500 dark:text-slate-400">
+                              Due Date:
+                            </span>
+                            <span className="ml-1 text-slate-900 dark:text-slate-100">
+                              {payment.dueDate}
+                            </span>
+                          </div>
+                          <div>
+                            <span className="text-slate-500 dark:text-slate-400">
+                              Payment Date:
+                            </span>
+                            <span className="ml-1 text-slate-900 dark:text-slate-100">
+                              {payment.paymentDate || "-"}
+                            </span>
+                          </div>
+                          <div>
+                            <span className="text-slate-500 dark:text-slate-400">
+                              Method:
+                            </span>
+                            <span className="ml-1 text-slate-900 dark:text-slate-100">
+                              {payment.paymentMethod || "-"}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Desktop Table Layout */}
+              <div className="hidden md:block">
                 <div className="-my-2 -mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8">
                   <div className="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8">
                     <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 rounded-lg md:rounded-lg">
