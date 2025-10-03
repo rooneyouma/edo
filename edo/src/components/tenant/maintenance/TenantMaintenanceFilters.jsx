@@ -33,29 +33,24 @@ const TenantMaintenanceFilters = ({
         <div className="flex items-center space-x-2">
           <button
             onClick={() => setIsFilterOpen(!isFilterOpen)}
-            className="inline-flex items-center px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0d9488]"
+            className="inline-flex items-center px-4 py-2 border border-gray-200 dark:border-gray-700 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0d9488]"
           >
-            <Filter className="h-4 w-4 mr-1 sm:mr-2" />
-            <span className="hidden xs:inline">Filter</span>
+            <Filter className="h-4 w-4 mr-2" />
+            Filter
             {isFilterOpen ? (
-              <X className="h-4 w-4 ml-1 sm:ml-2" />
+              <X className="h-4 w-4 ml-2" />
             ) : (
-              <span className="ml-1 sm:ml-2">▼</span>
+              <span className="ml-2">▼</span>
             )}
           </button>
           <button
             onClick={() =>
               setSortOrder(sortOrder === "latest" ? "earliest" : "latest")
             }
-            className="inline-flex items-center px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0d9488]"
+            className="inline-flex items-center px-4 py-2 border border-gray-200 dark:border-gray-700 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0d9488]"
           >
-            <ArrowUpDown className="h-4 w-4 mr-1 sm:mr-2" />
-            <span className="hidden xs:inline">
-              {sortOrder === "latest" ? "Latest" : "Earliest"}
-            </span>
-            <span className="xs:hidden">
-              {sortOrder === "latest" ? "↑" : "↓"}
-            </span>
+            <ArrowUpDown className="h-4 w-4 mr-2" />
+            {sortOrder === "latest" ? "Latest" : "Earliest"}
           </button>
         </div>
       </div>

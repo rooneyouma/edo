@@ -248,10 +248,10 @@ const Maintenance = () => {
       <div className="relative flex flex-col flex-1 overflow-y-auto overflow-x-hidden lg:ml-64">
         <TenantHeader toggleSidebar={toggleSidebar} />
 
-        <main className="flex-1 px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
+        <main className="flex-1 pl-4 pr-4 sm:pl-6 sm:pr-6 lg:pl-8 lg:pr-8 py-4 sm:py-6 lg:py-8 overflow-auto">
           <div>
             {/* Header */}
-            <div className="mb-6 sm:mb-8">
+            <div className="mb-8">
               <h1 className="text-2xl font-bold text-slate-800 dark:text-slate-100 mb-2">
                 Maintenance Requests
               </h1>
@@ -279,7 +279,7 @@ const Maintenance = () => {
             <div className="mb-6">
               <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-start sm:items-center justify-between">
                 {/* Search and Filters */}
-                <div className="w-full">
+                <div className="w-full sm:max-w-3xl">
                   <TenantMaintenanceFilters
                     searchQuery={searchQuery}
                     setSearchQuery={setSearchQuery}
@@ -295,7 +295,7 @@ const Maintenance = () => {
                 {/* New Request Button */}
                 <button
                   onClick={() => setShowNewRequestModal(true)}
-                  className="flex items-center w-full sm:w-auto justify-center px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors whitespace-nowrap text-sm sm:text-base"
+                  className="flex items-center w-full sm:w-auto justify-center px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors whitespace-nowrap text-sm font-medium"
                 >
                   <Plus className="h-4 w-4 mr-2" />
                   New Request
@@ -311,8 +311,8 @@ const Maintenance = () => {
 
             {/* Maintenance Table */}
             {filteredAndSortedRequests.length > 0 ? (
-              <div className="overflow-x-auto -mx-4 sm:mx-0">
-                <div className="inline-block min-w-full align-middle">
+              <div className="overflow-x-auto -mx-4 sm:-mx-6 lg:-mx-8">
+                <div className="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8">
                   <MaintenanceTable
                     requests={filteredAndSortedRequests.map((request) => ({
                       id: request.id,

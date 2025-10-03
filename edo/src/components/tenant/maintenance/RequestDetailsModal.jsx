@@ -1,5 +1,5 @@
 import React from "react";
-import { X } from "lucide-react";
+import { X, Calendar, Clock } from "lucide-react";
 import {
   getStatusColor,
   getPriorityColor,
@@ -7,83 +7,106 @@ import {
 
 const RequestDetailsModal = ({ request, onClose }) => {
   return (
-    <div className="fixed inset-0 bg-gray-500/50 dark:bg-gray-900/50 z-40">
+    <div className="fixed inset-0 bg-gray-900/30 dark:bg-gray-900/60 z-40">
       <div className="fixed inset-0 z-50 overflow-y-auto">
-        <div className="flex min-h-full items-end justify-center p-2 text-center sm:items-center sm:p-0">
-          <div className="relative transform overflow-hidden rounded-lg bg-white dark:bg-slate-800 px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:p-6 w-full">
-            {/* Close button */}
-            <div className="absolute right-0 top-0 pr-4 pt-4">
+        <div className="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
+          <div className="relative transform overflow-hidden rounded-lg bg-white dark:bg-slate-800 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg w-full max-h-[90vh] overflow-y-auto">
+            {/* Header with title and close button */}
+            <div className="bg-gray-50 dark:bg-gray-800/50 px-4 py-4 sm:px-6 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
+              <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">
+                {request.subject}
+              </h3>
               <button
                 type="button"
-                className="rounded-md bg-white dark:bg-slate-800 text-slate-400 hover:text-slate-500 focus:outline-none"
+                className="rounded-md bg-transparent text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400"
                 onClick={onClose}
               >
                 <span className="sr-only">Close</span>
-                <X className="h-6 w-6" />
+                <X className="h-5 w-5" />
               </button>
             </div>
 
             {/* Modal content */}
-            <div className="mt-4 sm:mt-6 space-y-5">
+            <div className="px-4 py-5 sm:p-6 space-y-6">
+              {/* Date and Time */}
+              <div className="flex items-center text-sm text-gray-500 dark:text-gray-400 space-x-4">
+                <div className="flex items-center">
+                  <Calendar className="h-4 w-4 mr-1.5" />
+                  <span>{request.date}</span>
+                </div>
+                {request.time && (
+                  <div className="flex items-center">
+                    <Clock className="h-4 w-4 mr-1.5" />
+                    <span>{request.time}</span>
+                  </div>
+                )}
+              </div>
+
               {/* Property Information */}
-              <div>
+              <div className="bg-gray-50 dark:bg-gray-800/30 rounded-lg p-4">
                 <h4 className="text-sm font-medium text-gray-900 dark:text-gray-100">
                   Property Information
                 </h4>
-                <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                <p className="mt-1 text-sm text-gray-600 dark:text-gray-300">
                   {request.property} - {request.unit}
                 </p>
               </div>
 
               {/* Description */}
               <div>
-                <h4 className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                <h4 className="text-sm font-medium text-gray-900 dark:text-gray-100 mb-2">
                   Description
                 </h4>
-                <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                  {request.description}
-                </p>
+                <div className="bg-gray-50 dark:bg-gray-800/30 rounded-lg p-4">
+                  <p className="text-sm text-gray-600 dark:text-gray-300 whitespace-pre-wrap">
+                    {request.description}
+                  </p>
+                </div>
               </div>
 
               {/* Status and Priority */}
               <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <h4 className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                <div className="bg-gray-50 dark:bg-gray-800/30 rounded-lg p-4">
+                  <h4 className="text-sm font-medium text-gray-900 dark:text-gray-100 mb-1">
                     Priority
                   </h4>
-                  <p
-                    className={`mt-1 text-sm ${getPriorityColor(
+                  <span
+                    className={`inline-flex rounded-full px-2.5 py-1 text-xs font-semibold ${getPriorityColor(
                       request.priority
                     )}`}
                   >
                     {request.priority}
-                  </p>
+                  </span>
                 </div>
-                <div>
-                  <h4 className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                <div className="bg-gray-50 dark:bg-gray-800/30 rounded-lg p-4">
+                  <h4 className="text-sm font-medium text-gray-900 dark:text-gray-100 mb-1">
                     Status
                   </h4>
-                  <p
-                    className={`mt-1 text-sm ${getStatusColor(request.status)}`}
+                  <span
+                    className={`inline-flex rounded-full px-2.5 py-1 text-xs font-semibold ${getStatusColor(
+                      request.status
+                    )}`}
                   >
                     {request.status}
-                  </p>
+                  </span>
                 </div>
               </div>
 
               {/* Assigned Information - Only show if assigned */}
               {request.assignedTo && (
-                <div>
-                  <h4 className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                <div className="bg-gray-50 dark:bg-gray-800/30 rounded-lg p-4">
+                  <h4 className="text-sm font-medium text-gray-900 dark:text-gray-100 mb-2">
                     Assigned To
                   </h4>
-                  <div className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                  <div className="text-sm">
                     <p className="font-medium text-gray-900 dark:text-gray-100">
                       {request.assignedTo}
                     </p>
-                    <p className="text-xs text-gray-400 mt-1">
-                      Contact: {request.contact}
-                    </p>
+                    {request.contact && (
+                      <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                        Contact: {request.contact}
+                      </p>
+                    )}
                   </div>
                 </div>
               )}

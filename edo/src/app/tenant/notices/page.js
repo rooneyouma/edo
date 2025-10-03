@@ -591,7 +591,7 @@ const Notices = () => {
                     className="inline-flex items-center px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0d9488]"
                   >
                     <Filter className="h-4 w-4 mr-1 sm:mr-2" />
-                    <span className="hidden xs:inline">Filter</span>
+                    Filter
                     {showVacateFilters ? (
                       <svg
                         className="h-4 w-4 ml-1 sm:ml-2"
@@ -614,34 +614,13 @@ const Notices = () => {
                     type="button"
                     onClick={() =>
                       setVacateSortOrder(
-                        vacateSortOrder === "latest" ? "oldest" : "latest"
+                        vacateSortOrder === "latest" ? "earliest" : "latest"
                       )
                     }
                     className="inline-flex items-center px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0d9488]"
                   >
-                    {typeof ArrowUpDown !== "undefined" ? (
-                      <ArrowUpDown className="h-4 w-4 mr-1 sm:mr-2" />
-                    ) : (
-                      <svg
-                        className="h-4 w-4 mr-1 sm:mr-2"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        strokeWidth="1.5"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M16 17l-4 4m0 0l-4-4m4 4V3"
-                        />
-                      </svg>
-                    )}
-                    <span className="hidden xs:inline">
-                      {vacateSortOrder === "latest" ? "Latest" : "Earliest"}
-                    </span>
-                    <span className="xs:hidden">
-                      {vacateSortOrder === "latest" ? "↑" : "↓"}
-                    </span>
+                    <ArrowUpDown className="h-4 w-4 mr-1 sm:mr-2" />
+                    {vacateSortOrder === "latest" ? "Latest" : "Earliest"}
                   </button>
                   {/* Desktop: Submit Vacate Notice button in controls */}
                   <button

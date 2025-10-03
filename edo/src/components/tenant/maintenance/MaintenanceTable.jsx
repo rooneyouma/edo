@@ -14,31 +14,31 @@ const MaintenanceTable = ({
         {requests.map((request) => (
           <div
             key={request.id}
-            className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 hover:bg-gray-50 dark:hover:bg-gray-700/50 cursor-pointer border border-gray-200 dark:border-gray-700"
+            className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 hover:bg-gray-50 dark:hover:bg-gray-700/50 cursor-pointer border border-gray-200 dark:border-gray-700 transition-all"
             onClick={() => onRequestClick(request)}
           >
-            <div className="flex justify-between items-start">
-              <div>
-                <h3 className="font-medium text-gray-900 dark:text-gray-100">
+            <div className="flex justify-between items-start mb-2">
+              <div className="flex-1 min-w-0 pr-2">
+                <h3 className="font-medium text-gray-900 dark:text-gray-100 truncate">
                   {request.subject}
                 </h3>
                 {hasMultipleProperties && (
-                  <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                  <p className="text-sm text-gray-500 dark:text-gray-400 mt-1 truncate">
                     {request.property} - {request.unit}
                   </p>
                 )}
               </div>
               <span
-                className={`inline-flex rounded-full px-2 text-xs font-semibold leading-5 ${getPriorityColor(
+                className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-semibold whitespace-nowrap ${getPriorityColor(
                   request.priority
                 )}`}
               >
                 {request.priority}
               </span>
             </div>
-            <div className="mt-3 flex flex-wrap gap-2">
+            <div className="mt-2 flex flex-wrap items-center gap-2">
               <span
-                className={`inline-flex rounded-full px-2 text-xs font-semibold leading-5 ${getStatusColor(
+                className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-semibold whitespace-nowrap ${getStatusColor(
                   request.status
                 )}`}
               >
@@ -49,13 +49,13 @@ const MaintenanceTable = ({
               </span>
             </div>
             {request.assignedTo && (
-              <div className="mt-3 text-sm">
-                <p className="text-gray-600 dark:text-gray-300">Assigned to:</p>
-                <p className="font-medium text-gray-900 dark:text-gray-100">
+              <div className="mt-3 text-sm border-t border-gray-100 dark:border-gray-700 pt-2">
+                <p className="text-gray-600 dark:text-gray-300 text-xs">Assigned to:</p>
+                <p className="font-medium text-gray-900 dark:text-gray-100 truncate">
                   {request.assignedTo}
                 </p>
                 {request.contact && (
-                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                  <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
                     {request.contact}
                   </p>
                 )}
