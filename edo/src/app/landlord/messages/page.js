@@ -34,13 +34,13 @@ const Messages = () => {
   const [tenants, setTenants] = useState([]); // Store actual tenants
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  
+
   // Message selection and deletion states
   const [selectedMessages, setSelectedMessages] = useState([]);
   const [isSelectionMode, setIsSelectionMode] = useState(false);
   const [longPressTimer, setLongPressTimer] = useState(null);
   const [isMobile, setIsMobile] = useState(false);
-  
+
   // Table message selection and deletion states
   const [selectedTableMessages, setSelectedTableMessages] = useState([]);
   const [isTableSelectionMode, setIsTableSelectionMode] = useState(false);
@@ -91,8 +91,8 @@ const Messages = () => {
     // Check if device is mobile
     setIsMobile(window.innerWidth <= 768);
     const handleResize = () => setIsMobile(window.innerWidth <= 768);
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   // Check authentication after client-side rendering
@@ -367,11 +367,11 @@ const Messages = () => {
   const handleDeleteMessage = async () => {
     if (messageToDelete) {
       const [chatId, messageId] = messageToDelete.id.split("-");
-      
+
       try {
         // Delete message from the database
         await chatAPI.deleteMessage(parseInt(messageId));
-        
+
         // Update local state
         setMessages((prevMessages) =>
           prevMessages.map((chat) => {
@@ -385,20 +385,25 @@ const Messages = () => {
                 lastMessage:
                   filteredMessages[filteredMessages.length - 1]?.content || "",
                 lastMessageTime:
-                  filteredMessages[filteredMessages.length - 1]?.timestamp || "",
+                  filteredMessages[filteredMessages.length - 1]?.timestamp ||
+                  "",
               };
             }
             return chat;
           })
         );
-        
+
         // Also update sent and received messages tables
         if (viewMode === "sent") {
-          setSentMessages((prev) => prev.filter(msg => msg.id !== parseInt(messageId)));
+          setSentMessages((prev) =>
+            prev.filter((msg) => msg.id !== parseInt(messageId))
+          );
         } else if (viewMode === "received") {
-          setReceivedMessages((prev) => prev.filter(msg => msg.id !== parseInt(messageId)));
+          setReceivedMessages((prev) =>
+            prev.filter((msg) => msg.id !== parseInt(messageId))
+          );
         }
-        
+
         setIsDeleteConfirmModalOpen(false);
         setMessageToDelete(null);
       } catch (error) {
@@ -406,7 +411,7 @@ const Messages = () => {
       }
     }
   };
-  
+
   // Table message selection and deletion functions
   const toggleTableMessageSelection = (messageId) => {
     setSelectedTableMessages((prevSelected) => {
@@ -417,20 +422,20 @@ const Messages = () => {
       }
     });
   };
-  
+
   const enterTableSelectionMode = (messageId) => {
     setIsTableSelectionMode(true);
     setSelectedTableMessages([messageId]);
   };
-  
+
   const exitTableSelectionMode = () => {
     setIsTableSelectionMode(false);
     setSelectedTableMessages([]);
   };
-  
+
   const deleteSelectedTableMessages = async () => {
     if (selectedTableMessages.length === 0) return;
-    
+
     try {
       if (selectedTableMessages.length === 1) {
         // Delete single message
@@ -439,25 +444,25 @@ const Messages = () => {
         // Delete multiple messages
         await chatAPI.deleteMultipleMessages(selectedTableMessages);
       }
-      
+
       // Update local state based on current view
       if (viewMode === "sent") {
-        setSentMessages((prev) => 
-          prev.filter(msg => !selectedTableMessages.includes(msg.id))
+        setSentMessages((prev) =>
+          prev.filter((msg) => !selectedTableMessages.includes(msg.id))
         );
       } else if (viewMode === "received") {
-        setReceivedMessages((prev) => 
-          prev.filter(msg => !selectedTableMessages.includes(msg.id))
+        setReceivedMessages((prev) =>
+          prev.filter((msg) => !selectedTableMessages.includes(msg.id))
         );
       }
-      
+
       // Also update chat messages if applicable
       setMessages((prevMessages) =>
         prevMessages.map((chat) => {
           const filteredMessages = chat.messages.filter(
             (msg) => !selectedTableMessages.includes(msg.id)
           );
-          
+
           if (filteredMessages.length !== chat.messages.length) {
             return {
               ...chat,
@@ -471,7 +476,7 @@ const Messages = () => {
           return chat;
         })
       );
-      
+
       // Exit selection mode
       exitTableSelectionMode();
     } catch (error) {
@@ -588,14 +593,19 @@ const Messages = () => {
       const sentMessageObj = {
         id: response.id,
         sender: "landlord",
-        tenant: selectedTenant ? `${selectedTenant.first_name} ${selectedTenant.last_name}` : "Unknown",
-        property: selectedTenant?.unit?.property?.name || selectedTenant?.property || "N/A",
+        tenant: selectedTenant
+          ? `${selectedTenant.first_name} ${selectedTenant.last_name}`
+          : "Unknown",
+        property:
+          selectedTenant?.unit?.property?.name ||
+          selectedTenant?.property ||
+          "N/A",
         unit: selectedTenant?.unit?.unit_id || selectedTenant?.unit_id || "N/A",
         content: newMessage.message,
         timestamp: response.timestamp,
         status: "sent",
       };
-      
+
       // Add to sent messages list
       setSentMessages((prev) => [sentMessageObj, ...prev]);
 
@@ -624,12 +634,14 @@ const Messages = () => {
         recipient: selectedChat.id, // Tenant ID
         recipient_email: selectedChat.email, // Add recipient email for proper routing
         message: newChatMessage.trim(),
-        property: selectedChat.property && !isNaN(selectedChat.property)
-          ? parseInt(selectedChat.property)
-          : null,
-        unit: selectedChat.unit && !isNaN(selectedChat.unit)
-          ? parseInt(selectedChat.unit)
-          : null,
+        property:
+          selectedChat.property && !isNaN(selectedChat.property)
+            ? parseInt(selectedChat.property)
+            : null,
+        unit:
+          selectedChat.unit && !isNaN(selectedChat.unit)
+            ? parseInt(selectedChat.unit)
+            : null,
       };
 
       console.log("Sending message with data:", messageData); // Debug log
@@ -663,7 +675,7 @@ const Messages = () => {
         }
         return chat;
       });
-      
+
       // Update sent messages table
       const sentMessageObj = {
         id: response.id || Date.now(),
@@ -675,7 +687,7 @@ const Messages = () => {
         timestamp: response.timestamp || new Date().toISOString(),
         status: "sent",
       };
-      
+
       // Add to sent messages list
       setSentMessages((prev) => [sentMessageObj, ...prev]);
 
@@ -722,18 +734,18 @@ const Messages = () => {
   const handleStartNewChat = () => {
     setShowStartChatModal(true);
   };
-  
+
   // Message selection and deletion functions
   const toggleMessageSelection = (messageId) => {
-    setSelectedMessages(prev => {
+    setSelectedMessages((prev) => {
       if (prev.includes(messageId)) {
-        return prev.filter(id => id !== messageId);
+        return prev.filter((id) => id !== messageId);
       } else {
         return [...prev, messageId];
       }
     });
   };
-  
+
   const handleLongPress = (messageId) => {
     if (!isSelectionMode) {
       setIsSelectionMode(true);
@@ -742,7 +754,7 @@ const Messages = () => {
       toggleMessageSelection(messageId);
     }
   };
-  
+
   const startLongPress = (messageId) => {
     if (isMobile) {
       const timer = setTimeout(() => {
@@ -751,45 +763,49 @@ const Messages = () => {
       setLongPressTimer(timer);
     }
   };
-  
+
   const cancelLongPress = () => {
     if (longPressTimer) {
       clearTimeout(longPressTimer);
       setLongPressTimer(null);
     }
   };
-  
+
   const exitSelectionMode = () => {
     setIsSelectionMode(false);
     setSelectedMessages([]);
   };
-  
+
   const deleteSelectedMessages = async () => {
     if (selectedMessages.length === 0) return;
-    
+
     try {
       if (selectedMessages.length === 1) {
         await chatAPI.deleteMessage(selectedMessages[0]);
       } else {
         await chatAPI.deleteMultipleMessages(selectedMessages);
       }
-      
+
       // Update UI by removing deleted messages
-      setMessages(prevMessages => {
-        return prevMessages.map(chat => {
+      setMessages((prevMessages) => {
+        return prevMessages.map((chat) => {
           if (chat.id === selectedChat?.id) {
             return {
               ...chat,
-              messages: chat.messages.filter(msg => !selectedMessages.includes(msg.id))
+              messages: chat.messages.filter(
+                (msg) => !selectedMessages.includes(msg.id)
+              ),
             };
           }
           return chat;
         });
       });
-      
+
       // Also remove from sent messages table if applicable
-      setSentMessages(prev => prev.filter(msg => !selectedMessages.includes(msg.id)));
-      
+      setSentMessages((prev) =>
+        prev.filter((msg) => !selectedMessages.includes(msg.id))
+      );
+
       // Exit selection mode
       exitSelectionMode();
     } catch (error) {
@@ -810,7 +826,10 @@ const Messages = () => {
       // If chat doesn't exist, create a new one
       const newChat = {
         id: tenant.id,
-        tenant: tenant.name || `${tenant.first_name || ''} ${tenant.last_name || ''}`.trim() || "Unknown Tenant",
+        tenant:
+          tenant.name ||
+          `${tenant.first_name || ""} ${tenant.last_name || ""}`.trim() ||
+          "Unknown Tenant",
         tenantEmail: tenant.email || "",
         property: tenant.property || "Unknown Property",
         unit: tenant.unit || "Unknown Unit",
@@ -1009,7 +1028,7 @@ const Messages = () => {
                                   handleReceivedPageChange(totalReceivedPages);
                                 }
                               }}
-                              className="w-12 h-7 text-xs text-center rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-[#0d9488]"
+                              className="w-12 h-7 text-xs text-center rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 caret-slate-900 dark:caret-slate-100 focus:outline-none focus:ring-2 focus:ring-[#0d9488]"
                             />
                           </div>
                         </div>
@@ -1126,7 +1145,7 @@ const Messages = () => {
                                   handleSentPageChange(totalSentPages);
                                 }
                               }}
-                              className="w-12 h-7 text-xs text-center rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-[#0d9488]"
+                              className="w-12 h-7 text-xs text-center rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 caret-slate-900 dark:caret-slate-100 focus:outline-none focus:ring-2 focus:ring-[#0d9488]"
                             />
                           </div>
                         </div>
@@ -1260,20 +1279,27 @@ const Messages = () => {
       <StartChatModal
         isOpen={showStartChatModal}
         onClose={() => setShowStartChatModal(false)}
-        tenants={tenants.filter(tenant => 
-          // Only include tenants with valid data
-          tenant.first_name && tenant.last_name
-        ).map((tenant) => ({
-          id: tenant.id,
-          name: `${tenant.first_name} ${tenant.last_name}`,
-          property: tenant.property_name || 
-                   tenant.property?.name || 
-                   (tenant.unit && tenant.unit.property && tenant.unit.property.name) || 
-                   tenant.property || 
-                   "Unknown Property",
-          unit: tenant.unit_id || (tenant.unit && tenant.unit.unit_id) || "Unit",
-          email: tenant.email || "",
-        }))}
+        tenants={tenants
+          .filter(
+            (tenant) =>
+              // Only include tenants with valid data
+              tenant.first_name && tenant.last_name
+          )
+          .map((tenant) => ({
+            id: tenant.id,
+            name: `${tenant.first_name} ${tenant.last_name}`,
+            property:
+              tenant.property_name ||
+              tenant.property?.name ||
+              (tenant.unit &&
+                tenant.unit.property &&
+                tenant.unit.property.name) ||
+              tenant.property ||
+              "Unknown Property",
+            unit:
+              tenant.unit_id || (tenant.unit && tenant.unit.unit_id) || "Unit",
+            email: tenant.email || "",
+          }))}
         onSelectTenant={handleSelectTenant}
       />
 

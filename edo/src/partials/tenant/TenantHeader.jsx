@@ -411,7 +411,7 @@ const TenantHeader = ({ toggleSidebar }) => {
                         value={searchQuery}
                         onChange={handleSearch}
                         placeholder="Search notices, maintenance, payments, notifications, lease info..."
-                        className="block w-full pl-10 pr-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md leading-5 bg-white dark:bg-slate-800 placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent sm:text-sm"
+                        className="block w-full pl-10 pr-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md leading-5 bg-white dark:bg-slate-800 placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent caret-slate-900 dark:caret-slate-100 sm:text-sm"
                         autoFocus
                       />
                     </div>

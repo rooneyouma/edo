@@ -62,12 +62,6 @@ const TenantSidebar = ({ isOpen, toggleSidebar }) => {
       current: pathname.includes("/tenant/rentals"),
     },
     {
-      name: "Payments",
-      href: "/tenant/payments",
-      icon: CreditCard,
-      current: pathname === "/tenant/payments",
-    },
-    {
       name: "Maintenance",
       href: "/tenant/maintenance",
       icon: Wrench,
@@ -78,6 +72,12 @@ const TenantSidebar = ({ isOpen, toggleSidebar }) => {
       href: "/tenant/notices",
       icon: Bell,
       current: pathname === "/tenant/notices",
+    },
+    {
+      name: "Payments",
+      href: "/tenant/payments",
+      icon: CreditCard,
+      current: pathname === "/tenant/payments",
     },
     {
       name: "Messages",

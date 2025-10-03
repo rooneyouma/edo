@@ -577,7 +577,7 @@ const Notices = () => {
                       type="text"
                       name="search"
                       id="search"
-                      className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0d9488] focus:border-[#0d9488] dark:bg-gray-700 dark:text-gray-100 text-sm sm:text-sm"
+                      className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0d9488] focus:border-[#0d9488] dark:bg-gray-700 dark:text-gray-100 caret-slate-900 dark:caret-slate-100 text-sm sm:text-sm"
                       placeholder="Search by property, unit, or reason..."
                       value={vacateSearch}
                       onChange={(e) => setVacateSearch(e.target.value)}

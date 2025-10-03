@@ -790,7 +790,7 @@ const Notices = () => {
                     tenantName: e.target.value,
                   })
                 }
-                className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-gray-700 dark:text-gray-100 py-2 px-3 sm:text-sm"
+                className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-gray-700 dark:text-gray-100 caret-slate-900 dark:caret-slate-100 py-2 px-3 sm:text-sm"
                 required
               />
             </div>
@@ -808,7 +808,7 @@ const Notices = () => {
                 onChange={(e) =>
                   setNoticeToEdit({ ...noticeToEdit, property: e.target.value })
                 }
-                className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-gray-700 dark:text-gray-100 py-2 px-3 sm:text-sm"
+                className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-gray-700 dark:text-gray-100 caret-slate-900 dark:caret-slate-100 py-2 px-3 sm:text-sm"
                 required
               />
             </div>
@@ -826,7 +826,7 @@ const Notices = () => {
                 onChange={(e) =>
                   setNoticeToEdit({ ...noticeToEdit, unit: e.target.value })
                 }
-                className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-gray-700 dark:text-gray-100 py-2 px-3 sm:text-sm"
+                className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-gray-700 dark:text-gray-100 caret-slate-900 dark:caret-slate-100 py-2 px-3 sm:text-sm"
               />
             </div>
             <div>
@@ -843,7 +843,7 @@ const Notices = () => {
                   setNoticeToEdit({ ...noticeToEdit, reason: e.target.value })
                 }
                 rows={3}
-                className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-gray-700 dark:text-gray-100 py-2 px-3 sm:text-sm"
+                className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-gray-700 dark:text-gray-100 caret-slate-900 dark:caret-slate-100 py-2 px-3 sm:text-sm"
                 required
               />
             </div>
@@ -865,7 +865,7 @@ const Notices = () => {
                   })
                 }
                 min={new Date().toISOString().split("T")[0]}
-                className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-gray-700 dark:text-gray-100 py-2 px-3 sm:text-sm"
+                className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-gray-700 dark:text-gray-100 caret-slate-900 dark:caret-slate-100 py-2 px-3 sm:text-sm"
                 required
               />
             </div>
@@ -2563,7 +2563,7 @@ const Notices = () => {
               rows={4}
               value={declineReason}
               onChange={(e) => setDeclineReason(e.target.value)}
-              className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-gray-700 dark:text-gray-100 sm:text-sm"
+              className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-gray-700 dark:text-gray-100 caret-slate-900 dark:caret-slate-100 sm:text-sm"
               placeholder="Enter your reason for declining..."
               required
             />

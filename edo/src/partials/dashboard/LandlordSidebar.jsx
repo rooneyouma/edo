@@ -9,10 +9,10 @@ import {
   Building2,
   Bell,
   MessageSquare,
-  FileText,
   Settings,
   LogOut,
   Wrench,
+  CreditCard,
 } from "lucide-react";
 import EdoLogo from "../../components/EdoLogo";
 
@@ -92,12 +92,6 @@ function LandlordSidebar({ sidebarOpen, setSidebarOpen }) {
       current: pathname === "/landlord/maintenance",
     },
     {
-      name: "Messages",
-      href: "/landlord/messages",
-      icon: MessageSquare,
-      current: pathname === "/landlord/messages",
-    },
-    {
       name: "Notices",
       href: "/landlord/notices",
       icon: Bell,
@@ -106,8 +100,14 @@ function LandlordSidebar({ sidebarOpen, setSidebarOpen }) {
     {
       name: "Payments",
       href: "/landlord/payments",
-      icon: FileText,
+      icon: CreditCard,
       current: pathname === "/landlord/payments",
+    },
+    {
+      name: "Messages",
+      href: "/landlord/messages",
+      icon: MessageSquare,
+      current: pathname === "/landlord/messages",
     },
     {
       name: "Notifications",
