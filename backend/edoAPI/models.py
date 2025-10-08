@@ -332,4 +332,3 @@ class TenantInvitation(models.Model):
     
     def generate_invitation_code(self):
         return secrets.token_urlsafe(32)
-
