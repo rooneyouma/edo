@@ -1,13 +1,13 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import TenantHeader from "../../../partials/tenant/TenantHeader.jsx";
-import TenantSidebar from "../../../partials/tenant/TenantSidebar.jsx";
+import TenantHeader from "@/partials/tenant/TenantHeader.jsx";
+import TenantSidebar from "@/partials/tenant/TenantSidebar.jsx";
 import { useRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
 import { ArrowUpDown, Filter, ChevronDown } from "lucide-react";
-import { isAuthenticated } from "../../../utils/api.js";
-import { apiRequest } from "../../../utils/api.js";
+import { isAuthenticated } from "@/utils/api";
+import { apiRequest } from "@/utils/api";
 import Link from "next/link";
 
 const Notices = () => {
