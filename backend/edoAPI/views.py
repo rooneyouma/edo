@@ -998,3 +998,68 @@ class VacateRequestViewSet(viewsets.ModelViewSet):
         property_obj = unit.property
         
         serializer.save(tenant=tenant, unit=unit, property=property_obj)
+    
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        user = request.user
+        
+        # Check if user is authorized to update this vacate request
+        if user.roles.filter(name='tenant').exists() and instance.tenant.user == user:
+            # Tenants can only withdraw their own requests when pending
+            if 'status' in request.data and request.data['status'] == 'withdrawn':
+                # Only allow withdrawing if current status is pending
+                if instance.status == 'pending':
+                    # Update the instance directly
+                    instance.status = 'withdrawn'
+                    instance.save()
+                    serializer = self.get_serializer(instance)
+                    return Response(serializer.data)
+                else:
+                    return Response(
+                        {'error': 'Cannot withdraw request that is not pending'}, 
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+            else:
+                return Response(
+                    {'error': 'Tenants can only withdraw their requests'}, 
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+        elif user.roles.filter(name='landlord').exists() and instance.property.landlord == user:
+            # Landlords can only update status to approved/declined for their own properties
+            if 'status' in request.data:
+                new_status = request.data['status']
+                if new_status in ['approved', 'declined']:
+                    # Only allow updating if current status is pending
+                    if instance.status == 'pending':
+                        # Update the instance directly
+                        instance.status = new_status
+                        if new_status == 'declined' and 'landlord_response' in request.data:
+                            instance.landlord_response = request.data['landlord_response']
+                        instance.response_date = timezone.now()
+                        instance.save()
+                        serializer = self.get_serializer(instance)
+                        return Response(serializer.data)
+                    else:
+                        return Response(
+                            {'error': 'Cannot modify request that is not pending'}, 
+                            status=status.HTTP_400_BAD_REQUEST
+                        )
+                else:
+                    return Response(
+                        {'error': 'Landlords can only approve or decline requests'}, 
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+            else:
+                return Response(
+                    {'error': 'Landlords can only update status'}, 
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
+        else:
+            return Response(
+                {'error': 'Not authorized to update this request'}, 
+                status=status.HTTP_403_FORBIDDEN
+            )
+    
+    def partial_update(self, request, *args, **kwargs):
+        return self.update(request, *args, **kwargs)

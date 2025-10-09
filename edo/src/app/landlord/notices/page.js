@@ -457,22 +457,35 @@ const Notices = () => {
       payload.landlord_response = declineReason;
     }
 
-    updateVacateRequestMutation.mutate({ requestId, payload });
+    updateVacateRequestMutation.mutate(
+      { requestId, payload },
+      {
+        onSuccess: () => {
+          // Close the modal after action
+          setIsVacateRequestModalOpen(false);
+          setIsDeclineReasonModalOpen(false);
+          setDeclineReason("");
+          setRequestToDecline(null);
 
-    // Update selected request if it's the one being modified
-    if (selectedVacateRequest && selectedVacateRequest.id === requestId) {
-      setSelectedVacateRequest((prev) => ({
-        ...prev,
-        status: action === "approve" ? "Approved" : "Declined",
-        declineReason: action === "decline" ? declineReason : null,
-      }));
-    }
-
-    // Close the modal after action
-    setIsVacateRequestModalOpen(false);
-    setIsDeclineReasonModalOpen(false);
-    setDeclineReason("");
-    setRequestToDecline(null);
+          // Update selected request if it's the one being modified
+          if (selectedVacateRequest && selectedVacateRequest.id === requestId) {
+            setSelectedVacateRequest((prev) => ({
+              ...prev,
+              status: action === "approve" ? "Approved" : "Declined",
+              declineReason: action === "decline" ? declineReason : null,
+            }));
+          }
+        },
+        onError: (error) => {
+          console.error("Failed to update vacate request:", error);
+          // Close the modal even if there's an error
+          setIsVacateRequestModalOpen(false);
+          setIsDeclineReasonModalOpen(false);
+          setDeclineReason("");
+          setRequestToDecline(null);
+        },
+      }
+    );
   };
 
   const handleEvictionNoticeAction = (noticeId, action) => {
@@ -488,6 +501,11 @@ const Notices = () => {
   // Filter and sort vacate requests
   const filteredVacateRequests = vacateRequests
     .filter((request) => {
+      // Exclude withdrawn requests from landlord view
+      if (request.status === "Withdrawn") {
+        return false;
+      }
+
       const matchesSearch =
         request.tenantName
           .toLowerCase()
@@ -2046,6 +2064,192 @@ const Notices = () => {
                             </div>
                           </div>
                         ))}
+                      </div>
+
+                      {/* Desktop Table Layout for Vacate Requests */}
+                      <div className="hidden md:block overflow-x-auto">
+                        <div className="inline-block min-w-full align-middle">
+                          <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
+                            <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                              <thead className="bg-gray-50 dark:bg-gray-800">
+                                <tr>
+                                  <th
+                                    scope="col"
+                                    className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-100 sm:pl-6"
+                                  >
+                                    Tenant Name
+                                  </th>
+                                  <th
+                                    scope="col"
+                                    className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
+                                  >
+                                    Property
+                                  </th>
+                                  <th
+                                    scope="col"
+                                    className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
+                                  >
+                                    Unit
+                                  </th>
+                                  <th
+                                    scope="col"
+                                    className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
+                                  >
+                                    Request Date
+                                  </th>
+                                  <th
+                                    scope="col"
+                                    className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
+                                  >
+                                    Move-Out Date
+                                  </th>
+                                  <th
+                                    scope="col"
+                                    className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
+                                  >
+                                    Reason
+                                  </th>
+                                  <th
+                                    scope="col"
+                                    className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
+                                  >
+                                    Status
+                                  </th>
+                                  <th
+                                    scope="col"
+                                    className="relative py-3.5 pl-3 pr-4 sm:pr-6"
+                                  >
+                                    <span className="sr-only">Actions</span>
+                                  </th>
+                                </tr>
+                              </thead>
+                              <tbody className="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-900">
+                                {currentVacateRequests.map((request) => (
+                                  <tr
+                                    key={request.id}
+                                    className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800"
+                                    onClick={() => {
+                                      setSelectedVacateRequest(request);
+                                      setIsVacateRequestModalOpen(true);
+                                    }}
+                                  >
+                                    <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 dark:text-gray-100 sm:pl-6">
+                                      {request.tenantName}
+                                    </td>
+                                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
+                                      {request.property}
+                                    </td>
+                                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
+                                      {request.unit}
+                                    </td>
+                                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
+                                      {request.requestDate}
+                                    </td>
+                                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
+                                      {request.moveOutDate}
+                                    </td>
+                                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
+                                      {request.reason}
+                                    </td>
+                                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
+                                      <span
+                                        className={`inline-flex rounded-full px-2 text-xs font-semibold leading-5 ${getStatusColor(
+                                          request.status
+                                        )}`}
+                                      >
+                                        {request.status}
+                                      </span>
+                                    </td>
+                                    <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
+                                      <div
+                                        className="flex items-center space-x-2"
+                                        onClick={(e) => e.stopPropagation()}
+                                      >
+                                        {request.status === "Pending" && (
+                                          <>
+                                            <button
+                                              onClick={(e) => {
+                                                e.stopPropagation();
+                                                handleVacateRequestAction(
+                                                  request.id,
+                                                  "approve"
+                                                );
+                                              }}
+                                              className="text-[#0d9488] hover:text-[#0f766e] dark:text-[#0d9488] dark:hover:text-[#0f766e]"
+                                            >
+                                              <svg
+                                                className="w-5 h-5"
+                                                fill="none"
+                                                stroke="currentColor"
+                                                viewBox="0 0 24 24"
+                                              >
+                                                <path
+                                                  strokeLinecap="round"
+                                                  strokeLinejoin="round"
+                                                  strokeWidth={2}
+                                                  d="M5 13l4 4L19 7"
+                                                />
+                                              </svg>
+                                            </button>
+                                            <button
+                                              onClick={(e) => {
+                                                e.stopPropagation();
+                                                handleVacateRequestAction(
+                                                  request.id,
+                                                  "decline"
+                                                );
+                                              }}
+                                              className="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300"
+                                            >
+                                              <svg
+                                                className="w-5 h-5"
+                                                fill="none"
+                                                stroke="currentColor"
+                                                viewBox="0 0 24 24"
+                                              >
+                                                <path
+                                                  strokeLinecap="round"
+                                                  strokeLinejoin="round"
+                                                  strokeWidth={2}
+                                                  d="M6 18L18 6M6 6l12 12"
+                                                />
+                                              </svg>
+                                            </button>
+                                          </>
+                                        )}
+                                        <button
+                                          onClick={(e) => {
+                                            e.stopPropagation();
+                                            setNoticeToDelete({
+                                              id: request.id,
+                                              type: "vacate",
+                                            });
+                                            setIsDeleteConfirmModalOpen(true);
+                                          }}
+                                          className="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300"
+                                        >
+                                          <svg
+                                            className="w-5 h-5"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            viewBox="0 0 24 24"
+                                          >
+                                            <path
+                                              strokeLinecap="round"
+                                              strokeLinejoin="round"
+                                              strokeWidth={2}
+                                              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                                            />
+                                          </svg>
+                                        </button>
+                                      </div>
+                                    </td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
                       </div>
 
                       {/* Desktop Table Layout for Eviction Notices */}

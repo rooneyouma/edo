@@ -192,6 +192,23 @@ const Notices = () => {
     },
   });
 
+  // Mutation for withdrawing vacate requests
+  const withdrawVacateRequestMutation = useMutation({
+    mutationFn: (requestId) =>
+      apiRequest(`/vacate-requests/${requestId}/`, {
+        method: "PATCH",
+        body: JSON.stringify({ status: "withdrawn" }),
+      }),
+    onSuccess: () => {
+      // Invalidate vacate requests query to refresh the list
+      queryClient.invalidateQueries({ queryKey: ["vacateRequests"] });
+    },
+    onError: (error) => {
+      console.error("Failed to withdraw vacate request:", error);
+      // You might want to show an error message to the user here
+    },
+  });
+
   // Helper to check if a date is in a given range
   const isInTimeRange = (dateStr, range) => {
     const date = new Date(dateStr);
@@ -220,6 +237,11 @@ const Notices = () => {
 
   const filteredVacateRequests = vacateRequests
     .filter((request) => {
+      // Exclude withdrawn requests from tenant view after landlord action
+      if (request.status.toLowerCase() === "withdrawn") {
+        return false;
+      }
+
       const matchesSearch =
         request.property.toLowerCase().includes(vacateSearch.toLowerCase()) ||
         request.unit.toLowerCase().includes(vacateSearch.toLowerCase()) ||
@@ -326,6 +348,31 @@ const Notices = () => {
   const handleNoticeClick = (notice) => {
     setSelectedNotice(notice);
     setShowNoticeModal(true);
+  };
+
+  // Add this function to handle withdraw action
+  const handleWithdrawRequest = (requestId) => {
+    // Find the request to check its status
+    const request = vacateRequests.find((req) => req.id === requestId);
+
+    // Check if the request has already been acted upon by the landlord
+    if (
+      request &&
+      (request.status.toLowerCase() === "approved" ||
+        request.status.toLowerCase() === "declined")
+    ) {
+      alert(
+        "This request has already been processed by your landlord and cannot be withdrawn."
+      );
+      return;
+    }
+
+    if (
+      window.confirm("Are you sure you want to withdraw this vacate request?")
+    ) {
+      withdrawVacateRequestMutation.mutate(requestId);
+      setShowVacateModal(false);
+    }
   };
 
   // Authentication and loading checks
@@ -1011,7 +1058,18 @@ const Notices = () => {
                   </div>
                 </div>
 
-                <div className="mt-6 flex justify-end">
+                <div className="mt-6 flex justify-end space-x-3">
+                  {selectedVacateRequest.status.toLowerCase() === "pending" && (
+                    <button
+                      type="button"
+                      className="inline-flex justify-center rounded-md border border-red-300 dark:border-red-600 bg-white dark:bg-gray-700 px-4 py-2 text-sm font-medium text-red-700 dark:text-red-200 shadow-sm hover:bg-red-50 dark:hover:bg-red-900/20 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+                      onClick={() =>
+                        handleWithdrawRequest(selectedVacateRequest.id)
+                      }
+                    >
+                      Withdraw Request
+                    </button>
+                  )}
                   <button
                     type="button"
                     className="inline-flex justify-center rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 shadow-sm hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-[#0d9488] focus:ring-offset-2"
