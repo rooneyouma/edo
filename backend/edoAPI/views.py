@@ -13,6 +13,8 @@ from django.utils import timezone
 from django.core.mail import send_mail
 from django.conf import settings
 from rest_framework import serializers
+from django.db.models import Count
+from datetime import timedelta
 
 def send_tenant_invitation_email(invitation):
     """
@@ -996,6 +998,39 @@ class VacateRequestViewSet(viewsets.ModelViewSet):
         # Get the unit from the tenant
         unit = tenant.unit
         property_obj = unit.property
+        
+        # Rate limiting: Check if tenant has more than 3 requests for this property in the last 24 hours
+        twenty_four_hours_ago = timezone.now() - timedelta(hours=24)
+        recent_requests_count = VacateRequest.objects.filter(
+            tenant=tenant,
+            property=property_obj,  # Limit per property instead of globally
+            created_at__gte=twenty_four_hours_ago
+        ).count()
+        
+        if recent_requests_count >= 3:
+            raise serializers.ValidationError("You have reached the maximum number of submissions for this property today. Please try again tomorrow.")
+        
+        # Check if tenant already has a pending request for this property
+        pending_request_exists = VacateRequest.objects.filter(
+            tenant=tenant,
+            property=property_obj,  # Check per property instead of globally
+            status='pending'
+        ).exists()
+        
+        if pending_request_exists:
+            raise serializers.ValidationError("You already have a pending vacate request for this property. Please wait for it to be processed or withdraw it before submitting a new one.")
+        
+        # Validate move-out date (must be at least 30 days in the future)
+        move_out_date = serializer.validated_data.get('move_out_date')
+        if move_out_date:
+            today = timezone.now().date()
+            min_move_out_date = today + timedelta(days=30)
+            
+            if move_out_date < today:
+                raise serializers.ValidationError("Move-out date cannot be in the past.")
+            
+            if move_out_date < min_move_out_date:
+                raise serializers.ValidationError("Please provide at least 30 days notice for moving out.")
         
         serializer.save(tenant=tenant, unit=unit, property=property_obj)
     

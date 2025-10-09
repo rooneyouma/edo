@@ -10,6 +10,7 @@ import { isAuthenticated } from "@/utils/api";
 import { apiRequest } from "@/utils/api";
 import Link from "next/link";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import StyledAlert from "@/components/ui/StyledAlert"; // Keep the import for future use
 
 const Notices = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -20,6 +21,18 @@ const Notices = () => {
   const [selectedVacateRequest, setSelectedVacateRequest] = useState(null);
   const [isExpandedView, setIsExpandedView] = useState(false);
   const [isClient, setIsClient] = useState(false);
+  // Add these new state variables at the top with other state declarations
+  const [lastSubmissionTime, setLastSubmissionTime] = useState(null);
+  const [submissionCount, setSubmissionCount] = useState(0);
+  const [alert, setAlert] = useState({
+    show: false,
+    type: "info",
+    title: "",
+    message: "",
+  });
+  const [showConfirmation, setShowConfirmation] = useState(false);
+  const [requestToWithdraw, setRequestToWithdraw] = useState(null);
+  const [formError, setFormError] = useState(""); // Add state for form validation errors
   const router = useRouter();
   const searchParams = useSearchParams();
   const queryClient = useQueryClient();
@@ -149,65 +162,108 @@ const Notices = () => {
     enabled: isAuthenticated(),
   });
 
-  // Mutation for submitting vacate requests
-  const createVacateRequestMutation = useMutation({
-    mutationFn: (requestData) =>
-      apiRequest("/vacate-requests/", {
-        method: "POST",
-        body: JSON.stringify(requestData),
-      }),
-    onSuccess: (newRequest) => {
-      // Update the vacate requests list
-      const formattedRequest = {
-        id: newRequest.id,
-        property: newRequest.property_name,
-        unit: newRequest.unit_number,
-        requestDate: newRequest.created_at
-          ? new Date(newRequest.created_at).toLocaleDateString()
-          : new Date().toLocaleDateString(),
-        moveOutDate: newRequest.move_out_date,
-        reason: newRequest.reason,
-        status:
-          newRequest.status.charAt(0).toUpperCase() +
-          newRequest.status.slice(1),
-      };
+  const validateSubmission = () => {
+    const now = new Date();
+    const twentyFourHours = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+    const thirtyDays = 30 * 24 * 60 * 60 * 1000; // 30 days in milliseconds
 
-      // Update the query cache
-      queryClient.setQueryData(["vacateRequests"], (oldData = []) => [
-        ...oldData,
-        formattedRequest,
-      ]);
+    // Clear any previous form error
+    setFormError("");
 
-      // Close the form and reset
-      setShowVacateForm(false);
-      setFormData({
-        property: tenantProperties.length === 1 ? tenantProperties[0].id : "",
-        moveOutDate: "",
-        reason: "",
-      });
-    },
-    onError: (error) => {
-      console.error("Failed to submit vacate request:", error);
-      // You might want to show an error message to the user here
-    },
-  });
+    // Check if there's an existing pending request
+    const hasPendingRequest = vacateRequests.some(
+      (request) => request.status.toLowerCase() === "pending"
+    );
 
-  // Mutation for withdrawing vacate requests
-  const withdrawVacateRequestMutation = useMutation({
-    mutationFn: (requestId) =>
-      apiRequest(`/vacate-requests/${requestId}/`, {
-        method: "PATCH",
-        body: JSON.stringify({ status: "withdrawn" }),
-      }),
-    onSuccess: () => {
-      // Invalidate vacate requests query to refresh the list
-      queryClient.invalidateQueries({ queryKey: ["vacateRequests"] });
-    },
-    onError: (error) => {
-      console.error("Failed to withdraw vacate request:", error);
-      // You might want to show an error message to the user here
-    },
-  });
+    if (hasPendingRequest) {
+      setFormError(
+        "You already have a pending vacate request. Please wait for it to be processed or withdraw it before submitting a new one."
+      );
+      return false;
+    }
+
+    // Check submission frequency
+    if (lastSubmissionTime) {
+      const timeSinceLastSubmission = now - new Date(lastSubmissionTime);
+
+      // Prevent more than 3 submissions in 24 hours
+      if (submissionCount >= 3 && timeSinceLastSubmission < twentyFourHours) {
+        setFormError(
+          "You have reached the maximum number of submissions for today. Please try again tomorrow."
+        );
+        return false;
+      }
+
+      // Reset submission count after 24 hours
+      if (timeSinceLastSubmission >= twentyFourHours) {
+        setSubmissionCount(0);
+      }
+    }
+
+    // Validate move-out date
+    const moveOutDate = new Date(formData.moveOutDate);
+    const minimumNotice = 30; // days
+    const today = new Date();
+
+    if (moveOutDate < today) {
+      setFormError("Move-out date cannot be in the past.");
+      return false;
+    }
+
+    const daysNotice = Math.ceil((moveOutDate - today) / (1000 * 60 * 60 * 24));
+    if (daysNotice < minimumNotice) {
+      setFormError(
+        `Please provide at least ${minimumNotice} days notice for moving out.`
+      );
+      return false;
+    }
+
+    return true;
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    // Validate the submission
+    if (!validateSubmission()) {
+      return;
+    }
+
+    // Find the selected property
+    const selectedProperty = tenantProperties.find(
+      (p) => p.id === parseInt(formData.property)
+    );
+
+    if (!selectedProperty) {
+      console.error("Selected property not found");
+      return;
+    }
+
+    // Update submission tracking
+    setSubmissionCount((prev) => prev + 1);
+    setLastSubmissionTime(new Date().toISOString());
+
+    // Prepare data for submission
+    const requestData = {
+      move_out_date: formData.moveOutDate,
+      reason: formData.reason,
+    };
+
+    // Use React Query mutation to submit the request
+    createVacateRequestMutation.mutate(requestData);
+  };
+
+  const toggleSidebar = () => {
+    setIsSidebarOpen(!isSidebarOpen);
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
 
   // Helper to check if a date is in a given range
   const isInTimeRange = (dateStr, range) => {
@@ -264,42 +320,6 @@ const Notices = () => {
       const dateB = new Date(b.requestDate);
       return vacateSortOrder === "latest" ? dateB - dateA : dateA - dateB;
     });
-
-  const toggleSidebar = () => {
-    setIsSidebarOpen(!isSidebarOpen);
-  };
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    // Find the selected property
-    const selectedProperty = tenantProperties.find(
-      (p) => p.id === parseInt(formData.property)
-    );
-
-    if (!selectedProperty) {
-      console.error("Selected property not found");
-      return;
-    }
-
-    // Prepare data for submission
-    // Note: tenant, unit, and property will be automatically determined by the backend
-    const requestData = {
-      move_out_date: formData.moveOutDate,
-      reason: formData.reason,
-    };
-
-    // Use React Query mutation to submit the request
-    createVacateRequestMutation.mutate(requestData);
-  };
 
   const getStatusColor = (status) => {
     switch (status.toLowerCase()) {
@@ -367,13 +387,116 @@ const Notices = () => {
       return;
     }
 
-    if (
-      window.confirm("Are you sure you want to withdraw this vacate request?")
-    ) {
-      withdrawVacateRequestMutation.mutate(requestId);
-      setShowVacateModal(false);
+    // Set the request to withdraw and show styled confirmation
+    setRequestToWithdraw(requestId);
+    setShowConfirmation(true);
+  };
+
+  // Function to confirm withdrawal
+  const confirmWithdrawal = () => {
+    if (requestToWithdraw) {
+      withdrawVacateRequestMutation.mutate(requestToWithdraw);
     }
   };
+
+  // Function to cancel withdrawal
+  const cancelWithdrawal = () => {
+    setShowConfirmation(false);
+    setRequestToWithdraw(null);
+  };
+
+  // Mutation for submitting vacate requests
+  const createVacateRequestMutation = useMutation({
+    mutationFn: (requestData) =>
+      apiRequest("/vacate-requests/", {
+        method: "POST",
+        body: JSON.stringify(requestData),
+      }),
+    onSuccess: (newRequest) => {
+      // Update the vacate requests list
+      const formattedRequest = {
+        id: newRequest.id,
+        property: newRequest.property_name,
+        unit: newRequest.unit_number,
+        requestDate: newRequest.created_at
+          ? new Date(newRequest.created_at).toLocaleDateString()
+          : new Date().toLocaleDateString(),
+        moveOutDate: newRequest.move_out_date,
+        reason: newRequest.reason,
+        status:
+          newRequest.status.charAt(0).toUpperCase() +
+          newRequest.status.slice(1),
+      };
+
+      // Update the query cache
+      queryClient.setQueryData(["vacateRequests"], (oldData = []) => [
+        ...oldData,
+        formattedRequest,
+      ]);
+
+      // Close the form and reset
+      setShowVacateForm(false);
+      setFormData({
+        property: tenantProperties.length === 1 ? tenantProperties[0].id : "",
+        moveOutDate: "",
+        reason: "",
+      });
+      // Clear any form error
+      setFormError("");
+    },
+    onError: (error) => {
+      console.error("Failed to submit vacate request:", error);
+      // Display backend validation errors as styled messages
+      if (error && error.message) {
+        setFormError(error.message);
+      } else if (error && error.response) {
+        // Handle array of errors from backend
+        if (Array.isArray(error.response)) {
+          setFormError(error.response.join(" "));
+        } else if (typeof error.response === "object") {
+          // Handle object with detail property or array of errors
+          if (error.response.detail) {
+            setFormError(error.response.detail);
+          } else if (
+            Array.isArray(error.response) &&
+            error.response.length > 0
+          ) {
+            // Handle case where response is an array of error messages
+            setFormError(error.response.join(" "));
+          } else {
+            // Handle other object formats
+            const errorMessages = Object.values(error.response).flat();
+            setFormError(errorMessages.join(" "));
+          }
+        } else {
+          setFormError(error.response);
+        }
+      } else {
+        setFormError("Failed to submit vacate request. Please try again.");
+      }
+    },
+  });
+
+  // Mutation for withdrawing vacate requests
+  const withdrawVacateRequestMutation = useMutation({
+    mutationFn: (requestId) => {
+      return apiRequest(`/vacate-requests/${requestId}/`, {
+        method: "PATCH",
+        body: JSON.stringify({ status: "withdrawn" }),
+      });
+    },
+    onSuccess: () => {
+      // Invalidate vacate requests query to refresh the list
+      queryClient.invalidateQueries({ queryKey: ["vacateRequests"] });
+      setShowVacateModal(false);
+      setShowConfirmation(false); // Close confirmation modal
+    },
+    onError: (error) => {
+      console.error("Failed to withdraw vacate request:", error);
+      // You might want to show an error message to the user here
+      setShowConfirmation(false); // Close confirmation modal even on error
+    },
+  });
 
   // Authentication and loading checks
   if (!isClient) {
@@ -668,6 +791,27 @@ const Notices = () => {
               <h2 className="text-lg font-medium text-slate-900 dark:text-slate-100 mb-4">
                 Vacate Notices
               </h2>
+
+              {/* Add the 30-day notice badge here */}
+              <div className="mb-4">
+                <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
+                  <svg
+                    className="mr-1.5 h-4 w-4"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                  </svg>
+                  Minimum 30 days notice required
+                </span>
+              </div>
+
               {/* Mobile: Submit Vacate Notice button under title */}
               <div className="block sm:hidden mb-4">
                 <button
@@ -748,7 +892,7 @@ const Notices = () => {
                   <button
                     type="button"
                     onClick={() => setShowVacateForm(true)}
-                    className="hidden sm:inline-flex items-center px-3 py-2 border border-transparent text-xs sm:text-sm font-medium rounded-lg shadow-sm text-white bg-[#0d9488] hover:bg-[#0f766e] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0d9488]"
+                    className="hidden sm:inline-flex items-center px-3 py-2 border border-transparent text-xs sm:text-sm font-medium rounded-lg shadow-sm text-white bg-[#0d9488] hover:bg-[#0f766e] focus:outline-none focus:ring-[#0d9488]"
                   >
                     Submit Vacate Notice
                   </button>
@@ -857,7 +1001,10 @@ const Notices = () => {
                   <button
                     type="button"
                     className="rounded-md bg-white dark:bg-slate-800 text-gray-400 hover:text-gray-500 focus:outline-none"
-                    onClick={() => setShowVacateForm(false)}
+                    onClick={() => {
+                      setShowVacateForm(false);
+                      setFormError(""); // Clear error when closing
+                    }}
                   >
                     <span className="sr-only">Close</span>
                     <svg
@@ -886,6 +1033,55 @@ const Notices = () => {
                     </p>
                   </div>
                 </div>
+
+                {/* Add 30-day notice badge inside the form modal */}
+                <div className="mt-4">
+                  <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
+                    <svg
+                      className="mr-1.5 h-4 w-4"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                      />
+                    </svg>
+                    Minimum 30 days notice required
+                  </span>
+                </div>
+
+                {/* Form validation error message */}
+                {formError && (
+                  <div className="mt-4 rounded-md bg-red-50 p-4">
+                    <div className="flex">
+                      <div className="flex-shrink-0">
+                        <svg
+                          className="h-5 w-5 text-red-400"
+                          viewBox="0 0 20 20"
+                          fill="currentColor"
+                        >
+                          <path
+                            fillRule="evenodd"
+                            d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                            clipRule="evenodd"
+                          />
+                        </svg>
+                      </div>
+                      <div className="ml-3">
+                        <h3 className="text-sm font-medium text-red-800">
+                          Validation Error
+                        </h3>
+                        <div className="mt-2 text-sm text-red-700">
+                          <p>{formError}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
 
                 <form onSubmit={handleSubmit} className="mt-6 space-y-6">
                   {tenantProperties.length > 1 && (
@@ -967,6 +1163,62 @@ const Notices = () => {
                     </button>
                   </div>
                 </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Styled Confirmation Modal for Withdrawal */}
+      {showConfirmation && (
+        <div className="fixed inset-0 bg-gray-500/50 dark:bg-gray-900/50 z-40">
+          <div className="fixed inset-0 z-50 overflow-y-auto">
+            <div className="flex min-h-full items-center justify-center p-4 text-center">
+              <div className="relative transform overflow-hidden rounded-lg bg-white dark:bg-slate-800 px-4 pb-4 pt-5 text-left shadow-xl transition-all mx-auto w-[95%] max-w-lg sm:my-8 sm:w-full sm:p-6">
+                <div className="sm:flex sm:items-start">
+                  <div className="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
+                    <svg
+                      className="h-6 w-6 text-red-600"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      strokeWidth="1.5"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"
+                      />
+                    </svg>
+                  </div>
+                  <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                    <h3 className="text-lg font-semibold leading-6 text-gray-900 dark:text-gray-100">
+                      Confirm Withdrawal
+                    </h3>
+                    <div className="mt-2">
+                      <p className="text-sm text-gray-500 dark:text-gray-400">
+                        Are you sure you want to withdraw this vacate request?
+                        This action cannot be undone.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div className="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
+                  <button
+                    type="button"
+                    className="inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto"
+                    onClick={confirmWithdrawal}
+                  >
+                    Withdraw
+                  </button>
+                  <button
+                    type="button"
+                    className="mt-3 inline-flex w-full justify-center rounded-md bg-white dark:bg-gray-700 px-3 py-2 text-sm font-semibold text-gray-900 dark:text-gray-200 shadow-sm ring-1 ring-inset ring-gray-300 dark:ring-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600 sm:mt-0 sm:w-auto"
+                    onClick={cancelWithdrawal}
+                  >
+                    Cancel
+                  </button>
+                </div>
               </div>
             </div>
           </div>
