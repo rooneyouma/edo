@@ -5,8 +5,8 @@ from rest_framework import status, generics, permissions, viewsets
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import authenticate
-from .models import User, LandlordProperty, Role, Unit, Tenant, Payment, Notice, LandlordMaintenance, MaintenanceMessage, ChatMessage, TenantInvitation
-from .serializers import UserSerializer, UserRegistrationSerializer, UserLoginSerializer, LandlordPropertySerializer, UnitSerializer, TenantSerializer, PaymentSerializer, NoticeSerializer, LandlordMaintenanceSerializer, MaintenanceMessageSerializer, ChatMessageSerializer, TenantInvitationSerializer, LandlordListSerializer, LandlordDetailSerializer
+from .models import User, LandlordProperty, Role, Unit, Tenant, Payment, Notice, LandlordMaintenance, MaintenanceMessage, ChatMessage, TenantInvitation, VacateRequest
+from .serializers import UserSerializer, UserRegistrationSerializer, UserLoginSerializer, LandlordPropertySerializer, UnitSerializer, TenantSerializer, PaymentSerializer, NoticeSerializer, LandlordMaintenanceSerializer, MaintenanceMessageSerializer, ChatMessageSerializer, TenantInvitationSerializer, LandlordListSerializer, LandlordDetailSerializer, VacateRequestSerializer
 from rest_framework.decorators import api_view, permission_classes, action
 from django.db import models
 from django.utils import timezone
@@ -961,3 +961,40 @@ def landlord_maintenance_requests(request):
         return Response(serializer.data)
     except Exception as e:
         return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class VacateRequestViewSet(viewsets.ModelViewSet):
+    serializer_class = VacateRequestSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    
+    def get_queryset(self):
+        user = self.request.user
+        # Tenants can only see their own vacate requests
+        if user.roles.filter(name='tenant').exists():
+            try:
+                tenant = Tenant.objects.get(user=user)
+                return VacateRequest.objects.filter(tenant=tenant)
+            except Tenant.DoesNotExist:
+                return VacateRequest.objects.none()
+        # Landlords can see vacate requests for their properties
+        elif user.roles.filter(name='landlord').exists():
+            return VacateRequest.objects.filter(property__landlord=user)
+        # Default to empty queryset for other roles
+        return VacateRequest.objects.none()
+    
+    def perform_create(self, serializer):
+        user = self.request.user
+        # Only tenants can create vacate requests
+        if not user.roles.filter(name='tenant').exists():
+            raise serializers.ValidationError("Only tenants can submit vacate requests")
+        
+        try:
+            tenant = Tenant.objects.get(user=user)
+        except Tenant.DoesNotExist:
+            raise serializers.ValidationError("Tenant profile not found")
+        
+        # Get the unit from the tenant
+        unit = tenant.unit
+        property_obj = unit.property
+        
+        serializer.save(tenant=tenant, unit=unit, property=property_obj)

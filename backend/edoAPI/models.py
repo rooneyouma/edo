@@ -332,3 +332,29 @@ class TenantInvitation(models.Model):
     
     def generate_invitation_code(self):
         return secrets.token_urlsafe(32)
+
+
+class VacateRequest(models.Model):
+    STATUS_CHOICES = [
+        ('pending', 'Pending'),
+        ('approved', 'Approved'),
+        ('declined', 'Declined'),
+        ('withdrawn', 'Withdrawn'),
+    ]
+    
+    tenant = models.ForeignKey(Tenant, on_delete=models.CASCADE, related_name='vacate_requests')
+    unit = models.ForeignKey(Unit, on_delete=models.CASCADE, related_name='vacate_requests')
+    property = models.ForeignKey(LandlordProperty, on_delete=models.CASCADE, related_name='vacate_requests')
+    move_out_date = models.DateField()
+    reason = models.TextField(blank=True) 
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
+    landlord_response = models.TextField(blank=True, null=True)
+    response_date = models.DateTimeField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        ordering = ['-created_at']
+    
+    def __str__(self):
+        return f"Vacate Request by {self.tenant.first_name} {self.tenant.last_name} for Unit {self.unit.unit_id}"

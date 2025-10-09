@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth import authenticate
-from .models import User, Role, LandlordProperty, Unit, Tenant, Payment, Notice, LandlordMaintenance, MaintenanceMessage, ChatMessage, TenantInvitation
+from .models import User, Role, LandlordProperty, Unit, Tenant, Payment, Notice, LandlordMaintenance, MaintenanceMessage, ChatMessage, TenantInvitation, VacateRequest
 import re
 from django.utils import timezone
 
@@ -318,3 +318,39 @@ class LandlordDetailSerializer(serializers.ModelSerializer):
     
     def get_full_name(self, obj):
         return f"{obj.first_name} {obj.last_name}".strip()
+
+
+class VacateRequestSerializer(serializers.ModelSerializer):
+    tenant_name = serializers.SerializerMethodField()
+    property_name = serializers.CharField(source='property.name', read_only=True)
+    unit_number = serializers.CharField(source='unit.unit_id', read_only=True)
+    status_display = serializers.CharField(source='get_status_display', read_only=True)
+    
+    class Meta:
+        model = VacateRequest
+        fields = [
+            'id', 'tenant', 'unit', 'property', 'move_out_date', 'reason', 
+            'status', 'status_display', 'landlord_response', 'response_date',
+            'created_at', 'updated_at', 'tenant_name', 'property_name', 'unit_number'
+        ]
+        read_only_fields = ['id', 'created_at', 'updated_at', 'status', 'tenant_name', 'property_name', 'unit_number', 'status_display', 'tenant', 'unit', 'property']
+    
+    def get_tenant_name(self, obj):
+        return f"{obj.tenant.first_name} {obj.tenant.last_name}"
+    
+    def create(self, validated_data):
+        # Get the request from the serializer context
+        request = self.context.get('request')
+        if request and hasattr(request, 'user'):
+            # Get the tenant from the authenticated user
+            try:
+                tenant = Tenant.objects.get(user=request.user)
+                validated_data['tenant'] = tenant
+                validated_data['unit'] = tenant.unit
+                validated_data['property'] = tenant.unit.property
+            except Tenant.DoesNotExist:
+                raise serializers.ValidationError("Tenant profile not found")
+        else:
+            raise serializers.ValidationError("User authentication required")
+        
+        return super().create(validated_data)

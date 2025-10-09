@@ -9,6 +9,7 @@ import { ArrowUpDown, Filter, ChevronDown } from "lucide-react";
 import { isAuthenticated } from "@/utils/api";
 import { apiRequest } from "@/utils/api";
 import Link from "next/link";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 const Notices = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -18,12 +19,10 @@ const Notices = () => {
   const [showVacateModal, setShowVacateModal] = useState(false);
   const [selectedVacateRequest, setSelectedVacateRequest] = useState(null);
   const [isExpandedView, setIsExpandedView] = useState(false);
-  const [notices, setNotices] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [isClient, setIsClient] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
+  const queryClient = useQueryClient();
 
   // Initialize client-side state
   useEffect(() => {
@@ -40,37 +39,12 @@ const Notices = () => {
     }
   }, [isClient, searchParams]);
 
-  // Mock data for tenant's properties (in a real app, this would come from your API)
-  const tenantProperties = [
-    { id: 1, name: "Sunset Apartments", unit: "A101" },
-    { id: 2, name: "Mountain View Condos", unit: "B202" },
-  ];
-
-  // Mock data for vacate requests
-  const [vacateRequests, setVacateRequests] = useState([
-    {
-      id: 1,
-      property: "Sunset Apartments",
-      unit: "A101",
-      requestDate: "2024-03-01",
-      moveOutDate: "2024-04-01",
-      reason: "Job relocation to another city",
-      status: "Pending",
-    },
-    {
-      id: 2,
-      property: "Mountain View Condos",
-      unit: "B202",
-      requestDate: "2024-03-10",
-      moveOutDate: "2024-04-15",
-      reason: "Family emergency requiring relocation",
-      status: "Approved",
-    },
-  ]);
+  // State for tenant's properties and vacate requests
+  const [tenantProperties, setTenantProperties] = useState([]);
 
   // Form state
   const [formData, setFormData] = useState({
-    property: tenantProperties.length === 1 ? tenantProperties[0].id : "",
+    property: "",
     moveOutDate: "",
     reason: "",
   });
@@ -82,42 +56,141 @@ const Notices = () => {
   const [vacateTimeFilter, setVacateTimeFilter] = useState("all");
   const [showVacateFilters, setShowVacateFilters] = useState(false);
 
-  // Fetch notices data
+  // Fetch tenant properties
   useEffect(() => {
-    const fetchNotices = async () => {
-      setLoading(true);
+    const fetchTenantProperties = async () => {
       try {
-        const data = await apiRequest("/notices/", { method: "GET" });
-        const noticesData = Array.isArray(data) ? data : data?.results || [];
-        setNotices(
-          Array.isArray(noticesData)
-            ? noticesData.map((notice) => ({
-                id: notice?.id ?? Math.random(),
-                type: notice?.notice_type || notice?.type || "general",
-                title: notice?.title || "",
-                content: notice?.message || notice?.content || "",
-                date: notice?.date_sent
-                  ? new Date(notice.date_sent).toLocaleDateString()
-                  : "",
-                priority: notice?.priority || "normal",
-                from:
-                  notice?.from ||
-                  (notice?.property && notice.property.name) ||
-                  "Property Manager",
-                isRead: notice?.isRead || false,
-                managerId: notice?.managerId || null,
-              }))
-            : []
-        );
-        setError(null);
+        const data = await apiRequest("/tenant/rentals/", { method: "GET" });
+        if (data.rentals && data.rentals.length > 0) {
+          const properties = data.rentals.map((rental) => ({
+            id: rental.id,
+            name: rental.property_name,
+            unit: rental.unit_number,
+            propertyId: rental.property_id,
+            unitId: rental.unit_id,
+          }));
+          setTenantProperties(properties);
+
+          // Set default property if only one
+          if (properties.length === 1) {
+            setFormData((prev) => ({
+              ...prev,
+              property: properties[0].id,
+            }));
+          }
+        }
       } catch (err) {
-        setError("Failed to load notices");
-        setNotices([]);
+        console.error("Failed to load tenant properties:", err);
       }
-      setLoading(false);
     };
-    fetchNotices();
+
+    if (isAuthenticated()) {
+      fetchTenantProperties();
+    }
   }, []);
+
+  // Use React Query for fetching notices
+  const {
+    data: notices = [],
+    isLoading: loadingNotices,
+    error: noticesError,
+  } = useQuery({
+    queryKey: ["tenantNotices"],
+    queryFn: async () => {
+      const data = await apiRequest("/notices/", { method: "GET" });
+      const noticesData = Array.isArray(data) ? data : data?.results || [];
+      return Array.isArray(noticesData)
+        ? noticesData.map((notice) => ({
+            id: notice?.id ?? Math.random(),
+            type: notice?.notice_type || notice?.type || "general",
+            title: notice?.title || "",
+            content: notice?.message || notice?.content || "",
+            date: notice?.date_sent
+              ? new Date(notice.date_sent).toLocaleDateString()
+              : "",
+            priority: notice?.priority || "normal",
+            from:
+              notice?.from ||
+              (notice?.property && notice.property.name) ||
+              "Property Manager",
+            isRead: notice?.isRead || false,
+            managerId: notice?.managerId || null,
+          }))
+        : [];
+    },
+    enabled: isAuthenticated(),
+  });
+
+  // Use React Query for fetching vacate requests
+  const {
+    data: vacateRequests = [],
+    isLoading: vacateRequestsLoading,
+    error: vacateRequestsError,
+  } = useQuery({
+    queryKey: ["vacateRequests"],
+    queryFn: async () => {
+      const data = await apiRequest("/vacate-requests/", { method: "GET" });
+      if (Array.isArray(data)) {
+        return data.map((request) => ({
+          id: request.id,
+          property: request.property_name,
+          unit: request.unit_number,
+          requestDate: request.created_at
+            ? new Date(request.created_at).toLocaleDateString()
+            : "",
+          moveOutDate: request.move_out_date,
+          reason: request.reason,
+          status:
+            request.status.charAt(0).toUpperCase() + request.status.slice(1), // Capitalize first letter
+        }));
+      }
+      return [];
+    },
+    enabled: isAuthenticated(),
+  });
+
+  // Mutation for submitting vacate requests
+  const createVacateRequestMutation = useMutation({
+    mutationFn: (requestData) =>
+      apiRequest("/vacate-requests/", {
+        method: "POST",
+        body: JSON.stringify(requestData),
+      }),
+    onSuccess: (newRequest) => {
+      // Update the vacate requests list
+      const formattedRequest = {
+        id: newRequest.id,
+        property: newRequest.property_name,
+        unit: newRequest.unit_number,
+        requestDate: newRequest.created_at
+          ? new Date(newRequest.created_at).toLocaleDateString()
+          : new Date().toLocaleDateString(),
+        moveOutDate: newRequest.move_out_date,
+        reason: newRequest.reason,
+        status:
+          newRequest.status.charAt(0).toUpperCase() +
+          newRequest.status.slice(1),
+      };
+
+      // Update the query cache
+      queryClient.setQueryData(["vacateRequests"], (oldData = []) => [
+        ...oldData,
+        formattedRequest,
+      ]);
+
+      // Close the form and reset
+      setShowVacateForm(false);
+      setFormData({
+        property: tenantProperties.length === 1 ? tenantProperties[0].id : "",
+        moveOutDate: "",
+        reason: "",
+      });
+    },
+    onError: (error) => {
+      console.error("Failed to submit vacate request:", error);
+      // You might want to show an error message to the user here
+    },
+  });
 
   // Helper to check if a date is in a given range
   const isInTimeRange = (dateStr, range) => {
@@ -150,7 +223,8 @@ const Notices = () => {
       const matchesSearch =
         request.property.toLowerCase().includes(vacateSearch.toLowerCase()) ||
         request.unit.toLowerCase().includes(vacateSearch.toLowerCase()) ||
-        request.reason.toLowerCase().includes(vacateSearch.toLowerCase()) ||
+        (request.reason &&
+          request.reason.toLowerCase().includes(vacateSearch.toLowerCase())) ||
         request.requestDate
           .toLowerCase()
           .includes(vacateSearch.toLowerCase()) ||
@@ -181,27 +255,28 @@ const Notices = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Find the selected property
     const selectedProperty = tenantProperties.find(
       (p) => p.id === parseInt(formData.property)
     );
-    const newRequest = {
-      id: vacateRequests.length + 1,
-      property: selectedProperty.name,
-      unit: selectedProperty.unit,
-      requestDate: new Date().toISOString().split("T")[0],
-      moveOutDate: formData.moveOutDate,
+
+    if (!selectedProperty) {
+      console.error("Selected property not found");
+      return;
+    }
+
+    // Prepare data for submission
+    // Note: tenant, unit, and property will be automatically determined by the backend
+    const requestData = {
+      move_out_date: formData.moveOutDate,
       reason: formData.reason,
-      status: "Pending",
     };
-    setVacateRequests((prev) => [...prev, newRequest]);
-    setShowVacateForm(false);
-    setFormData({
-      property: tenantProperties.length === 1 ? tenantProperties[0].id : "",
-      moveOutDate: "",
-      reason: "",
-    });
+
+    // Use React Query mutation to submit the request
+    createVacateRequestMutation.mutate(requestData);
   };
 
   const getStatusColor = (status) => {
@@ -277,8 +352,8 @@ const Notices = () => {
     );
   }
 
-  if (loading) return <div>Loading notices...</div>;
-  if (error) return <div>{error}</div>;
+  if (loadingNotices) return <div>Loading notices...</div>;
+  if (noticesError) return <div>Failed to load notices</div>;
 
   // Sort notices to ensure eviction notices appear first
   const sortedNotices = [...notices].sort((a, b) => {
@@ -662,56 +737,63 @@ const Notices = () => {
                 </div>
               )}
               <div className="flex flex-col gap-4">
-                {filteredVacateRequests.map((request) => (
-                  <div
-                    key={request.id}
-                    className="w-full bg-white dark:bg-gray-900 shadow ring-1 ring-black ring-opacity-5 rounded-lg px-4 py-3 sm:px-6 sm:py-4 flex flex-col gap-3 cursor-pointer hover:ring-[#0d9488] transition"
-                    onClick={() => {
-                      setSelectedVacateRequest(request);
-                      setShowVacateModal(true);
-                    }}
-                  >
-                    <div className="flex flex-wrap items-center justify-between gap-2">
-                      <div className="text-sm font-semibold text-gray-900 dark:text-gray-100 truncate">
-                        {request.property} - {request.unit}
-                      </div>
-                      <div>
-                        <span
-                          className={`inline-flex rounded-full px-2 py-1 text-xs font-semibold leading-4 ${getStatusColor(
-                            request.status
-                          )}`}
-                        >
-                          {request.status}
-                        </span>
-                      </div>
-                    </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                      <div className="text-xs text-gray-500 dark:text-gray-400">
-                        Request Date:{" "}
-                        <span className="font-medium text-gray-700 dark:text-gray-200">
-                          {request.requestDate}
-                        </span>
-                      </div>
-                      <div className="text-xs text-gray-500 dark:text-gray-400">
-                        Move-Out Date:{" "}
-                        <span className="font-medium text-gray-700 dark:text-gray-200">
-                          {request.moveOutDate}
-                        </span>
-                      </div>
-                      <div className="text-xs text-gray-500 dark:text-gray-400 sm:col-span-3">
-                        <span className="font-medium">Reason:</span>{" "}
-                        <span className="text-gray-700 dark:text-gray-200">
-                          {request.reason}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-                {filteredVacateRequests.length === 0 && (
+                {vacateRequestsLoading ? (
                   <div className="text-center text-gray-500 dark:text-gray-400 py-8">
-                    No vacate requests found.
+                    Loading vacate requests...
                   </div>
+                ) : (
+                  filteredVacateRequests.map((request) => (
+                    <div
+                      key={request.id}
+                      className="w-full bg-white dark:bg-gray-900 shadow ring-1 ring-black ring-opacity-5 rounded-lg px-4 py-3 sm:px-6 sm:py-4 flex flex-col gap-3 cursor-pointer hover:ring-[#0d9488] transition"
+                      onClick={() => {
+                        setSelectedVacateRequest(request);
+                        setShowVacateModal(true);
+                      }}
+                    >
+                      <div className="flex flex-wrap items-center justify-between gap-2">
+                        <div className="text-sm font-semibold text-gray-900 dark:text-gray-100 truncate">
+                          {request.property} - {request.unit}
+                        </div>
+                        <div>
+                          <span
+                            className={`inline-flex rounded-full px-2 py-1 text-xs font-semibold leading-4 ${getStatusColor(
+                              request.status
+                            )}`}
+                          >
+                            {request.status}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <div className="text-xs text-gray-500 dark:text-gray-400">
+                          Request Date:{" "}
+                          <span className="font-medium text-gray-700 dark:text-gray-200">
+                            {request.requestDate}
+                          </span>
+                        </div>
+                        <div className="text-xs text-gray-500 dark:text-gray-400">
+                          Move-Out Date:{" "}
+                          <span className="font-medium text-gray-700 dark:text-gray-200">
+                            {request.moveOutDate}
+                          </span>
+                        </div>
+                        <div className="text-xs text-gray-500 dark:text-gray-400 sm:col-span-3">
+                          <span className="font-medium">Reason:</span>{" "}
+                          <span className="text-gray-700 dark:text-gray-200">
+                            {request.reason}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  ))
                 )}
+                {!vacateRequestsLoading &&
+                  filteredVacateRequests.length === 0 && (
+                    <div className="text-center text-gray-500 dark:text-gray-400 py-8">
+                      No vacate requests found.
+                    </div>
+                  )}
               </div>
             </div>
           </main>
@@ -809,7 +891,7 @@ const Notices = () => {
                       htmlFor="reason"
                       className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
                     >
-                      Reason for Vacating
+                      Reason for Vacating (Optional)
                     </label>
                     <textarea
                       id="reason"
@@ -817,7 +899,6 @@ const Notices = () => {
                       rows={3}
                       value={formData.reason}
                       onChange={handleInputChange}
-                      required
                       className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-gray-700 dark:text-gray-100 sm:text-sm py-2 px-3"
                       placeholder="Please provide a detailed reason for vacating..."
                     />
@@ -910,7 +991,7 @@ const Notices = () => {
                       Reason
                     </h4>
                     <p className="mt-1 text-sm text-gray-900 dark:text-gray-100">
-                      {selectedVacateRequest.reason}
+                      {selectedVacateRequest.reason || "No reason provided"}
                     </p>
                   </div>
 
