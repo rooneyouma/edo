@@ -76,39 +76,34 @@ const Notices = () => {
   // Add mounted state to prevent hydration errors
   const [mounted, setMounted] = useState(false);
 
-  // Initialize vacate requests state
-  const [vacateRequests, setVacateRequests] = useState([
-    {
-      id: 1,
-      tenantName: "Jane Doe",
-      property: "Sunset Apartments",
-      unit: "A101",
-      requestDate: "2024-03-01",
-      moveOutDate: "2024-04-01",
-      reason: "Job relocation to another city",
-      status: "Pending",
+  // React Query for fetching vacate requests
+  const {
+    data: vacateRequests = [],
+    isLoading: loadingVacateRequests,
+    error: vacateRequestsError,
+  } = useQuery({
+    queryKey: ["vacateRequests"],
+    queryFn: async () => {
+      const data = await apiRequest("/vacate-requests/", { method: "GET" });
+      if (Array.isArray(data)) {
+        return data.map((request) => ({
+          id: request.id,
+          tenantName: request.tenant_name,
+          property: request.property_name,
+          unit: request.unit_number,
+          requestDate: request.created_at
+            ? new Date(request.created_at).toLocaleDateString()
+            : "",
+          moveOutDate: request.move_out_date,
+          reason: request.reason,
+          status:
+            request.status.charAt(0).toUpperCase() + request.status.slice(1), // Capitalize first letter
+        }));
+      }
+      return [];
     },
-    {
-      id: 2,
-      tenantName: "John Smith",
-      property: "Mountain View Condos",
-      unit: "B202",
-      requestDate: "2024-03-03",
-      moveOutDate: "2024-03-30",
-      reason: "Moving in with family",
-      status: "Approved",
-    },
-    {
-      id: 3,
-      tenantName: "Sarah Johnson",
-      property: "Riverside Townhomes",
-      unit: "C303",
-      requestDate: "2024-03-05",
-      moveOutDate: "2024-04-05",
-      reason: "Found a larger apartment",
-      status: "Declined",
-    },
-  ]);
+    enabled: mounted && isAuthenticated(), // Only fetch when mounted and authenticated
+  });
 
   // Initialize eviction notices state
   const [evictionNotices, setEvictionNotices] = useState([
@@ -175,6 +170,37 @@ const Notices = () => {
     },
     onError: () => {
       setCreateNoticeError("Failed to create notice. Please try again.");
+    },
+  });
+
+  // React Query mutation for updating vacate requests
+  const updateVacateRequestMutation = useMutation({
+    mutationFn: ({ requestId, payload }) =>
+      apiRequest(`/vacate-requests/${requestId}/`, {
+        method: "PATCH",
+        body: JSON.stringify(payload),
+      }),
+    onSuccess: () => {
+      // Invalidate vacate requests query to refresh the list
+      queryClient.invalidateQueries({ queryKey: ["vacateRequests"] });
+    },
+    onError: (error) => {
+      console.error("Failed to update vacate request:", error);
+    },
+  });
+
+  // React Query mutation for deleting vacate requests
+  const deleteVacateRequestMutation = useMutation({
+    mutationFn: (requestId) =>
+      apiRequest(`/vacate-requests/${requestId}/`, {
+        method: "DELETE",
+      }),
+    onSuccess: () => {
+      // Invalidate vacate requests query to refresh the list
+      queryClient.invalidateQueries({ queryKey: ["vacateRequests"] });
+    },
+    onError: (error) => {
+      console.error("Failed to delete vacate request:", error);
     },
   });
 
@@ -422,18 +448,16 @@ const Notices = () => {
       return;
     }
 
-    setVacateRequests((prevRequests) =>
-      prevRequests.map((request) => {
-        if (request.id === requestId) {
-          return {
-            ...request,
-            status: action === "approve" ? "Approved" : "Declined",
-            declineReason: action === "decline" ? declineReason : null,
-          };
-        }
-        return request;
-      })
-    );
+    // Use React Query mutation to update the vacate request
+    const payload = {
+      status: action === "approve" ? "approved" : "declined",
+    };
+
+    if (action === "decline") {
+      payload.landlord_response = declineReason;
+    }
+
+    updateVacateRequestMutation.mutate({ requestId, payload });
 
     // Update selected request if it's the one being modified
     if (selectedVacateRequest && selectedVacateRequest.id === requestId) {
@@ -640,9 +664,8 @@ const Notices = () => {
       // and then invalidate the query to refresh the data
       // queryClient.invalidateQueries({ queryKey: ["notices"] });
     } else if (noticeToDelete?.type === "vacate") {
-      setVacateRequests((prevRequests) =>
-        prevRequests.filter((request) => request.id !== noticeToDelete.id)
-      );
+      // Use React Query mutation to delete the vacate request
+      deleteVacateRequestMutation.mutate(noticeToDelete.id);
     } else if (noticeToDelete?.type === "eviction") {
       setEvictionNotices(
         evictionNotices.filter((notice) => notice.id !== noticeToDelete.id)
