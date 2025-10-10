@@ -447,26 +447,27 @@ const Notices = () => {
     onError: (error) => {
       console.error("Failed to submit vacate request:", error);
       // Display backend validation errors as styled messages
-      if (error && error.message) {
+      // First check if the response is a direct array
+      if (Array.isArray(error.response)) {
+        setFormError(error.response[0]); // Take the first error message from the array
+      } else if (error && error.message) {
         setFormError(error.message);
       } else if (error && error.response) {
-        // Handle array of errors from backend
-        if (Array.isArray(error.response)) {
-          setFormError(error.response.join(" "));
-        } else if (typeof error.response === "object") {
-          // Handle object with detail property or array of errors
+        if (typeof error.response === "object") {
+          // Handle object with detail property
           if (error.response.detail) {
             setFormError(error.response.detail);
-          } else if (
-            Array.isArray(error.response) &&
-            error.response.length > 0
-          ) {
-            // Handle case where response is an array of error messages
-            setFormError(error.response.join(" "));
+          } else if (Array.isArray(error.response.non_field_errors)) {
+            // Handle Django REST Framework validation errors
+            setFormError(error.response.non_field_errors[0]);
           } else {
             // Handle other object formats
             const errorMessages = Object.values(error.response).flat();
-            setFormError(errorMessages.join(" "));
+            setFormError(
+              Array.isArray(errorMessages)
+                ? errorMessages[0]
+                : errorMessages.join(" ")
+            );
           }
         } else {
           setFormError(error.response);
@@ -1072,12 +1073,7 @@ const Notices = () => {
                         </svg>
                       </div>
                       <div className="ml-3">
-                        <h3 className="text-sm font-medium text-red-800">
-                          Validation Error
-                        </h3>
-                        <div className="mt-2 text-sm text-red-700">
-                          <p>{formError}</p>
-                        </div>
+                        <p className="text-sm text-red-800">{formError}</p>
                       </div>
                     </div>
                   </div>
