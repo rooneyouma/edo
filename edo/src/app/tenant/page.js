@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import TenantHeader from "../../partials/tenant/TenantHeader";
 import TenantSidebar from "../../partials/tenant/TenantSidebar";
 import Link from "next/link";
@@ -26,6 +26,8 @@ import {
   getStoredUser,
   becomeTenant,
   storeUser,
+  tenantAPI,
+  apiRequest,
 } from "../../utils/api";
 import OnboardRoleModal from "../../components/OnboardRoleModal";
 import NewRequestModal from "../../components/tenant/maintenance/NewRequestModal";
@@ -107,11 +109,63 @@ const TenantDashboard = () => {
   const router = useRouter();
   const storedUser = getStoredUser();
   const searchParams = useSearchParams();
+  const queryClient = useQueryClient();
 
   // Initialize client-side state
   useEffect(() => {
     setIsClient(true);
   }, []);
+
+  // React Query for fetching tenant properties
+  const { data: propertiesData } = useQuery({
+    queryKey: ["tenant-rentals"],
+    queryFn: async () => {
+      try {
+        const data = await tenantAPI.getRentals();
+        const properties =
+          data.rentals?.map((rental) => ({
+            id: rental.id,
+            name: rental.property_name,
+            unit: rental.unit_number,
+            propertyId: rental.property_id,
+            unitId: rental.unit_id,
+          })) || [];
+        return properties;
+      } catch (err) {
+        console.error("Failed to load tenant properties:", err);
+        return [];
+      }
+    },
+    enabled: isAuthenticated(),
+  });
+
+  // Use React Query for fetching vacate requests
+  const {
+    data: vacateRequests = [],
+    isLoading: vacateRequestsLoading,
+    error: vacateRequestsError,
+  } = useQuery({
+    queryKey: ["vacateRequests"],
+    queryFn: async () => {
+      const data = await apiRequest("/vacate-requests/", { method: "GET" });
+      if (Array.isArray(data)) {
+        return data.map((request) => ({
+          id: request.id,
+          property: request.property_name,
+          unit: request.unit_number,
+          requestDate: request.created_at
+            ? new Date(request.created_at).toLocaleDateString()
+            : "",
+          moveOutDate: request.move_out_date,
+          reason: request.reason,
+          status:
+            request.status.charAt(0).toUpperCase() + request.status.slice(1), // Capitalize first letter
+        }));
+      }
+      return [];
+    },
+    enabled: isAuthenticated(),
+  });
 
   // Check for query parameters to open modals
   useEffect(() => {
@@ -245,7 +299,7 @@ const TenantDashboard = () => {
 
   const handlePayRentSubmit = async (formData) => {
     setSubmittingPayRent(true);
-    
+
     try {
       // TODO: Implement actual API call to submit payment
       console.log("Submitting payment:", formData);
@@ -266,18 +320,89 @@ const TenantDashboard = () => {
     }
   };
 
+  // Mutation for submitting vacate requests
+  const createVacateRequestMutation = useMutation({
+    mutationFn: (requestData) =>
+      apiRequest("/vacate-requests/", {
+        method: "POST",
+        body: JSON.stringify(requestData),
+      }),
+    onSuccess: (newRequest) => {
+      // Update the vacate requests list
+      const formattedRequest = {
+        id: newRequest.id,
+        property: newRequest.property_name,
+        unit: newRequest.unit_number,
+        requestDate: newRequest.created_at
+          ? new Date(newRequest.created_at).toLocaleDateString()
+          : new Date().toLocaleDateString(),
+        moveOutDate: newRequest.move_out_date,
+        reason: newRequest.reason,
+        status:
+          newRequest.status.charAt(0).toUpperCase() +
+          newRequest.status.slice(1),
+      };
+
+      // Update the query cache
+      queryClient.setQueryData(["vacateRequests"], (oldData = []) => [
+        ...oldData,
+        formattedRequest,
+      ]);
+
+      // Close the form and reset
+      setShowVacateNoticeModal(false);
+    },
+    onError: (error) => {
+      console.error("Failed to submit vacate request:", error);
+      // Display backend validation errors as styled messages
+      // First check if the response is a direct array
+      if (Array.isArray(error.response)) {
+        // Handle array of errors
+        console.error("Validation errors:", error.response);
+      } else if (error && error.message) {
+        console.error("Error message:", error.message);
+      } else if (error && error.response) {
+        if (typeof error.response === "object") {
+          // Handle object with detail property
+          if (error.response.detail) {
+            console.error("Detail error:", error.response.detail);
+          } else if (Array.isArray(error.response.non_field_errors)) {
+            // Handle Django REST Framework validation errors
+            console.error(
+              "Non-field errors:",
+              error.response.non_field_errors[0]
+            );
+          } else {
+            // Handle other object formats
+            const errorMessages = Object.values(error.response).flat();
+            console.error(
+              "Other errors:",
+              Array.isArray(errorMessages)
+                ? errorMessages[0]
+                : errorMessages.join(" ")
+            );
+          }
+        } else {
+          console.error("Response error:", error.response);
+        }
+      } else {
+        console.error(
+          "General error:",
+          "Failed to submit vacate request. Please try again."
+        );
+      }
+    },
+  });
+
   const handleVacateNoticeSubmit = async (formData) => {
     setSubmittingVacateNotice(true);
-    
+
     try {
-      // TODO: Implement actual API call to submit vacate notice
-      console.log("Submitting vacate notice:", formData);
-
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      // Close modal on success
-      setShowVacateNoticeModal(false);
+      // Submit the request using React Query mutation
+      await createVacateRequestMutation.mutateAsync({
+        move_out_date: formData.move_out_date,
+        reason: formData.reason,
+      });
 
       // Show success message (you might want to add a toast notification here)
       console.log("Vacate notice submitted successfully");
@@ -517,11 +642,12 @@ const TenantDashboard = () => {
         onSubmit={handlePayRentSubmit}
         submitting={submittingPayRent}
       />
-      
+
       {/* Vacate Notice Modal */}
       <VacateNoticeModal
         isOpen={showVacateNoticeModal}
         onClose={() => setShowVacateNoticeModal(false)}
+        tenantProperties={propertiesData || []}
         onSubmit={handleVacateNoticeSubmit}
         submitting={submittingVacateNotice}
       />

@@ -1,17 +1,20 @@
 import React, { useState, useEffect } from "react";
 
-const VacateNoticeModal = ({ isOpen, onClose, onSubmit, submitting }) => {
-  // Mock data for tenant's properties (in a real app, this would come from your API)
-  const tenantProperties = [
-    { id: 1, name: "Sunset Apartments", unit: "A101" },
-    { id: 2, name: "Mountain View Condos", unit: "B202" },
-  ];
-
+const VacateNoticeModal = ({
+  isOpen,
+  onClose,
+  onSubmit,
+  submitting,
+  tenantProperties = [],
+}) => {
   const [formData, setFormData] = useState({
     property: tenantProperties.length === 1 ? tenantProperties[0].id : "",
     moveOutDate: "",
     reason: "",
   });
+  const [formError, setFormError] = useState("");
+  const [lastSubmissionTime, setLastSubmissionTime] = useState(null);
+  const [submissionCount, setSubmissionCount] = useState(0);
 
   // Initialize when modal opens
   useEffect(() => {
@@ -21,8 +24,10 @@ const VacateNoticeModal = ({ isOpen, onClose, onSubmit, submitting }) => {
         moveOutDate: "",
         reason: "",
       });
+      // Clear any form error when reopening
+      setFormError("");
     }
-  }, [isOpen]);
+  }, [isOpen, tenantProperties]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -32,15 +37,91 @@ const VacateNoticeModal = ({ isOpen, onClose, onSubmit, submitting }) => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const validateSubmission = (
+    formData,
+    tenantProperties,
+    vacateRequests = []
+  ) => {
+    const now = new Date();
+    const twentyFourHours = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+
+    // Clear any previous form error
+    setFormError("");
+
+    // Check if there's an existing pending request
+    const hasPendingRequest = vacateRequests.some(
+      (request) => request.status.toLowerCase() === "pending"
+    );
+
+    if (hasPendingRequest) {
+      setFormError(
+        "You already have a pending vacate request. Please wait for it to be processed or withdraw it before submitting a new one."
+      );
+      return false;
+    }
+
+    // Check submission frequency
+    if (lastSubmissionTime) {
+      const timeSinceLastSubmission = now - new Date(lastSubmissionTime);
+
+      // Prevent more than 3 submissions in 24 hours
+      if (submissionCount >= 3 && timeSinceLastSubmission < twentyFourHours) {
+        setFormError(
+          "You have reached the maximum number of submissions for today. Please try again tomorrow."
+        );
+        return false;
+      }
+
+      // Reset submission count after 24 hours
+      if (timeSinceLastSubmission >= twentyFourHours) {
+        setSubmissionCount(0);
+      }
+    }
+
+    // Validate move-out date
+    const moveOutDate = new Date(formData.moveOutDate);
+    const minimumNotice = 30; // days
+    const today = new Date();
+
+    if (moveOutDate < today) {
+      setFormError("Move-out date cannot be in the past.");
+      return false;
+    }
+
+    const daysNotice = Math.ceil((moveOutDate - today) / (1000 * 60 * 60 * 24));
+    if (daysNotice < minimumNotice) {
+      setFormError(
+        `Please provide at least ${minimumNotice} days notice for moving out.`
+      );
+      return false;
+    }
+
+    return true;
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Validate the submission
+    if (!validateSubmission(formData, tenantProperties)) {
+      return;
+    }
+
     const selectedProperty = tenantProperties.find(
       (p) => p.id === parseInt(formData.property)
     );
 
+    if (!selectedProperty) {
+      setFormError("Selected property not found");
+      return;
+    }
+
+    // Update submission tracking
+    setSubmissionCount((prev) => prev + 1);
+    setLastSubmissionTime(new Date().toISOString());
+
     onSubmit({
-      property: selectedProperty,
-      moveOutDate: formData.moveOutDate,
+      move_out_date: formData.moveOutDate,
       reason: formData.reason,
     });
   };
@@ -56,7 +137,10 @@ const VacateNoticeModal = ({ isOpen, onClose, onSubmit, submitting }) => {
               <button
                 type="button"
                 className="rounded-md bg-white dark:bg-slate-800 text-gray-400 hover:text-gray-500 focus:outline-none"
-                onClick={onClose}
+                onClick={() => {
+                  onClose();
+                  setFormError(""); // Clear error when closing
+                }}
               >
                 <span className="sr-only">Close</span>
                 <svg
@@ -85,6 +169,50 @@ const VacateNoticeModal = ({ isOpen, onClose, onSubmit, submitting }) => {
                 </p>
               </div>
             </div>
+
+            {/* Add 30-day notice badge inside the form modal */}
+            <div className="mt-4">
+              <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
+                <svg
+                  className="mr-1.5 h-4 w-4"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+                Minimum 30 days notice required
+              </span>
+            </div>
+
+            {/* Form validation error message */}
+            {formError && (
+              <div className="mt-4 rounded-md bg-red-50 p-4">
+                <div className="flex">
+                  <div className="flex-shrink-0">
+                    <svg
+                      className="h-5 w-5 text-red-400"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                  </div>
+                  <div className="ml-3">
+                    <p className="text-sm text-red-800">{formError}</p>
+                  </div>
+                </div>
+              </div>
+            )}
 
             <form
               onSubmit={handleSubmit}
@@ -140,7 +268,7 @@ const VacateNoticeModal = ({ isOpen, onClose, onSubmit, submitting }) => {
                   htmlFor="reason"
                   className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
                 >
-                  Reason for Vacating
+                  Reason for Vacating (Optional)
                 </label>
                 <textarea
                   id="reason"
@@ -148,7 +276,6 @@ const VacateNoticeModal = ({ isOpen, onClose, onSubmit, submitting }) => {
                   rows={3}
                   value={formData.reason}
                   onChange={handleInputChange}
-                  required
                   className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-gray-700 dark:text-gray-100 text-sm sm:text-sm py-2 px-3"
                   placeholder="Please provide a detailed reason for vacating..."
                 />
@@ -158,7 +285,10 @@ const VacateNoticeModal = ({ isOpen, onClose, onSubmit, submitting }) => {
                 <button
                   type="button"
                   className="w-full sm:w-auto inline-flex justify-center rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 shadow-sm hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-[#0d9488] focus:ring-offset-2"
-                  onClick={onClose}
+                  onClick={() => {
+                    onClose();
+                    setFormError(""); // Clear error when closing
+                  }}
                 >
                   Cancel
                 </button>
