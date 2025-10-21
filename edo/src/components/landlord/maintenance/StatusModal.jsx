@@ -10,17 +10,17 @@ const StatusModal = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-gray-900/30 dark:bg-gray-900/50 transition-opacity">
+    <div className="fixed inset-0 bg-gray-900/30 transition-opacity">
       <div
         className="fixed inset-0 z-60 overflow-y-auto"
         style={{ zIndex: 1060 }}
       >
         <div className="flex min-h-full items-center justify-center p-4">
-          <div className="relative transform overflow-hidden rounded-lg bg-white dark:bg-gray-800 px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-md sm:p-6">
+          <div className="relative transform overflow-hidden rounded-lg bg-white px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-md sm:p-6">
             <div className="absolute right-0 top-0 pr-4 pt-4">
               <button
                 onClick={onClose}
-                className="rounded-md bg-white dark:bg-gray-800 text-gray-400 hover:text-gray-500 focus:outline-none"
+                className="rounded-md bg-white text-gray-400 hover:text-gray-500 focus:outline-none"
               >
                 <span className="sr-only">Close</span>
                 <svg
@@ -39,20 +39,20 @@ const StatusModal = ({
               </button>
             </div>
             <div className="p-6">
-              <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">
+              <h3 className="text-lg font-medium text-gray-900 mb-4">
                 Update Status
               </h3>
               <div className="space-y-4">
                 <div>
                   <label
                     htmlFor="status"
-                    className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                    className="block text-sm font-medium text-gray-700"
                   >
                     Select New Status
                   </label>
                   <select
                     id="status"
-                    className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 py-2 pl-3 pr-10 text-base focus:border-violet-500 focus:outline-none focus:ring-violet-500 dark:bg-gray-700 dark:text-gray-100 sm:text-sm"
+                    className="mt-1 block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 text-base focus:border-violet-500 focus:outline-none focus:ring-violet-500 sm:text-sm"
                     value={selectedStatus}
                     onChange={(e) => setSelectedStatus(e.target.value)}
                   >

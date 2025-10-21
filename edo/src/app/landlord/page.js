@@ -18,7 +18,13 @@ import {
   CheckCircle,
   Calendar,
   Bell,
+  TrendingUp,
+  PieChart,
+  CreditCard,
+  ArrowRight,
 } from "lucide-react";
+import { Calendar as CalendarComponent } from "../../components/ui/calendar";
+import EnhancedCalendar from "../../components/landlord/EnhancedCalendar";
 import {
   isAuthenticated,
   authAPI,
@@ -34,99 +40,102 @@ import SendNoticeModal from "../../components/landlord/modals/SendNoticeModal";
 const quickActions = [
   {
     label: "Add Property",
-    icon: <Plus className="h-6 w-6" />,
+    icon: <Plus className="h-5 w-5" />,
     action: "openAddProperty",
   },
   {
     label: "Rent Reminders",
-    icon: <Bell className="h-6 w-6" />,
+    icon: <Bell className="h-5 w-5" />,
     action: "openRentReminder",
   },
   {
     label: "Send Notice",
-    icon: <FileText className="h-6 w-6" />,
+    icon: <FileText className="h-5 w-5" />,
     action: "openSendNotice",
   },
 ];
 
-const analyticsStats = [
-  {
-    label: "Total Properties",
-    value: 24,
-    icon: <Home className="h-6 w-6 text-blue-600 dark:text-blue-400" />,
-    color: "bg-blue-50 dark:bg-blue-900/30",
-    text: "text-blue-900 dark:text-blue-100",
-  },
-  {
-    label: "Occupied",
-    value: 18,
-    icon: <Users className="h-6 w-6 text-green-600 dark:text-green-400" />,
-    color: "bg-green-50 dark:bg-green-900/30",
-    text: "text-green-900 dark:text-green-100",
-  },
-  {
-    label: "Vacant",
-    value: 6,
-    icon: <Home className="h-6 w-6 text-red-600 dark:text-red-400" />,
-    color: "bg-red-50 dark:bg-red-900/30",
-    text: "text-red-900 dark:text-red-100",
-  },
-  {
-    label: "Tenants",
-    value: 144,
-    icon: <Users className="h-6 w-6 text-yellow-600 dark:text-yellow-400" />,
-    color: "bg-yellow-50 dark:bg-yellow-900/30",
-    text: "text-yellow-900 dark:text-yellow-100",
-  },
-  {
-    label: "Maintenance",
-    value: 8,
-    icon: <Wrench className="h-6 w-6 text-pink-600 dark:text-pink-400" />,
-    color: "bg-pink-50 dark:bg-pink-900/30",
-    text: "text-pink-900 dark:text-pink-100",
-  },
-  {
-    label: "Payments (This Month)",
-    value: "$100,000",
-    icon: (
-      <DollarSign className="h-6 w-6 text-purple-600 dark:text-purple-400" />
-    ),
-    color: "bg-purple-50 dark:bg-purple-900/30",
-    text: "text-purple-900 dark:text-purple-100",
-  },
-  {
-    label: "Occupancy Rate",
-    value: "75%",
-    icon: <BarChart2 className="h-6 w-6 text-teal-600 dark:text-teal-400" />,
-    color: "bg-teal-50 dark:bg-teal-900/30",
-    text: "text-teal-900 dark:text-teal-100",
-  },
-];
+// Modern Analytics Card Component
+const AnalyticsCard = ({ title, value, icon, color, trend, subtitle }) => (
+  <div className="bg-white rounded-lg sm:rounded-xl shadow-sm border border-gray-200 p-3 sm:p-5 hover:shadow-md transition-shadow duration-200">
+    <div className="flex items-start justify-between">
+      <div>
+        <p className="text-xs sm:text-sm font-medium text-gray-500">{title}</p>
+        <h3 className="text-lg sm:text-2xl font-bold text-gray-900 mt-1">
+          {value}
+        </h3>
+        {subtitle && (
+          <p className="text-xs sm:text-sm text-gray-500 mt-1">{subtitle}</p>
+        )}
+      </div>
+      <div className={`p-2 sm:p-3 rounded-lg ${color}`}>{icon}</div>
+    </div>
+    {trend && (
+      <div className="mt-2 sm:mt-3 flex items-center">
+        <TrendingUp className="h-3 w-3 sm:h-4 sm:w-4 text-green-500" />
+        <span className="text-xs sm:text-sm text-green-600 ml-1">{trend}</span>
+      </div>
+    )}
+  </div>
+);
+
+// Financial Summary Card Component
+const FinancialCard = ({ title, amount, change, icon, color }) => (
+  <div className="bg-white rounded-lg sm:rounded-xl shadow-sm border border-gray-200 p-3 sm:p-5">
+    <div className="flex items-start justify-between">
+      <div>
+        <p className="text-xs sm:text-sm font-medium text-gray-500">{title}</p>
+        <h3 className="text-base sm:text-xl font-bold text-gray-900 mt-1">
+          {amount}
+        </h3>
+      </div>
+      <div className={`p-2 sm:p-3 rounded-lg ${color}`}>{icon}</div>
+    </div>
+    {change && (
+      <div className="mt-2 sm:mt-3">
+        <span
+          className={`inline-flex items-center px-2 py-0.5 sm:px-2.5 sm:py-0.5 rounded-full text-xs font-medium ${
+            change.type === "positive"
+              ? "bg-green-100 text-green-800"
+              : "bg-red-100 text-red-800"
+          }`}
+        >
+          {change.value}
+        </span>
+      </div>
+    )}
+  </div>
+);
+
+// Calendar Card Component
+const CalendarCard = () => {
+  return <EnhancedCalendar />;
+};
 
 const activityTimeline = [
   {
     type: "tenant",
     label: "New tenant added: John Doe",
     date: "Jul 3, 2024",
-    icon: <Users className="h-5 w-5 text-yellow-500" />,
+    icon: <Users className="h-5 w-5 text-yellow-600" />,
   },
   {
     type: "payment",
     label: "Received $2,400 rent",
     date: "Jul 2, 2024",
-    icon: <DollarSign className="h-5 w-5 text-green-500" />,
+    icon: <DollarSign className="h-5 w-5 text-green-600" />,
   },
   {
     type: "maintenance",
     label: "Maintenance completed: AC repair",
     date: "Jul 1, 2024",
-    icon: <Wrench className="h-5 w-5 text-pink-500" />,
+    icon: <Wrench className="h-5 w-5 text-pink-600" />,
   },
   {
     type: "notice",
     label: "Notice sent: Lease renewal",
     date: "Jun 30, 2024",
-    icon: <FileText className="h-5 w-5 text-blue-500" />,
+    icon: <FileText className="h-5 w-5 text-blue-600" />,
   },
 ];
 
@@ -185,7 +194,7 @@ const LandlordDashboard = () => {
     : "Landlord";
 
   return (
-    <div className="flex h-screen overflow-hidden bg-slate-50 dark:bg-slate-900">
+    <div className="flex h-screen overflow-hidden bg-slate-50">
       {/* Sidebar */}
       <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
 
@@ -194,17 +203,17 @@ const LandlordDashboard = () => {
         {/* Site header */}
         <Header toggleSidebar={toggleSidebar} />
         <main className="h-full transition-all duration-200 overflow-y-auto">
-          <div className="pl-4 pr-8 sm:pl-6 sm:pr-12 lg:pl-8 lg:pr-16 py-8 w-full">
+          <div className="px-4 sm:px-6 lg:px-8 py-4 sm:py-6 w-full">
             {/* Welcome Banner with Profile Picture */}
-            <div className="mb-6 flex items-center gap-4 w-full">
+            <div className="mb-4 sm:mb-6 flex items-center gap-3 sm:gap-4 w-full">
               {isClient && user && user.profile_image_url ? (
                 <img
                   src={user.profile_image_url}
                   alt={user.first_name || user.name}
-                  className="h-12 w-12 rounded-full"
+                  className="h-10 w-10 sm:h-12 sm:w-12 rounded-full"
                 />
               ) : (
-                <div className="h-12 w-12 rounded-full bg-teal-600 flex items-center justify-center text-white text-xl font-bold">
+                <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-full bg-teal-600 flex items-center justify-center text-white text-lg sm:text-xl font-bold">
                   {isClient &&
                     user &&
                     (user.first_name
@@ -216,7 +225,7 @@ const LandlordDashboard = () => {
                 </div>
               )}
               <div>
-                <h1 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-slate-100">
+                <h1 className="text-lg sm:text-xl md:text-2xl font-bold text-slate-900">
                   Welcome,{" "}
                   {isClient && user
                     ? `${user.first_name || ""} ${
@@ -225,18 +234,18 @@ const LandlordDashboard = () => {
                     : ""}
                   !
                 </h1>
-                <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
+                <p className="text-xs sm:text-sm text-slate-500">
                   Here's what's happening with your properties today.
                 </p>
               </div>
             </div>
 
             {/* Quick Actions */}
-            <div className="mb-8">
-              <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-200 mb-4 text-center">
+            <div className="mb-6 sm:mb-8">
+              <h3 className="text-base sm:text-lg font-semibold text-slate-800 mb-3 sm:mb-4 text-center">
                 Quick Actions
               </h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 max-w-4xl mx-auto">
+              <div className="flex flex-wrap justify-center gap-2 sm:gap-3 max-w-4xl mx-auto">
                 {quickActions.map((action, index) => (
                   <div
                     key={index}
@@ -249,68 +258,146 @@ const LandlordDashboard = () => {
                         setShowSendNoticeModal(true);
                       }
                     }}
-                    className="bg-teal-500/10 dark:bg-teal-500/20 border border-teal-200 dark:border-teal-800 rounded-md p-3 flex flex-col items-center justify-center transition-colors hover:opacity-90 cursor-pointer min-h-[80px]"
+                    className="flex items-center gap-2 bg-teal-700 rounded-lg px-3 py-3 sm:px-4 sm:py-4 transition-colors hover:bg-teal-800 cursor-pointer flex-1 min-w-[140px] sm:min-w-[200px] max-w-[250px]"
                   >
-                    <div className="text-teal-700 dark:text-teal-300">
-                      {action.icon}
-                    </div>
-                    <span className="mt-2 font-medium text-xs text-slate-700 dark:text-slate-300 text-center">
+                    <div className="text-white">{action.icon}</div>
+                    <span className="font-medium text-xs sm:text-sm text-white whitespace-nowrap overflow-hidden text-ellipsis">
                       {action.label}
                     </span>
+                    <ArrowRight className="h-3 w-3 sm:h-4 sm:w-4 text-white ml-auto" />
                   </div>
                 ))}
               </div>
             </div>
 
-            {/* Analytics and Activity */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-              {/* Analytics Stats */}
+            {/* Modern Analytics Section */}
+            <div className="mb-6 sm:mb-8">
+              <h3 className="text-base sm:text-lg font-semibold text-slate-800 mb-3 sm:mb-4">
+                Property Overview
+              </h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5">
+                <AnalyticsCard
+                  title="Total Properties"
+                  value="24"
+                  icon={
+                    <Home className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600" />
+                  }
+                  color="bg-blue-100"
+                  trend="+2 from last month"
+                />
+                <AnalyticsCard
+                  title="Total Units"
+                  value="120"
+                  icon={
+                    <Users className="h-5 w-5 sm:h-6 sm:w-6 text-indigo-600" />
+                  }
+                  color="bg-indigo-100"
+                  trend="+5 from last month"
+                />
+                <AnalyticsCard
+                  title="Occupied Units"
+                  value="95"
+                  subtitle="79% occupancy rate"
+                  icon={
+                    <CheckCircle className="h-5 w-5 sm:h-6 sm:w-6 text-green-600" />
+                  }
+                  color="bg-green-100"
+                  trend="+3 from last month"
+                />
+                <AnalyticsCard
+                  title="Vacant Units"
+                  value="25"
+                  icon={
+                    <Home className="h-5 w-5 sm:h-6 sm:w-6 text-orange-600" />
+                  }
+                  color="bg-orange-100"
+                  trend="-2 from last month"
+                />
+              </div>
+            </div>
+
+            {/* Financial Summary and Calendar */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 sm:gap-5 mb-6 sm:mb-8">
+              {/* Financial Summary Section */}
               <div className="lg:col-span-2">
-                <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-200 mb-4">
-                  Analytics Overview
+                <h3 className="text-base sm:text-lg font-semibold text-slate-800 mb-3 sm:mb-4">
+                  Financial Summary
                 </h3>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {analyticsStats.map((stat, index) => (
-                    <div
-                      key={index}
-                      className={`${stat.color} rounded-lg p-4 flex items-center`}
-                    >
-                      <div className="mr-3">{stat.icon}</div>
-                      <div>
-                        <p className={`text-2xl font-bold ${stat.text}`}>
-                          {stat.value}
-                        </p>
-                        <p className="text-sm text-slate-600 dark:text-slate-400">
-                          {stat.label}
-                        </p>
-                      </div>
-                    </div>
-                  ))}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-5">
+                  <FinancialCard
+                    title="Total Monthly Rent"
+                    amount="$120,000"
+                    icon={
+                      <DollarSign className="h-5 w-5 sm:h-6 sm:w-6 text-purple-600" />
+                    }
+                    color="bg-purple-100"
+                    change={{
+                      type: "positive",
+                      value: "+5.2% from last month",
+                    }}
+                  />
+                  <FinancialCard
+                    title="Collected This Month"
+                    amount="$100,000"
+                    icon={
+                      <CreditCard className="h-5 w-5 sm:h-6 sm:w-6 text-green-600" />
+                    }
+                    color="bg-green-100"
+                    change={{
+                      type: "positive",
+                      value: "83.3% collection rate",
+                    }}
+                  />
+                  <FinancialCard
+                    title="Pending Payments"
+                    amount="$12,000"
+                    icon={
+                      <PieChart className="h-5 w-5 sm:h-6 sm:w-6 text-yellow-600" />
+                    }
+                    color="bg-yellow-100"
+                    change={{ type: "negative", value: "10 units pending" }}
+                  />
+                  <FinancialCard
+                    title="Overdue Payments"
+                    amount="$8,000"
+                    icon={
+                      <PieChart className="h-5 w-5 sm:h-6 sm:w-6 text-red-600" />
+                    }
+                    color="bg-red-100"
+                    change={{ type: "negative", value: "6 units overdue" }}
+                  />
                 </div>
               </div>
 
-              {/* Recent Activity */}
+              {/* Calendar */}
               <div>
-                <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-200 mb-4">
-                  Recent Activity
-                </h3>
-                <div className="bg-white dark:bg-slate-800 rounded-lg shadow-sm p-4">
-                  <ul className="space-y-4">
-                    {activityTimeline.map((activity, index) => (
-                      <li key={index} className="flex items-start">
-                        <div className="mr-3 mt-1">{activity.icon}</div>
-                        <div>
-                          <p className="text-sm font-medium text-slate-800 dark:text-slate-200">
-                            {activity.label}
-                          </p>
-                          <p className="text-xs text-slate-500 dark:text-slate-400">
-                            {activity.date}
-                          </p>
-                        </div>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+                <CalendarCard />
+              </div>
+            </div>
+
+            {/* Recent Activity */}
+            <div className="mb-4 sm:mb-6">
+              <h3 className="text-base sm:text-lg font-semibold text-slate-800 mb-3 sm:mb-4">
+                Recent Activity
+              </h3>
+              <div className="bg-white rounded-lg sm:rounded-xl shadow-sm border border-gray-200 p-3 sm:p-5">
+                <ul className="space-y-3 sm:space-y-4">
+                  {activityTimeline.map((activity, index) => (
+                    <li key={index} className="flex items-start">
+                      <div className="mr-2 sm:mr-3 mt-0.5 sm:mt-1">
+                        {activity.icon}
+                      </div>
+                      <div>
+                        <p className="text-xs sm:text-sm font-medium text-slate-800">
+                          {activity.label}
+                        </p>
+                        <p className="text-xs text-slate-500 mt-0.5 sm:mt-1">
+                          {activity.date}
+                        </p>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
               </div>
             </div>
           </div>

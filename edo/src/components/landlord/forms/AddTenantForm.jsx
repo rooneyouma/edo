@@ -419,7 +419,7 @@ const AddTenantForm = ({
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       {/* Tab Navigation */}
-      <div className="border-b border-gray-200 dark:border-gray-700">
+      <div className="border-b border-gray-200">
         <nav className="-mb-px flex space-x-8">
           <button
             type="button"
@@ -427,7 +427,7 @@ const AddTenantForm = ({
             className={`py-2 px-1 border-b-2 font-medium text-sm ${
               activeTab === "quick-add"
                 ? "border-[#0d9488] text-[#0d9488]"
-                : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300"
+                : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
             }`}
           >
             Quick Add
@@ -438,7 +438,7 @@ const AddTenantForm = ({
             className={`py-2 px-1 border-b-2 font-medium text-sm ${
               activeTab === "invite"
                 ? "border-[#0d9488] text-[#0d9488]"
-                : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300"
+                : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
             }`}
           >
             Invite Tenant
@@ -485,7 +485,7 @@ const AddTenantForm = ({
         <button
           type="button"
           onClick={onClose}
-          className="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0d9488] dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 dark:hover:bg-gray-600"
+          className="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0d9488]"
         >
           Cancel
         </button>
@@ -557,7 +557,7 @@ const QuickAddForm = ({
       <div className="email-search-container relative">
         <label
           htmlFor="email"
-          className="block text-sm font-medium text-slate-700 dark:text-slate-300"
+          className="block text-sm font-medium text-gray-700"
         >
           Tenant Email
         </label>
@@ -568,7 +568,7 @@ const QuickAddForm = ({
             name="email"
             value={formData.email}
             onChange={(e) => handleEmailChange(e)}
-            className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100 py-2 px-3 sm:text-sm"
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] bg-white text-gray-900 py-2 px-3 sm:text-sm"
             required
             autoComplete="off"
             disabled={checking}
@@ -583,20 +583,20 @@ const QuickAddForm = ({
 
         {/* Email Suggestions Dropdown */}
         {showSuggestions && emailSuggestions.length > 0 && (
-          <div className="absolute z-10 w-full mt-1 bg-white dark:bg-slate-800 border border-gray-300 dark:border-slate-600 rounded-md shadow-lg max-h-60 overflow-auto">
+          <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto">
             {emailSuggestions.map((suggestion, index) => (
               <button
                 key={`${suggestion.type}-${suggestion.id}`}
                 type="button"
                 onClick={() => handleSuggestionSelect(suggestion)}
-                className="w-full px-4 py-3 text-left hover:bg-gray-100 dark:hover:bg-slate-700 border-b border-gray-100 dark:border-slate-700 last:border-b-0 focus:outline-none focus:bg-gray-100 dark:focus:bg-slate-700"
+                className="w-full px-4 py-3 text-left hover:bg-gray-100 border-b border-gray-100 last:border-b-0 focus:outline-none focus:bg-gray-100"
               >
                 <div className="flex items-center justify-between">
                   <div className="flex-1">
-                    <div className="font-medium text-gray-900 dark:text-slate-100">
+                    <div className="font-medium text-gray-900">
                       {suggestion.email}
                     </div>
-                    <div className="text-sm text-gray-500 dark:text-slate-400">
+                    <div className="text-sm text-gray-500">
                       {suggestion.first_name} {suggestion.last_name}
                       {suggestion.phone && ` • ${suggestion.phone}`}
                     </div>
@@ -605,8 +605,8 @@ const QuickAddForm = ({
                     <span
                       className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
                         suggestion.type === "user"
-                          ? "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200"
-                          : "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
+                          ? "bg-blue-100 text-blue-800"
+                          : "bg-green-100 text-green-800"
                       }`}
                     >
                       {suggestion.type === "user"
@@ -672,7 +672,7 @@ const QuickAddForm = ({
         <div>
           <label
             htmlFor="firstName"
-            className="block text-sm font-medium text-slate-700 dark:text-slate-300"
+            className="block text-sm font-medium text-gray-700"
           >
             First Name
           </label>
@@ -682,7 +682,7 @@ const QuickAddForm = ({
             name="firstName"
             value={formData.firstName}
             onChange={handleChange}
-            className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100 py-2 px-3 sm:text-sm"
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] bg-white text-gray-900 py-2 px-3 sm:text-sm"
             required
           />
         </div>
@@ -690,7 +690,7 @@ const QuickAddForm = ({
         <div>
           <label
             htmlFor="lastName"
-            className="block text-sm font-medium text-slate-700 dark:text-slate-300"
+            className="block text-sm font-medium text-gray-700"
           >
             Last Name
           </label>
@@ -700,7 +700,7 @@ const QuickAddForm = ({
             name="lastName"
             value={formData.lastName}
             onChange={handleChange}
-            className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100 py-2 px-3 sm:text-sm"
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] bg-white text-gray-900 py-2 px-3 sm:text-sm"
             required
           />
         </div>
@@ -708,7 +708,7 @@ const QuickAddForm = ({
         <div>
           <label
             htmlFor="phone"
-            className="block text-sm font-medium text-slate-700 dark:text-slate-300"
+            className="block text-sm font-medium text-gray-700"
           >
             Phone
           </label>
@@ -718,7 +718,7 @@ const QuickAddForm = ({
             name="phone"
             value={formData.phone}
             onChange={handleChange}
-            className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100 py-2 px-3 sm:text-sm"
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] bg-white text-gray-900 py-2 px-3 sm:text-sm"
             required
           />
         </div>
@@ -726,7 +726,7 @@ const QuickAddForm = ({
         <div>
           <label
             htmlFor="propertyId"
-            className="block text-sm font-medium text-slate-700 dark:text-slate-300"
+            className="block text-sm font-medium text-gray-700"
           >
             Property
           </label>
@@ -735,7 +735,7 @@ const QuickAddForm = ({
             name="propertyId"
             value={formData.propertyId}
             onChange={handleChange}
-            className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100 py-2 px-3 sm:text-sm"
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] bg-white text-gray-900 py-2 px-3 sm:text-sm"
             required
           >
             <option value="">Select Property</option>
@@ -750,7 +750,7 @@ const QuickAddForm = ({
         <div>
           <label
             htmlFor="unitNumber"
-            className="block text-sm font-medium text-slate-700 dark:text-slate-300"
+            className="block text-sm font-medium text-gray-700"
           >
             Unit
           </label>
@@ -759,7 +759,7 @@ const QuickAddForm = ({
             name="unitNumber"
             value={formData.unitNumber}
             onChange={handleChange}
-            className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100 py-2 px-3 sm:text-sm"
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] bg-white text-gray-900 py-2 px-3 sm:text-sm"
             required
             disabled={!formData.propertyId || loadingUnits}
           >
@@ -790,13 +790,13 @@ const QuickAddForm = ({
         <div>
           <label
             htmlFor="rentAmount"
-            className="block text-sm font-medium text-slate-700 dark:text-slate-300"
+            className="block text-sm font-medium text-gray-700"
           >
             Monthly Rent
           </label>
           <div className="mt-1 relative rounded-md shadow-sm">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <span className="text-slate-500 sm:text-sm">KES</span>
+              <span className="text-gray-500 sm:text-sm">KES</span>
             </div>
             <input
               type="number"
@@ -806,8 +806,8 @@ const QuickAddForm = ({
               onChange={handleChange}
               className={`block w-full pl-12 rounded-md shadow-sm focus:ring-[#0d9488] focus:ring-2 focus:ring-offset-2 py-2 px-3 sm:text-sm ${
                 selectedUnit || initialUnitId
-                  ? "border-slate-300 bg-slate-50 text-slate-500 dark:bg-slate-700 dark:border-slate-600 dark:text-slate-400"
-                  : "border-slate-300 focus:border-[#0d9488] dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100"
+                  ? "border-gray-300 bg-gray-50 text-gray-500"
+                  : "border-gray-300 focus:border-[#0d9488] bg-white text-gray-900"
               }`}
               required
               readOnly={!!(selectedUnit || initialUnitId)}
@@ -819,13 +819,13 @@ const QuickAddForm = ({
         <div>
           <label
             htmlFor="securityDeposit"
-            className="block text-sm font-medium text-slate-700 dark:text-slate-300"
+            className="block text-sm font-medium text-gray-700"
           >
             Security Deposit
           </label>
           <div className="mt-1 relative rounded-md shadow-sm">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <span className="text-slate-500 sm:text-sm">KES</span>
+              <span className="text-gray-500 sm:text-sm">KES</span>
             </div>
             <input
               type="number"
@@ -835,8 +835,8 @@ const QuickAddForm = ({
               onChange={handleChange}
               className={`block w-full pl-12 rounded-md shadow-sm focus:ring-[#0d9488] focus:ring-2 focus:ring-offset-2 py-2 px-3 sm:text-sm ${
                 (selectedUnit && selectedUnit.security_deposit) || initialUnitId
-                  ? "border-slate-300 bg-slate-50 text-slate-500 dark:bg-slate-700 dark:border-slate-600 dark:text-slate-400"
-                  : "border-slate-300 focus:border-[#0d9488] dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100"
+                  ? "border-gray-300 bg-gray-50 text-gray-500"
+                  : "border-gray-300 focus:border-[#0d9488] bg-white text-gray-900"
               }`}
               required
               readOnly={
@@ -858,7 +858,7 @@ const QuickAddForm = ({
         <div>
           <label
             htmlFor="leaseType"
-            className="block text-sm font-medium text-slate-700 dark:text-slate-300"
+            className="block text-sm font-medium text-gray-700"
           >
             Agreement Type
           </label>
@@ -867,7 +867,7 @@ const QuickAddForm = ({
             name="leaseType"
             value={formData.leaseType}
             onChange={handleChange}
-            className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100 py-2 px-3 sm:text-sm"
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] bg-white text-gray-900 py-2 px-3 sm:text-sm"
             required
           >
             <option value="rental">Rental Agreement</option>
@@ -878,7 +878,7 @@ const QuickAddForm = ({
         <div>
           <label
             htmlFor="startDate"
-            className="block text-sm font-medium text-slate-700 dark:text-slate-300"
+            className="block text-sm font-medium text-gray-700"
           >
             Start Date
           </label>
@@ -888,7 +888,7 @@ const QuickAddForm = ({
             name="startDate"
             value={formData.startDate}
             onChange={handleChange}
-            className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100 py-2 px-3 sm:text-sm"
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] bg-white text-gray-900 py-2 px-3 sm:text-sm"
             required
           />
         </div>
@@ -897,7 +897,7 @@ const QuickAddForm = ({
           <div>
             <label
               htmlFor="endDate"
-              className="block text-sm font-medium text-slate-700 dark:text-slate-300"
+              className="block text-sm font-medium text-gray-700"
             >
               End Date
             </label>
@@ -907,22 +907,22 @@ const QuickAddForm = ({
               name="endDate"
               value={formData.endDate}
               onChange={handleChange}
-              className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100 py-2 px-3 sm:text-sm"
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] bg-white text-gray-900 py-2 px-3 sm:text-sm"
               required
             />
           </div>
         )}
       </div>
 
-      <div className="border-t border-slate-200 dark:border-slate-700 pt-6">
-        <h3 className="text-lg font-medium text-slate-900 dark:text-slate-100 mb-4">
+      <div className="border-t border-gray-200 pt-6">
+        <h3 className="text-lg font-medium text-gray-900 mb-4">
           Emergency Contact (Optional)
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div>
             <label
               htmlFor="emergencyContact.name"
-              className="block text-sm font-medium text-slate-700 dark:text-slate-300"
+              className="block text-sm font-medium text-gray-700"
             >
               Name
             </label>
@@ -932,14 +932,14 @@ const QuickAddForm = ({
               name="emergencyContact.name"
               value={formData.emergencyContact.name}
               onChange={handleChange}
-              className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100 py-2 px-3 sm:text-sm"
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] bg-white text-gray-900 py-2 px-3 sm:text-sm"
             />
           </div>
 
           <div>
             <label
               htmlFor="emergencyContact.phone"
-              className="block text-sm font-medium text-slate-700 dark:text-slate-300"
+              className="block text-sm font-medium text-gray-700"
             >
               Phone
             </label>
@@ -949,14 +949,14 @@ const QuickAddForm = ({
               name="emergencyContact.phone"
               value={formData.emergencyContact.phone}
               onChange={handleChange}
-              className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100 py-2 px-3 sm:text-sm"
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] bg-white text-gray-900 py-2 px-3 sm:text-sm"
             />
           </div>
 
           <div>
             <label
               htmlFor="emergencyContact.relationship"
-              className="block text-sm font-medium text-slate-700 dark:text-slate-300"
+              className="block text-sm font-medium text-gray-700"
             >
               Relationship
             </label>
@@ -966,7 +966,7 @@ const QuickAddForm = ({
               name="emergencyContact.relationship"
               value={formData.emergencyContact.relationship}
               onChange={handleChange}
-              className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100 py-2 px-3 sm:text-sm"
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] bg-white text-gray-900 py-2 px-3 sm:text-sm"
             />
           </div>
         </div>
@@ -1063,7 +1063,7 @@ const InviteForm = ({
 
   return (
     <div className="space-y-6">
-      <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-md p-4">
+      <div className="bg-blue-50 border border-blue-200 rounded-md p-4">
         <div className="flex">
           <div className="flex-shrink-0">
             <svg
@@ -1079,10 +1079,10 @@ const InviteForm = ({
             </svg>
           </div>
           <div className="ml-3">
-            <h3 className="text-sm font-medium text-blue-800 dark:text-blue-200">
+            <h3 className="text-sm font-medium text-blue-800">
               Invite Tenant to Join Platform
             </h3>
-            <div className="mt-2 text-sm text-blue-700 dark:text-blue-300">
+            <div className="mt-2 text-sm text-blue-700">
               <p>
                 Send an invitation to your tenant. They'll receive an email with
                 two options:
@@ -1106,7 +1106,7 @@ const InviteForm = ({
         <div className="email-search-container relative">
           <label
             htmlFor="inviteEmail"
-            className="block text-sm font-medium text-slate-700 dark:text-slate-300"
+            className="block text-sm font-medium text-gray-700"
           >
             Email Address
           </label>
@@ -1117,7 +1117,7 @@ const InviteForm = ({
               name="email"
               value={inviteData.email}
               onChange={handleEmailChange}
-              className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100 py-2 px-3 sm:text-sm"
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] bg-white text-gray-900 py-2 px-3 sm:text-sm"
               placeholder="Enter email to check for existing tenant..."
               required
             />
@@ -1130,20 +1130,20 @@ const InviteForm = ({
 
           {/* Email Suggestions Dropdown */}
           {showSuggestions && emailSuggestions.length > 0 && (
-            <div className="absolute z-10 w-full mt-1 bg-white dark:bg-slate-800 border border-gray-300 dark:border-slate-600 rounded-md shadow-lg max-h-60 overflow-auto">
+            <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto">
               {emailSuggestions.map((suggestion, index) => (
                 <button
                   key={`${suggestion.type}-${suggestion.id}`}
                   type="button"
                   onClick={() => handleSuggestionSelect(suggestion)}
-                  className="w-full px-4 py-3 text-left hover:bg-gray-100 dark:hover:bg-slate-700 border-b border-gray-100 dark:border-slate-700 last:border-b-0 focus:outline-none focus:bg-gray-100 dark:focus:bg-slate-700"
+                  className="w-full px-4 py-3 text-left hover:bg-gray-100 border-b border-gray-100 last:border-b-0 focus:outline-none focus:bg-gray-100"
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex-1">
-                      <div className="font-medium text-gray-900 dark:text-slate-100">
+                      <div className="font-medium text-gray-900">
                         {suggestion.email}
                       </div>
-                      <div className="text-sm text-gray-500 dark:text-slate-400">
+                      <div className="text-sm text-gray-500">
                         {suggestion.first_name} {suggestion.last_name}
                         {suggestion.phone && ` • ${suggestion.phone}`}
                       </div>
@@ -1152,8 +1152,8 @@ const InviteForm = ({
                       <span
                         className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
                           suggestion.type === "user"
-                            ? "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200"
-                            : "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
+                            ? "bg-blue-100 text-blue-800"
+                            : "bg-green-100 text-green-800"
                         }`}
                       >
                         {suggestion.type === "user"
@@ -1171,7 +1171,7 @@ const InviteForm = ({
         <div>
           <label
             htmlFor="invitePhone"
-            className="block text-sm font-medium text-slate-700 dark:text-slate-300"
+            className="block text-sm font-medium text-gray-700"
           >
             Phone Number (Optional)
           </label>
@@ -1181,7 +1181,7 @@ const InviteForm = ({
             name="phone"
             value={inviteData.phone}
             onChange={handleInviteChange}
-            className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100 py-2 px-3 sm:text-sm"
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] bg-white text-gray-900 py-2 px-3 sm:text-sm"
             placeholder="+1 (555) 123-4567"
           />
         </div>
@@ -1189,7 +1189,7 @@ const InviteForm = ({
         <div>
           <label
             htmlFor="invitePropertyId"
-            className="block text-sm font-medium text-slate-700 dark:text-slate-300"
+            className="block text-sm font-medium text-gray-700"
           >
             Property
           </label>
@@ -1198,7 +1198,7 @@ const InviteForm = ({
             name="propertyId"
             value={inviteData.propertyId}
             onChange={handleInviteChange}
-            className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100 py-2 px-3 sm:text-sm"
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] bg-white text-gray-900 py-2 px-3 sm:text-sm"
             required
           >
             <option value="">Select Property</option>
@@ -1213,7 +1213,7 @@ const InviteForm = ({
         <div>
           <label
             htmlFor="inviteUnitNumber"
-            className="block text-sm font-medium text-slate-700 dark:text-slate-300"
+            className="block text-sm font-medium text-gray-700"
           >
             Unit
           </label>
@@ -1222,7 +1222,7 @@ const InviteForm = ({
             name="unitNumber"
             value={inviteData.unitNumber}
             onChange={handleInviteChange}
-            className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100 py-2 px-3 sm:text-sm"
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] bg-white text-gray-900 py-2 px-3 sm:text-sm"
             required
             disabled={!inviteData.propertyId || loadingUnits}
           >
@@ -1249,7 +1249,7 @@ const InviteForm = ({
         <div>
           <label
             htmlFor="inviteMessage"
-            className="block text-sm font-medium text-slate-700 dark:text-slate-300"
+            className="block text-sm font-medium text-gray-700"
           >
             Personal Message (Optional)
           </label>
@@ -1259,7 +1259,7 @@ const InviteForm = ({
             value={inviteData.message}
             onChange={handleInviteChange}
             rows={4}
-            className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100 py-2 px-3 sm:text-sm"
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] bg-white text-gray-900 py-2 px-3 sm:text-sm"
             placeholder="Add a personal message to your invitation..."
           />
         </div>

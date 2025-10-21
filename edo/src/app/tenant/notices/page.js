@@ -324,13 +324,13 @@ const Notices = () => {
   const getStatusColor = (status) => {
     switch (status.toLowerCase()) {
       case "pending":
-        return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300";
+        return "bg-yellow-100 text-yellow-800";
       case "approved":
-        return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300";
+        return "bg-green-100 text-green-800";
       case "declined":
-        return "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300";
+        return "bg-red-100 text-red-800";
       default:
-        return "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300";
+        return "bg-gray-100 text-gray-800";
     }
   };
 
@@ -338,29 +338,24 @@ const Notices = () => {
     switch (type) {
       case "eviction":
         return {
-          container: "border-red-200 dark:border-red-800",
-          badge: "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300",
-          title: "text-red-600 dark:text-red-400",
-          button:
-            "text-red-600 hover:text-red-500 dark:text-red-400 dark:hover:text-red-300",
+          container: "border-red-200",
+          badge: "bg-red-100 text-red-800",
+          title: "text-red-600",
+          button: "text-red-600 hover:text-red-500",
         };
       case "important":
         return {
-          container: "border-yellow-200 dark:border-yellow-800",
-          badge:
-            "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300",
-          title: "text-slate-900 dark:text-slate-100",
-          button:
-            "text-violet-600 hover:text-violet-500 dark:text-violet-400 dark:hover:text-violet-300",
+          container: "border-yellow-200",
+          badge: "bg-yellow-100 text-yellow-800",
+          title: "text-slate-900",
+          button: "text-violet-600 hover:text-violet-500",
         };
       default:
         return {
-          container: "border-slate-200 dark:border-slate-700",
-          badge:
-            "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300",
-          title: "text-slate-900 dark:text-slate-100",
-          button:
-            "text-[#0d9488] hover:text-[#0f766e] dark:text-[#0d9488] dark:hover:text-[#0f766e]",
+          container: "border-slate-200",
+          badge: "bg-blue-100 text-blue-800",
+          title: "text-slate-900",
+          button: "text-[#0d9488] hover:text-[#0f766e]",
         };
     }
   };
@@ -502,7 +497,7 @@ const Notices = () => {
   // Authentication and loading checks
   if (!isClient) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-slate-50 dark:bg-slate-900">
+      <div className="flex flex-col items-center justify-center min-h-screen bg-slate-50">
         <h2 className="text-2xl font-bold mb-4">Loading...</h2>
       </div>
     );
@@ -510,7 +505,7 @@ const Notices = () => {
 
   if (!isAuthenticated()) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-slate-50 dark:bg-slate-900">
+      <div className="flex flex-col items-center justify-center min-h-screen bg-slate-50">
         <h2 className="text-2xl font-bold mb-4">Sign in required</h2>
         <p className="mb-6">You must be signed in to access this page.</p>
         <Link
@@ -539,7 +534,7 @@ const Notices = () => {
     : sortedNotices.slice(0, 3);
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-900">
+    <div className="min-h-screen bg-slate-50">
       <div className="flex">
         <TenantSidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
         <div className="flex-1 flex flex-col lg:ml-64">
@@ -549,10 +544,10 @@ const Notices = () => {
             <div className="mb-6 sm:mb-8">
               <div className="flex flex-col gap-3 sm:gap-0 sm:flex-row sm:justify-between sm:items-center">
                 <div>
-                  <h1 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-slate-100">
+                  <h1 className="text-xl sm:text-2xl font-bold text-slate-900 text-slate-900">
                     Notices
                   </h1>
-                  <p className="mt-1 text-xs sm:text-sm text-slate-500 dark:text-slate-400">
+                  <p className="mt-1 text-xs sm:text-sm text-slate-500 text-slate-500">
                     {isExpandedView
                       ? "All notices and announcements"
                       : "Recent notices and announcements"}
@@ -561,7 +556,7 @@ const Notices = () => {
                 <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:space-x-3 mt-3 sm:mt-0">
                   <button
                     onClick={() => setIsExpandedView(!isExpandedView)}
-                    className="inline-flex items-center justify-center px-3 py-2 border border-[#0d9488] text-xs sm:text-sm font-medium rounded-md text-[#0d9488] hover:bg-[#0d9488]/10 dark:text-[#0d9488] dark:hover:bg-[#0d9488]/20 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0d9488] w-full sm:w-auto"
+                    className="inline-flex items-center justify-center px-3 py-2 border border-[#0d9488] text-xs sm:text-sm font-medium rounded-md text-[#0d9488] hover:bg-[#0d9488]/10 text-[#0d9488] hover:bg-[#0d9488]/10 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0d9488] w-full sm:w-auto"
                   >
                     {isExpandedView ? "Show Recent" : "View All Notices"}
                   </button>
@@ -582,7 +577,7 @@ const Notices = () => {
                 return (
                   <div
                     key={notice.id}
-                    className={`bg-white dark:bg-slate-800 rounded-lg shadow-sm border ${styles.container} cursor-pointer hover:shadow-md transition-shadow duration-200`}
+                    className={`bg-white bg-white rounded-lg shadow-sm border ${styles.container} cursor-pointer hover:shadow-md transition-shadow duration-200`}
                     onClick={() => handleNoticeClick(notice)}
                   >
                     <div
@@ -597,19 +592,19 @@ const Notices = () => {
                           <div
                             className={`p-2 sm:p-3 rounded-lg ${
                               notice.type === "eviction"
-                                ? "bg-red-100 dark:bg-red-900/30"
+                                ? "bg-red-100 bg-red-100"
                                 : notice.type === "important"
-                                ? "bg-yellow-100 dark:bg-yellow-900/30"
-                                : "bg-blue-100 dark:bg-blue-900/30"
+                                ? "bg-yellow-100"
+                                : "bg-blue-100"
                             }`}
                           >
                             <svg
                               className={`w-5 h-5 sm:w-6 sm:h-6 ${
                                 notice.type === "eviction"
-                                  ? "text-red-600 dark:text-red-400"
+                                  ? "text-red-600"
                                   : notice.type === "important"
-                                  ? "text-yellow-600 dark:text-yellow-400"
-                                  : "text-blue-600 dark:text-blue-400"
+                                  ? "text-yellow-600"
+                                  : "text-blue-600"
                               }`}
                               fill="none"
                               stroke="currentColor"
@@ -639,12 +634,12 @@ const Notices = () => {
                                   notice.type.slice(1)}
                             </span>
                             {notice.priority === "urgent" && (
-                              <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300">
+                              <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
                                 Urgent
                               </span>
                             )}
                           </div>
-                          <span className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
+                          <span className="text-xs sm:text-sm text-slate-500">
                             {notice.date}
                           </span>
                         </div>
@@ -654,7 +649,7 @@ const Notices = () => {
                           {notice.title}
                         </h3>
                         <p
-                          className={`mt-2 text-xs sm:text-sm text-slate-500 dark:text-slate-400 ${
+                          className={`mt-2 text-xs sm:text-sm text-slate-500 text-slate-500 ${
                             isExpandedView
                               ? "whitespace-pre-wrap"
                               : "line-clamp-2"
@@ -674,7 +669,7 @@ const Notices = () => {
                               ? "View Details"
                               : "Read more"}
                           </button>
-                          <span className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
+                          <span className="text-xs sm:text-sm text-slate-500">
                             By {notice.from}
                           </span>
                         </div>
@@ -687,14 +682,14 @@ const Notices = () => {
 
             {/* Notice Details Modal */}
             {showNoticeModal && selectedNotice && (
-              <div className="fixed inset-0 bg-gray-500/50 dark:bg-gray-900/50 z-40">
+              <div className="fixed inset-0 bg-gray-500/50 z-40">
                 <div className="fixed inset-0 z-50 overflow-y-auto">
                   <div className="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
-                    <div className="relative transform overflow-hidden rounded-lg bg-white dark:bg-slate-800 px-4 pb-4 pt-5 text-left shadow-xl transition-all mx-auto w-[95%] max-w-lg sm:my-8 sm:w-full sm:p-6">
+                    <div className="relative transform overflow-hidden rounded-lg bg-white bg-white px-4 pb-4 pt-5 text-left shadow-xl transition-all mx-auto w-[95%] max-w-lg sm:my-8 sm:w-full sm:p-6">
                       <div className="absolute right-0 top-0 pr-4 pt-4">
                         <button
                           type="button"
-                          className="rounded-md bg-white dark:bg-slate-800 text-gray-400 hover:text-gray-500 focus:outline-none"
+                          className="rounded-md bg-white bg-white text-gray-400 hover:text-gray-500 focus:outline-none"
                           onClick={() => setShowNoticeModal(false)}
                         >
                           <span className="sr-only">Close</span>
@@ -728,7 +723,7 @@ const Notices = () => {
                                   selectedNotice.type.slice(1)}
                             </span>
                             {selectedNotice.priority === "urgent" && (
-                              <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300">
+                              <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
                                 Urgent
                               </span>
                             )}
@@ -740,7 +735,7 @@ const Notices = () => {
                           >
                             {selectedNotice.title}
                           </h3>
-                          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+                          <p className="mt-1 text-sm text-slate-500">
                             Posted {selectedNotice.date}
                           </p>
                         </div>
@@ -748,14 +743,14 @@ const Notices = () => {
 
                       <div className="mt-4 sm:mt-6">
                         <div className="prose dark:prose-invert max-w-none">
-                          <p className="text-slate-600 dark:text-slate-300 text-sm sm:text-base">
+                          <p className="text-slate-600 text-sm sm:text-base">
                             {selectedNotice.content}
                           </p>
                         </div>
                       </div>
 
                       <div className="mt-6 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
-                        <span className="text-sm text-slate-500 dark:text-slate-400">
+                        <span className="text-sm text-slate-500">
                           From: {selectedNotice.from}
                         </span>
                         <div className="flex flex-col sm:flex-row sm:space-x-3 gap-2">
@@ -774,7 +769,7 @@ const Notices = () => {
                           )}
                           <button
                             type="button"
-                            className="inline-flex justify-center rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 shadow-sm hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-[#0d9488] focus:ring-offset-2 w-full sm:w-auto"
+                            className="inline-flex justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-[#0d9488] focus:ring-offset-2 w-full sm:w-auto"
                             onClick={() => setShowNoticeModal(false)}
                           >
                             Close
@@ -789,7 +784,7 @@ const Notices = () => {
 
             {/* Vacate Requests Table (now Horizontal Cards) */}
             <div className="mt-8">
-              <h2 className="text-lg font-medium text-slate-900 dark:text-slate-100 mb-4">
+              <h2 className="text-lg font-medium text-slate-900 text-slate-900 mb-4">
                 Vacate Notices
               </h2>
 
@@ -828,7 +823,7 @@ const Notices = () => {
                 <div className="flex-1">
                   <div className="relative">
                     <svg
-                      className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400 dark:text-gray-500"
+                      className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -844,7 +839,7 @@ const Notices = () => {
                       type="text"
                       name="search"
                       id="search"
-                      className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0d9488] focus:border-[#0d9488] dark:bg-gray-700 dark:text-gray-100 caret-slate-900 dark:caret-slate-100 text-sm sm:text-sm"
+                      className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0d9488] focus:border-[#0d9488] text-sm sm:text-sm"
                       placeholder="Search by property, unit, or reason..."
                       value={vacateSearch}
                       onChange={(e) => setVacateSearch(e.target.value)}
@@ -855,7 +850,7 @@ const Notices = () => {
                   <button
                     type="button"
                     onClick={() => setShowVacateFilters((prev) => !prev)}
-                    className="inline-flex items-center px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0d9488]"
+                    className="inline-flex items-center px-3 py-2 border border-gray-300 rounded-lg text-xs sm:text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0d9488]"
                   >
                     <Filter className="h-4 w-4 mr-1 sm:mr-2" />
                     Filter
@@ -884,7 +879,7 @@ const Notices = () => {
                         vacateSortOrder === "latest" ? "earliest" : "latest"
                       )
                     }
-                    className="inline-flex items-center px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0d9488]"
+                    className="inline-flex items-center px-3 py-2 border border-gray-200 rounded-lg text-xs sm:text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0d9488]"
                   >
                     <ArrowUpDown className="h-4 w-4 mr-1 sm:mr-2" />
                     {vacateSortOrder === "latest" ? "Latest" : "Earliest"}
@@ -900,10 +895,10 @@ const Notices = () => {
                 </div>
               </div>
               {showVacateFilters && (
-                <div className="mb-6 grid grid-cols-1 sm:grid-cols-2 gap-3 p-4 bg-white dark:bg-gray-800 rounded-lg shadow border border-gray-200 dark:border-gray-700">
+                <div className="mb-6 grid grid-cols-1 sm:grid-cols-2 gap-3 p-4 bg-white rounded-lg shadow border border-gray-200">
                   <div>
                     <select
-                      className="block w-full rounded-md border-gray-300 dark:border-gray-600 pl-3 pr-10 py-2 text-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-gray-700 dark:text-gray-100"
+                      className="block w-full rounded-md border-gray-300 pl-3 pr-10 py-2 text-sm focus:border-[#0d9488] focus:ring-[#0d9488]"
                       value={vacateStatusFilter}
                       onChange={(e) => setVacateStatusFilter(e.target.value)}
                     >
@@ -915,7 +910,7 @@ const Notices = () => {
                   </div>
                   <div>
                     <select
-                      className="block w-full rounded-md border-gray-300 dark:border-gray-600 pl-3 pr-10 py-2 text-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-gray-700 dark:text-gray-100"
+                      className="block w-full rounded-md border-gray-300 pl-3 pr-10 py-2 text-sm focus:border-[#0d9488] focus:ring-[#0d9488]"
                       value={vacateTimeFilter}
                       onChange={(e) => setVacateTimeFilter(e.target.value)}
                     >
@@ -930,21 +925,21 @@ const Notices = () => {
               )}
               <div className="flex flex-col gap-4">
                 {vacateRequestsLoading ? (
-                  <div className="text-center text-gray-500 dark:text-gray-400 py-8">
+                  <div className="text-center text-gray-500 py-8">
                     Loading vacate requests...
                   </div>
                 ) : (
                   filteredVacateRequests.map((request) => (
                     <div
                       key={request.id}
-                      className="w-full bg-white dark:bg-gray-900 shadow ring-1 ring-black ring-opacity-5 rounded-lg px-4 py-3 sm:px-6 sm:py-4 flex flex-col gap-3 cursor-pointer hover:ring-[#0d9488] transition"
+                      className="w-full bg-white shadow ring-1 ring-black ring-opacity-5 rounded-lg px-4 py-3 sm:px-6 sm:py-4 flex flex-col gap-3 cursor-pointer hover:ring-[#0d9488] transition"
                       onClick={() => {
                         setSelectedVacateRequest(request);
                         setShowVacateModal(true);
                       }}
                     >
                       <div className="flex flex-wrap items-center justify-between gap-2">
-                        <div className="text-sm font-semibold text-gray-900 dark:text-gray-100 truncate">
+                        <div className="text-sm font-semibold text-gray-900 truncate">
                           {request.property} - {request.unit}
                         </div>
                         <div>
@@ -958,21 +953,21 @@ const Notices = () => {
                         </div>
                       </div>
                       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                        <div className="text-xs text-gray-500 dark:text-gray-400">
+                        <div className="text-xs text-gray-600">
                           Request Date:{" "}
-                          <span className="font-medium text-gray-700 dark:text-gray-200">
+                          <span className="font-medium text-gray-900">
                             {request.requestDate}
                           </span>
                         </div>
-                        <div className="text-xs text-gray-500 dark:text-gray-400">
+                        <div className="text-xs text-gray-600">
                           Move-Out Date:{" "}
-                          <span className="font-medium text-gray-700 dark:text-gray-200">
+                          <span className="font-medium text-gray-900">
                             {request.moveOutDate}
                           </span>
                         </div>
-                        <div className="text-xs text-gray-500 dark:text-gray-400 sm:col-span-3">
+                        <div className="text-xs text-gray-600 sm:col-span-3">
                           <span className="font-medium">Reason:</span>{" "}
-                          <span className="text-gray-700 dark:text-gray-200">
+                          <span className="text-gray-900">
                             {request.reason}
                           </span>
                         </div>
@@ -982,7 +977,7 @@ const Notices = () => {
                 )}
                 {!vacateRequestsLoading &&
                   filteredVacateRequests.length === 0 && (
-                    <div className="text-center text-gray-500 dark:text-gray-400 py-8">
+                    <div className="text-center text-gray-500 py-8">
                       No vacate requests found.
                     </div>
                   )}
@@ -997,11 +992,11 @@ const Notices = () => {
         <div className="fixed inset-0 bg-gray-500/50 dark:bg-gray-900/50 z-40">
           <div className="fixed inset-0 z-50 overflow-y-auto">
             <div className="flex min-h-full items-center justify-center p-4 text-center">
-              <div className="relative transform overflow-hidden rounded-lg bg-white dark:bg-slate-800 px-4 pb-4 pt-5 text-left shadow-xl transition-all mx-auto w-[95%] max-w-lg sm:my-8 sm:w-full sm:p-6">
+              <div className="relative transform overflow-hidden rounded-lg bg-white bg-white px-4 pb-4 pt-5 text-left shadow-xl transition-all mx-auto w-[95%] max-w-lg sm:my-8 sm:w-full sm:p-6">
                 <div className="absolute right-0 top-0 pr-4 pt-4">
                   <button
                     type="button"
-                    className="rounded-md bg-white dark:bg-slate-800 text-gray-400 hover:text-gray-500 focus:outline-none"
+                    className="rounded-md bg-white bg-white text-gray-400 hover:text-gray-500 focus:outline-none"
                     onClick={() => {
                       setShowVacateForm(false);
                       setFormError(""); // Clear error when closing
@@ -1026,10 +1021,10 @@ const Notices = () => {
 
                 <div className="sm:flex sm:items-start">
                   <div className="mt-3 text-center sm:mt-0 sm:text-left w-full">
-                    <h3 className="text-lg font-semibold leading-6 text-gray-900 dark:text-gray-100">
+                    <h3 className="text-lg font-semibold leading-6 text-gray-900">
                       Submit Vacate Notice
                     </h3>
-                    <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                    <p className="mt-1 text-sm text-gray-600">
                       Please provide the details for your vacate notice.
                     </p>
                   </div>
@@ -1037,7 +1032,7 @@ const Notices = () => {
 
                 {/* Add 30-day notice badge inside the form modal */}
                 <div className="mt-4">
-                  <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
+                  <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
                     <svg
                       className="mr-1.5 h-4 w-4"
                       fill="none"
@@ -1084,7 +1079,7 @@ const Notices = () => {
                     <div>
                       <label
                         htmlFor="property"
-                        className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                        className="block text-sm font-medium text-gray-700 mb-1"
                       >
                         Property
                       </label>
@@ -1094,7 +1089,7 @@ const Notices = () => {
                         value={formData.property}
                         onChange={handleInputChange}
                         required
-                        className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-gray-700 dark:text-gray-100 sm:text-sm py-2 px-3"
+                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] sm:text-sm py-2 px-3"
                       >
                         <option value="">Select a property</option>
                         {tenantProperties.map((property) => (
@@ -1109,7 +1104,7 @@ const Notices = () => {
                   <div>
                     <label
                       htmlFor="moveOutDate"
-                      className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                      className="block text-sm font-medium text-gray-700 mb-1"
                     >
                       Move-Out Date
                     </label>
@@ -1121,14 +1116,14 @@ const Notices = () => {
                       onChange={handleInputChange}
                       required
                       min={new Date().toISOString().split("T")[0]}
-                      className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-gray-700 dark:text-gray-100 sm:text-sm py-2 px-3"
+                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] sm:text-sm py-2 px-3"
                     />
                   </div>
 
                   <div>
                     <label
                       htmlFor="reason"
-                      className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                      className="block text-sm font-medium text-gray-700 mb-1"
                     >
                       Reason for Vacating (Optional)
                     </label>
@@ -1138,7 +1133,7 @@ const Notices = () => {
                       rows={3}
                       value={formData.reason}
                       onChange={handleInputChange}
-                      className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-gray-700 dark:text-gray-100 sm:text-sm py-2 px-3"
+                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] sm:text-sm py-2 px-3"
                       placeholder="Please provide a detailed reason for vacating..."
                     />
                   </div>
@@ -1146,7 +1141,7 @@ const Notices = () => {
                   <div className="mt-6 flex justify-end space-x-3">
                     <button
                       type="button"
-                      className="inline-flex justify-center rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 shadow-sm hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-[#0d9488] focus:ring-offset-2"
+                      className="inline-flex justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-[#0d9488] focus:ring-offset-2"
                       onClick={() => setShowVacateForm(false)}
                     >
                       Cancel
@@ -1170,7 +1165,7 @@ const Notices = () => {
         <div className="fixed inset-0 bg-gray-500/50 dark:bg-gray-900/50 z-40">
           <div className="fixed inset-0 z-50 overflow-y-auto">
             <div className="flex min-h-full items-center justify-center p-4 text-center">
-              <div className="relative transform overflow-hidden rounded-lg bg-white dark:bg-slate-800 px-4 pb-4 pt-5 text-left shadow-xl transition-all mx-auto w-[95%] max-w-lg sm:my-8 sm:w-full sm:p-6">
+              <div className="relative transform overflow-hidden rounded-lg bg-white bg-white px-4 pb-4 pt-5 text-left shadow-xl transition-all mx-auto w-[95%] max-w-lg sm:my-8 sm:w-full sm:p-6">
                 <div className="sm:flex sm:items-start">
                   <div className="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
                     <svg
@@ -1188,11 +1183,11 @@ const Notices = () => {
                     </svg>
                   </div>
                   <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-                    <h3 className="text-lg font-semibold leading-6 text-gray-900 dark:text-gray-100">
+                    <h3 className="text-lg font-semibold leading-6 text-gray-900">
                       Confirm Withdrawal
                     </h3>
                     <div className="mt-2">
-                      <p className="text-sm text-gray-500 dark:text-gray-400">
+                      <p className="text-sm text-gray-600">
                         Are you sure you want to withdraw this vacate request?
                         This action cannot be undone.
                       </p>
@@ -1209,7 +1204,7 @@ const Notices = () => {
                   </button>
                   <button
                     type="button"
-                    className="mt-3 inline-flex w-full justify-center rounded-md bg-white dark:bg-gray-700 px-3 py-2 text-sm font-semibold text-gray-900 dark:text-gray-200 shadow-sm ring-1 ring-inset ring-gray-300 dark:ring-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600 sm:mt-0 sm:w-auto"
+                    className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
                     onClick={cancelWithdrawal}
                   >
                     Cancel
@@ -1226,11 +1221,11 @@ const Notices = () => {
         <div className="fixed inset-0 bg-gray-500/50 dark:bg-gray-900/50 z-40">
           <div className="fixed inset-0 z-50 overflow-y-auto">
             <div className="flex min-h-full items-center justify-center p-4 text-center">
-              <div className="relative transform overflow-hidden rounded-lg bg-white dark:bg-slate-800 px-4 pb-4 pt-5 text-left shadow-xl transition-all mx-auto w-[95%] max-w-lg sm:my-8 sm:w-full sm:p-6">
+              <div className="relative transform overflow-hidden rounded-lg bg-white bg-white px-4 pb-4 pt-5 text-left shadow-xl transition-all mx-auto w-[95%] max-w-lg sm:my-8 sm:w-full sm:p-6">
                 <div className="absolute right-0 top-0 pr-4 pt-4">
                   <button
                     type="button"
-                    className="rounded-md bg-white dark:bg-slate-800 text-gray-400 hover:text-gray-500 focus:outline-none"
+                    className="rounded-md bg-white bg-white text-gray-400 hover:text-gray-500 focus:outline-none"
                     onClick={() => setShowVacateModal(false)}
                   >
                     <span className="sr-only">Close</span>
@@ -1252,10 +1247,10 @@ const Notices = () => {
 
                 <div className="sm:flex sm:items-start">
                   <div className="mt-3 text-center sm:mt-0 sm:text-left w-full">
-                    <h3 className="text-lg font-semibold leading-6 text-gray-900 dark:text-gray-100">
+                    <h3 className="text-lg font-semibold leading-6 text-gray-900">
                       Vacate Notice Details
                     </h3>
-                    <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                    <p className="mt-1 text-sm text-gray-500">
                       Submitted on {selectedVacateRequest.requestDate}
                     </p>
                   </div>
@@ -1263,35 +1258,35 @@ const Notices = () => {
 
                 <div className="mt-6 space-y-6">
                   <div>
-                    <h4 className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                    <h4 className="text-sm font-medium text-gray-600">
                       Property & Unit
                     </h4>
-                    <p className="mt-1 text-sm text-gray-900 dark:text-gray-100">
+                    <p className="mt-1 text-sm text-gray-900">
                       {selectedVacateRequest.property} -{" "}
                       {selectedVacateRequest.unit}
                     </p>
                   </div>
 
                   <div>
-                    <h4 className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                    <h4 className="text-sm font-medium text-gray-500">
                       Move-Out Date
                     </h4>
-                    <p className="mt-1 text-sm text-gray-900 dark:text-gray-100">
+                    <p className="mt-1 text-sm text-gray-900">
                       {selectedVacateRequest.moveOutDate}
                     </p>
                   </div>
 
                   <div>
-                    <h4 className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                    <h4 className="text-sm font-medium text-gray-500">
                       Reason
                     </h4>
-                    <p className="mt-1 text-sm text-gray-900 dark:text-gray-100">
+                    <p className="mt-1 text-sm text-gray-900">
                       {selectedVacateRequest.reason || "No reason provided"}
                     </p>
                   </div>
 
                   <div>
-                    <h4 className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                    <h4 className="text-sm font-medium text-gray-500">
                       Status
                     </h4>
                     <p className="mt-1">
@@ -1310,7 +1305,7 @@ const Notices = () => {
                   {selectedVacateRequest.status.toLowerCase() === "pending" && (
                     <button
                       type="button"
-                      className="inline-flex justify-center rounded-md border border-red-300 dark:border-red-600 bg-white dark:bg-gray-700 px-4 py-2 text-sm font-medium text-red-700 dark:text-red-200 shadow-sm hover:bg-red-50 dark:hover:bg-red-900/20 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+                      className="inline-flex justify-center rounded-md border border-red-300 bg-white px-4 py-2 text-sm font-medium text-red-700 shadow-sm hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
                       onClick={() =>
                         handleWithdrawRequest(selectedVacateRequest.id)
                       }
@@ -1320,7 +1315,7 @@ const Notices = () => {
                   )}
                   <button
                     type="button"
-                    className="inline-flex justify-center rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 shadow-sm hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-[#0d9488] focus:ring-offset-2"
+                    className="inline-flex justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-[#0d9488] focus:ring-offset-2"
                     onClick={() => setShowVacateModal(false)}
                   >
                     Close

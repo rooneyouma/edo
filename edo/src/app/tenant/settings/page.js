@@ -52,7 +52,6 @@ const TenantSettings = () => {
   });
 
   const [preferences, setPreferences] = useState({
-    theme: "system",
     language: "en",
     dateFormat: "MM/DD/YYYY",
     timezone: "America/New_York",
@@ -93,7 +92,6 @@ const TenantSettings = () => {
       // Initialize preferences if they exist in user data
       if (user.preferences) {
         setPreferences({
-          theme: user.preferences.theme || "system",
           language: user.preferences.language || "en",
           dateFormat: user.preferences.date_format || "MM/DD/YYYY",
           timezone: user.preferences.timezone || "America/New_York",
@@ -133,7 +131,7 @@ const TenantSettings = () => {
   ];
 
   return (
-    <div className="h-screen bg-slate-50 dark:bg-slate-900 overflow-hidden">
+    <div className="h-screen bg-slate-50 overflow-hidden">
       <div className="flex">
         <TenantSidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
         <div className="flex-1 flex flex-col lg:ml-64">
@@ -143,17 +141,17 @@ const TenantSettings = () => {
               <div className="pl-3 pr-6 sm:pl-4 sm:pr-8 md:pl-6 md:pr-12 lg:pl-8 lg:pr-16 py-4">
                 {/* Page Header */}
                 <div className="mb-8">
-                  <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">
+                  <h1 className="text-2xl font-bold text-slate-900">
                     Settings
                   </h1>
-                  <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+                  <p className="mt-1 text-sm text-slate-500">
                     Manage your account settings and preferences
                   </p>
                 </div>
 
                 {/* Tab Navigation */}
                 <div className="mb-8">
-                  <div className="border-b border-slate-200 dark:border-slate-700">
+                  <div className="border-b border-slate-200">
                     <nav className="-mb-px flex space-x-8">
                       {tabs.map((tab) => (
                         <button
@@ -161,8 +159,8 @@ const TenantSettings = () => {
                           onClick={() => setActiveTab(tab.id)}
                           className={`flex items-center py-2 px-1 border-b-2 font-medium text-sm ${
                             activeTab === tab.id
-                              ? "border-teal-500 text-teal-600 dark:text-teal-400"
-                              : "border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300 dark:text-slate-400 dark:hover:text-slate-200"
+                              ? "border-teal-500 text-teal-600"
+                              : "border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300"
                           }`}
                         >
                           <tab.icon className="w-5 h-5 mr-2" />
@@ -174,11 +172,11 @@ const TenantSettings = () => {
                 </div>
 
                 {/* Tab Content */}
-                <div className="bg-white dark:bg-slate-800 shadow rounded-lg">
+                <div className="bg-white shadow rounded-lg">
                   {/* Profile Tab */}
                   {activeTab === "profile" && (
                     <div className="p-6">
-                      <h3 className="text-lg font-medium text-slate-900 dark:text-slate-100 mb-4">
+                      <h3 className="text-lg font-medium text-slate-900 mb-4">
                         Profile Information
                       </h3>
                       <form
@@ -187,7 +185,7 @@ const TenantSettings = () => {
                       >
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                           <div>
-                            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                            <label className="block text-sm font-medium text-slate-700 mb-2">
                               First Name
                             </label>
                             <input
@@ -199,11 +197,11 @@ const TenantSettings = () => {
                                   firstName: e.target.value,
                                 })
                               }
-                              className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500 dark:bg-slate-700 dark:text-slate-100"
+                              className="w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500"
                             />
                           </div>
                           <div>
-                            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                            <label className="block text-sm font-medium text-slate-700 mb-2">
                               Last Name
                             </label>
                             <input
@@ -215,12 +213,12 @@ const TenantSettings = () => {
                                   lastName: e.target.value,
                                 })
                               }
-                              className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500 dark:bg-slate-700 dark:text-slate-100"
+                              className="w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500"
                             />
                           </div>
                         </div>
                         <div>
-                          <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                          <label className="block text-sm font-medium text-slate-700 mb-2">
                             Email Address
                           </label>
                           <input
@@ -232,24 +230,27 @@ const TenantSettings = () => {
                                 email: e.target.value,
                               })
                             }
-                            className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500 dark:bg-slate-700 dark:text-slate-100"
+                            className="w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500"
                           />
                         </div>
-                        <div>
-                          <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-                            Phone Number
-                          </label>
-                          <input
-                            type="tel"
-                            value={profileData.phone}
-                            onChange={(e) =>
-                              setProfileData({
-                                ...profileData,
-                                phone: e.target.value,
-                              })
-                            }
-                            className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500 dark:bg-slate-700 dark:text-slate-100"
-                          />
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                          <div>
+                            <label className="block text-sm font-medium text-slate-700 mb-2">
+                              Phone Number
+                            </label>
+                            <input
+                              type="tel"
+                              value={profileData.phone}
+                              onChange={(e) =>
+                                setProfileData({
+                                  ...profileData,
+                                  phone: e.target.value,
+                                })
+                              }
+                              className="w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500"
+                            />
+                          </div>
+                          <div></div> {/* Empty div for proper spacing */}
                         </div>
                         <div className="flex justify-end">
                           <button
@@ -267,7 +268,7 @@ const TenantSettings = () => {
                   {/* Notifications Tab */}
                   {activeTab === "notifications" && (
                     <div className="p-6">
-                      <h3 className="text-lg font-medium text-slate-900 dark:text-slate-100 mb-4">
+                      <h3 className="text-lg font-medium text-slate-900 mb-4">
                         Notification Preferences
                       </h3>
                       <form
@@ -282,14 +283,14 @@ const TenantSettings = () => {
                                 className="flex items-center justify-between"
                               >
                                 <div>
-                                  <h4 className="text-sm font-medium text-slate-900 dark:text-slate-100">
+                                  <h4 className="text-sm font-medium text-slate-900">
                                     {key
                                       .replace(/([A-Z])/g, " $1")
                                       .replace(/^./, (str) =>
                                         str.toUpperCase()
                                       )}
                                   </h4>
-                                  <p className="text-sm text-slate-500 dark:text-slate-400">
+                                  <p className="text-sm text-slate-500">
                                     {key === "emailNotifications" &&
                                       "Receive notifications via email"}
                                     {key === "smsNotifications" &&
@@ -316,7 +317,7 @@ const TenantSettings = () => {
                                     }
                                     className="sr-only peer"
                                   />
-                                  <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-teal-300 dark:peer-focus:ring-teal-800 rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-slate-600 peer-checked:bg-teal-600"></div>
+                                  <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-teal-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-teal-600"></div>
                                 </label>
                               </div>
                             )
@@ -338,7 +339,7 @@ const TenantSettings = () => {
                   {/* Security Tab */}
                   {activeTab === "security" && (
                     <div className="p-6">
-                      <h3 className="text-lg font-medium text-slate-900 dark:text-slate-100 mb-4">
+                      <h3 className="text-lg font-medium text-slate-900 mb-4">
                         Security Settings
                       </h3>
                       <form
@@ -346,7 +347,7 @@ const TenantSettings = () => {
                         className="space-y-6"
                       >
                         <div>
-                          <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                          <label className="block text-sm font-medium text-slate-700 mb-2">
                             Current Password
                           </label>
                           <div className="relative">
@@ -359,7 +360,7 @@ const TenantSettings = () => {
                                   currentPassword: e.target.value,
                                 })
                               }
-                              className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500 dark:bg-slate-700 dark:text-slate-100 pr-10"
+                              className="w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500 pr-10"
                             />
                             <button
                               type="button"
@@ -375,7 +376,7 @@ const TenantSettings = () => {
                           </div>
                         </div>
                         <div>
-                          <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                          <label className="block text-sm font-medium text-slate-700 mb-2">
                             New Password
                           </label>
                           <input
@@ -387,11 +388,11 @@ const TenantSettings = () => {
                                 newPassword: e.target.value,
                               })
                             }
-                            className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500 dark:bg-slate-700 dark:text-slate-100"
+                            className="w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500"
                           />
                         </div>
                         <div>
-                          <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                          <label className="block text-sm font-medium text-slate-700 mb-2">
                             Confirm New Password
                           </label>
                           <input
@@ -403,7 +404,7 @@ const TenantSettings = () => {
                                 confirmPassword: e.target.value,
                               })
                             }
-                            className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500 dark:bg-slate-700 dark:text-slate-100"
+                            className="w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500"
                           />
                         </div>
                         <div className="flex justify-end">
@@ -422,7 +423,7 @@ const TenantSettings = () => {
                   {/* Preferences Tab */}
                   {activeTab === "preferences" && (
                     <div className="p-6">
-                      <h3 className="text-lg font-medium text-slate-900 dark:text-slate-100 mb-4">
+                      <h3 className="text-lg font-medium text-slate-900 mb-4">
                         Application Preferences
                       </h3>
                       <form
@@ -431,26 +432,7 @@ const TenantSettings = () => {
                       >
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                           <div>
-                            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-                              Theme
-                            </label>
-                            <select
-                              value={preferences.theme}
-                              onChange={(e) =>
-                                setPreferences({
-                                  ...preferences,
-                                  theme: e.target.value,
-                                })
-                              }
-                              className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500 dark:bg-slate-700 dark:text-slate-100"
-                            >
-                              <option value="system">System</option>
-                              <option value="light">Light</option>
-                              <option value="dark">Dark</option>
-                            </select>
-                          </div>
-                          <div>
-                            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                            <label className="block text-sm font-medium text-slate-700 mb-2">
                               Language
                             </label>
                             <select
@@ -461,17 +443,18 @@ const TenantSettings = () => {
                                   language: e.target.value,
                                 })
                               }
-                              className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500 dark:bg-slate-700 dark:text-slate-100"
+                              className="w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500"
                             >
                               <option value="en">English</option>
                               <option value="es">Spanish</option>
                               <option value="fr">French</option>
                             </select>
                           </div>
+                          <div></div> {/* Empty div for proper spacing */}
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                           <div>
-                            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                            <label className="block text-sm font-medium text-slate-700 mb-2">
                               Date Format
                             </label>
                             <select
@@ -482,7 +465,7 @@ const TenantSettings = () => {
                                   dateFormat: e.target.value,
                                 })
                               }
-                              className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500 dark:bg-slate-700 dark:text-slate-100"
+                              className="w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500"
                             >
                               <option value="MM/DD/YYYY">MM/DD/YYYY</option>
                               <option value="DD/MM/YYYY">DD/MM/YYYY</option>
@@ -490,7 +473,7 @@ const TenantSettings = () => {
                             </select>
                           </div>
                           <div>
-                            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                            <label className="block text-sm font-medium text-slate-700 mb-2">
                               Timezone
                             </label>
                             <select
@@ -501,7 +484,7 @@ const TenantSettings = () => {
                                   timezone: e.target.value,
                                 })
                               }
-                              className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500 dark:bg-slate-700 dark:text-slate-100"
+                              className="w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500"
                             >
                               <option value="America/New_York">
                                 Eastern Time
@@ -520,7 +503,7 @@ const TenantSettings = () => {
                         </div>
                         {/* Add this currency selection dropdown */}
                         <div>
-                          <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                          <label className="block text-sm font-medium text-slate-700 mb-2">
                             Currency
                           </label>
                           <select
@@ -531,7 +514,7 @@ const TenantSettings = () => {
                                 currency: e.target.value,
                               })
                             }
-                            className="w-full max-w-xs px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500 dark:bg-slate-700 dark:text-slate-100"
+                            className="w-full max-w-xs px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500"
                           >
                             <option value="USD">USD - US Dollar</option>
                             <option value="KES">KES - Kenyan Shilling</option>

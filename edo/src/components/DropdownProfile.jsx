@@ -1,8 +1,9 @@
 import React, { useState, useRef, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import Transition from "../utils/Transition";
 import { getStoredUser } from "../utils/api";
-import { LogOut, Settings } from "lucide-react";
+import { LogOut, Settings, SwitchCamera } from "lucide-react";
 
 // In Next.js, images in the public folder are referenced directly with a path starting with /
 const UserAvatar = "/images/user-avatar-32.png";
@@ -10,6 +11,7 @@ const UserAvatar = "/images/user-avatar-32.png";
 function DropdownProfile({ align, children }) {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [user, setUser] = useState(null); // Initialize user state as null
+  const router = useRouter();
 
   const trigger = useRef(null);
   const dropdown = useRef(null);
@@ -46,6 +48,33 @@ function DropdownProfile({ align, children }) {
     return () => document.removeEventListener("keydown", keyHandler);
   });
 
+  // Check if user has both landlord and tenant roles
+  const hasDualRoles =
+    user &&
+    user.roles &&
+    user.roles.includes("landlord") &&
+    user.roles.includes("tenant");
+
+  // Determine current portal context
+  const isCurrentPortalLandlord =
+    typeof window !== "undefined" &&
+    window.location.pathname.startsWith("/landlord");
+  const isCurrentPortalTenant =
+    typeof window !== "undefined" &&
+    window.location.pathname.startsWith("/tenant");
+
+  // Handle role switching
+  const handleRoleSwitch = () => {
+    if (isCurrentPortalLandlord && user.roles.includes("tenant")) {
+      // Switch to tenant portal
+      router.push("/tenant");
+    } else if (isCurrentPortalTenant && user.roles.includes("landlord")) {
+      // Switch to landlord portal
+      router.push("/landlord");
+    }
+    setDropdownOpen(false);
+  };
+
   return (
     <div className="relative inline-flex">
       <button
@@ -79,7 +108,7 @@ function DropdownProfile({ align, children }) {
       </button>
 
       <Transition
-        className={`origin-top-right z-10 absolute top-full w-80 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700/60 py-1.5 rounded-lg shadow-lg overflow-hidden mt-1 ${
+        className={`origin-top-right z-10 absolute top-full w-80 bg-white border border-gray-200 py-1.5 rounded-lg shadow-lg overflow-hidden mt-1 ${
           align === "right" ? "right-0" : "left-0"
         }`}
         show={dropdownOpen}
@@ -96,7 +125,7 @@ function DropdownProfile({ align, children }) {
           onBlur={() => setDropdownOpen(false)}
         >
           {/* Updated popover to match tenant header style */}
-          <div className="px-4 py-3 border-b border-slate-200 dark:border-slate-700">
+          <div className="px-4 py-3 border-b border-slate-200">
             <div className="flex items-center">
               {user && user.profile_image_url ? (
                 <img
@@ -117,22 +146,34 @@ function DropdownProfile({ align, children }) {
                 </div>
               )}
               <div className="ml-3">
-                <p className="text-sm font-medium text-slate-900 dark:text-slate-100">
+                <p className="text-sm font-medium text-slate-900">
                   {user && (user.first_name || user.name)}
                 </p>
-                <p className="text-xs text-slate-500 dark:text-slate-400">
-                  {user && user.email}
-                </p>
+                <p className="text-xs text-slate-500">{user && user.email}</p>
               </div>
             </div>
           </div>
 
           {/* Menu items */}
           <ul>
+            {hasDualRoles && (
+              <li>
+                <button
+                  onClick={handleRoleSwitch}
+                  className="w-full flex items-center px-4 py-2 text-sm text-slate-700 hover:bg-slate-100"
+                >
+                  <SwitchCamera className="h-5 w-5 mr-3 text-slate-400" />
+                  Switch to {isCurrentPortalLandlord
+                    ? "Tenant"
+                    : "Landlord"}{" "}
+                  Portal
+                </button>
+              </li>
+            )}
             <li>
               <Link
                 href="/landlord/settings"
-                className="flex items-center px-4 py-2 text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700/50"
+                className="flex items-center px-4 py-2 text-sm text-slate-700 hover:bg-slate-100"
                 onClick={() => setDropdownOpen(false)}
               >
                 <Settings className="h-5 w-5 mr-3 text-slate-400" />
@@ -142,7 +183,7 @@ function DropdownProfile({ align, children }) {
             <li>
               <Link
                 href="/auth/signin"
-                className="flex items-center px-4 py-2 text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700/50"
+                className="flex items-center px-4 py-2 text-sm text-slate-700 hover:bg-slate-100"
                 onClick={() => setDropdownOpen(false)}
               >
                 <LogOut className="h-5 w-5 mr-3 text-slate-400" />

@@ -77,7 +77,7 @@ const AssignModal = ({
       <div className="space-y-4">
         <div className="flex justify-between items-start">
           <div>
-            <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">
+            <h3 className="text-lg font-medium text-gray-900">
               Assign Maintenance Request
             </h3>
           </div>
@@ -86,7 +86,7 @@ const AssignModal = ({
           <div>
             <label
               htmlFor="assigneeName"
-              className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+              className="block text-sm font-medium text-gray-700"
             >
               Name
             </label>
@@ -95,8 +95,8 @@ const AssignModal = ({
               id="assigneeName"
               className={`mt-1 block w-full rounded-md border py-2 pl-3 pr-10 text-base focus:outline-none focus:ring-2 sm:text-sm ${
                 errors.name
-                  ? "border-red-500 focus:border-red-600 focus:ring-red-500 dark:border-red-400 dark:bg-gray-700 dark:text-gray-100"
-                  : "border-teal-500 dark:border-teal-400 focus:border-teal-600 focus:ring-teal-500 dark:bg-gray-700 dark:text-gray-100"
+                  ? "border-red-500 focus:border-red-600 focus:ring-red-500"
+                  : "border-teal-500 focus:border-teal-600 focus:ring-teal-500"
               }`}
               value={assigneeName}
               onChange={(e) => {
@@ -109,15 +109,13 @@ const AssignModal = ({
               autoComplete="off"
             />
             {errors.name && (
-              <p className="mt-1 text-sm text-red-600 dark:text-red-400">
-                {errors.name}
-              </p>
+              <p className="mt-1 text-sm text-red-600">{errors.name}</p>
             )}
           </div>
           <div>
             <label
               htmlFor="assigneePhone"
-              className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+              className="block text-sm font-medium text-gray-700"
             >
               Phone Number
             </label>
@@ -126,8 +124,8 @@ const AssignModal = ({
               id="assigneePhone"
               className={`mt-1 block w-full rounded-md border py-2 pl-3 pr-10 text-base focus:outline-none focus:ring-2 sm:text-sm ${
                 errors.phone
-                  ? "border-red-500 focus:border-red-600 focus:ring-red-500 dark:border-red-400 dark:bg-gray-700 dark:text-gray-100"
-                  : "border-teal-500 dark:border-teal-400 focus:border-teal-600 focus:ring-teal-500 dark:bg-gray-700 dark:text-gray-100"
+                  ? "border-red-500 focus:border-red-600 focus:ring-red-500"
+                  : "border-teal-500 focus:border-teal-600 focus:ring-teal-500"
               }`}
               value={assigneePhone}
               onChange={handlePhoneChange}
@@ -135,9 +133,7 @@ const AssignModal = ({
               autoComplete="off"
             />
             {errors.phone && (
-              <p className="mt-1 text-sm text-red-600 dark:text-red-400">
-                {errors.phone}
-              </p>
+              <p className="mt-1 text-sm text-red-600">{errors.phone}</p>
             )}
           </div>
         </div>

@@ -110,7 +110,7 @@ const CreateNoticeForm = ({
       <div>
         <label
           htmlFor="title"
-          className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+          className="block text-sm font-medium text-gray-700"
         >
           Notice Title
         </label>
@@ -121,14 +121,14 @@ const CreateNoticeForm = ({
           value={formData.title}
           onChange={handleChange}
           required
-          className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-gray-700 dark:text-gray-100 py-2 px-3 sm:text-sm"
+          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] bg-white text-gray-900 py-2 px-3 sm:text-sm"
         />
       </div>
 
       <div>
         <label
           htmlFor="type"
-          className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+          className="block text-sm font-medium text-gray-700"
         >
           Notice Type
         </label>
@@ -137,7 +137,7 @@ const CreateNoticeForm = ({
           name="type"
           value={formData.type}
           onChange={handleChange}
-          className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-gray-700 dark:text-gray-100 py-2 px-3 sm:text-sm"
+          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] bg-white text-gray-900 py-2 px-3 sm:text-sm"
         >
           <option value="general">General</option>
           <option value="maintenance">Maintenance</option>
@@ -150,7 +150,7 @@ const CreateNoticeForm = ({
       <div>
         <label
           htmlFor="priority"
-          className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+          className="block text-sm font-medium text-gray-700"
         >
           Priority
         </label>
@@ -159,7 +159,7 @@ const CreateNoticeForm = ({
           name="priority"
           value={formData.priority}
           onChange={handleChange}
-          className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-gray-700 dark:text-gray-100 py-2 px-3 sm:text-sm"
+          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] bg-white text-gray-900 py-2 px-3 sm:text-sm"
         >
           <option value="low">Low</option>
           <option value="normal">Normal</option>
@@ -171,7 +171,7 @@ const CreateNoticeForm = ({
       <div>
         <label
           htmlFor="content"
-          className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+          className="block text-sm font-medium text-gray-700"
         >
           Notice Content
         </label>
@@ -182,14 +182,14 @@ const CreateNoticeForm = ({
           value={formData.content}
           onChange={handleChange}
           required
-          className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-gray-700 dark:text-gray-100 py-2 px-3 sm:text-sm"
+          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] bg-white text-gray-900 py-2 px-3 sm:text-sm"
         />
       </div>
 
       <div>
         <label
           htmlFor="startDate"
-          className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+          className="block text-sm font-medium text-gray-700"
         >
           Start Date
         </label>
@@ -200,14 +200,14 @@ const CreateNoticeForm = ({
           value={formData.startDate}
           onChange={handleChange}
           required
-          className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-gray-700 dark:text-gray-100 py-2 px-3 sm:text-sm"
+          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] bg-white text-gray-900 py-2 px-3 sm:text-sm"
         />
       </div>
 
       <div>
         <label
           htmlFor="endDate"
-          className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+          className="block text-sm font-medium text-gray-700"
         >
           End Date
         </label>
@@ -218,12 +218,12 @@ const CreateNoticeForm = ({
           value={formData.endDate}
           onChange={handleChange}
           required
-          className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-gray-700 dark:text-gray-100 py-2 px-3 sm:text-sm"
+          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] bg-white text-gray-900 py-2 px-3 sm:text-sm"
         />
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+        <label className="block text-sm font-medium text-gray-700">
           Target Audience
         </label>
         <div className="mt-2 space-y-2">
@@ -235,11 +235,11 @@ const CreateNoticeForm = ({
               value="all"
               checked={formData.targetAudience === "all"}
               onChange={handleChange}
-              className="h-4 w-4 text-[#0d9488] focus:ring-[#0d9488] border-gray-300 dark:border-gray-600"
+              className="h-4 w-4 text-[#0d9488] focus:ring-[#0d9488] border-gray-300"
             />
             <label
               htmlFor="all"
-              className="ml-3 block text-sm font-medium text-gray-700 dark:text-gray-300"
+              className="ml-3 block text-sm font-medium text-gray-700"
             >
               All Tenants
             </label>
@@ -252,11 +252,11 @@ const CreateNoticeForm = ({
               value="property"
               checked={formData.targetAudience === "property"}
               onChange={handleChange}
-              className="h-4 w-4 text-[#0d9488] focus:ring-[#0d9488] border-gray-300 dark:border-gray-600"
+              className="h-4 w-4 text-[#0d9488] focus:ring-[#0d9488] border-gray-300"
             />
             <label
               htmlFor="property"
-              className="ml-3 block text-sm font-medium text-gray-700 dark:text-gray-300"
+              className="ml-3 block text-sm font-medium text-gray-700"
             >
               Specific Properties
             </label>
@@ -269,11 +269,11 @@ const CreateNoticeForm = ({
               value="tenant"
               checked={formData.targetAudience === "tenant"}
               onChange={handleChange}
-              className="h-4 w-4 text-[#0d9488] focus:ring-[#0d9488] border-gray-300 dark:border-gray-600"
+              className="h-4 w-4 text-[#0d9488] focus:ring-[#0d9488] border-gray-300"
             />
             <label
               htmlFor="tenant"
-              className="ml-3 block text-sm font-medium text-gray-700 dark:text-gray-300"
+              className="ml-3 block text-sm font-medium text-gray-700"
             >
               Specific Tenants
             </label>
@@ -294,26 +294,26 @@ const CreateNoticeForm = ({
               }...`}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-gray-700 dark:text-gray-100 py-2 px-3 sm:text-sm"
+              className="mt-1 block w-full rounded-md border border-gray-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] bg-white text-gray-900 py-2 px-3 sm:text-sm"
             />
           </div>
           <div className="max-h-[200px] overflow-y-auto">
             {formData.targetAudience === "property" ? (
-              <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                <thead className="bg-gray-50 dark:bg-gray-800">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Select
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Property
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Address
                     </th>
                   </tr>
                 </thead>
-                <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                <tbody className="bg-white divide-y divide-gray-200">
                   {filteredProperties.map((property) => (
                     <tr key={property.id}>
                       <td className="px-6 py-4 whitespace-nowrap">
@@ -323,13 +323,13 @@ const CreateNoticeForm = ({
                             property.id
                           )}
                           onChange={() => handlePropertySelect(property.id)}
-                          className="h-4 w-4 text-[#0d9488] focus:ring-[#0d9488] border-gray-300 dark:border-gray-600 rounded"
+                          className="h-4 w-4 text-[#0d9488] focus:ring-[#0d9488] border-gray-300 rounded"
                         />
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                         {property.name}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                         {property.address}
                       </td>
                     </tr>
@@ -337,24 +337,24 @@ const CreateNoticeForm = ({
                 </tbody>
               </table>
             ) : (
-              <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                <thead className="bg-gray-50 dark:bg-gray-800">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Select
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Tenant
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Property
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Unit
                     </th>
                   </tr>
                 </thead>
-                <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                <tbody className="bg-white divide-y divide-gray-200">
                   {filteredTenants.map((tenant) => (
                     <tr key={tenant.id}>
                       <td className="px-6 py-4 whitespace-nowrap">
@@ -364,16 +364,16 @@ const CreateNoticeForm = ({
                             tenant.id
                           )}
                           onChange={() => handleTenantSelect(tenant.id)}
-                          className="h-4 w-4 text-[#0d9488] focus:ring-[#0d9488] border-gray-300 dark:border-gray-600 rounded"
+                          className="h-4 w-4 text-[#0d9488] focus:ring-[#0d9488] border-gray-300 rounded"
                         />
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                         {tenant.name}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                         {tenant.property}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                         {tenant.unit}
                       </td>
                     </tr>
@@ -389,7 +389,7 @@ const CreateNoticeForm = ({
         <button
           type="button"
           onClick={onClose}
-          className="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0d9488] dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 dark:hover:bg-gray-600"
+          className="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0d9488]"
         >
           Cancel
         </button>
@@ -408,15 +408,12 @@ const CreateNoticeForm = ({
   }
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-4 sm:p-6 w-full max-w-2xl mx-auto">
+    <div className="bg-white rounded-lg shadow-lg p-4 sm:p-6 w-full max-w-2xl mx-auto">
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
+        <h2 className="text-xl font-semibold text-gray-900">
           {initialData ? "Edit Notice" : "Create Notice"}
         </h2>
-        <button
-          onClick={onClose}
-          className="text-gray-400 hover:text-gray-500 dark:hover:text-gray-300"
-        >
+        <button onClick={onClose} className="text-gray-400 hover:text-gray-500">
           <svg
             className="h-6 w-6"
             fill="none"

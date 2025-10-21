@@ -4,17 +4,17 @@ const DeleteConfirmModal = ({ isOpen, onClose, onConfirm }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-gray-900/30 dark:bg-gray-900/50 transition-opacity">
+    <div className="fixed inset-0 bg-gray-900/30 transition-opacity">
       <div
         className="fixed inset-0 z-60 overflow-y-auto"
         style={{ zIndex: 1060 }}
       >
         <div className="flex min-h-full items-center justify-center p-4">
-          <div className="relative transform overflow-hidden rounded-lg bg-white dark:bg-gray-800 px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-md sm:p-6">
+          <div className="relative transform overflow-hidden rounded-lg bg-white px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-md sm:p-6">
             <div className="absolute right-0 top-0 pr-4 pt-4">
               <button
                 onClick={onClose}
-                className="rounded-md bg-white dark:bg-gray-800 text-gray-400 hover:text-gray-500 focus:outline-none"
+                className="rounded-md bg-white text-gray-400 hover:text-gray-500 focus:outline-none"
               >
                 <span className="sr-only">Close</span>
                 <svg
@@ -33,9 +33,9 @@ const DeleteConfirmModal = ({ isOpen, onClose, onConfirm }) => {
               </button>
             </div>
             <div className="p-6">
-              <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100 dark:bg-red-900">
+              <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100">
                 <svg
-                  className="h-6 w-6 text-red-600 dark:text-red-300"
+                  className="h-6 w-6 text-red-600"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -49,11 +49,11 @@ const DeleteConfirmModal = ({ isOpen, onClose, onConfirm }) => {
                 </svg>
               </div>
               <div className="mt-3 text-center sm:mt-5">
-                <h3 className="text-lg font-medium leading-6 text-gray-900 dark:text-gray-100">
+                <h3 className="text-lg font-medium leading-6 text-gray-900">
                   Delete Maintenance Request
                 </h3>
                 <div className="mt-2">
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                  <p className="text-sm text-gray-500">
                     Are you sure you want to delete this maintenance request?
                     This action cannot be undone.
                   </p>

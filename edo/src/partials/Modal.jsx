@@ -17,19 +17,19 @@ const Modal = ({
       <div className="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
         {/* Backdrop */}
         <div
-          className="fixed inset-0 bg-gray-900/30 dark:bg-gray-900/60 transition-opacity"
+          className="fixed inset-0 bg-gray-900/30 transition-opacity"
           onClick={onClose}
         />
 
         {/* Modal panel */}
         <div
-          className={`relative transform overflow-hidden rounded-lg bg-white dark:bg-slate-800 text-left shadow-xl transition-all sm:my-8 w-full ${maxWidth}`}
+          className={`relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 w-full ${maxWidth}`}
         >
           {/* Close button - styled and positioned like in LandlordNotices.jsx */}
           <div className="absolute right-0 top-0 pr-4 pt-4">
             <button
               type="button"
-              className="rounded-md bg-white dark:bg-gray-800 text-gray-400 hover:text-gray-500 focus:outline-none"
+              className="rounded-md bg-white text-gray-400 hover:text-gray-500 focus:outline-none"
               onClick={onClose}
             >
               <span className="sr-only">Close</span>

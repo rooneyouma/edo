@@ -11,4 +11,8 @@ module.exports = {
     },
   },
   plugins: [require("@tailwindcss/forms")],
+  // Disable dark mode variants for landlord and tenant pages
+  corePlugins: {
+    preflight: true,
+  },
 };

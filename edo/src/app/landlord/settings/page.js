@@ -9,7 +9,6 @@ import {
   User,
   Bell,
   Shield,
-  Building2,
   CreditCard,
   Globe,
   Save,
@@ -56,19 +55,7 @@ const LandlordSettings = () => {
     marketingEmails: false,
   });
 
-  const [businessSettings, setBusinessSettings] = useState({
-    autoRentReminders: true,
-    lateFeesEnabled: true,
-    lateFeeDays: 5,
-    lateFeeAmount: 50,
-    securityDepositRequired: true,
-    defaultSecurityDeposit: 1000,
-    allowOnlinePayments: true,
-    requireTenantScreening: true,
-  });
-
   const [preferences, setPreferences] = useState({
-    theme: "system",
     language: "en",
     dateFormat: "MM/DD/YYYY",
     timezone: "America/New_York",
@@ -107,6 +94,16 @@ const LandlordSettings = () => {
         newPassword: "",
         confirmPassword: "",
       });
+
+      // Initialize preferences if they exist in user data
+      if (user && user.preferences) {
+        setPreferences({
+          language: user.preferences.language || "en",
+          dateFormat: user.preferences.date_format || "MM/DD/YYYY",
+          timezone: user.preferences.timezone || "America/New_York",
+          currency: user.preferences.currency || "KES",
+        });
+      }
     }
   }, [router, user, isClient]);
 
@@ -126,12 +123,6 @@ const LandlordSettings = () => {
     console.log("Notification settings:", notificationSettings);
   };
 
-  const handleBusinessSubmit = (e) => {
-    e.preventDefault();
-    // Handle business settings update
-    console.log("Business settings:", businessSettings);
-  };
-
   const handlePreferencesSubmit = (e) => {
     e.preventDefault();
     // Handle preferences update
@@ -141,13 +132,12 @@ const LandlordSettings = () => {
   const tabs = [
     { id: "profile", label: "Profile", icon: User },
     { id: "notifications", label: "Notifications", icon: Bell },
-    { id: "business", label: "Business", icon: Building2 },
     { id: "security", label: "Security", icon: Shield },
     { id: "preferences", label: "Preferences", icon: Globe },
   ];
 
   return (
-    <div className="flex h-screen overflow-hidden bg-slate-50 dark:bg-slate-900">
+    <div className="flex h-screen overflow-hidden bg-slate-50">
       {/* Sidebar */}
       <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
 
@@ -159,17 +149,15 @@ const LandlordSettings = () => {
           <div className="pl-4 pr-8 sm:pl-6 sm:pr-12 lg:pl-8 lg:pr-16 py-8 w-full">
             {/* Page Header */}
             <div className="mb-8">
-              <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">
-                Settings
-              </h1>
-              <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
-                Manage your account settings and business preferences
+              <h1 className="text-2xl font-bold text-slate-900">Settings</h1>
+              <p className="mt-1 text-sm text-slate-500">
+                Manage your account settings
               </p>
             </div>
 
             {/* Tab Navigation */}
             <div className="mb-8">
-              <div className="border-b border-slate-200 dark:border-slate-700">
+              <div className="border-b border-slate-200">
                 <nav className="-mb-px flex space-x-8">
                   {tabs.map((tab) => (
                     <button
@@ -177,8 +165,8 @@ const LandlordSettings = () => {
                       onClick={() => setActiveTab(tab.id)}
                       className={`flex items-center py-2 px-1 border-b-2 font-medium text-sm ${
                         activeTab === tab.id
-                          ? "border-teal-500 text-teal-600 dark:text-teal-400"
-                          : "border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300 dark:text-slate-400 dark:hover:text-slate-200"
+                          ? "border-teal-500 text-teal-600"
+                          : "border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300"
                       }`}
                     >
                       <tab.icon className="w-5 h-5 mr-2" />
@@ -190,17 +178,17 @@ const LandlordSettings = () => {
             </div>
 
             {/* Tab Content */}
-            <div className="bg-white dark:bg-slate-800 shadow rounded-lg">
+            <div className="bg-white shadow rounded-lg">
               {/* Profile Tab */}
               {activeTab === "profile" && (
                 <div className="p-6">
-                  <h3 className="text-lg font-medium text-slate-900 dark:text-slate-100 mb-4">
+                  <h3 className="text-lg font-medium text-slate-900 mb-4">
                     Profile Information
                   </h3>
                   <form onSubmit={handleProfileSubmit} className="space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div>
-                        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                        <label className="block text-sm font-medium text-slate-700 mb-2">
                           First Name
                         </label>
                         <input
@@ -212,11 +200,11 @@ const LandlordSettings = () => {
                               firstName: e.target.value,
                             })
                           }
-                          className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500 dark:bg-slate-700 dark:text-slate-100 caret-slate-900 dark:caret-slate-100"
+                          className="w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500"
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                        <label className="block text-sm font-medium text-slate-700 mb-2">
                           Last Name
                         </label>
                         <input
@@ -228,12 +216,12 @@ const LandlordSettings = () => {
                               lastName: e.target.value,
                             })
                           }
-                          className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500 dark:bg-slate-700 dark:text-slate-100 caret-slate-900 dark:caret-slate-100"
+                          className="w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500"
                         />
                       </div>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                      <label className="block text-sm font-medium text-slate-700 mb-2">
                         Email Address
                       </label>
                       <input
@@ -245,12 +233,12 @@ const LandlordSettings = () => {
                             email: e.target.value,
                           })
                         }
-                        className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500 dark:bg-slate-700 dark:text-slate-100 caret-slate-900 dark:caret-slate-100"
+                        className="w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500"
                       />
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div>
-                        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                        <label className="block text-sm font-medium text-slate-700 mb-2">
                           Phone Number
                         </label>
                         <input
@@ -262,11 +250,11 @@ const LandlordSettings = () => {
                               phone: e.target.value,
                             })
                           }
-                          className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500 dark:bg-slate-700 dark:text-slate-100 caret-slate-900 dark:caret-slate-100"
+                          className="w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500"
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                        <label className="block text-sm font-medium text-slate-700 mb-2">
                           Company Name
                         </label>
                         <input
@@ -278,12 +266,12 @@ const LandlordSettings = () => {
                               companyName: e.target.value,
                             })
                           }
-                          className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500 dark:bg-slate-700 dark:text-slate-100 caret-slate-900 dark:caret-slate-100"
+                          className="w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500"
                         />
                       </div>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                      <label className="block text-sm font-medium text-slate-700 mb-2">
                         License Number
                       </label>
                       <input
@@ -295,7 +283,7 @@ const LandlordSettings = () => {
                             licenseNumber: e.target.value,
                           })
                         }
-                        className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500 dark:bg-slate-700 dark:text-slate-100 caret-slate-900 dark:caret-slate-100"
+                        className="w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500"
                         placeholder="Real estate license number (optional)"
                       />
                     </div>
@@ -315,7 +303,7 @@ const LandlordSettings = () => {
               {/* Notifications Tab */}
               {activeTab === "notifications" && (
                 <div className="p-6">
-                  <h3 className="text-lg font-medium text-slate-900 dark:text-slate-100 mb-4">
+                  <h3 className="text-lg font-medium text-slate-900 mb-4">
                     Notification Preferences
                   </h3>
                   <form
@@ -330,12 +318,12 @@ const LandlordSettings = () => {
                             className="flex items-center justify-between"
                           >
                             <div>
-                              <h4 className="text-sm font-medium text-slate-900 dark:text-slate-100">
+                              <h4 className="text-sm font-medium text-slate-900">
                                 {key
                                   .replace(/([A-Z])/g, " $1")
                                   .replace(/^./, (str) => str.toUpperCase())}
                               </h4>
-                              <p className="text-sm text-slate-500 dark:text-slate-400">
+                              <p className="text-sm text-slate-500">
                                 {key === "emailNotifications" &&
                                   "Receive notifications via email"}
                                 {key === "smsNotifications" &&
@@ -364,7 +352,7 @@ const LandlordSettings = () => {
                                 }
                                 className="sr-only peer"
                               />
-                              <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-teal-300 dark:peer-focus:ring-teal-800 rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-slate-600 peer-checked:bg-teal-600"></div>
+                              <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-teal-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-teal-600"></div>
                             </label>
                           </div>
                         )
@@ -383,232 +371,15 @@ const LandlordSettings = () => {
                 </div>
               )}
 
-              {/* Business Settings Tab */}
-              {activeTab === "business" && (
-                <div className="p-6">
-                  <h3 className="text-lg font-medium text-slate-900 dark:text-slate-100 mb-4">
-                    Business Settings
-                  </h3>
-                  <form onSubmit={handleBusinessSubmit} className="space-y-6">
-                    <div className="space-y-6">
-                      {/* Rent Reminders */}
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <h4 className="text-sm font-medium text-slate-900 dark:text-slate-100">
-                            Automatic Rent Reminders
-                          </h4>
-                          <p className="text-sm text-slate-500 dark:text-slate-400">
-                            Send automatic reminders to tenants for upcoming
-                            rent payments
-                          </p>
-                        </div>
-                        <label className="relative inline-flex items-center cursor-pointer">
-                          <input
-                            type="checkbox"
-                            checked={businessSettings.autoRentReminders}
-                            onChange={(e) =>
-                              setBusinessSettings({
-                                ...businessSettings,
-                                autoRentReminders: e.target.checked,
-                              })
-                            }
-                            className="sr-only peer"
-                          />
-                          <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-teal-300 dark:peer-focus:ring-teal-800 rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-slate-600 peer-checked:bg-teal-600"></div>
-                        </label>
-                      </div>
-
-                      {/* Late Fees */}
-                      <div className="space-y-4">
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <h4 className="text-sm font-medium text-slate-900 dark:text-slate-100">
-                              Late Fees Enabled
-                            </h4>
-                            <p className="text-sm text-slate-500 dark:text-slate-400">
-                              Automatically charge late fees for overdue rent
-                            </p>
-                          </div>
-                          <label className="relative inline-flex items-center cursor-pointer">
-                            <input
-                              type="checkbox"
-                              checked={businessSettings.lateFeesEnabled}
-                              onChange={(e) =>
-                                setBusinessSettings({
-                                  ...businessSettings,
-                                  lateFeesEnabled: e.target.checked,
-                                })
-                              }
-                              className="sr-only peer"
-                            />
-                            <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-teal-300 dark:peer-focus:ring-teal-800 rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-slate-600 peer-checked:bg-teal-600"></div>
-                          </label>
-                        </div>
-                        {businessSettings.lateFeesEnabled && (
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 ml-6">
-                            <div>
-                              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-                                Grace Period (Days)
-                              </label>
-                              <input
-                                type="number"
-                                value={businessSettings.lateFeeDays}
-                                onChange={(e) =>
-                                  setBusinessSettings({
-                                    ...businessSettings,
-                                    lateFeeDays: parseInt(e.target.value) || 0,
-                                  })
-                                }
-                                className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500 dark:bg-slate-700 dark:text-slate-100 caret-slate-900 dark:caret-slate-100"
-                                min="1"
-                                max="30"
-                              />
-                            </div>
-                            <div>
-                              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-                                Late Fee Amount (KES)
-                              </label>
-                              <input
-                                type="number"
-                                value={businessSettings.lateFeeAmount}
-                                onChange={(e) =>
-                                  setBusinessSettings({
-                                    ...businessSettings,
-                                    lateFeeAmount:
-                                      parseInt(e.target.value) || 0,
-                                  })
-                                }
-                                className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500 dark:bg-slate-700 dark:text-slate-100 caret-slate-900 dark:caret-slate-100"
-                                min="0"
-                              />
-                            </div>
-                          </div>
-                        )}
-                      </div>
-
-                      {/* Security Deposit */}
-                      <div className="space-y-4">
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <h4 className="text-sm font-medium text-slate-900 dark:text-slate-100">
-                              Security Deposit Required
-                            </h4>
-                            <p className="text-sm text-slate-500 dark:text-slate-400">
-                              Require security deposits for new tenants
-                            </p>
-                          </div>
-                          <label className="relative inline-flex items-center cursor-pointer">
-                            <input
-                              type="checkbox"
-                              checked={businessSettings.securityDepositRequired}
-                              onChange={(e) =>
-                                setBusinessSettings({
-                                  ...businessSettings,
-                                  securityDepositRequired: e.target.checked,
-                                })
-                              }
-                              className="sr-only peer"
-                            />
-                            <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-teal-300 dark:peer-focus:ring-teal-800 rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-slate-600 peer-checked:bg-teal-600"></div>
-                          </label>
-                        </div>
-                        {businessSettings.securityDepositRequired && (
-                          <div className="ml-6">
-                            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-                              Default Security Deposit Amount (KES)
-                            </label>
-                            <input
-                              type="number"
-                              value={businessSettings.defaultSecurityDeposit}
-                              onChange={(e) =>
-                                setBusinessSettings({
-                                  ...businessSettings,
-                                  defaultSecurityDeposit:
-                                    parseInt(e.target.value) || 0,
-                                })
-                              }
-                              className="w-full max-w-xs px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500 dark:bg-slate-700 dark:text-slate-100 caret-slate-900 dark:caret-slate-100"
-                              min="0"
-                            />
-                          </div>
-                        )}
-                      </div>
-
-                      {/* Online Payments */}
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <h4 className="text-sm font-medium text-slate-900 dark:text-slate-100">
-                            Allow Online Payments
-                          </h4>
-                          <p className="text-sm text-slate-500 dark:text-slate-400">
-                            Enable tenants to pay rent and fees online
-                          </p>
-                        </div>
-                        <label className="relative inline-flex items-center cursor-pointer">
-                          <input
-                            type="checkbox"
-                            checked={businessSettings.allowOnlinePayments}
-                            onChange={(e) =>
-                              setBusinessSettings({
-                                ...businessSettings,
-                                allowOnlinePayments: e.target.checked,
-                              })
-                            }
-                            className="sr-only peer"
-                          />
-                          <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-teal-300 dark:peer-focus:ring-teal-800 rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-slate-600 peer-checked:bg-teal-600"></div>
-                        </label>
-                      </div>
-
-                      {/* Tenant Screening */}
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <h4 className="text-sm font-medium text-slate-900 dark:text-slate-100">
-                            Require Tenant Screening
-                          </h4>
-                          <p className="text-sm text-slate-500 dark:text-slate-400">
-                            Require background and credit checks for new tenants
-                          </p>
-                        </div>
-                        <label className="relative inline-flex items-center cursor-pointer">
-                          <input
-                            type="checkbox"
-                            checked={businessSettings.requireTenantScreening}
-                            onChange={(e) =>
-                              setBusinessSettings({
-                                ...businessSettings,
-                                requireTenantScreening: e.target.checked,
-                              })
-                            }
-                            className="sr-only peer"
-                          />
-                          <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-teal-300 dark:peer-focus:ring-teal-800 rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-slate-600 peer-checked:bg-teal-600"></div>
-                        </label>
-                      </div>
-                    </div>
-
-                    <div className="flex justify-end">
-                      <button
-                        type="submit"
-                        className="flex items-center px-4 py-2 bg-teal-600 text-white rounded-md hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
-                      >
-                        <Save className="w-4 h-4 mr-2" />
-                        Save Changes
-                      </button>
-                    </div>
-                  </form>
-                </div>
-              )}
-
               {/* Security Tab */}
               {activeTab === "security" && (
                 <div className="p-6">
-                  <h3 className="text-lg font-medium text-slate-900 dark:text-slate-100 mb-4">
+                  <h3 className="text-lg font-medium text-slate-900 mb-4">
                     Security Settings
                   </h3>
                   <form onSubmit={handleProfileSubmit} className="space-y-6">
                     <div>
-                      <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                      <label className="block text-sm font-medium text-slate-700 mb-2">
                         Current Password
                       </label>
                       <div className="relative">
@@ -621,7 +392,7 @@ const LandlordSettings = () => {
                               currentPassword: e.target.value,
                             })
                           }
-                          className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500 dark:bg-slate-700 dark:text-slate-100 caret-slate-900 dark:caret-slate-100 pr-10"
+                          className="w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500 pr-10"
                         />
                         <button
                           type="button"
@@ -637,7 +408,7 @@ const LandlordSettings = () => {
                       </div>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                      <label className="block text-sm font-medium text-slate-700 mb-2">
                         New Password
                       </label>
                       <input
@@ -649,11 +420,11 @@ const LandlordSettings = () => {
                             newPassword: e.target.value,
                           })
                         }
-                        className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500 dark:bg-slate-700 dark:text-slate-100 caret-slate-900 dark:caret-slate-100"
+                        className="w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                      <label className="block text-sm font-medium text-slate-700 mb-2">
                         Confirm New Password
                       </label>
                       <input
@@ -665,7 +436,7 @@ const LandlordSettings = () => {
                             confirmPassword: e.target.value,
                           })
                         }
-                        className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500 dark:bg-slate-700 dark:text-slate-100 caret-slate-900 dark:caret-slate-100"
+                        className="w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500"
                       />
                     </div>
                     <div className="flex justify-end">
@@ -684,7 +455,7 @@ const LandlordSettings = () => {
               {/* Preferences Tab */}
               {activeTab === "preferences" && (
                 <div className="p-6">
-                  <h3 className="text-lg font-medium text-slate-900 dark:text-slate-100 mb-4">
+                  <h3 className="text-lg font-medium text-slate-900 mb-4">
                     Application Preferences
                   </h3>
                   <form
@@ -693,26 +464,7 @@ const LandlordSettings = () => {
                   >
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div>
-                        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-                          Theme
-                        </label>
-                        <select
-                          value={preferences.theme}
-                          onChange={(e) =>
-                            setPreferences({
-                              ...preferences,
-                              theme: e.target.value,
-                            })
-                          }
-                          className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500 dark:bg-slate-700 dark:text-slate-100"
-                        >
-                          <option value="system">System</option>
-                          <option value="light">Light</option>
-                          <option value="dark">Dark</option>
-                        </select>
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                        <label className="block text-sm font-medium text-slate-700 mb-2">
                           Language
                         </label>
                         <select
@@ -723,17 +475,18 @@ const LandlordSettings = () => {
                               language: e.target.value,
                             })
                           }
-                          className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500 dark:bg-slate-700 dark:text-slate-100"
+                          className="w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500"
                         >
                           <option value="en">English</option>
                           <option value="es">Spanish</option>
                           <option value="fr">French</option>
                         </select>
                       </div>
+                      <div></div> {/* Empty div for proper spacing */}
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div>
-                        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                        <label className="block text-sm font-medium text-slate-700 mb-2">
                           Date Format
                         </label>
                         <select
@@ -744,7 +497,7 @@ const LandlordSettings = () => {
                               dateFormat: e.target.value,
                             })
                           }
-                          className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500 dark:bg-slate-700 dark:text-slate-100"
+                          className="w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500"
                         >
                           <option value="MM/DD/YYYY">MM/DD/YYYY</option>
                           <option value="DD/MM/YYYY">DD/MM/YYYY</option>
@@ -752,7 +505,7 @@ const LandlordSettings = () => {
                         </select>
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                        <label className="block text-sm font-medium text-slate-700 mb-2">
                           Timezone
                         </label>
                         <select
@@ -763,7 +516,7 @@ const LandlordSettings = () => {
                               timezone: e.target.value,
                             })
                           }
-                          className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500 dark:bg-slate-700 dark:text-slate-100"
+                          className="w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500"
                         >
                           <option value="America/New_York">Eastern Time</option>
                           <option value="America/Chicago">Central Time</option>
@@ -775,7 +528,7 @@ const LandlordSettings = () => {
                       </div>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                      <label className="block text-sm font-medium text-slate-700 mb-2">
                         Currency
                       </label>
                       <select
@@ -786,7 +539,7 @@ const LandlordSettings = () => {
                             currency: e.target.value,
                           })
                         }
-                        className="w-full max-w-xs px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500 dark:bg-slate-700 dark:text-slate-100"
+                        className="w-full max-w-xs px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500"
                       >
                         <option value="USD">USD - US Dollar</option>
                         <option value="KES">KES - Kenyan Shilling</option>

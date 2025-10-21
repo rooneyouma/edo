@@ -228,7 +228,7 @@ const LandlordMaintenance = () => {
 
   if (!isAuthenticated()) {
     return (
-      <div className="flex h-screen overflow-hidden bg-slate-50 dark:bg-slate-900">
+      <div className="flex h-screen overflow-hidden bg-slate-50">
         {/* Sidebar */}
         <LandlordSidebar sidebarOpen={false} setSidebarOpen={() => {}} />
 
@@ -236,8 +236,8 @@ const LandlordMaintenance = () => {
         <div className="relative flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
           <div className="lg:ml-64">
             <div className="w-full">
-              <h2 className="text-2xl font-bold mb-4">Sign in required</h2>
-              <p className="mb-6">You must be signed in to access this page.</p>
+              <h2 className="text-2xl font-bold mb-4 text-slate-900">Sign in required</h2>
+              <p className="mb-6 text-slate-700">You must be signed in to access this page.</p>
               <button
                 className="px-6 py-2 bg-teal-600 text-white rounded-lg font-semibold hover:bg-teal-700 transition"
                 onClick={() =>
@@ -259,7 +259,7 @@ const LandlordMaintenance = () => {
 
   if (loading) {
     return (
-      <div className="flex h-screen overflow-hidden bg-slate-50 dark:bg-slate-900">
+      <div className="flex h-screen overflow-hidden bg-slate-50">
         <LandlordSidebar
           sidebarOpen={sidebarOpen}
           setSidebarOpen={setSidebarOpen}
@@ -277,7 +277,7 @@ const LandlordMaintenance = () => {
   }
 
   return (
-    <div className="flex h-screen overflow-hidden bg-slate-50 dark:bg-slate-900">
+    <div className="flex h-screen overflow-hidden bg-slate-50">
       {/* Sidebar */}
       <LandlordSidebar
         sidebarOpen={sidebarOpen}
@@ -291,20 +291,20 @@ const LandlordMaintenance = () => {
             <div>
               {/* Header */}
               <div className="mb-8">
-                <h1 className="text-2xl font-bold text-slate-800 dark:text-slate-100 mb-2">
+                <h1 className="text-2xl font-bold text-slate-800 mb-2">
                   Maintenance Requests
                 </h1>
-                <p className="text-slate-600 dark:text-slate-400">
+                <p className="text-slate-600">
                   Manage maintenance requests from your tenants
                 </p>
               </div>
 
               {/* Error Display */}
               {error && (
-                <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg dark:bg-red-900/20 dark:border-red-800">
+                <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
                   <div className="flex items-center">
                     <AlertCircle className="h-5 w-5 text-red-500 mr-2" />
-                    <span className="text-red-700 dark:text-red-300">
+                    <span className="text-red-700">
                       {error}
                     </span>
                   </div>
@@ -328,7 +328,7 @@ const LandlordMaintenance = () => {
               />
 
               {/* Results Count */}
-              <div className="mb-4 text-sm text-slate-600 dark:text-slate-400">
+              <div className="mb-4 text-sm text-slate-600">
                 {filteredAndSortedRequests.length} request
                 {filteredAndSortedRequests.length !== 1 ? "s" : ""} found
               </div>
@@ -369,12 +369,12 @@ const LandlordMaintenance = () => {
                   </>
                 ) : (
                   <div className="text-center py-12">
-                    <div className="text-slate-400 dark:text-slate-500 mb-4">
+                    <div className="text-slate-400 mb-4">
                       <Search className="h-12 w-12 mx-auto mb-4" />
-                      <p className="text-lg font-medium">
+                      <p className="text-lg font-medium text-slate-900">
                         No maintenance requests found
                       </p>
-                      <p className="text-sm">
+                      <p className="text-sm text-slate-700">
                         Maintenance requests from your tenants will appear here
                       </p>
                     </div>

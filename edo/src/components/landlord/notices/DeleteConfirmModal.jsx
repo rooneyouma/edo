@@ -12,9 +12,9 @@ const DeleteConfirmModal = ({
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <div className="space-y-4">
-        <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100 dark:bg-red-900">
+        <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100">
           <svg
-            className="h-6 w-6 text-red-600 dark:text-red-300"
+            className="h-6 w-6 text-red-600"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -28,7 +28,7 @@ const DeleteConfirmModal = ({
           </svg>
         </div>
         <div className="mt-3 text-center sm:mt-5">
-          <h3 className="text-lg font-medium leading-6 text-gray-900 dark:text-gray-100">
+          <h3 className="text-lg font-medium leading-6 text-gray-900">
             {title ||
               `Delete ${
                 noticeType === "general"
@@ -39,7 +39,7 @@ const DeleteConfirmModal = ({
               }`}
           </h3>
           <div className="mt-2">
-            <p className="text-sm text-gray-500 dark:text-gray-400">
+            <p className="text-sm text-gray-500">
               {message ||
                 `Are you sure you want to delete this ${
                   noticeType === "general"
@@ -61,7 +61,7 @@ const DeleteConfirmModal = ({
           </button>
           <button
             type="button"
-            className="inline-flex justify-center w-full rounded-md border border-gray-300 dark:border-gray-600 shadow-sm px-4 py-2 bg-white dark:bg-gray-700 text-base font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-violet-500 sm:text-sm"
+            className="inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-violet-500 sm:text-sm"
             onClick={onClose}
           >
             Cancel

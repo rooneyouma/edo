@@ -36,17 +36,17 @@ const Messages = () => {
   // Initialize client-side state
   useEffect(() => {
     setIsClient(true);
-    
+
     // Check if device is mobile
     const checkMobile = () => {
       setIsMobile(window.innerWidth <= 768);
     };
-    
+
     checkMobile();
-    window.addEventListener('resize', checkMobile);
-    
+    window.addEventListener("resize", checkMobile);
+
     return () => {
-      window.removeEventListener('resize', checkMobile);
+      window.removeEventListener("resize", checkMobile);
     };
   }, []);
 
@@ -531,11 +531,11 @@ const Messages = () => {
       toggleMessageSelection(messageId);
       return;
     }
-    
+
     const timer = setTimeout(() => {
       handleLongPress(messageId);
     }, 500); // 500ms for long press
-    
+
     setLongPressTimer(timer);
   };
 
@@ -553,7 +553,7 @@ const Messages = () => {
 
   const deleteSelectedMessages = async () => {
     if (selectedMessages.length === 0) return;
-    
+
     try {
       if (selectedMessages.length === 1) {
         // Delete single message
@@ -562,18 +562,18 @@ const Messages = () => {
         // Delete multiple messages
         await chatAPI.deleteMultipleMessages(selectedMessages);
       }
-      
+
       // Update local state to remove deleted messages
       setMessageHistory((prevHistory) => {
         const updatedHistory = { ...prevHistory };
         if (updatedHistory[selectedChat.id]) {
-          updatedHistory[selectedChat.id] = updatedHistory[selectedChat.id].filter(
-            (msg) => !selectedMessages.includes(msg.id)
-          );
+          updatedHistory[selectedChat.id] = updatedHistory[
+            selectedChat.id
+          ].filter((msg) => !selectedMessages.includes(msg.id));
         }
         return updatedHistory;
       });
-      
+
       // Exit selection mode
       exitSelectionMode();
     } catch (error) {
@@ -668,15 +668,15 @@ const Messages = () => {
 
   if (!isClient) {
     return (
-      <div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex items-center justify-center">
-        <div className="text-slate-600 dark:text-slate-400">Loading...</div>
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+        <div className="text-slate-600">Loading...</div>
       </div>
     );
   }
 
   if (!isAuthenticated()) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-slate-50 dark:bg-slate-900">
+      <div className="flex flex-col items-center justify-center min-h-screen bg-slate-50">
         <h2 className="text-2xl font-bold mb-4">Sign in required</h2>
         <p className="mb-6">You must be signed in to access this page.</p>
         <Link
@@ -693,13 +693,13 @@ const Messages = () => {
   const hasRentals = rentals.length > 0;
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-900">
+    <div className="min-h-screen bg-white">
       <div className="flex">
         <TenantSidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
         <div className="flex-1 flex flex-col lg:ml-64">
           <TenantHeader toggleSidebar={toggleSidebar} />
           {/* Main content */}
-          <main className="flex-1 transition-all duration-200">
+          <main className="flex-1 transition-all duration-200 bg-slate-50">
             <div className="px-4 sm:px-6 lg:px-8 py-2 md:py-4 h-full min-h-0 flex flex-col">
               {/* Page header */}
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
@@ -711,13 +711,13 @@ const Messages = () => {
                   >
                     <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" />
                   </svg>
-                  <h1 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-gray-100">
+                  <h1 className="text-lg sm:text-xl font-semibold text-gray-900">
                     Messages
                   </h1>
                 </div>
                 <div className="flex items-center justify-between sm:justify-end gap-2">
                   {/* Mobile search toggle button */}
-                  <button className="sm:hidden p-2 rounded-md bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-500 dark:text-gray-400">
+                  <button className="sm:hidden p-2 rounded-md bg-white border border-gray-300 text-gray-500">
                     <svg
                       className="w-5 h-5"
                       fill="none"
@@ -737,13 +737,13 @@ const Messages = () => {
 
               {/* Mobile header for chat view */}
               {selectedChat && (
-                <div className="lg:hidden p-3 sm:p-4 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between bg-white dark:bg-slate-800 sticky top-0 z-10">
+                <div className="lg:hidden p-3 sm:p-4 border-b border-slate-200 flex items-center justify-between bg-white sticky top-0 z-10">
                   <button
                     onClick={() => setSelectedChat(null)}
-                    className="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-700"
+                    className="p-2 rounded-full hover:bg-slate-100"
                   >
                     <svg
-                      className="w-5 h-5 text-slate-600 dark:text-slate-400"
+                      className="w-5 h-5 text-slate-600"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -757,8 +757,8 @@ const Messages = () => {
                     </svg>
                   </button>
                   <div className="flex items-center space-x-3">
-                    <div className="w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center">
-                      <span className="text-xs font-medium text-gray-600 dark:text-gray-300">
+                    <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center">
+                      <span className="text-xs font-medium text-gray-600">
                         {selectedChat.manager && selectedChat.manager.name
                           ? selectedChat.manager.name
                               .split(" ")
@@ -768,10 +768,10 @@ const Messages = () => {
                       </span>
                     </div>
                     <div className="min-w-0 flex-1">
-                      <h3 className="text-sm font-medium text-slate-900 dark:text-slate-100 truncate">
+                      <h3 className="text-sm font-medium text-slate-900 truncate">
                         {selectedChat.manager.name}
                       </h3>
-                      <p className="text-xs text-slate-500 dark:text-slate-400 truncate">
+                      <p className="text-xs text-slate-500 truncate">
                         {selectedChat.propertyName}
                       </p>
                     </div>
@@ -783,7 +783,7 @@ const Messages = () => {
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 sm:gap-4 h-full">
                   {/* Conversations list */}
                   <div
-                    className={`lg:col-span-4 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden ${
+                    className={`lg:col-span-4 border border-gray-200 rounded-lg overflow-hidden ${
                       selectedChat ? "hidden lg:block" : "block"
                     } min-h-0 h-full flex flex-col`}
                   >
@@ -802,14 +802,14 @@ const Messages = () => {
 
                   {/* Chat area */}
                   <div
-                    className={`lg:col-span-8 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden ${
+                    className={`lg:col-span-8 border border-gray-200 rounded-lg overflow-hidden ${
                       selectedChat ? "block" : "hidden lg:block"
                     } min-h-0 h-full flex flex-col`}
                   >
                     <div className="lg:hidden">
                       <button
                         onClick={() => setSelectedChat(null)}
-                        className="p-3 sm:p-4 flex items-center space-x-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100"
+                        className="p-3 sm:p-4 flex items-center space-x-2 text-gray-600 hover:text-gray-900"
                       >
                         <svg
                           className="w-5 h-5"
@@ -845,15 +845,15 @@ const Messages = () => {
                         isMobile={isMobile}
                       />
                     ) : (
-                      <div className="h-full flex items-center justify-center bg-gray-50 dark:bg-gray-800 p-4">
+                      <div className="h-full flex items-center justify-center bg-gray-50 p-4">
                         <div className="text-center max-w-xs">
-                          <h3 className="text-base sm:text-lg font-medium text-gray-900 dark:text-gray-100">
+                          <h3 className="text-base sm:text-lg font-medium text-gray-900">
                             No property managers
                           </h3>
-                          <p className="mt-2 text-xs sm:text-sm text-gray-500 dark:text-gray-400">
+                          <p className="mt-2 text-xs sm:text-sm text-gray-500">
                             You are not registered under any rental properties.
                           </p>
-                          <p className="mt-1 text-xs sm:text-sm text-gray-500 dark:text-gray-400">
+                          <p className="mt-1 text-xs sm:text-sm text-gray-500">
                             Once you are assigned to a property, you can
                             communicate with your property managers here.
                           </p>

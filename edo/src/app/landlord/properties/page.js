@@ -55,9 +55,9 @@ const Properties = () => {
 
   if (!isAuthenticated()) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-slate-50 dark:bg-slate-900">
-        <h2 className="text-2xl font-bold mb-4">Sign in required</h2>
-        <p className="mb-6">You must be signed in to access this page.</p>
+      <div className="flex flex-col items-center justify-center min-h-screen bg-slate-50">
+        <h2 className="text-2xl font-bold mb-4 text-slate-900">Sign in required</h2>
+        <p className="mb-6 text-slate-700">You must be signed in to access this page.</p>
         <button
           className="px-6 py-2 bg-teal-600 text-white rounded-lg font-semibold hover:bg-teal-700 transition"
           onClick={() =>
@@ -167,7 +167,7 @@ const Properties = () => {
   };
 
   return (
-    <div className="flex h-screen overflow-hidden bg-slate-50 dark:bg-slate-900">
+    <div className="flex h-screen overflow-hidden bg-slate-50">
       {/* Sidebar */}
       <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
 
@@ -182,10 +182,10 @@ const Properties = () => {
             <div className="mb-8">
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
                 <div>
-                  <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                  <h1 className="text-2xl font-bold text-gray-900">
                     Properties
                   </h1>
-                  <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                  <p className="mt-1 text-sm text-gray-500">
                     Manage your properties and units
                   </p>
                 </div>
@@ -218,13 +218,13 @@ const Properties = () => {
             {loading ? (
               <div className="text-center py-8">
                 <div className="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[#0d9488]"></div>
-                <p className="mt-2 text-gray-600 dark:text-gray-400">
+                <p className="mt-2 text-gray-600">
                   Loading properties...
                 </p>
               </div>
             ) : filteredProperties.length === 0 ? (
               <div className="text-center py-12">
-                <div className="mx-auto h-12 w-12 text-gray-400 dark:text-gray-500">
+                <div className="mx-auto h-12 w-12 text-gray-400">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
@@ -239,10 +239,10 @@ const Properties = () => {
                     />
                   </svg>
                 </div>
-                <h3 className="mt-2 text-lg font-medium text-gray-900 dark:text-gray-100">
+                <h3 className="mt-2 text-lg font-medium text-gray-900">
                   No properties found
                 </h3>
-                <p className="mt-1 text-gray-500 dark:text-gray-400">
+                <p className="mt-1 text-gray-500">
                   {searchQuery || typeFilter !== "all"
                     ? "No properties match your search criteria."
                     : "Get started by adding a new property."}
@@ -299,7 +299,7 @@ const Properties = () => {
       >
         <div className="p-6">
           <div className="mb-6">
-            <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
+            <h2 className="text-xl font-semibold text-gray-900">
               {propertyToEdit ? "Edit Property" : "Add New Property"}
             </h2>
           </div>
@@ -322,7 +322,7 @@ const Properties = () => {
       >
         <div className="p-6">
           <div className="mb-6">
-            <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
+            <h2 className="text-xl font-semibold text-gray-900">
               Edit Property
             </h2>
           </div>

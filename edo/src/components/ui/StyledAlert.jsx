@@ -27,40 +27,32 @@ const StyledAlert = ({
   // Define styles based on alert type
   const alertStyles = {
     error: {
-      container:
-        "bg-red-50 border-red-200 dark:bg-red-900/20 dark:border-red-800",
-      icon: "text-red-400 dark:text-red-500",
-      title: "text-red-800 dark:text-red-200",
-      message: "text-red-700 dark:text-red-300",
-      close:
-        "text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300",
+      container: "bg-red-50 border-red-200",
+      icon: "text-red-400",
+      title: "text-red-800",
+      message: "text-red-700",
+      close: "text-red-500 hover:text-red-700",
     },
     success: {
-      container:
-        "bg-green-50 border-green-200 dark:bg-green-900/20 dark:border-green-800",
-      icon: "text-green-400 dark:text-green-500",
-      title: "text-green-800 dark:text-green-200",
-      message: "text-green-700 dark:text-green-300",
-      close:
-        "text-green-500 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300",
+      container: "bg-green-50 border-green-200",
+      icon: "text-green-400",
+      title: "text-green-800",
+      message: "text-green-700",
+      close: "text-green-500 hover:text-green-700",
     },
     warning: {
-      container:
-        "bg-yellow-50 border-yellow-200 dark:bg-yellow-900/20 dark:border-yellow-800",
-      icon: "text-yellow-400 dark:text-yellow-500",
-      title: "text-yellow-800 dark:text-yellow-200",
-      message: "text-yellow-700 dark:text-yellow-300",
-      close:
-        "text-yellow-500 hover:text-yellow-700 dark:text-yellow-400 dark:hover:text-yellow-300",
+      container: "bg-yellow-50 border-yellow-200",
+      icon: "text-yellow-400",
+      title: "text-yellow-800",
+      message: "text-yellow-700",
+      close: "text-yellow-500 hover:text-yellow-700",
     },
     info: {
-      container:
-        "bg-blue-50 border-blue-200 dark:bg-blue-900/20 dark:border-blue-800",
-      icon: "text-blue-400 dark:text-blue-500",
-      title: "text-blue-800 dark:text-blue-200",
-      message: "text-blue-700 dark:text-blue-300",
-      close:
-        "text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300",
+      container: "bg-blue-50 border-blue-200",
+      icon: "text-blue-400",
+      title: "text-blue-800",
+      message: "text-blue-700",
+      close: "text-blue-500 hover:text-blue-700",
     },
   };
 

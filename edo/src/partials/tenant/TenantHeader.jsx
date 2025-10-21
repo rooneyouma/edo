@@ -4,25 +4,21 @@ import {
   X,
   Bell,
   Search,
-  Settings,
-  User,
-  LogOut,
   AlertTriangle,
   FileText,
   DollarSign,
   Wrench,
-  Sun,
-  Moon,
+  // Sun and Moon icons are no longer needed
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { authAPI, getStoredUser } from "../../utils/api";
 import { useTheme } from "../../contexts/ThemeContext";
+import UserMenu from "../../components/DropdownProfile";
 
 const TenantHeader = ({ toggleSidebar }) => {
   const router = useRouter();
   const { theme, toggleTheme } = useTheme();
-  const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -188,14 +184,14 @@ const TenantHeader = ({ toggleSidebar }) => {
   }, [isSearchOpen]);
 
   return (
-    <header className="sticky top-0 before:absolute before:inset-0 before:backdrop-blur-md max-lg:before:bg-white/90 dark:max-lg:before:bg-gray-800/90 before:-z-10 z-30 max-lg:shadow-xs lg:before:bg-gray-100/90 dark:lg:before:bg-gray-900/90">
+    <header className="sticky top-0 before:absolute before:inset-0 before:backdrop-blur-md max-lg:before:bg-white/90 before:-z-10 z-30 max-lg:shadow-xs lg:before:bg-gray-100">
       <div className="px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16 lg:border-b border-gray-200 dark:border-gray-700/60">
+        <div className="flex items-center justify-between h-16 lg:border-b border-gray-200">
           {/* Header: Left side */}
           <div className="flex">
             {/* Hamburger button */}
             <button
-              className="text-gray-500 hover:text-gray-600 dark:hover:text-gray-400 lg:hidden"
+              className="text-gray-500 hover:text-gray-600 lg:hidden"
               aria-controls="sidebar"
               onClick={() => toggleSidebar(true)}
             >
@@ -209,7 +205,7 @@ const TenantHeader = ({ toggleSidebar }) => {
             {/* Search */}
             <button
               type="button"
-              className="p-1 rounded-full text-slate-500 hover:text-slate-600 dark:text-slate-400 dark:hover:text-slate-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 hover:bg-slate-100 dark:hover:bg-slate-700/50"
+              className="p-1 rounded-full text-slate-500 hover:text-slate-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 hover:bg-slate-100"
               onClick={() => setIsSearchOpen(true)}
             >
               <span className="sr-only">Search</span>
@@ -220,53 +216,51 @@ const TenantHeader = ({ toggleSidebar }) => {
             <div className="relative">
               <button
                 type="button"
-                className="p-1 rounded-full text-slate-500 hover:text-slate-600 dark:text-slate-400 dark:hover:text-slate-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 hover:bg-slate-100 dark:hover:bg-slate-700/50"
+                className="p-1 rounded-full text-slate-500 hover:text-slate-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 hover:bg-slate-100"
                 onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}
               >
                 <span className="sr-only">View notifications</span>
                 <Bell className="h-6 w-6" />
                 {notifications.some((n) => !n.read) && (
-                  <span className="absolute top-0 right-0 block h-2 w-2 rounded-full bg-red-400 ring-2 ring-white dark:ring-slate-800" />
+                  <span className="absolute top-0 right-0 block h-2 w-2 rounded-full bg-red-400 ring-2 ring-white" />
                 )}
               </button>
 
               {/* Notifications dropdown */}
               {isNotificationsOpen && (
-                <div className="origin-top-right absolute right-0 mt-2 w-80 rounded-md shadow-lg bg-white dark:bg-slate-800 ring-1 ring-black ring-opacity-5 focus:outline-none">
+                <div className="origin-top-right absolute right-0 mt-2 w-80 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
                   <div className="py-1">
-                    <div className="px-4 py-2 border-b border-slate-200 dark:border-slate-700">
-                      <h3 className="text-sm font-medium text-slate-900 dark:text-slate-100">
+                    <div className="px-4 py-2 border-b border-slate-200">
+                      <h3 className="text-sm font-medium text-slate-900">
                         Notifications
                       </h3>
                     </div>
                     {notifications.map((notification) => (
                       <div
                         key={notification.id}
-                        className={`px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-700/50 ${
-                          !notification.read
-                            ? "bg-teal-50 dark:bg-teal-900/20"
-                            : ""
+                        className={`px-4 py-3 hover:bg-slate-50 ${
+                          !notification.read ? "bg-teal-50" : ""
                         }`}
                       >
                         <div className="flex items-start">
                           <div className="flex-1">
-                            <p className="text-sm font-medium text-slate-900 dark:text-slate-100">
+                            <p className="text-sm font-medium text-slate-900">
                               {notification.title}
                             </p>
-                            <p className="text-sm text-slate-500 dark:text-slate-400">
+                            <p className="text-sm text-slate-500">
                               {notification.message}
                             </p>
-                            <p className="mt-1 text-xs text-slate-400 dark:text-slate-500">
+                            <p className="mt-1 text-xs text-slate-400">
                               {notification.time}
                             </p>
                           </div>
                         </div>
                       </div>
                     ))}
-                    <div className="px-4 py-2 border-t border-slate-200 dark:border-slate-700">
+                    <div className="px-4 py-2 border-t border-slate-200">
                       <Link
                         href="/tenant/notifications"
-                        className="w-full text-sm text-teal-600 dark:text-teal-400 hover:text-teal-700 dark:hover:text-teal-300"
+                        className="w-full text-sm text-teal-600 hover:text-teal-700"
                         onClick={() => setIsNotificationsOpen(false)}
                       >
                         View all notifications
@@ -277,116 +271,13 @@ const TenantHeader = ({ toggleSidebar }) => {
               )}
             </div>
 
-            {/* Theme Toggle */}
-            <button
-              type="button"
-              className="p-1 rounded-full text-slate-500 hover:text-slate-600 dark:text-slate-400 dark:hover:text-slate-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 hover:bg-slate-100 dark:hover:bg-slate-700/50"
-              onClick={toggleTheme}
-            >
-              <span className="sr-only">Toggle theme</span>
-              {theme === "light" ? (
-                <Moon className="h-6 w-6" />
-              ) : (
-                <Sun className="h-6 w-6" />
-              )}
-            </button>
+            {/* Theme Toggle - REMOVED */}
 
             {/* Divider */}
-            <hr className="w-px h-6 bg-gray-200 dark:bg-gray-700/60 border-none" />
+            <hr className="w-px h-6 bg-gray-200 border-none" />
 
             {/* Profile dropdown */}
-            <div className="relative">
-              <button
-                type="button"
-                className="flex items-center max-w-xs rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 hover:bg-slate-100 dark:hover:bg-slate-700/50"
-                onClick={() => setIsProfileOpen(!isProfileOpen)}
-              >
-                <span className="sr-only">Open user menu</span>
-                {isClient && user && user.profile_image_url ? (
-                  <img
-                    className="h-8 w-8 rounded-full"
-                    src={user.profile_image_url}
-                    alt={user.first_name || user.name}
-                  />
-                ) : (
-                  <div className="h-8 w-8 rounded-full bg-teal-600 flex items-center justify-center">
-                    <span className="text-sm font-medium text-white">
-                      {isClient &&
-                        user &&
-                        (user.first_name
-                          ? user.first_name.charAt(0)
-                          : user.name
-                          ? user.name.charAt(0)
-                          : "U")}
-                      {!isClient && "U"}
-                    </span>
-                  </div>
-                )}
-              </button>
-
-              {/* Profile dropdown menu */}
-              {isProfileOpen && (
-                <div className="origin-top-right absolute right-0 mt-2 w-80 rounded-md shadow-lg bg-white dark:bg-slate-800 ring-1 ring-black ring-opacity-5 focus:outline-none">
-                  <div className="py-1">
-                    {/* Profile info */}
-                    <div className="px-4 py-3 border-b border-slate-200 dark:border-slate-700">
-                      <div className="flex items-center">
-                        {isClient && user && user.profile_image_url ? (
-                          <img
-                            className="w-10 h-10 rounded-full"
-                            src={user.profile_image_url}
-                            alt={user.first_name || user.name}
-                          />
-                        ) : (
-                          <div className="w-10 h-10 rounded-full bg-teal-600 flex items-center justify-center">
-                            <span className="text-sm font-medium text-white">
-                              {isClient &&
-                                user &&
-                                (user.first_name
-                                  ? user.first_name.charAt(0)
-                                  : user.name
-                                  ? user.name.charAt(0)
-                                  : "U")}
-                              {!isClient && "U"}
-                            </span>
-                          </div>
-                        )}
-                        <div className="ml-3">
-                          <p className="text-sm font-medium text-slate-900 dark:text-slate-100">
-                            {isClient && user && (user.first_name || user.name)}
-                          </p>
-                          <p className="text-xs text-slate-500 dark:text-slate-400">
-                            {isClient && user && user.email}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Menu items */}
-                    <Link
-                      href="/tenant/settings"
-                      className="flex items-center px-4 py-2 text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700/50"
-                      onClick={() => setIsProfileOpen(false)}
-                    >
-                      <Settings className="h-5 w-5 mr-3 text-slate-400" />
-                      Settings
-                    </Link>
-
-                    <button
-                      type="button"
-                      className="flex items-center w-full px-4 py-2 text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700/50"
-                      onClick={() => {
-                        // Handle logout
-                        setIsProfileOpen(false);
-                      }}
-                    >
-                      <LogOut className="h-5 w-5 mr-3 text-slate-400" />
-                      Sign out
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
+            <UserMenu align="right" />
           </div>
         </div>
       </div>
@@ -398,7 +289,7 @@ const TenantHeader = ({ toggleSidebar }) => {
             <div className="flex min-h-full items-start justify-center p-4 text-center sm:p-0">
               <div
                 ref={searchModalRef}
-                className="relative transform overflow-hidden rounded-lg bg-white dark:bg-slate-800 px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:p-6"
+                className="relative transform overflow-hidden rounded-lg bg-white px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:p-6"
               >
                 <div className="sm:flex sm:items-start">
                   <div className="mt-3 text-center sm:mt-0 sm:text-left w-full">
@@ -411,7 +302,7 @@ const TenantHeader = ({ toggleSidebar }) => {
                         value={searchQuery}
                         onChange={handleSearch}
                         placeholder="Search notices, maintenance, payments, notifications, lease info..."
-                        className="block w-full pl-10 pr-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md leading-5 bg-white dark:bg-slate-800 placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent caret-slate-900 dark:caret-slate-100 sm:text-sm"
+                        className="block w-full pl-10 pr-3 py-2 border border-slate-300 rounded-md leading-5 bg-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent caret-slate-900 sm:text-sm"
                         autoFocus
                       />
                     </div>
@@ -426,7 +317,7 @@ const TenantHeader = ({ toggleSidebar }) => {
                               return (
                                 <button
                                   key={result.id}
-                                  className="w-full px-4 py-3 text-left hover:bg-slate-50 dark:hover:bg-slate-700/50 rounded-md focus:outline-none"
+                                  className="w-full px-4 py-3 text-left hover:bg-slate-50 rounded-md focus:outline-none"
                                   onClick={() => handleResultClick(result)}
                                 >
                                   <div className="flex items-center">
@@ -434,45 +325,45 @@ const TenantHeader = ({ toggleSidebar }) => {
                                       <div
                                         className={`w-10 h-10 rounded-full flex items-center justify-center ${
                                           result.type === "eviction"
-                                            ? "bg-red-100 dark:bg-red-900/30"
+                                            ? "bg-red-100"
                                             : result.type === "maintenance"
-                                            ? "bg-blue-100 dark:bg-blue-900/30"
+                                            ? "bg-blue-100"
                                             : result.type === "notice"
-                                            ? "bg-yellow-100 dark:bg-yellow-900/30"
+                                            ? "bg-yellow-100"
                                             : result.type === "payment"
-                                            ? "bg-green-100 dark:bg-green-900/30"
+                                            ? "bg-green-100"
                                             : result.type === "notification"
-                                            ? "bg-purple-100 dark:bg-purple-900/30"
-                                            : "bg-gray-100 dark:bg-gray-900/30"
+                                            ? "bg-purple-100"
+                                            : "bg-gray-100"
                                         }`}
                                       >
                                         <Icon
                                           className={`h-5 w-5 ${
                                             result.type === "eviction"
-                                              ? "text-red-600 dark:text-red-400"
+                                              ? "text-red-600"
                                               : result.type === "maintenance"
-                                              ? "text-blue-600 dark:text-blue-400"
+                                              ? "text-blue-600"
                                               : result.type === "notice"
-                                              ? "text-yellow-600 dark:text-yellow-400"
+                                              ? "text-yellow-600"
                                               : result.type === "payment"
-                                              ? "text-green-600 dark:text-green-400"
+                                              ? "text-green-600"
                                               : result.type === "notification"
-                                              ? "text-purple-600 dark:text-purple-400"
-                                              : "text-gray-600 dark:text-gray-400"
+                                              ? "text-purple-600"
+                                              : "text-gray-600"
                                           }`}
                                         />
                                       </div>
                                     </div>
                                     <div className="ml-3 flex-1">
                                       <div className="flex items-center justify-between">
-                                        <p className="text-sm font-medium text-slate-900 dark:text-slate-100">
+                                        <p className="text-sm font-medium text-slate-900">
                                           {result.title}
                                         </p>
-                                        <span className="text-xs text-slate-500 dark:text-slate-400">
+                                        <span className="text-xs text-slate-500">
                                           {result.date}
                                         </span>
                                       </div>
-                                      <p className="text-xs text-slate-500 dark:text-slate-400">
+                                      <p className="text-xs text-slate-500">
                                         {result.description}
                                       </p>
                                       <div className="mt-1 flex items-center space-x-2">
@@ -480,29 +371,29 @@ const TenantHeader = ({ toggleSidebar }) => {
                                           <span
                                             className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${
                                               result.priority === "Urgent"
-                                                ? "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300"
+                                                ? "bg-red-100 text-red-800"
                                                 : result.priority ===
                                                   "Important"
-                                                ? "bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-300"
-                                                : "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300"
+                                                ? "bg-orange-100 text-orange-800"
+                                                : "bg-yellow-100 text-yellow-800"
                                             }`}
                                           >
                                             {result.priority}
                                           </span>
                                         )}
                                         {result.status && (
-                                          <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300">
+                                          <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">
                                             {result.status}
                                           </span>
                                         )}
                                         {result.amount && result.dueDate && (
-                                          <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300">
+                                          <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
                                             {result.amount} due in{" "}
                                             {result.dueDate}
                                           </span>
                                         )}
                                         {result.amount && !result.dueDate && (
-                                          <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300">
+                                          <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
                                             {result.amount}
                                           </span>
                                         )}
@@ -515,7 +406,7 @@ const TenantHeader = ({ toggleSidebar }) => {
                           </div>
                         ) : (
                           <div className="text-center py-4">
-                            <p className="text-sm text-slate-500 dark:text-slate-400">
+                            <p className="text-sm text-slate-500">
                               No results found for "{searchQuery}"
                             </p>
                           </div>

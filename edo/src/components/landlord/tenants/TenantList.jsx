@@ -12,49 +12,49 @@ const TenantList = ({
   return (
     <div className="overflow-x-auto">
       <div className="inline-block min-w-full align-middle">
-        <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
-          <table className="min-w-full divide-y divide-gray-300 dark:divide-gray-700">
-            <thead className="bg-gray-50 dark:bg-gray-800">
+        <div className="overflow-hidden shadow md:rounded-lg">
+          <table className="min-w-full divide-y divide-gray-300">
+            <thead className="bg-gray-50">
               <tr>
                 <th
                   scope="col"
-                  className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-100 sm:pl-6"
+                  className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6"
                 >
                   Name
                 </th>
                 <th
                   scope="col"
-                  className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
+                  className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
                 >
                   Email
                 </th>
                 <th
                   scope="col"
-                  className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
+                  className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
                 >
                   Phone
                 </th>
                 <th
                   scope="col"
-                  className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
+                  className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
                 >
                   Property
                 </th>
                 <th
                   scope="col"
-                  className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
+                  className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
                 >
                   Unit
                 </th>
                 <th
                   scope="col"
-                  className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
+                  className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
                 >
                   Rent
                 </th>
                 <th
                   scope="col"
-                  className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
+                  className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
                 >
                   Status
                 </th>
@@ -63,11 +63,11 @@ const TenantList = ({
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-900">
+            <tbody className="divide-y divide-gray-200 bg-white">
               {currentTenants.map((tenant) => (
                 <tr
                   key={tenant.id}
-                  className="hover:bg-gray-50 dark:hover:bg-gray-800/50 cursor-pointer"
+                  className="hover:bg-gray-50 cursor-pointer"
                   onClick={(event) => {
                     // Check if the click is not on the actions column (options button)
                     if (!event.target.closest(".actions-column")) {
@@ -75,25 +75,25 @@ const TenantList = ({
                     }
                   }}
                 >
-                  <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 dark:text-gray-100 sm:pl-6">
+                  <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
                     {tenant.name}
                   </td>
-                  <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
+                  <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                     {tenant.email}
                   </td>
-                  <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
+                  <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                     {tenant.phone}
                   </td>
-                  <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
+                  <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                     {tenant.property}
                   </td>
-                  <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
+                  <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                     {tenant.unit_number}
                   </td>
-                  <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
+                  <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                     KES {tenant.rent ? tenant.rent.toLocaleString() : "0"}
                   </td>
-                  <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
+                  <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                     <span
                       className={`inline-flex rounded-full px-2 text-xs font-semibold leading-5 ${getStatusColor(
                         tenant.status
@@ -102,14 +102,14 @@ const TenantList = ({
                       {tenant.status}
                     </span>
                   </td>
-                  <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400 actions-column">
+                  <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 actions-column">
                     <div className="flex items-center justify-end gap-2">
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
                           handleEditTenant(tenant);
                         }}
-                        className="text-violet-600 hover:text-violet-900 dark:text-[#2dd4bf] dark:hover:text-[#0d9488]"
+                        className="text-violet-600 hover:text-violet-900"
                         title="Edit Tenant"
                       >
                         <svg
@@ -131,7 +131,7 @@ const TenantList = ({
                           e.stopPropagation();
                           handleDeleteTenant(tenant);
                         }}
-                        className="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300"
+                        className="text-red-600 hover:text-red-900"
                         title="Delete Tenant"
                       >
                         <svg

@@ -34,14 +34,14 @@ const MessageFilters = ({
       <div className="flex flex-col sm:flex-row gap-4">
         <div className="relative flex-grow">
           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <Search className="h-5 w-5 text-gray-400 dark:text-gray-500" />
+            <Search className="h-5 w-5 text-gray-400" />
           </div>
           <input
             type="text"
             placeholder="Search messages..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg text-sm placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 dark:bg-gray-700 dark:text-gray-100 transition-all duration-200"
+            className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg text-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-all duration-200"
           />
         </div>
 
@@ -51,14 +51,14 @@ const MessageFilters = ({
             onClick={() => setIsFilterOpen(!isFilterOpen)}
             className={`inline-flex items-center px-4 py-2 border rounded-lg text-sm font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 transition-colors ${
               activeFiltersCount > 0
-                ? "border-teal-500 bg-teal-50 text-teal-700 dark:bg-teal-900/20 dark:text-teal-300 dark:border-teal-400"
-                : "border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700"
+                ? "border-teal-500 bg-teal-50 text-teal-700"
+                : "border-gray-300 text-gray-700 hover:bg-gray-50"
             }`}
           >
             <Filter className="h-4 w-4 mr-2" />
             Filters
             {activeFiltersCount > 0 && (
-              <span className="ml-1 inline-flex items-center justify-center px-2 py-0.5 rounded-full text-xs font-medium bg-teal-100 text-teal-800 dark:bg-teal-800 dark:text-teal-100">
+              <span className="ml-1 inline-flex items-center justify-center px-2 py-0.5 rounded-full text-xs font-medium bg-teal-100 text-teal-800">
                 {activeFiltersCount}
               </span>
             )}
@@ -72,7 +72,7 @@ const MessageFilters = ({
             onClick={() =>
               setSortOrder(sortOrder === "latest" ? "earliest" : "latest")
             }
-            className="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500"
+            className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500"
           >
             <ArrowUpDown className="h-4 w-4 mr-2" />
             {sortOrder === "latest" ? "Latest" : "Earliest"}
@@ -83,21 +83,19 @@ const MessageFilters = ({
       {/* Active Filters Summary */}
       {activeFiltersCount > 0 && !isFilterOpen && (
         <div className="mt-3 flex flex-wrap items-center gap-2">
-          <span className="text-sm text-gray-600 dark:text-gray-400">
-            Active filters:
-          </span>
+          <span className="text-sm text-gray-600">Active filters:</span>
           {!isSent && statusFilter !== "all" && (
-            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
+            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
               Status: {statusFilter}
             </span>
           )}
           {propertyFilter !== "all" && (
-            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
+            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
               Property: {propertyFilter}
             </span>
           )}
           {(dateFilter.startDate || dateFilter.endDate) && (
-            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200">
+            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
               Date Range
             </span>
           )}
@@ -107,7 +105,7 @@ const MessageFilters = ({
               setPropertyFilter("all");
               setDateFilter({ startDate: "", endDate: "" });
             }}
-            className="inline-flex items-center px-2 py-1 text-xs font-medium text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-md transition-colors"
+            className="inline-flex items-center px-2 py-1 text-xs font-medium text-red-600 hover:text-red-700 hover:bg-red-50 rounded-md transition-colors"
           >
             Clear all
           </button>
@@ -122,7 +120,7 @@ const MessageFilters = ({
               <div>
                 <label
                   htmlFor="status"
-                  className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                  className="block text-sm font-medium text-gray-700 mb-1"
                 >
                   Status
                 </label>
@@ -130,7 +128,7 @@ const MessageFilters = ({
                   id="status"
                   value={statusFilter}
                   onChange={(e) => setStatusFilter(e.target.value)}
-                  className="block w-full rounded-lg border border-gray-300 dark:border-gray-700 pl-3 pr-10 py-2 text-sm focus:border-teal-500 focus:ring-teal-500 focus:ring-2 focus:ring-opacity-20 dark:bg-gray-700 dark:text-gray-100 shadow-sm transition-all duration-200"
+                  className="block w-full rounded-lg border border-gray-300 pl-3 pr-10 py-2 text-sm focus:border-teal-500 focus:ring-teal-500 focus:ring-2 focus:ring-opacity-20 shadow-sm transition-all duration-200"
                 >
                   <option value="all">All Status</option>
                   <option value="read">Read</option>
@@ -142,7 +140,7 @@ const MessageFilters = ({
             <div>
               <label
                 htmlFor="property"
-                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                className="block text-sm font-medium text-gray-700 mb-1"
               >
                 Property
               </label>
@@ -150,7 +148,7 @@ const MessageFilters = ({
                 id="property"
                 value={propertyFilter}
                 onChange={(e) => setPropertyFilter(e.target.value)}
-                className="block w-full rounded-lg border border-gray-300 dark:border-gray-700 pl-3 pr-10 py-2 text-sm focus:border-teal-500 focus:ring-teal-500 focus:ring-2 focus:ring-opacity-20 dark:bg-gray-700 dark:text-gray-100 shadow-sm transition-all duration-200"
+                className="block w-full rounded-lg border border-gray-300 pl-3 pr-10 py-2 text-sm focus:border-teal-500 focus:ring-teal-500 focus:ring-2 focus:ring-opacity-20 shadow-sm transition-all duration-200"
               >
                 <option value="all">All Properties</option>
                 {availableProperties.map((property) => (
@@ -162,7 +160,7 @@ const MessageFilters = ({
             </div>
 
             <div className="sm:col-span-2 lg:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
                 Date Range
               </label>
 
@@ -189,14 +187,14 @@ const MessageFilters = ({
                         endDate: today.toISOString().split("T")[0],
                       });
                     }}
-                    className="px-3 py-1 text-xs font-medium rounded-full border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-teal-500 transition-colors"
+                    className="px-3 py-1 text-xs font-medium rounded-full border border-gray-300 text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-teal-500 transition-colors"
                   >
                     {preset.label}
                   </button>
                 ))}
                 <button
                   onClick={() => setDateFilter({ startDate: "", endDate: "" })}
-                  className="px-3 py-1 text-xs font-medium rounded-full border border-gray-300 dark:border-gray-600 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 focus:outline-none focus:ring-2 focus:ring-red-500 transition-colors"
+                  className="px-3 py-1 text-xs font-medium rounded-full border border-gray-300 text-red-600 hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-red-500 transition-colors"
                 >
                   Clear
                 </button>
@@ -207,7 +205,7 @@ const MessageFilters = ({
                 <div>
                   <label
                     htmlFor="startDate"
-                    className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1"
+                    className="block text-xs font-medium text-gray-500 mb-1"
                   >
                     Start Date
                   </label>
@@ -221,13 +219,13 @@ const MessageFilters = ({
                         startDate: e.target.value,
                       }))
                     }
-                    className="block w-full rounded-lg border border-gray-300 dark:border-gray-700 pl-3 pr-10 py-2 text-sm focus:border-teal-500 focus:ring-teal-500 focus:ring-2 focus:ring-opacity-20 dark:bg-gray-700 dark:text-gray-100 shadow-sm transition-all duration-200"
+                    className="block w-full rounded-lg border border-gray-300 pl-3 pr-10 py-2 text-sm focus:border-teal-500 focus:ring-teal-500 focus:ring-2 focus:ring-opacity-20 shadow-sm transition-all duration-200"
                   />
                 </div>
                 <div>
                   <label
                     htmlFor="endDate"
-                    className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1"
+                    className="block text-xs font-medium text-gray-500 mb-1"
                   >
                     End Date
                   </label>
@@ -241,7 +239,7 @@ const MessageFilters = ({
                         endDate: e.target.value,
                       }))
                     }
-                    className="block w-full rounded-lg border border-gray-300 dark:border-gray-700 pl-3 pr-10 py-2 text-sm focus:border-teal-500 focus:ring-teal-500 focus:ring-2 focus:ring-opacity-20 dark:bg-gray-700 dark:text-gray-100 shadow-sm transition-all duration-200"
+                    className="block w-full rounded-lg border border-gray-300 pl-3 pr-10 py-2 text-sm focus:border-teal-500 focus:ring-teal-500 focus:ring-2 focus:ring-opacity-20 shadow-sm transition-all duration-200"
                   />
                 </div>
               </div>
@@ -250,14 +248,14 @@ const MessageFilters = ({
 
           {/* Clear All Filters Button */}
           {activeFiltersCount > 0 && (
-            <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+            <div className="mt-4 pt-4 border-t border-gray-200">
               <button
                 onClick={() => {
                   if (!isSent) setStatusFilter("all");
                   setPropertyFilter("all");
                   setDateFilter({ startDate: "", endDate: "" });
                 }}
-                className="inline-flex items-center px-4 py-2 text-sm font-medium text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg border border-red-300 dark:border-red-600 transition-colors"
+                className="inline-flex items-center px-4 py-2 text-sm font-medium text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg border border-red-300 transition-colors"
               >
                 <X className="h-4 w-4 mr-2" />
                 Clear All Filters

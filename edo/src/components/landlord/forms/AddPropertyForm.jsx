@@ -58,7 +58,7 @@ const AddPropertyForm = ({ property, onSubmit, onClose }) => {
       <div>
         <label
           htmlFor="name"
-          className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+          className="block text-sm font-medium text-gray-700"
         >
           Property Name
         </label>
@@ -69,14 +69,14 @@ const AddPropertyForm = ({ property, onSubmit, onClose }) => {
           value={formData.name}
           onChange={handleChange}
           required
-          className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-gray-700 dark:text-gray-100 py-2 px-3 sm:text-sm"
+          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] bg-white text-gray-900 py-2 px-3 sm:text-sm"
         />
       </div>
 
       <div>
         <label
           htmlFor="type"
-          className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+          className="block text-sm font-medium text-gray-700"
         >
           Property Type
         </label>
@@ -86,7 +86,7 @@ const AddPropertyForm = ({ property, onSubmit, onClose }) => {
           value={formData.type}
           onChange={handleChange}
           required
-          className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-gray-700 dark:text-gray-100 py-2 px-3 sm:text-sm"
+          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] bg-white text-gray-900 py-2 px-3 sm:text-sm"
         >
           <option value="">Select Type</option>
           <option value="House">House</option>
@@ -104,7 +104,7 @@ const AddPropertyForm = ({ property, onSubmit, onClose }) => {
           <div className="md:col-span-2">
             <label
               htmlFor="address.street"
-              className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+              className="block text-sm font-medium text-gray-700"
             >
               Street Address
             </label>
@@ -115,13 +115,13 @@ const AddPropertyForm = ({ property, onSubmit, onClose }) => {
               value={formData.address.street}
               onChange={handleChange}
               required
-              className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-gray-700 dark:text-gray-100 py-2 px-3 sm:text-sm"
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] bg-white text-gray-900 py-2 px-3 sm:text-sm"
             />
           </div>
           <div>
             <label
               htmlFor="address.city"
-              className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+              className="block text-sm font-medium text-gray-700"
             >
               City
             </label>
@@ -132,13 +132,13 @@ const AddPropertyForm = ({ property, onSubmit, onClose }) => {
               value={formData.address.city}
               onChange={handleChange}
               required
-              className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-gray-700 dark:text-gray-100 py-2 px-3 sm:text-sm"
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] bg-white text-gray-900 py-2 px-3 sm:text-sm"
             />
           </div>
           <div>
             <label
               htmlFor="address.state"
-              className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+              className="block text-sm font-medium text-gray-700"
             >
               State
             </label>
@@ -149,13 +149,13 @@ const AddPropertyForm = ({ property, onSubmit, onClose }) => {
               value={formData.address.state}
               onChange={handleChange}
               required
-              className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-gray-700 dark:text-gray-100 py-2 px-3 sm:text-sm"
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] bg-white text-gray-900 py-2 px-3 sm:text-sm"
             />
           </div>
           <div>
             <label
               htmlFor="address.zipCode"
-              className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+              className="block text-sm font-medium text-gray-700"
             >
               ZIP Code
             </label>
@@ -166,7 +166,7 @@ const AddPropertyForm = ({ property, onSubmit, onClose }) => {
               value={formData.address.zipCode}
               onChange={handleChange}
               required
-              className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-gray-700 dark:text-gray-100 py-2 px-3 sm:text-sm"
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] bg-white text-gray-900 py-2 px-3 sm:text-sm"
             />
           </div>
         </div>
@@ -175,7 +175,7 @@ const AddPropertyForm = ({ property, onSubmit, onClose }) => {
       <div>
         <label
           htmlFor="description"
-          className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+          className="block text-sm font-medium text-gray-700"
         >
           Description
         </label>
@@ -185,7 +185,7 @@ const AddPropertyForm = ({ property, onSubmit, onClose }) => {
           value={formData.description}
           onChange={handleChange}
           rows={4}
-          className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-gray-700 dark:text-gray-100 py-2 px-3 sm:text-sm"
+          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] bg-white text-gray-900 py-2 px-3 sm:text-sm"
         />
       </div>
 
@@ -193,7 +193,7 @@ const AddPropertyForm = ({ property, onSubmit, onClose }) => {
         <button
           type="button"
           onClick={onClose}
-          className="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0d9488] dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 dark:hover:bg-gray-600"
+          className="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0d9488]"
         >
           Cancel
         </button>

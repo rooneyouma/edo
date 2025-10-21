@@ -53,47 +53,47 @@ const PropertyList = ({
         {properties.map((property) => (
           <div
             key={property.id}
-            className="bg-white dark:bg-slate-800 rounded-xl shadow-md hover:shadow-lg transition-shadow duration-200 flex flex-col group"
+            className="bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow duration-200 flex flex-col group"
             onClick={() => onPropertyClick(property)}
           >
             <div className="p-5 flex-1 flex flex-col">
-              <h3 className="text-xl font-bold text-[#0d9488] dark:text-[#2dd4bf] mb-1 line-clamp-1">
+              <h3 className="text-xl font-bold text-[#0d9488] mb-1 line-clamp-1">
                 {property.name}
               </h3>
-              <p className="text-sm text-gray-700 dark:text-gray-300 mb-1 flex items-center">
+              <p className="text-sm text-gray-700 mb-1 flex items-center">
                 <span className="truncate">{`${property.street}, ${property.city}, ${property.state} ${property.zip_code}`}</span>
               </p>
-              <p className="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-2 uppercase tracking-wide">
+              <p className="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wide">
                 {property.type}
               </p>
-              <div className="flex items-center space-x-4 text-sm text-gray-600 dark:text-gray-300 mb-2">
+              <div className="flex items-center space-x-4 text-sm text-gray-600 mb-2">
                 <span>Units: {property.units?.length ?? 0}</span>
               </div>
-              <p className="text-xs text-gray-500 dark:text-gray-400 mb-2 line-clamp-2">
+              <p className="text-xs text-gray-500 mb-2 line-clamp-2">
                 {property.description}
               </p>
               {/* Units List */}
               {false && property.units && property.units.length > 0 && (
                 <div className="mt-3">
-                  <h4 className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-1">
+                  <h4 className="text-sm font-semibold text-gray-900 mb-1">
                     Units
                   </h4>
-                  <div className="divide-y divide-gray-200 dark:divide-gray-700 rounded-md border border-gray-100 dark:border-gray-700 bg-white/80 dark:bg-gray-900/40">
+                  <div className="divide-y divide-gray-200 rounded-md border border-gray-100 bg-white/80">
                     {property.units.map((unit) => (
                       <div
                         key={unit.id}
                         className="flex flex-wrap items-center justify-between px-3 py-2 text-xs sm:text-sm"
                       >
-                        <div className="font-medium text-gray-800 dark:text-gray-100">
+                        <div className="font-medium text-gray-800">
                           {unit.unit_number}
                         </div>
-                        <div className="text-gray-500 dark:text-gray-400">
+                        <div className="text-gray-500">
                           Floor: {unit.floor || "-"}
                         </div>
-                        <div className="text-gray-500 dark:text-gray-400">
+                        <div className="text-gray-500">
                           {unit.bedrooms} bed / {unit.bathrooms} bath
                         </div>
-                        <div className="text-gray-700 dark:text-gray-300 font-semibold">
+                        <div className="text-gray-700 font-semibold">
                           {unit.rent_amount ? `₦${unit.rent_amount}` : "-"}
                         </div>
                         <div className="text-gray-400 ml-2">
@@ -108,13 +108,13 @@ const PropertyList = ({
                 </div>
               )}
             </div>
-            <div className="flex justify-end gap-2 p-3 border-t border-gray-100 dark:border-gray-800 bg-white/60 dark:bg-slate-900/60">
+            <div className="flex justify-end gap-2 p-3 border-t border-gray-100 bg-white/60">
               <button
                 onClick={(e) => {
                   e.stopPropagation();
                   onEdit(property);
                 }}
-                className="cursor-pointer text-violet-600 hover:text-violet-900 dark:text-[#2dd4bf] dark:hover:text-[#0d9488] mr-2"
+                className="cursor-pointer text-violet-600 hover:text-violet-900 mr-2"
                 title="Edit"
               >
                 <svg
@@ -136,7 +136,7 @@ const PropertyList = ({
                   e.stopPropagation();
                   onDelete(property);
                 }}
-                className="cursor-pointer text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300"
+                className="cursor-pointer text-red-600 hover:text-red-900"
                 title="Delete"
               >
                 <svg
@@ -159,7 +159,7 @@ const PropertyList = ({
                   setSelectedProperty(property);
                   setIsManageUnitsModalOpen(true);
                 }}
-                className="cursor-pointer text-amber-600 hover:text-amber-900 dark:text-amber-400 dark:hover:text-amber-300 ml-2"
+                className="cursor-pointer text-amber-600 hover:text-amber-900 ml-2"
                 title="Manage Units"
               >
                 <svg
@@ -183,7 +183,7 @@ const PropertyList = ({
                   setSelectedProperty(property);
                   setIsAddTenantModalOpen(true);
                 }}
-                className="cursor-pointer text-cyan-600 hover:text-cyan-900 dark:text-cyan-400 dark:hover:text-cyan-300 ml-2"
+                className="cursor-pointer text-cyan-600 hover:text-cyan-900 ml-2"
                 title="Add Tenant(s)"
               >
                 <svg

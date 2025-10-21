@@ -30,16 +30,14 @@ const TenantPagination = ({
   };
 
   return (
-    <div className="mt-4 flex items-center justify-between border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-4 py-3">
+    <div className="mt-4 flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3">
       <div className="flex items-center justify-between w-full">
         <div className="flex items-center space-x-4">
-          <span className="text-xs text-gray-700 dark:text-gray-200">
+          <span className="text-xs text-gray-700">
             Page {currentPage} of {totalPages}
           </span>
           <div className="flex items-center space-x-2">
-            <span className="text-xs text-gray-700 dark:text-gray-200">
-              Go to page:
-            </span>
+            <span className="text-xs text-gray-700">Go to page:</span>
             <input
               type="number"
               min="1"
@@ -47,7 +45,7 @@ const TenantPagination = ({
               value={pageInputValue}
               onChange={handlePageInputChange}
               onBlur={handlePageInputBlur}
-              className="w-12 h-6 text-xs text-center rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-violet-500"
+              className="w-12 h-6 text-xs text-center rounded border border-gray-300 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-violet-500"
             />
           </div>
         </div>
@@ -55,7 +53,7 @@ const TenantPagination = ({
           <button
             onClick={() => onPageChange(currentPage - 1)}
             disabled={currentPage === 1}
-            className="inline-flex items-center p-1.5 text-xs font-medium rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="inline-flex items-center p-1.5 text-xs font-medium rounded-md border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <svg
               className="w-4 h-4"
@@ -74,7 +72,7 @@ const TenantPagination = ({
           <button
             onClick={() => onPageChange(currentPage + 1)}
             disabled={currentPage === totalPages}
-            className="inline-flex items-center p-1.5 text-xs font-medium rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="inline-flex items-center p-1.5 text-xs font-medium rounded-md border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <svg
               className="w-4 h-4"

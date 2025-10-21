@@ -52,13 +52,13 @@ const MessageTable = ({
     switch (priority) {
       case "urgent":
         return (
-          <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200">
+          <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
             🔥 Urgent
           </span>
         );
       case "important":
         return (
-          <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200">
+          <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
             ⚠️ Important
           </span>
         );
@@ -71,54 +71,63 @@ const MessageTable = ({
     <div className="mt-4">
       {/* Selection Mode Header */}
       {isSelectionMode && (
-        <div className="bg-white dark:bg-gray-800 p-3 mb-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 flex items-center justify-between">
+        <div className="bg-white p-3 mb-4 rounded-lg shadow-sm border border-gray-200 flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <button 
+            <button
               onClick={exitSelectionMode}
-              className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
+              className="text-gray-600 hover:text-gray-900"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clipRule="evenodd" />
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+                  clipRule="evenodd"
+                />
               </svg>
             </button>
-            <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
+            <span className="text-sm font-medium text-gray-900">
               {selectedMessages.length} selected
             </span>
           </div>
-          <button 
+          <button
             onClick={deleteSelectedMessages}
-            className="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 text-sm font-medium"
+            className="text-red-600 hover:text-red-800 text-sm font-medium"
             disabled={selectedMessages.length === 0}
           >
             Delete
           </button>
         </div>
       )}
-      
+
       {/* Mobile Card Layout */}
       <div className="block md:hidden space-y-4">
         {messages.map((message) => {
           const priority = getMessagePriority(message.content);
           const isSelected = selectedMessages.includes(message.id);
-          
+
           return (
             <div
               key={message.id}
-              className={`bg-white dark:bg-gray-800 rounded-lg shadow-sm border overflow-hidden hover:shadow-md transition-shadow cursor-pointer ${
+              className={`bg-white rounded-lg shadow-sm border overflow-hidden hover:shadow-md transition-shadow cursor-pointer ${
                 isSelected
-                  ? "border-blue-500 dark:border-blue-400 ring-2 ring-blue-300 dark:ring-blue-700"
+                  ? "border-blue-500 ring-2 ring-blue-300"
                   : priority === "urgent"
-                  ? "border-red-300 dark:border-red-600"
+                  ? "border-red-300"
                   : priority === "important"
-                  ? "border-orange-300 dark:border-orange-600"
-                  : "border-gray-200 dark:border-gray-700"
+                  ? "border-orange-300"
+                  : "border-gray-200"
               }`}
               onClick={(e) => {
                 if (isSelectionMode) {
                   toggleMessageSelection(message.id);
                 } else {
                   // Long press (right click) to enter selection mode
-                  if (e.type === 'contextmenu') {
+                  if (e.type === "contextmenu") {
                     e.preventDefault();
                     enterSelectionMode(message.id);
                   } else {
@@ -136,11 +145,14 @@ const MessageTable = ({
               }}
             >
               {/* Card Header */}
-              <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
+              <div className="px-4 py-3 border-b border-gray-200 flex items-center justify-between">
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
                     {isSelectionMode && (
-                      <div className="flex items-center mr-2" onClick={(e) => e.stopPropagation()}>
+                      <div
+                        className="flex items-center mr-2"
+                        onClick={(e) => e.stopPropagation()}
+                      >
                         <input
                           type="checkbox"
                           checked={isSelected}
@@ -149,14 +161,14 @@ const MessageTable = ({
                         />
                       </div>
                     )}
-                    <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
+                    <h3 className="text-sm font-medium text-gray-900 truncate">
                       {isSent
                         ? `To: ${message.tenant}`
                         : `From: ${message.tenant}`}
                     </h3>
                     {getPriorityBadge(priority)}
                   </div>
-                  <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
+                  <p className="text-xs text-gray-500 truncate">
                     {message.property} - {message.unit}
                   </p>
                 </div>
@@ -164,8 +176,8 @@ const MessageTable = ({
                   <span
                     className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
                       message.status === "unread"
-                        ? "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200"
-                        : "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
+                        ? "bg-yellow-100 text-yellow-800"
+                        : "bg-green-100 text-green-800"
                     }`}
                   >
                     {message.status}
@@ -177,18 +189,18 @@ const MessageTable = ({
               <div className="px-4 py-3">
                 <div className="space-y-2">
                   <div>
-                    <p className="text-sm text-gray-900 dark:text-gray-100 line-clamp-3">
+                    <p className="text-sm text-gray-900 line-clamp-3">
                       {message.content}
                     </p>
                   </div>
-                  <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
+                  <div className="flex items-center justify-between text-xs text-gray-500">
                     <span>{formatDate(message.timestamp)}</span>
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
                         onDeleteClick(message);
                       }}
-                      className="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300 p-1"
+                      className="text-red-600 hover:text-red-900 p-1"
                       aria-label="Delete message"
                     >
                       <svg
@@ -216,46 +228,46 @@ const MessageTable = ({
       {/* Desktop Table Layout */}
       <div className="hidden md:block overflow-x-auto">
         <div className="inline-block min-w-full align-middle">
-          <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
-            <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-              <thead className="bg-gray-50 dark:bg-gray-800">
+          <div className="overflow-hidden shadow ring-1 ring-gray-200 md:rounded-lg">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50">
                 <tr>
                   {isSelectionMode && (
                     <th
                       scope="col"
-                      className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-100 sm:pl-6 w-10"
+                      className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6 w-10"
                     >
                       <span className="sr-only">Select</span>
                     </th>
                   )}
                   <th
                     scope="col"
-                    className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-100 sm:pl-6"
+                    className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6"
                   >
                     {isSent ? "To" : "From"}
                   </th>
                   <th
                     scope="col"
-                    className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
+                    className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
                   >
                     Property
                   </th>
                   <th
                     scope="col"
-                    className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
+                    className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
                   >
                     Message
                   </th>
                   <th
                     scope="col"
-                    className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
+                    className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
                   >
                     Date
                   </th>
                   {!isSent && (
                     <th
                       scope="col"
-                      className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
+                      className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
                     >
                       Status
                     </th>
@@ -265,20 +277,20 @@ const MessageTable = ({
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-900">
+              <tbody className="divide-y divide-gray-200 bg-white">
                 {messages.map((message) => {
                   const priority = getMessagePriority(message.content);
                   const isSelected = selectedMessages.includes(message.id);
                   return (
                     <tr
                       key={message.id}
-                      className={`hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer ${
+                      className={`hover:bg-gray-50 cursor-pointer ${
                         isSelected
-                          ? "bg-blue-50 dark:bg-blue-900/20"
+                          ? "bg-blue-50"
                           : priority === "urgent"
-                          ? "bg-red-50 dark:bg-red-900/10"
+                          ? "bg-red-50"
                           : priority === "important"
-                          ? "bg-orange-50 dark:bg-orange-900/10"
+                          ? "bg-orange-50"
                           : ""
                       }`}
                       onClick={(e) => {
@@ -298,7 +310,7 @@ const MessageTable = ({
                       }}
                     >
                       {isSelectionMode && (
-                        <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 dark:text-gray-100 sm:pl-6">
+                        <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
                           <input
                             type="checkbox"
                             checked={isSelected}
@@ -308,13 +320,13 @@ const MessageTable = ({
                           />
                         </td>
                       )}
-                      <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 dark:text-gray-100 sm:pl-6">
+                      <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
                         {message.tenant}
                       </td>
-                      <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
+                      <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                         {message.property} - {message.unit}
                       </td>
-                      <td className="px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
+                      <td className="px-3 py-4 text-sm text-gray-500">
                         <div className="flex items-center gap-2">
                           <div className="max-w-md truncate">
                             {message.content}
@@ -322,7 +334,7 @@ const MessageTable = ({
                           {getPriorityBadge(priority)}
                         </div>
                       </td>
-                      <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
+                      <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                         {formatDate(message.timestamp)}
                       </td>
                       {!isSent && (
@@ -330,8 +342,8 @@ const MessageTable = ({
                           <span
                             className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
                               message.status === "unread"
-                                ? "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200"
-                                : "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
+                                ? "bg-yellow-100 text-yellow-800"
+                                : "bg-green-100 text-green-800"
                             }`}
                           >
                             {message.status}
@@ -344,7 +356,7 @@ const MessageTable = ({
                             e.stopPropagation();
                             onDeleteClick(message);
                           }}
-                          className="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300"
+                          className="text-red-600 hover:text-red-900"
                           aria-label="Delete message"
                         >
                           <svg

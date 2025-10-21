@@ -49,15 +49,15 @@ const Payments = () => {
 
   if (!isClient) {
     return (
-      <div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex items-center justify-center">
-        <div className="text-slate-600 dark:text-slate-400">Loading...</div>
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+        <div className="text-slate-600">Loading...</div>
       </div>
     );
   }
 
   if (!isAuthenticated()) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-slate-50 dark:bg-slate-900">
+      <div className="flex flex-col items-center justify-center min-h-screen bg-slate-50">
         <h2 className="text-2xl font-bold mb-4">Sign in required</h2>
         <p className="mb-6">You must be signed in to access this page.</p>
         <Link
@@ -424,19 +424,19 @@ Payment Method: ${payment.method}`;
   ];
 
   return (
-    <div className="flex h-screen overflow-hidden bg-slate-50 dark:bg-slate-900">
+    <div className="flex min-h-screen overflow-hidden bg-slate-50">
       <TenantSidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
       <div className="relative flex flex-col flex-1 overflow-y-auto overflow-x-hidden lg:ml-64">
         <TenantHeader toggleSidebar={toggleSidebar} />
-        <main className="grow">
+        <main className="grow bg-white">
           <div className="pl-4 pr-8 sm:pl-6 sm:pr-12 lg:pl-8 lg:pr-16 py-8 w-full">
             {/* Page header - Responsive, title always at top, button below on mobile */}
             <div className="flex flex-col gap-3 sm:flex-row sm:justify-between sm:items-center mb-6">
               <div>
-                <h1 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-slate-100">
+                <h1 className="text-xl sm:text-2xl font-bold text-slate-900">
                   Payments
                 </h1>
-                <p className="mt-1 text-xs sm:text-sm text-slate-500 dark:text-slate-400">
+                <p className="mt-1 text-xs sm:text-sm text-slate-500">
                   View and manage your rental payments
                 </p>
               </div>
@@ -451,19 +451,17 @@ Payment Method: ${payment.method}`;
             {/* Payment summary cards */}
             <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8">
               {/* Total Paid */}
-              <div className="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 p-3 sm:p-4 lg:p-6">
+              <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-3 sm:p-4 lg:p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-xs text-slate-500 dark:text-slate-400">
-                      Total Paid
-                    </p>
-                    <p className="mt-1 text-base sm:text-lg lg:text-2xl font-semibold text-slate-900 dark:text-slate-100">
+                    <p className="text-xs text-slate-500">Total Paid</p>
+                    <p className="mt-1 text-base sm:text-lg lg:text-2xl font-semibold text-slate-900">
                       $12,000
                     </p>
                   </div>
-                  <div className="p-1.5 sm:p-2 lg:p-3 bg-green-100 dark:bg-green-900/30 rounded-full">
+                  <div className="p-1.5 sm:p-2 lg:p-3 bg-green-100 rounded-full">
                     <svg
-                      className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-green-600 dark:text-green-400"
+                      className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-green-600"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -480,19 +478,17 @@ Payment Method: ${payment.method}`;
               </div>
 
               {/* Current Balance */}
-              <div className="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 p-3 sm:p-4 lg:p-6">
+              <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-3 sm:p-4 lg:p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-xs text-slate-500 dark:text-slate-400">
-                      Current Balance
-                    </p>
-                    <p className="mt-1 text-base sm:text-lg lg:text-2xl font-semibold text-slate-900 dark:text-slate-100">
+                    <p className="text-xs text-slate-500">Current Balance</p>
+                    <p className="mt-1 text-base sm:text-lg lg:text-2xl font-semibold text-slate-900">
                       $1,200
                     </p>
                   </div>
-                  <div className="p-1.5 sm:p-2 lg:p-3 bg-blue-100 dark:bg-blue-900/30 rounded-full">
+                  <div className="p-1.5 sm:p-2 lg:p-3 bg-blue-100 rounded-full">
                     <svg
-                      className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-blue-600 dark:text-blue-400"
+                      className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-blue-600"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -509,22 +505,20 @@ Payment Method: ${payment.method}`;
               </div>
 
               {/* Next Payment */}
-              <div className="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 p-3 sm:p-4 lg:p-6">
+              <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-3 sm:p-4 lg:p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-xs text-slate-500 dark:text-slate-400">
-                      Next Payment
-                    </p>
-                    <p className="mt-1 text-base sm:text-lg lg:text-2xl font-semibold text-slate-900 dark:text-slate-100">
+                    <p className="text-xs text-slate-500">Next Payment</p>
+                    <p className="mt-1 text-base sm:text-lg lg:text-2xl font-semibold text-slate-900">
                       $1,200
                     </p>
-                    <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                    <p className="mt-1 text-xs text-slate-500">
                       Due in 15 days
                     </p>
                   </div>
-                  <div className="p-1.5 sm:p-2 lg:p-3 bg-yellow-100 dark:bg-yellow-900/30 rounded-full">
+                  <div className="p-1.5 sm:p-2 lg:p-3 bg-yellow-100 rounded-full">
                     <svg
-                      className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-yellow-600 dark:text-yellow-400"
+                      className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-yellow-600"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -541,22 +535,20 @@ Payment Method: ${payment.method}`;
               </div>
 
               {/* Payment History */}
-              <div className="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 p-3 sm:p-4 lg:p-6">
+              <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-3 sm:p-4 lg:p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-xs text-slate-500 dark:text-slate-400">
-                      Payment History
-                    </p>
-                    <p className="mt-1 text-base sm:text-lg lg:text-2xl font-semibold text-slate-900 dark:text-slate-100">
+                    <p className="text-xs text-slate-500">Payment History</p>
+                    <p className="mt-1 text-base sm:text-lg lg:text-2xl font-semibold text-slate-900">
                       10
                     </p>
-                    <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                    <p className="mt-1 text-xs text-slate-500">
                       Total payments
                     </p>
                   </div>
-                  <div className="p-1.5 sm:p-2 lg:p-3 bg-purple-100 dark:bg-purple-900/30 rounded-full">
+                  <div className="p-1.5 sm:p-2 lg:p-3 bg-purple-100 rounded-full">
                     <svg
-                      className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-purple-600 dark:text-purple-400"
+                      className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-purple-600"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -585,7 +577,7 @@ Payment Method: ${payment.method}`;
                     <input
                       type="text"
                       placeholder="Search payments..."
-                      className="w-full pl-10 pr-4 py-2 sm:py-2.5 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0d9488] focus:border-[#0d9488] dark:bg-gray-800 dark:text-gray-100"
+                      className="w-full pl-10 pr-4 py-2 sm:py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0d9488] focus:border-[#0d9488]"
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
                     />
@@ -594,7 +586,7 @@ Payment Method: ${payment.method}`;
                 <div className="flex items-center space-x-2">
                   <button
                     onClick={() => setIsFilterOpen(!isFilterOpen)}
-                    className="inline-flex items-center px-4 py-2 border border-gray-200 dark:border-gray-700 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0d9488]"
+                    className="inline-flex items-center px-4 py-2 border border-gray-200 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0d9488]"
                   >
                     <Filter className="h-4 w-4 mr-2" />
                     Filter
@@ -610,7 +602,7 @@ Payment Method: ${payment.method}`;
                         sortOrder === "latest" ? "earliest" : "latest"
                       )
                     }
-                    className="inline-flex items-center px-4 py-2 border border-gray-200 dark:border-gray-700 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0d9488]"
+                    className="inline-flex items-center px-4 py-2 border border-gray-200 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0d9488]"
                   >
                     <ArrowUpDown className="h-4 w-4 mr-2" />
                     {sortOrder === "latest" ? "Latest" : "Earliest"}
@@ -623,13 +615,13 @@ Payment Method: ${payment.method}`;
                   <div>
                     <label
                       htmlFor="status"
-                      className="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                      className="block text-xs sm:text-sm font-medium text-gray-700 mb-1"
                     >
                       Status
                     </label>
                     <select
                       id="status"
-                      className="block w-full rounded-md border-gray-300 dark:border-gray-600 pl-3 pr-10 py-2 text-xs sm:text-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-gray-700 dark:text-gray-100"
+                      className="block w-full rounded-md border-gray-300 pl-3 pr-10 py-2 text-xs sm:text-sm focus:border-[#0d9488] focus:ring-[#0d9488]"
                       value={statusFilter}
                       onChange={(e) => setStatusFilter(e.target.value)}
                     >
@@ -642,13 +634,13 @@ Payment Method: ${payment.method}`;
                   <div>
                     <label
                       htmlFor="method"
-                      className="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                      className="block text-xs sm:text-sm font-medium text-gray-700 mb-1"
                     >
                       Payment Method
                     </label>
                     <select
                       id="method"
-                      className="block w-full rounded-md border-gray-300 dark:border-gray-600 pl-3 pr-10 py-2 text-xs sm:text-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-gray-700 dark:text-gray-100"
+                      className="block w-full rounded-md border-gray-300 pl-3 pr-10 py-2 text-xs sm:text-sm focus:border-[#0d9488] focus:ring-[#0d9488]"
                       value={methodFilter}
                       onChange={(e) => setMethodFilter(e.target.value)}
                     >
@@ -670,26 +662,26 @@ Payment Method: ${payment.method}`;
                     {currentPayments.map((payment) => (
                       <div
                         key={payment.id}
-                        className="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 cursor-pointer hover:shadow-md transition-shadow duration-200"
+                        className="bg-white rounded-lg shadow-sm border border-slate-200 cursor-pointer hover:shadow-md transition-shadow duration-200"
                         onClick={() => setSelectedPayment(payment)}
                       >
                         <div className="p-4">
                           <div className="flex items-start justify-between mb-3">
                             <div className="flex-1">
-                              <h3 className="text-sm font-medium text-slate-900 dark:text-slate-100">
+                              <h3 className="text-sm font-medium text-slate-900">
                                 {payment.reference}
                               </h3>
-                              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                              <p className="text-xs text-slate-500 mt-1">
                                 {payment.property} - {payment.unit || "N/A"}
                               </p>
                             </div>
                             <span
                               className={`inline-flex rounded-full px-2 py-1 text-xs font-semibold leading-4 ${
                                 payment.status === "Paid"
-                                  ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
+                                  ? "bg-green-100 text-green-800"
                                   : payment.status === "Pending"
-                                  ? "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200"
-                                  : "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200"
+                                  ? "bg-yellow-100 text-yellow-800"
+                                  : "bg-red-100 text-red-800"
                               }`}
                             >
                               {payment.status}
@@ -698,18 +690,14 @@ Payment Method: ${payment.method}`;
 
                           <div className="grid grid-cols-2 gap-4 text-sm">
                             <div>
-                              <span className="text-slate-500 dark:text-slate-400">
-                                Amount:
-                              </span>
-                              <span className="ml-1 font-medium text-slate-900 dark:text-slate-100">
+                              <span className="text-slate-500">Amount:</span>
+                              <span className="ml-1 font-medium text-slate-900">
                                 ${payment.amount.toFixed(2)}
                               </span>
                             </div>
                             <div>
-                              <span className="text-slate-500 dark:text-slate-400">
-                                Date:
-                              </span>
-                              <span className="ml-1 text-slate-900 dark:text-slate-100">
+                              <span className="text-slate-500">Date:</span>
+                              <span className="ml-1 text-slate-900">
                                 {new Date(payment.date).toLocaleDateString(
                                   "en-US",
                                   {
@@ -721,10 +709,8 @@ Payment Method: ${payment.method}`;
                               </span>
                             </div>
                             <div>
-                              <span className="text-slate-500 dark:text-slate-400">
-                                Method:
-                              </span>
-                              <span className="ml-1 text-slate-900 dark:text-slate-100">
+                              <span className="text-slate-500">Method:</span>
+                              <span className="ml-1 text-slate-900">
                                 {payment.method}
                               </span>
                             </div>
@@ -740,61 +726,61 @@ Payment Method: ${payment.method}`;
                   <div className="-my-2 -mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8">
                     <div className="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8">
                       <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 rounded-lg md:rounded-lg">
-                        <table className="min-w-full divide-y divide-gray-300 dark:divide-gray-700">
-                          <thead className="bg-gray-50 dark:bg-gray-800">
+                        <table className="min-w-full divide-y divide-gray-300">
+                          <thead className="bg-gray-50">
                             <tr>
                               <th
                                 scope="col"
-                                className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-100 sm:pl-6"
+                                className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6"
                               >
                                 Date
                               </th>
                               <th
                                 scope="col"
-                                className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
+                                className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
                               >
                                 Property
                               </th>
                               <th
                                 scope="col"
-                                className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
+                                className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
                               >
                                 Unit
                               </th>
                               <th
                                 scope="col"
-                                className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
+                                className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
                               >
                                 Amount
                               </th>
                               <th
                                 scope="col"
-                                className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
+                                className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
                               >
                                 Status
                               </th>
                               <th
                                 scope="col"
-                                className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
+                                className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
                               >
                                 Method
                               </th>
                               <th
                                 scope="col"
-                                className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
+                                className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
                               >
                                 Reference
                               </th>
                             </tr>
                           </thead>
-                          <tbody className="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-900">
+                          <tbody className="divide-y divide-gray-200 bg-white">
                             {currentPayments.map((payment) => (
                               <tr
                                 key={payment.id}
-                                className="hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer"
+                                className="hover:bg-gray-50 cursor-pointer"
                                 onClick={() => setSelectedPayment(payment)}
                               >
-                                <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 dark:text-gray-100 sm:pl-6">
+                                <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
                                   {new Date(payment.date).toLocaleDateString(
                                     "en-US",
                                     {
@@ -804,32 +790,32 @@ Payment Method: ${payment.method}`;
                                     }
                                   )}
                                 </td>
-                                <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
+                                <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                                   {payment.property}
                                 </td>
-                                <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
+                                <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                                   {payment.unit || "-"}
                                 </td>
-                                <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
+                                <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                                   ${payment.amount.toFixed(2)}
                                 </td>
-                                <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
+                                <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                                   <span
                                     className={`inline-flex rounded-full px-2 text-xs font-semibold leading-5 ${
                                       payment.status === "Paid"
-                                        ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
+                                        ? "bg-green-100 text-green-800"
                                         : payment.status === "Pending"
-                                        ? "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200"
-                                        : "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200"
+                                        ? "bg-yellow-100 text-yellow-800"
+                                        : "bg-red-100 text-red-800"
                                     }`}
                                   >
                                     {payment.status}
                                   </span>
                                 </td>
-                                <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
+                                <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                                   {payment.method}
                                 </td>
-                                <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
+                                <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                                   {payment.reference}
                                 </td>
                               </tr>
@@ -844,14 +830,14 @@ Payment Method: ${payment.method}`;
 
               {/* Pagination */}
               {filteredPayments.length > 0 && (
-                <div className="mt-4 flex items-center justify-between border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-4 py-3">
+                <div className="mt-4 flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3">
                   <div className="flex items-center justify-between w-full">
                     <div className="flex items-center space-x-4">
-                      <span className="text-xs text-gray-700 dark:text-gray-200">
+                      <span className="text-xs text-gray-700">
                         Page {currentPage} of {totalPages}
                       </span>
                       <div className="flex items-center space-x-2">
-                        <span className="text-xs text-gray-700 dark:text-gray-200">
+                        <span className="text-xs text-gray-700">
                           Go to page:
                         </span>
                         <input
@@ -877,7 +863,7 @@ Payment Method: ${payment.method}`;
                               handlePageChange(totalPages);
                             }
                           }}
-                          className="w-12 h-6 text-xs text-center rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-violet-500"
+                          className="w-12 h-6 text-xs text-center rounded border border-gray-300 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-violet-500"
                         />
                       </div>
                     </div>
@@ -885,7 +871,7 @@ Payment Method: ${payment.method}`;
                       <button
                         onClick={() => handlePageChange(currentPage - 1)}
                         disabled={currentPage === 1}
-                        className="inline-flex items-center p-1.5 text-xs font-medium rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="inline-flex items-center p-1.5 text-xs font-medium rounded-md border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         <svg
                           className="w-4 h-4"
@@ -904,7 +890,7 @@ Payment Method: ${payment.method}`;
                       <button
                         onClick={() => handlePageChange(currentPage + 1)}
                         disabled={currentPage === totalPages}
-                        className="inline-flex items-center p-1.5 text-xs font-medium rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="inline-flex items-center p-1.5 text-xs font-medium rounded-md border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         <svg
                           className="w-4 h-4"
@@ -931,14 +917,14 @@ Payment Method: ${payment.method}`;
 
       {/* Payment Modal */}
       {showPaymentModal && (
-        <div className="fixed inset-0 bg-gray-500/50 dark:bg-gray-900/50 z-40 transition-opacity">
+        <div className="fixed inset-0 bg-gray-500/50 z-40 transition-opacity">
           <div className="fixed inset-0 z-50 overflow-y-auto">
             <div className="flex min-h-full items-center justify-center p-2 sm:p-4 text-center">
-              <div className="relative transform overflow-hidden rounded-lg bg-white dark:bg-slate-800 px-3 pb-3 pt-4 sm:px-4 sm:pb-4 sm:pt-5 text-left shadow-xl transition-all w-full max-w-lg">
+              <div className="relative transform overflow-hidden rounded-lg bg-white px-3 pb-3 pt-4 sm:px-4 sm:pb-4 sm:pt-5 text-left shadow-xl transition-all w-full max-w-lg">
                 <div className="absolute right-0 top-0 pr-3 pt-3 sm:pr-4 sm:pt-4">
                   <button
                     type="button"
-                    className="rounded-md bg-white dark:bg-slate-800 text-slate-400 hover:text-slate-500 focus:outline-none"
+                    className="rounded-md bg-white text-slate-400 hover:text-slate-500 focus:outline-none"
                     onClick={() => {
                       setShowPaymentModal(false);
                       setSelectedPaymentMethod(null);
@@ -964,7 +950,7 @@ Payment Method: ${payment.method}`;
 
                 <div className="sm:flex sm:items-start">
                   <div className="mt-2 text-center sm:mt-0 sm:text-left w-full">
-                    <h3 className="text-lg sm:text-xl font-semibold leading-6 text-slate-900 dark:text-slate-100">
+                    <h3 className="text-lg sm:text-xl font-semibold leading-6 text-slate-900">
                       Pay Rent
                     </h3>
                   </div>
@@ -976,7 +962,7 @@ Payment Method: ${payment.method}`;
                     <div>
                       <label
                         htmlFor="property"
-                        className="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
+                        className="block text-xs sm:text-sm font-medium text-slate-700 mb-1"
                       >
                         Select Property
                       </label>
@@ -990,7 +976,7 @@ Payment Method: ${payment.method}`;
                           );
                           setSelectedProperty(property);
                         }}
-                        className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100 text-xs sm:text-sm py-2 px-3"
+                        className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] text-xs sm:text-sm py-2 px-3"
                       >
                         <option value="">Select a property</option>
                         {properties.map((property) => (
@@ -1005,19 +991,19 @@ Payment Method: ${payment.method}`;
                   {/* Payment Amount */}
                   {selectedProperty && (
                     <div>
-                      <h4 className="text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                      <h4 className="text-xs sm:text-sm font-medium text-slate-700 mb-2">
                         Payment Amount
                       </h4>
-                      <div className="bg-slate-50 dark:bg-slate-700/50 rounded-lg p-3 sm:p-4">
+                      <div className="bg-slate-50 rounded-lg p-3 sm:p-4">
                         <div className="flex justify-between items-center">
-                          <span className="text-slate-600 dark:text-slate-300 text-xs sm:text-sm">
+                          <span className="text-slate-600 text-xs sm:text-sm">
                             Monthly Rent
                           </span>
-                          <span className="text-lg sm:text-xl font-semibold text-slate-900 dark:text-slate-100">
+                          <span className="text-lg sm:text-xl font-semibold text-slate-900">
                             ${selectedProperty.rent.toLocaleString()}
                           </span>
                         </div>
-                        <div className="mt-2 text-xs sm:text-sm text-slate-500 dark:text-slate-400">
+                        <div className="mt-2 text-xs sm:text-sm text-slate-500">
                           Due by{" "}
                           {new Date(
                             selectedProperty.dueDate
@@ -1030,7 +1016,7 @@ Payment Method: ${payment.method}`;
                   {/* Payment Methods */}
                   {selectedProperty && (
                     <div>
-                      <h4 className="text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-3 sm:mb-4">
+                      <h4 className="text-xs sm:text-sm font-medium text-slate-700 mb-3 sm:mb-4">
                         Select Payment Method
                       </h4>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
@@ -1041,19 +1027,19 @@ Payment Method: ${payment.method}`;
                             className={`flex items-center p-3 sm:p-4 rounded-lg border ${
                               selectedPaymentMethod === method.id
                                 ? "border-[#0d9488] bg-[#0d9488]/20"
-                                : "border-slate-200 dark:border-slate-700 hover:border-[#0d9488]"
+                                : "border-slate-200 hover:border-[#0d9488]"
                             }`}
                           >
                             <div
                               className={`p-1.5 sm:p-2 rounded-full ${
                                 selectedPaymentMethod === method.id
                                   ? "bg-[#0d9488]/10 text-[#0d9488]"
-                                  : "bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-400"
+                                  : "bg-slate-100 text-slate-600"
                               }`}
                             >
                               {method.icon}
                             </div>
-                            <span className="ml-2 sm:ml-3 text-xs sm:text-sm font-medium text-slate-900 dark:text-slate-100">
+                            <span className="ml-2 sm:ml-3 text-xs sm:text-sm font-medium text-slate-900">
                               {method.name}
                             </span>
                           </button>
@@ -1070,7 +1056,7 @@ Payment Method: ${payment.method}`;
                           <div>
                             <label
                               htmlFor="cardNumber"
-                              className="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
+                              className="block text-xs sm:text-sm font-medium text-slate-700 mb-1"
                             >
                               Card Number
                             </label>
@@ -1078,14 +1064,14 @@ Payment Method: ${payment.method}`;
                               type="text"
                               id="cardNumber"
                               placeholder="1234 5678 9012 3456"
-                              className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100 text-xs sm:text-sm py-2 px-3"
+                              className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] text-xs sm:text-sm py-2 px-3"
                             />
                           </div>
                           <div className="grid grid-cols-2 gap-3 sm:gap-4">
                             <div>
                               <label
                                 htmlFor="expiry"
-                                className="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
+                                className="block text-xs sm:text-sm font-medium text-slate-700 mb-1"
                               >
                                 Expiry Date
                               </label>
@@ -1093,13 +1079,13 @@ Payment Method: ${payment.method}`;
                                 type="text"
                                 id="expiry"
                                 placeholder="MM/YY"
-                                className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100 text-xs sm:text-sm py-2 px-3"
+                                className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] text-xs sm:text-sm py-2 px-3"
                               />
                             </div>
                             <div>
                               <label
                                 htmlFor="cvv"
-                                className="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
+                                className="block text-xs sm:text-sm font-medium text-slate-700 mb-1"
                               >
                                 CVV
                               </label>
@@ -1107,7 +1093,7 @@ Payment Method: ${payment.method}`;
                                 type="text"
                                 id="cvv"
                                 placeholder="123"
-                                className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100 text-xs sm:text-sm py-2 px-3"
+                                className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] text-xs sm:text-sm py-2 px-3"
                               />
                             </div>
                           </div>
@@ -1119,7 +1105,7 @@ Payment Method: ${payment.method}`;
                           <div>
                             <label
                               htmlFor="accountNumber"
-                              className="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
+                              className="block text-xs sm:text-sm font-medium text-slate-700 mb-1"
                             >
                               Account Number
                             </label>
@@ -1127,13 +1113,13 @@ Payment Method: ${payment.method}`;
                               type="text"
                               id="accountNumber"
                               placeholder="Enter your account number"
-                              className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100 text-xs sm:text-sm py-2 px-3"
+                              className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] text-xs sm:text-sm py-2 px-3"
                             />
                           </div>
                           <div>
                             <label
                               htmlFor="routingNumber"
-                              className="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
+                              className="block text-xs sm:text-sm font-medium text-slate-700 mb-1"
                             >
                               Routing Number
                             </label>
@@ -1141,7 +1127,7 @@ Payment Method: ${payment.method}`;
                               type="text"
                               id="routingNumber"
                               placeholder="Enter your routing number"
-                              className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100 text-xs sm:text-sm py-2 px-3"
+                              className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] text-xs sm:text-sm py-2 px-3"
                             />
                           </div>
                         </div>
@@ -1152,7 +1138,7 @@ Payment Method: ${payment.method}`;
                           <div>
                             <label
                               htmlFor="phoneNumber"
-                              className="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
+                              className="block text-xs sm:text-sm font-medium text-slate-700 mb-1"
                             >
                               M-PESA Phone Number
                             </label>
@@ -1160,10 +1146,10 @@ Payment Method: ${payment.method}`;
                               type="tel"
                               id="phoneNumber"
                               placeholder="Enter your M-PESA phone number"
-                              className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100 text-xs sm:text-sm py-2 px-3"
+                              className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] text-xs sm:text-sm py-2 px-3"
                             />
                           </div>
-                          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
+                          <p className="text-xs sm:text-sm text-slate-500">
                             You will receive a prompt on your phone to confirm
                             the payment.
                           </p>
@@ -1172,7 +1158,7 @@ Payment Method: ${payment.method}`;
 
                       {selectedPaymentMethod === "paypal" && (
                         <div className="text-center py-3 sm:py-4">
-                          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mb-3 sm:mb-4">
+                          <p className="text-xs sm:text-sm text-slate-500 mb-3 sm:mb-4">
                             You will be redirected to PayPal to complete your
                             payment.
                           </p>
@@ -1194,7 +1180,7 @@ Payment Method: ${payment.method}`;
                         </button>
                         <button
                           type="button"
-                          className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-xs sm:text-sm font-semibold text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 hover:bg-slate-50 dark:bg-slate-700 dark:text-slate-100 dark:ring-slate-600 dark:hover:bg-slate-600 sm:mt-0 sm:w-auto"
+                          className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-xs sm:text-sm font-semibold text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 hover:bg-slate-50 sm:mt-0 sm:w-auto"
                           onClick={() => {
                             setShowPaymentModal(false);
                             setSelectedPaymentMethod(null);
@@ -1221,20 +1207,20 @@ Payment Method: ${payment.method}`;
           <div className="space-y-4 sm:space-y-5">
             <div className="flex justify-between items-start">
               <div>
-                <h3 className="text-lg sm:text-xl font-medium text-slate-900 dark:text-slate-100">
+                <h3 className="text-lg sm:text-xl font-medium text-slate-900">
                   Payment Details
                 </h3>
-                <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
+                <p className="text-xs sm:text-sm text-slate-500">
                   Reference: {selectedPayment.reference}
                 </p>
               </div>
             </div>
             <div className="mt-4 space-y-4">
               <div>
-                <h4 className="text-xs sm:text-sm font-medium text-slate-500 dark:text-slate-400">
+                <h4 className="text-xs sm:text-sm font-medium text-slate-500">
                   Date
                 </h4>
-                <p className="mt-1 text-xs sm:text-sm text-slate-900 dark:text-slate-100">
+                <p className="mt-1 text-xs sm:text-sm text-slate-900">
                   {new Date(selectedPayment.date).toLocaleDateString("en-US", {
                     month: "long",
                     day: "numeric",
@@ -1243,34 +1229,34 @@ Payment Method: ${payment.method}`;
                 </p>
               </div>
               <div>
-                <h4 className="text-xs sm:text-sm font-medium text-slate-500 dark:text-slate-400">
+                <h4 className="text-xs sm:text-sm font-medium text-slate-500">
                   Amount
                 </h4>
-                <p className="mt-1 text-xs sm:text-sm text-slate-900 dark:text-slate-100">
+                <p className="mt-1 text-xs sm:text-sm text-slate-900">
                   ${selectedPayment.amount.toFixed(2)}
                 </p>
               </div>
               <div>
-                <h4 className="text-xs sm:text-sm font-medium text-slate-500 dark:text-slate-400">
+                <h4 className="text-xs sm:text-sm font-medium text-slate-500">
                   Status
                 </h4>
                 <span
                   className={`inline-flex items-center px-2 py-0.5 sm:px-2.5 sm:py-0.5 rounded-full text-xs font-medium mt-1 ${
                     selectedPayment.status === "Paid"
-                      ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
+                      ? "bg-green-100 text-green-800"
                       : selectedPayment.status === "Pending"
-                      ? "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200"
-                      : "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200"
+                      ? "bg-yellow-100 text-yellow-800"
+                      : "bg-red-100 text-red-800"
                   }`}
                 >
                   {selectedPayment.status}
                 </span>
               </div>
               <div>
-                <h4 className="text-xs sm:text-sm font-medium text-slate-500 dark:text-slate-400">
+                <h4 className="text-xs sm:text-sm font-medium text-slate-500">
                   Payment Method
                 </h4>
-                <p className="mt-1 text-xs sm:text-sm text-slate-900 dark:text-slate-100">
+                <p className="mt-1 text-xs sm:text-sm text-slate-900">
                   {selectedPayment.method}
                 </p>
               </div>
@@ -1304,7 +1290,7 @@ Payment Method: ${payment.method}`;
                   <button
                     type="button"
                     onClick={() => handleSharePDF(selectedPayment, "email")}
-                    className="inline-flex items-center justify-center px-3 py-1.5 sm:px-4 sm:py-2 border border-transparent text-xs sm:text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-800"
+                    className="inline-flex items-center justify-center px-3 py-1.5 sm:px-4 sm:py-2 border border-transparent text-xs sm:text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                   >
                     <svg
                       className="w-4 h-4 mr-2"
@@ -1316,7 +1302,7 @@ Payment Method: ${payment.method}`;
                         strokeLinecap="round"
                         strokeLinejoin="round"
                         strokeWidth={2}
-                        d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                        d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"
                       />
                     </svg>
                     Share via Email
@@ -1324,7 +1310,7 @@ Payment Method: ${payment.method}`;
                   <button
                     type="button"
                     onClick={() => handleSharePDF(selectedPayment, "whatsapp")}
-                    className="inline-flex items-center justify-center px-3 py-1.5 sm:px-4 sm:py-2 border border-transparent text-xs sm:text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 dark:focus:ring-offset-gray-800"
+                    className="inline-flex items-center justify-center px-3 py-1.5 sm:px-4 sm:py-2 border border-transparent text-xs sm:text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
                   >
                     <svg
                       className="w-4 h-4 mr-2"

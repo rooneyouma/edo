@@ -10,6 +10,7 @@ html,
 body {
   scroll-behavior: smooth;
   height: 100%;
+  overflow-x: hidden; /* Prevent horizontal scrolling */
 }
 
 /* Scaling container to simulate 80% zoom */
@@ -19,7 +20,7 @@ body {
     transform-origin: top center;
     width: 111.111111%; /* 100% / 0.9 */
     margin-left: -5.555555%; /* -((111.111111% - 100%) / 2) */
-    min-height: 111.111111vh; /* Compensate for scaling */
+    min-height: 100vh; /* Changed from 111.111111vh to 100vh */
     display: flex;
     flex-direction: column;
   }
@@ -31,6 +32,31 @@ body {
     transform: none;
     width: 100%;
     margin-left: 0;
+    min-height: 100vh;
+  }
+}
+
+/* Mobile-specific adjustments to prevent whitespace */
+@media (max-width: 768px) {
+  html,
+  body {
+    height: auto;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Prevent scaling on mobile to avoid whitespace issues */
+  .app-scale-container {
+    transform: none;
+    width: 100%;
+    margin-left: 0;
+    min-height: 100vh;
+  }
+
+  /* Alternative: If scaling is needed, use a different approach */
+  .mobile-scale {
+    zoom: 0.95;
+    width: 100%;
     min-height: 100vh;
   }
 }
@@ -58,4 +84,9 @@ body {
 
 .scrollbar-none::-webkit-scrollbar {
   display: none;
+}
+
+/* Prevent pull-to-refresh on mobile */
+body {
+  overscroll-behavior-y: contain;
 }

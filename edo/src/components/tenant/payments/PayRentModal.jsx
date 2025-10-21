@@ -150,14 +150,14 @@ const PayRentModal = ({ isOpen, onClose, onSubmit, submitting }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-gray-500/50 dark:bg-gray-900/50 z-40 transition-opacity">
+    <div className="fixed inset-0 bg-gray-500/50 z-40 transition-opacity">
       <div className="fixed inset-0 z-50 overflow-y-auto">
         <div className="flex min-h-full items-center justify-center p-4 text-center">
-          <div className="relative transform overflow-hidden rounded-lg bg-white dark:bg-slate-800 px-4 pb-4 pt-5 text-left shadow-xl transition-all w-full max-w-lg">
+          <div className="relative transform overflow-hidden rounded-lg bg-white px-4 pb-4 pt-5 text-left shadow-xl transition-all w-full max-w-lg">
             <div className="absolute right-0 top-0 pr-4 pt-4">
               <button
                 type="button"
-                className="rounded-md bg-white dark:bg-slate-800 text-slate-400 hover:text-slate-500 focus:outline-none"
+                className="rounded-md bg-white text-slate-400 hover:text-slate-500 focus:outline-none"
                 onClick={onClose}
               >
                 <span className="sr-only">Close</span>
@@ -179,7 +179,7 @@ const PayRentModal = ({ isOpen, onClose, onSubmit, submitting }) => {
 
             <div className="sm:flex sm:items-start">
               <div className="mt-3 text-center sm:mt-0 sm:text-left w-full">
-                <h3 className="text-lg font-semibold leading-6 text-slate-900 dark:text-slate-100">
+                <h3 className="text-lg font-semibold leading-6 text-slate-900">
                   Pay Rent
                 </h3>
               </div>
@@ -191,7 +191,7 @@ const PayRentModal = ({ isOpen, onClose, onSubmit, submitting }) => {
                 <div>
                   <label
                     htmlFor="property"
-                    className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
+                    className="block text-sm font-medium text-slate-700 mb-1"
                   >
                     Select Property
                   </label>
@@ -205,7 +205,7 @@ const PayRentModal = ({ isOpen, onClose, onSubmit, submitting }) => {
                       );
                       setSelectedProperty(property);
                     }}
-                    className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100 sm:text-sm py-2 px-3"
+                    className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] sm:text-sm py-2 px-3"
                   >
                     <option value="">Select a property</option>
                     {properties.map((property) => (
@@ -220,19 +220,17 @@ const PayRentModal = ({ isOpen, onClose, onSubmit, submitting }) => {
               {/* Payment Amount */}
               {selectedProperty && (
                 <div>
-                  <h4 className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                  <h4 className="text-sm font-medium text-slate-700 mb-2">
                     Payment Amount
                   </h4>
-                  <div className="bg-slate-50 dark:bg-slate-700/50 rounded-lg p-4">
+                  <div className="bg-slate-50 rounded-lg p-4">
                     <div className="flex justify-between items-center">
-                      <span className="text-slate-600 dark:text-slate-300">
-                        Monthly Rent
-                      </span>
-                      <span className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+                      <span className="text-slate-600">Monthly Rent</span>
+                      <span className="text-lg font-semibold text-slate-900">
                         ${selectedProperty.rent.toLocaleString()}
                       </span>
                     </div>
-                    <div className="mt-2 text-sm text-slate-500 dark:text-slate-400">
+                    <div className="mt-2 text-sm text-slate-500">
                       Due by{" "}
                       {new Date(selectedProperty.dueDate).toLocaleDateString()}
                     </div>
@@ -243,7 +241,7 @@ const PayRentModal = ({ isOpen, onClose, onSubmit, submitting }) => {
               {/* Payment Methods */}
               {selectedProperty && !selectedPaymentMethod && (
                 <div>
-                  <h4 className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-4">
+                  <h4 className="text-sm font-medium text-slate-700 mb-4">
                     Select Payment Method
                   </h4>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -254,19 +252,19 @@ const PayRentModal = ({ isOpen, onClose, onSubmit, submitting }) => {
                         className={`flex items-center p-4 rounded-lg border ${
                           selectedPaymentMethod === method.id
                             ? "border-[#0d9488] bg-[#0d9488]/20"
-                            : "border-slate-200 dark:border-slate-700 hover:border-[#0d9488]"
+                            : "border-slate-200 hover:border-[#0d9488]"
                         }`}
                       >
                         <div
                           className={`p-2 rounded-full ${
                             selectedPaymentMethod === method.id
                               ? "bg-[#0d9488]/10 text-[#0d9488]"
-                              : "bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-400"
+                              : "bg-slate-100 text-slate-600"
                           }`}
                         >
                           {method.icon}
                         </div>
-                        <span className="ml-3 text-sm font-medium text-slate-900 dark:text-slate-100">
+                        <span className="ml-3 text-sm font-medium text-slate-900">
                           {method.name}
                         </span>
                       </button>
@@ -283,7 +281,7 @@ const PayRentModal = ({ isOpen, onClose, onSubmit, submitting }) => {
                       <div>
                         <label
                           htmlFor="cardNumber"
-                          className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
+                          className="block text-sm font-medium text-slate-700 mb-1"
                         >
                           Card Number
                         </label>
@@ -294,14 +292,14 @@ const PayRentModal = ({ isOpen, onClose, onSubmit, submitting }) => {
                           value={formData.cardNumber}
                           onChange={handleInputChange}
                           placeholder="1234 5678 9012 3456"
-                          className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100 sm:text-sm py-2 px-3"
+                          className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] sm:text-sm py-2 px-3"
                         />
                       </div>
                       <div className="grid grid-cols-2 gap-4">
                         <div>
                           <label
                             htmlFor="expiry"
-                            className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
+                            className="block text-sm font-medium text-slate-700 mb-1"
                           >
                             Expiry Date
                           </label>
@@ -312,13 +310,13 @@ const PayRentModal = ({ isOpen, onClose, onSubmit, submitting }) => {
                             value={formData.expiry}
                             onChange={handleInputChange}
                             placeholder="MM/YY"
-                            className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100 sm:text-sm py-2 px-3"
+                            className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] sm:text-sm py-2 px-3"
                           />
                         </div>
                         <div>
                           <label
                             htmlFor="cvv"
-                            className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
+                            className="block text-sm font-medium text-slate-700 mb-1"
                           >
                             CVV
                           </label>
@@ -329,7 +327,7 @@ const PayRentModal = ({ isOpen, onClose, onSubmit, submitting }) => {
                             value={formData.cvv}
                             onChange={handleInputChange}
                             placeholder="123"
-                            className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100 sm:text-sm py-2 px-3"
+                            className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] sm:text-sm py-2 px-3"
                           />
                         </div>
                       </div>
@@ -341,7 +339,7 @@ const PayRentModal = ({ isOpen, onClose, onSubmit, submitting }) => {
                       <div>
                         <label
                           htmlFor="accountNumber"
-                          className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
+                          className="block text-sm font-medium text-slate-700 mb-1"
                         >
                           Account Number
                         </label>
@@ -352,13 +350,13 @@ const PayRentModal = ({ isOpen, onClose, onSubmit, submitting }) => {
                           value={formData.accountNumber}
                           onChange={handleInputChange}
                           placeholder="Enter your account number"
-                          className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100 sm:text-sm py-2 px-3"
+                          className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] sm:text-sm py-2 px-3"
                         />
                       </div>
                       <div>
                         <label
                           htmlFor="routingNumber"
-                          className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
+                          className="block text-sm font-medium text-slate-700 mb-1"
                         >
                           Routing Number
                         </label>
@@ -369,7 +367,7 @@ const PayRentModal = ({ isOpen, onClose, onSubmit, submitting }) => {
                           value={formData.routingNumber}
                           onChange={handleInputChange}
                           placeholder="Enter your routing number"
-                          className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100 sm:text-sm py-2 px-3"
+                          className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] sm:text-sm py-2 px-3"
                         />
                       </div>
                     </div>
@@ -380,7 +378,7 @@ const PayRentModal = ({ isOpen, onClose, onSubmit, submitting }) => {
                       <div>
                         <label
                           htmlFor="phoneNumber"
-                          className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
+                          className="block text-sm font-medium text-slate-700 mb-1"
                         >
                           M-PESA Phone Number
                         </label>
@@ -391,10 +389,10 @@ const PayRentModal = ({ isOpen, onClose, onSubmit, submitting }) => {
                           value={formData.phoneNumber}
                           onChange={handleInputChange}
                           placeholder="Enter your M-PESA phone number"
-                          className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100 sm:text-sm py-2 px-3"
+                          className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] sm:text-sm py-2 px-3"
                         />
                       </div>
-                      <p className="text-sm text-slate-500 dark:text-slate-400">
+                      <p className="text-sm text-slate-500">
                         You will receive a prompt on your phone to confirm the
                         payment.
                       </p>
@@ -403,7 +401,7 @@ const PayRentModal = ({ isOpen, onClose, onSubmit, submitting }) => {
 
                   {selectedPaymentMethod === "paypal" && (
                     <div className="text-center py-4">
-                      <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">
+                      <p className="text-sm text-slate-500 mb-4">
                         You will be redirected to PayPal to complete your
                         payment.
                       </p>
@@ -429,7 +427,7 @@ const PayRentModal = ({ isOpen, onClose, onSubmit, submitting }) => {
                     </button>
                     <button
                       type="button"
-                      className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 hover:bg-slate-50 dark:bg-slate-700 dark:text-slate-100 dark:ring-slate-600 dark:hover:bg-slate-600 sm:mt-0 sm:w-auto"
+                      className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 hover:bg-slate-50 sm:mt-0 sm:w-auto"
                       onClick={() => {
                         setSelectedPaymentMethod(null);
                       }}
@@ -445,7 +443,7 @@ const PayRentModal = ({ isOpen, onClose, onSubmit, submitting }) => {
                 <div className="flex justify-between">
                   <button
                     type="button"
-                    className="inline-flex items-center px-3 py-2 border border-gray-300 dark:border-gray-600 text-sm font-medium rounded-md text-gray-700 dark:text-gray-200 bg-white dark:bg-slate-700 hover:bg-gray-50 dark:hover:bg-slate-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0d9488]"
+                    className="inline-flex items-center px-3 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0d9488]"
                     onClick={() => {
                       if (properties.length > 1) {
                         setSelectedProperty(null);
@@ -464,7 +462,7 @@ const PayRentModal = ({ isOpen, onClose, onSubmit, submitting }) => {
                 <div className="flex justify-end">
                   <button
                     type="button"
-                    className="inline-flex items-center px-3 py-2 border border-gray-300 dark:border-gray-600 text-sm font-medium rounded-md text-gray-700 dark:text-gray-200 bg-white dark:bg-slate-700 hover:bg-gray-50 dark:hover:bg-slate-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0d9488]"
+                    className="inline-flex items-center px-3 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0d9488]"
                     onClick={onClose}
                   >
                     Cancel

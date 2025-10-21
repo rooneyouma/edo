@@ -19,6 +19,13 @@ import {
   CheckCircle,
   ArrowRight,
   Home,
+  Users,
+  BarChart2,
+  TrendingUp,
+  PieChart,
+  CreditCard,
+  Plus,
+  Bell,
 } from "lucide-react";
 import {
   isAuthenticated,
@@ -34,25 +41,72 @@ import NewRequestModal from "../../components/tenant/maintenance/NewRequestModal
 import PayRentModal from "../../components/tenant/payments/PayRentModal";
 import VacateNoticeModal from "../../components/tenant/notices/VacateNoticeModal";
 
-const sampleTenant = {
-  name: "John Tenant",
-  avatar: null,
-};
+// Modern Analytics Card Component
+const AnalyticsCard = ({ title, value, icon, color, trend, subtitle }) => (
+  <div className="bg-white rounded-lg sm:rounded-xl shadow-sm border border-gray-200 p-3 sm:p-5 hover:shadow-md transition-shadow duration-200">
+    <div className="flex items-start justify-between">
+      <div>
+        <p className="text-xs sm:text-sm font-medium text-gray-500">{title}</p>
+        <h3 className="text-lg sm:text-2xl font-bold text-gray-900 mt-1">
+          {value}
+        </h3>
+        {subtitle && (
+          <p className="text-xs sm:text-sm text-gray-500 mt-1">{subtitle}</p>
+        )}
+      </div>
+      <div className={`p-2 sm:p-3 rounded-lg ${color}`}>{icon}</div>
+    </div>
+    {trend && (
+      <div className="mt-2 sm:mt-3 flex items-center">
+        <TrendingUp className="h-3 w-3 sm:h-4 sm:w-4 text-green-500" />
+        <span className="text-xs sm:text-sm text-green-600 ml-1">{trend}</span>
+      </div>
+    )}
+  </div>
+);
+
+// Financial Summary Card Component
+const FinancialCard = ({ title, amount, change, icon, color }) => (
+  <div className="bg-white rounded-lg sm:rounded-xl shadow-sm border border-gray-200 p-3 sm:p-5">
+    <div className="flex items-start justify-between">
+      <div>
+        <p className="text-xs sm:text-sm font-medium text-gray-500">{title}</p>
+        <h3 className="text-base sm:text-xl font-bold text-gray-900 mt-1">
+          {amount}
+        </h3>
+      </div>
+      <div className={`p-2 sm:p-3 rounded-lg ${color}`}>{icon}</div>
+    </div>
+    {change && (
+      <div className="mt-2 sm:mt-3">
+        <span
+          className={`inline-flex items-center px-2 py-0.5 sm:px-2.5 sm:py-0.5 rounded-full text-xs font-medium ${
+            change.type === "positive"
+              ? "bg-green-100 text-green-800"
+              : "bg-red-100 text-red-800"
+          }`}
+        >
+          {change.value}
+        </span>
+      </div>
+    )}
+  </div>
+);
 
 const quickActions = [
   {
     label: "Pay Rent",
-    icon: <DollarSign className="h-6 w-6" />,
+    icon: <DollarSign className="h-5 w-5" />,
     action: "openPayRent",
   },
   {
-    label: "Send Maintenance Request",
-    icon: <Wrench className="h-6 w-6" />,
+    label: "Request Maintenance",
+    icon: <Wrench className="h-5 w-5" />,
     action: "openMaintenanceRequest",
   },
   {
     label: "Submit Vacate Notice",
-    icon: <FileText className="h-6 w-6" />,
+    icon: <FileText className="h-5 w-5" />,
     action: "openVacateNotice",
   },
 ];
@@ -62,34 +116,27 @@ const activityTimeline = [
     type: "payment",
     label: "Paid $1,200 rent",
     date: "Jul 1, 2024",
-    icon: <DollarSign className="h-5 w-5 text-green-500" />,
+    icon: <DollarSign className="h-5 w-5 text-green-600" />,
   },
   {
     type: "maintenance",
     label: "Submitted maintenance request",
     date: "Jul 2, 2024",
-    icon: <Wrench className="h-5 w-5 text-blue-500" />,
+    icon: <Wrench className="h-5 w-5 text-blue-600" />,
   },
   {
     type: "notice",
     label: "Received building notice",
     date: "Jul 3, 2024",
-    icon: <FileText className="h-5 w-5 text-yellow-500" />,
+    icon: <FileText className="h-5 w-5 text-yellow-600" />,
   },
   {
     type: "message",
     label: "Messaged landlord",
     date: "Jul 4, 2024",
-    icon: <MessageCircle className="h-5 w-5 text-purple-500" />,
+    icon: <MessageCircle className="h-5 w-5 text-purple-600" />,
   },
 ];
-
-const banner = {
-  message: "Refer a friend and get a rent discount!",
-  icon: <Gift className="h-8 w-8 text-pink-500" />,
-  action: "Invite Now",
-  link: "/tenant/referrals",
-};
 
 const TenantDashboard = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -415,202 +462,189 @@ const TenantDashboard = () => {
   };
 
   return (
-    <div className="h-screen bg-slate-50 dark:bg-slate-900 overflow-hidden">
-      <div className="flex">
-        <TenantSidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
-        <div className="flex-1 flex flex-col lg:ml-64">
-          <TenantHeader toggleSidebar={toggleSidebar} />
-          <div className="h-[calc(100vh-4rem)]">
-            <main className="h-full transition-all duration-200 overflow-y-auto">
-              <div className="px-4 sm:px-6 lg:px-8 py-4">
-                {/* Dashboard Title */}
-
-                {/* Welcome Banner */}
-                <div className="mb-6 flex flex-col sm:flex-row items-start sm:items-center gap-4 w-full">
-                  {isClient && user && user.profile_image_url ? (
-                    <img
-                      src={user.profile_image_url}
-                      alt={user.first_name || user.name}
-                      className="h-12 w-12 rounded-full"
-                    />
-                  ) : (
-                    <div className="h-12 w-12 rounded-full bg-teal-600 flex items-center justify-center text-white text-xl font-bold">
-                      {isClient &&
-                        user &&
-                        (user.first_name
-                          ? user.first_name.charAt(0)
-                          : user.name
-                          ? user.name.charAt(0)
-                          : "U")}
-                      {!isClient && "U"}
-                    </div>
-                  )}
-                  <div>
-                    <h1 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-slate-100">
-                      Welcome,{" "}
-                      {isClient && user
-                        ? `${user.first_name || ""} ${
-                            user.last_name || user.name || ""
-                          }`.trim()
-                        : ""}
-                      !
-                    </h1>
-                    <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
-                      Here's a summary of your rental activity.
-                    </p>
-                  </div>
+    <div className="flex h-screen overflow-hidden bg-slate-50">
+      <TenantSidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+      <div className="relative flex flex-col flex-1 overflow-y-auto overflow-x-hidden lg:ml-64">
+        <TenantHeader toggleSidebar={toggleSidebar} />
+        <main className="h-full transition-all duration-200 overflow-y-auto">
+          <div className="px-4 sm:px-6 lg:px-8 py-4 sm:py-6 w-full">
+            {/* Welcome Banner with Profile Picture */}
+            <div className="mb-4 sm:mb-6 flex items-center gap-3 sm:gap-4 w-full">
+              {isClient && user && user.profile_image_url ? (
+                <img
+                  src={user.profile_image_url}
+                  alt={user.first_name || user.name}
+                  className="h-10 w-10 sm:h-12 sm:w-12 rounded-full"
+                />
+              ) : (
+                <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-full bg-teal-600 flex items-center justify-center text-white text-lg sm:text-xl font-bold">
+                  {isClient &&
+                    user &&
+                    (user.first_name
+                      ? user.first_name.charAt(0)
+                      : user.name
+                      ? user.name.charAt(0)
+                      : "U")}
+                  {!isClient && "U"}
                 </div>
-                {/* Quick Actions */}
-                <div className="mb-8">
-                  <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-200 mb-4 text-center">
-                    Quick Actions
-                  </h3>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 max-w-4xl mx-auto">
-                    {quickActions.map((action, index) => (
-                      <div
-                        key={index}
-                        onClick={() => {
-                          if (action.action === "openPayRent") {
-                            setShowPayRentModal(true);
-                          } else if (
-                            action.action === "openMaintenanceRequest"
-                          ) {
-                            setShowMaintenanceRequestModal(true);
-                          } else if (action.action === "openVacateNotice") {
-                            setShowVacateNoticeModal(true);
-                          }
-                        }}
-                        className="bg-teal-500/10 dark:bg-teal-500/20 border border-teal-200 dark:border-teal-800 rounded-md p-3 flex flex-col items-center justify-center transition-colors hover:opacity-90 cursor-pointer min-h-[80px]"
-                      >
-                        <div className="text-teal-700 dark:text-teal-300">
-                          {action.icon}
-                        </div>
-                        <span className="mt-2 font-medium text-xs text-slate-700 dark:text-slate-300 text-center">
-                          {action.label}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-                {/* Stats Grid */}
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 mb-8">
-                  {/* Maintenance Requests */}
-                  <div
-                    onClick={() => router.push("/tenant/maintenance")}
-                    className="bg-blue-50 dark:bg-blue-900/30 overflow-hidden shadow-sm rounded-md hover:shadow-md transition-shadow cursor-pointer"
-                  >
-                    <div className="p-3">
-                      <div className="flex items-center">
-                        <div className="flex-shrink-0">
-                          <Wrench className="h-6 w-6 text-blue-600 dark:text-blue-400" />
-                        </div>
-                        <div className="ml-4 w-0 flex-1">
-                          <dl>
-                            <dt className="text-sm font-medium text-blue-700 dark:text-blue-200 truncate">
-                              Maintenance Requests
-                            </dt>
-                            <dd className="flex items-baseline">
-                              <div className="text-xl sm:text-2xl font-semibold text-blue-900 dark:text-blue-100">
-                                2
-                              </div>
-                              <div className="ml-2 flex items-baseline text-xs font-semibold text-yellow-600 dark:text-yellow-400">
-                                <span>In Progress</span>
-                              </div>
-                            </dd>
-                          </dl>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  {/* Notices */}
-                  <div
-                    onClick={() => router.push("/tenant/notices")}
-                    className="bg-yellow-50 dark:bg-yellow-900/30 overflow-hidden shadow-sm rounded-md hover:shadow-md transition-shadow cursor-pointer"
-                  >
-                    <div className="p-3">
-                      <div className="flex items-center">
-                        <div className="flex-shrink-0">
-                          <FileText className="h-6 w-6 text-yellow-600 dark:text-yellow-400" />
-                        </div>
-                        <div className="ml-4 w-0 flex-1">
-                          <dl>
-                            <dt className="text-sm font-medium text-yellow-700 dark:text-yellow-200 truncate">
-                              New Notices
-                            </dt>
-                            <dd className="flex items-baseline">
-                              <div className="text-xl sm:text-2xl font-semibold text-yellow-900 dark:text-yellow-100">
-                                1
-                              </div>
-                              <div className="ml-2 flex items-baseline text-xs font-semibold text-yellow-600 dark:text-yellow-400">
-                                <span>New</span>
-                              </div>
-                            </dd>
-                          </dl>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  {/* Payment History */}
-                  <div
-                    onClick={() => router.push("/tenant/payments")}
-                    className="bg-purple-50 dark:bg-purple-900/30 overflow-hidden shadow-sm rounded-md hover:shadow-md transition-shadow cursor-pointer"
-                  >
-                    <div className="p-3">
-                      <div className="flex items-center">
-                        <div className="flex-shrink-0">
-                          <Calendar className="h-6 w-6 text-purple-600 dark:text-purple-400" />
-                        </div>
-                        <div className="ml-4 w-0 flex-1">
-                          <dl>
-                            <dt className="text-sm font-medium text-purple-700 dark:text-purple-200 truncate">
-                              Payment History
-                            </dt>
-                            <dd className="flex items-baseline">
-                              <div className="text-xl sm:text-2xl font-semibold text-purple-900 dark:text-purple-100">
-                                $7,200
-                              </div>
-                              <div className="ml-2 flex items-baseline text-xs font-semibold text-purple-600 dark:text-purple-400">
-                                <span>Last 6 months</span>
-                              </div>
-                            </dd>
-                          </dl>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Recent Activity */}
-                <div className="mb-8">
-                  <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-200 mb-4">
-                    Recent Activity
-                  </h3>
-                  <div className="bg-white dark:bg-slate-800 overflow-hidden shadow-sm rounded-md">
-                    <div className="p-3">
-                      <ul className="space-y-3">
-                        {activityTimeline.map((item, index) => (
-                          <li key={index} className="flex items-start">
-                            <div className="mr-2 mt-0.5 flex-shrink-0">
-                              {item.icon}
-                            </div>
-                            <div>
-                              <p className="text-xs font-medium text-slate-800 dark:text-slate-200 leading-tight">
-                                {item.label}
-                              </p>
-                              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                                {item.date}
-                              </p>
-                            </div>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  </div>
-                </div>
+              )}
+              <div>
+                <h1 className="text-lg sm:text-xl md:text-2xl font-bold text-slate-900">
+                  Welcome,{" "}
+                  {isClient && user
+                    ? `${user.first_name || ""} ${
+                        user.last_name || user.name || ""
+                      }`.trim()
+                    : ""}
+                  !
+                </h1>
+                <p className="text-xs sm:text-sm text-slate-500">
+                  Here's a summary of your rental activity.
+                </p>
               </div>
-            </main>
+            </div>
+
+            {/* Quick Actions */}
+            <div className="mb-6 sm:mb-8">
+              <h3 className="text-base sm:text-lg font-semibold text-slate-800 mb-3 sm:mb-4 text-center">
+                Quick Actions
+              </h3>
+              <div className="flex flex-wrap justify-center gap-2 sm:gap-3 max-w-4xl mx-auto">
+                {quickActions.map((action, index) => (
+                  <div
+                    key={index}
+                    onClick={() => {
+                      if (action.action === "openPayRent") {
+                        setShowPayRentModal(true);
+                      } else if (action.action === "openMaintenanceRequest") {
+                        setShowMaintenanceRequestModal(true);
+                      } else if (action.action === "openVacateNotice") {
+                        setShowVacateNoticeModal(true);
+                      }
+                    }}
+                    className="flex items-center gap-2 bg-teal-700 rounded-lg px-3 py-3 sm:px-4 sm:py-4 transition-colors hover:bg-teal-800 cursor-pointer flex-1 min-w-[140px] sm:min-w-[200px] max-w-[250px]"
+                  >
+                    <div className="text-white">{action.icon}</div>
+                    <span className="font-medium text-xs sm:text-sm text-white whitespace-nowrap overflow-hidden text-ellipsis">
+                      {action.label}
+                    </span>
+                    <ArrowRight className="h-3 w-3 sm:h-4 sm:w-4 text-white ml-auto" />
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Modern Analytics Section */}
+            <div className="mb-6 sm:mb-8">
+              <h3 className="text-base sm:text-lg font-semibold text-slate-800 mb-3 sm:mb-4">
+                Rental Overview
+              </h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5">
+                <AnalyticsCard
+                  title="Active Rentals"
+                  value={propertiesData?.length || "0"}
+                  icon={
+                    <Home className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600" />
+                  }
+                  color="bg-blue-100"
+                  trend="+1 from last month"
+                />
+                <AnalyticsCard
+                  title="Maintenance Requests"
+                  value="2"
+                  icon={
+                    <Wrench className="h-5 w-5 sm:h-6 sm:w-6 text-indigo-600" />
+                  }
+                  color="bg-indigo-100"
+                  trend="1 in progress"
+                />
+                <AnalyticsCard
+                  title="Notices"
+                  value="1"
+                  subtitle="New notice"
+                  icon={
+                    <FileText className="h-5 w-5 sm:h-6 sm:w-6 text-green-600" />
+                  }
+                  color="bg-green-100"
+                  trend="1 unread"
+                />
+                <AnalyticsCard
+                  title="Payment History"
+                  value="$7,200"
+                  icon={
+                    <DollarSign className="h-5 w-5 sm:h-6 sm:w-6 text-orange-600" />
+                  }
+                  color="bg-orange-100"
+                  trend="Last 6 months"
+                />
+              </div>
+            </div>
+
+            {/* Financial Summary */}
+            <div className="mb-6 sm:mb-8">
+              <h3 className="text-base sm:text-lg font-semibold text-slate-800 mb-3 sm:mb-4">
+                Financial Summary
+              </h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-5">
+                <FinancialCard
+                  title="Monthly Rent"
+                  amount="$1,200"
+                  icon={
+                    <DollarSign className="h-5 w-5 sm:h-6 sm:w-6 text-purple-600" />
+                  }
+                  color="bg-purple-100"
+                />
+                <FinancialCard
+                  title="Last Payment"
+                  amount="$1,200"
+                  icon={
+                    <CreditCard className="h-5 w-5 sm:h-6 sm:w-6 text-green-600" />
+                  }
+                  color="bg-green-100"
+                  change={{
+                    type: "positive",
+                    value: "On time",
+                  }}
+                />
+                <FinancialCard
+                  title="Next Due"
+                  amount="$1,200"
+                  icon={
+                    <Calendar className="h-5 w-5 sm:h-6 sm:w-6 text-yellow-600" />
+                  }
+                  color="bg-yellow-100"
+                  change={{ type: "negative", value: "Due in 5 days" }}
+                />
+              </div>
+            </div>
+
+            {/* Recent Activity */}
+            <div className="mb-4 sm:mb-6">
+              <h3 className="text-base sm:text-lg font-semibold text-slate-800 mb-3 sm:mb-4">
+                Recent Activity
+              </h3>
+              <div className="bg-white rounded-lg sm:rounded-xl shadow-sm border border-gray-200 p-3 sm:p-5">
+                <ul className="space-y-3 sm:space-y-4">
+                  {activityTimeline.map((activity, index) => (
+                    <li key={index} className="flex items-start">
+                      <div className="mr-2 sm:mr-3 mt-0.5 sm:mt-1">
+                        {activity.icon}
+                      </div>
+                      <div>
+                        <p className="text-xs sm:text-sm font-medium text-slate-800">
+                          {activity.label}
+                        </p>
+                        <p className="text-xs text-slate-500 mt-0.5 sm:mt-1">
+                          {activity.date}
+                        </p>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
           </div>
-        </div>
+        </main>
       </div>
 
       {/* Onboard Role Modal */}

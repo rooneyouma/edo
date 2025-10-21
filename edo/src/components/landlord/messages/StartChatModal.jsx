@@ -17,30 +17,30 @@ const StartChatModal = ({ isOpen, onClose, tenants = [], onSelectTenant }) => {
         setFilteredTenants(sorted);
       } else {
         // Filter tenants based on search query
-        const filtered = tenants.filter(
-          (tenant) => {
-            // Convert all values to lowercase strings for comparison
-            const query = searchQuery.toLowerCase();
-            const name = (tenant.name || "").toLowerCase();
-            const email = (tenant.email || "").toLowerCase();
-            const property = (tenant.property || "").toLowerCase();
-            const unit = (tenant.unit || "").toLowerCase();
-            
-            // Check if any field contains the search query
-            return name.includes(query) || 
-                   email.includes(query) || 
-                   property.includes(query) || 
-                   unit.includes(query);
-          }
-        );
-        
+        const filtered = tenants.filter((tenant) => {
+          // Convert all values to lowercase strings for comparison
+          const query = searchQuery.toLowerCase();
+          const name = (tenant.name || "").toLowerCase();
+          const email = (tenant.email || "").toLowerCase();
+          const property = (tenant.property || "").toLowerCase();
+          const unit = (tenant.unit || "").toLowerCase();
+
+          // Check if any field contains the search query
+          return (
+            name.includes(query) ||
+            email.includes(query) ||
+            property.includes(query) ||
+            unit.includes(query)
+          );
+        });
+
         // Sort filtered results
         const sorted = filtered.sort((a, b) => {
           const nameA = a.name || "";
           const nameB = b.name || "";
           return nameA.localeCompare(nameB);
         });
-        
+
         setFilteredTenants(sorted);
       }
     }
@@ -53,20 +53,20 @@ const StartChatModal = ({ isOpen, onClose, tenants = [], onSelectTenant }) => {
       <div className="flex min-h-full items-center justify-center p-4 text-center">
         {/* Backdrop */}
         <div
-          className="fixed inset-0 bg-gray-900/30 dark:bg-gray-900/60 transition-opacity"
+          className="fixed inset-0 bg-gray-900/30 transition-opacity"
           onClick={onClose}
         />
 
         {/* Modal */}
-        <div className="relative transform overflow-hidden rounded-lg bg-white dark:bg-gray-800 text-left shadow-xl transition-all w-full max-w-lg">
+        <div className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all w-full max-w-lg">
           {/* Header */}
-          <div className="flex items-center justify-between border-b border-gray-200 dark:border-gray-700 px-6 py-4">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+          <div className="flex items-center justify-between border-b border-gray-200 px-6 py-4">
+            <h3 className="text-lg font-semibold text-gray-900">
               Start New Chat
             </h3>
             <button
               onClick={onClose}
-              className="rounded-full p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-gray-700 dark:hover:text-gray-300"
+              className="rounded-full p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600"
             >
               <X className="h-5 w-5" />
             </button>
@@ -81,7 +81,7 @@ const StartChatModal = ({ isOpen, onClose, tenants = [], onSelectTenant }) => {
                 placeholder="Search tenants..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full rounded-lg border border-gray-300 bg-white py-2 pl-10 pr-4 text-sm text-gray-900 placeholder-gray-500 focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400"
+                className="w-full rounded-lg border border-gray-300 bg-white py-2 pl-10 pr-4 text-sm text-gray-900 placeholder-gray-500 focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
               />
             </div>
           </div>
@@ -97,18 +97,18 @@ const StartChatModal = ({ isOpen, onClose, tenants = [], onSelectTenant }) => {
                         onSelectTenant(tenant);
                         onClose();
                       }}
-                      className="flex w-full items-center space-x-3 rounded-lg p-3 hover:bg-gray-50 dark:hover:bg-gray-700"
+                      className="flex w-full items-center space-x-3 rounded-lg p-3 hover:bg-gray-50"
                     >
-                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-teal-100 text-teal-600 dark:bg-teal-900 dark:text-teal-400">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-teal-100 text-teal-600">
                         <span className="text-sm font-medium">
                           {tenant.name?.charAt(0)?.toUpperCase()}
                         </span>
                       </div>
                       <div className="flex-1 text-left">
-                        <p className="text-sm font-medium text-gray-900 dark:text-white">
+                        <p className="text-sm font-medium text-gray-900">
                           {tenant.name}
                         </p>
-                        <p className="text-xs text-gray-500 dark:text-gray-400">
+                        <p className="text-xs text-gray-500">
                           {tenant.property} - {tenant.unit}
                         </p>
                       </div>
@@ -118,13 +118,13 @@ const StartChatModal = ({ isOpen, onClose, tenants = [], onSelectTenant }) => {
               </ul>
             ) : (
               <div className="py-8 text-center">
-                <div className="mx-auto h-12 w-12 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center">
+                <div className="mx-auto h-12 w-12 rounded-full bg-gray-100 flex items-center justify-center">
                   <Search className="h-6 w-6 text-gray-400" />
                 </div>
-                <h3 className="mt-2 text-sm font-medium text-gray-900 dark:text-white">
+                <h3 className="mt-2 text-sm font-medium text-gray-900">
                   No tenants found
                 </h3>
-                <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                <p className="mt-1 text-sm text-gray-500">
                   {searchQuery
                     ? "No tenants match your search criteria."
                     : "You don't have any tenants to chat with yet."}
@@ -134,10 +134,10 @@ const StartChatModal = ({ isOpen, onClose, tenants = [], onSelectTenant }) => {
           </div>
 
           {/* Footer */}
-          <div className="flex justify-end border-t border-gray-200 dark:border-gray-700 px-6 py-4">
+          <div className="flex justify-end border-t border-gray-200 px-6 py-4">
             <button
               onClick={onClose}
-              className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600"
+              className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
             >
               Cancel
             </button>

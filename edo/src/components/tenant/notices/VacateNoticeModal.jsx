@@ -129,14 +129,14 @@ const VacateNoticeModal = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-gray-500/50 dark:bg-gray-900/50 z-40">
+    <div className="fixed inset-0 bg-gray-500/50 z-40">
       <div className="fixed inset-0 z-50 overflow-y-auto">
         <div className="flex min-h-full items-end justify-center p-2 text-center sm:items-center sm:p-0">
-          <div className="relative transform overflow-hidden rounded-lg bg-white dark:bg-slate-800 px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:p-6 w-full">
+          <div className="relative transform overflow-hidden rounded-lg bg-white px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:p-6 w-full">
             <div className="absolute right-0 top-0 pr-4 pt-4">
               <button
                 type="button"
-                className="rounded-md bg-white dark:bg-slate-800 text-gray-400 hover:text-gray-500 focus:outline-none"
+                className="rounded-md bg-white text-gray-400 hover:text-gray-500 focus:outline-none"
                 onClick={() => {
                   onClose();
                   setFormError(""); // Clear error when closing
@@ -161,10 +161,10 @@ const VacateNoticeModal = ({
 
             <div className="sm:flex sm:items-start">
               <div className="mt-3 text-center sm:mt-0 sm:text-left w-full">
-                <h3 className="text-lg font-semibold leading-6 text-gray-900 dark:text-gray-100">
+                <h3 className="text-lg font-semibold leading-6 text-gray-900">
                   Submit Vacate Notice
                 </h3>
-                <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                <p className="mt-1 text-sm text-gray-500">
                   Please provide the details for your vacate notice.
                 </p>
               </div>
@@ -172,7 +172,7 @@ const VacateNoticeModal = ({
 
             {/* Add 30-day notice badge inside the form modal */}
             <div className="mt-4">
-              <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
+              <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
                 <svg
                   className="mr-1.5 h-4 w-4"
                   fill="none"
@@ -222,7 +222,7 @@ const VacateNoticeModal = ({
                 <div>
                   <label
                     htmlFor="property"
-                    className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                    className="block text-sm font-medium text-gray-700 mb-1"
                   >
                     Property
                   </label>
@@ -232,7 +232,7 @@ const VacateNoticeModal = ({
                     value={formData.property}
                     onChange={handleInputChange}
                     required
-                    className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-gray-700 dark:text-gray-100 text-sm sm:text-sm py-2 px-3"
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] text-sm sm:text-sm py-2 px-3"
                   >
                     <option value="">Select a property</option>
                     {tenantProperties.map((property) => (
@@ -247,7 +247,7 @@ const VacateNoticeModal = ({
               <div>
                 <label
                   htmlFor="moveOutDate"
-                  className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                  className="block text-sm font-medium text-gray-700 mb-1"
                 >
                   Move-Out Date
                 </label>
@@ -259,14 +259,14 @@ const VacateNoticeModal = ({
                   onChange={handleInputChange}
                   required
                   min={new Date().toISOString().split("T")[0]}
-                  className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-gray-700 dark:text-gray-100 text-sm sm:text-sm py-2 px-3"
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] text-sm sm:text-sm py-2 px-3"
                 />
               </div>
 
               <div>
                 <label
                   htmlFor="reason"
-                  className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                  className="block text-sm font-medium text-gray-700 mb-1"
                 >
                   Reason for Vacating (Optional)
                 </label>
@@ -276,7 +276,7 @@ const VacateNoticeModal = ({
                   rows={3}
                   value={formData.reason}
                   onChange={handleInputChange}
-                  className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-gray-700 dark:text-gray-100 text-sm sm:text-sm py-2 px-3"
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] text-sm sm:text-sm py-2 px-3"
                   placeholder="Please provide a detailed reason for vacating..."
                 />
               </div>
@@ -284,7 +284,7 @@ const VacateNoticeModal = ({
               <div className="mt-4 sm:mt-6 flex flex-col-reverse sm:flex-row sm:justify-end gap-3">
                 <button
                   type="button"
-                  className="w-full sm:w-auto inline-flex justify-center rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 shadow-sm hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-[#0d9488] focus:ring-offset-2"
+                  className="w-full sm:w-auto inline-flex justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-[#0d9488] focus:ring-offset-2"
                   onClick={() => {
                     onClose();
                     setFormError(""); // Clear error when closing

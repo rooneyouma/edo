@@ -27,7 +27,6 @@ const DynamicUnitForm = ({
   });
   const [validationErrors, setValidationErrors] = useState({});
   const [validationWarnings, setValidationWarnings] = useState({});
-  const [showTips, setShowTips] = useState(false);
 
   // Update form data when propertyType or initialData changes
   useEffect(() => {
@@ -126,12 +125,13 @@ const DynamicUnitForm = ({
     const hasError = validationErrors[fieldName];
     const hasWarning = validationWarnings[fieldName];
     const helpText = getFieldHelpText(fieldName, propertyType);
-    const baseInputClass = `mt-1 block w-full rounded-md border shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100 py-2 px-3 sm:text-sm ${
+    // Removed dark mode classes from baseInputClass
+    const baseInputClass = `mt-1 block w-full rounded-md border shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] py-2 px-3 sm:text-sm ${
       hasError
         ? "border-red-300 focus:border-red-500 focus:ring-red-500"
         : hasWarning
         ? "border-yellow-300 focus:border-yellow-500 focus:ring-yellow-500"
-        : "border-slate-300 dark:border-slate-600"
+        : "border-slate-300"
     }`;
 
     const renderInput = () => {
@@ -148,7 +148,7 @@ const DynamicUnitForm = ({
             />
             <label
               htmlFor={fieldName}
-              className="ml-2 block text-sm text-gray-900 dark:text-gray-100"
+              className="ml-2 block text-sm text-gray-900"
             >
               {fieldConfig.label}
             </label>
@@ -228,9 +228,7 @@ const DynamicUnitForm = ({
           }
           readOnly={isEdit && fieldName === "unit_id"}
           className={`${baseInputClass} ${
-            isEdit && fieldName === "unit_id"
-              ? "bg-gray-100 dark:bg-gray-600"
-              : ""
+            isEdit && fieldName === "unit_id" ? "bg-gray-100" : ""
           }`}
         />
       );
@@ -258,7 +256,7 @@ const DynamicUnitForm = ({
       <div key={fieldName} className={className}>
         <label
           htmlFor={fieldName}
-          className="block text-sm font-medium text-slate-700 dark:text-slate-300"
+          className="block text-sm font-medium text-slate-700"
         >
           {fieldConfig.label}
           {helpText && (
@@ -286,39 +284,16 @@ const DynamicUnitForm = ({
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      {/* Property Type Indicator */}
-      <div className="bg-slate-50 dark:bg-slate-800 rounded-lg p-3">
+      {/* Property Type Indicator - Removed tips section as requested */}
+      <div className="bg-slate-50 rounded-lg p-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
             <div className="w-2 h-2 bg-[#0d9488] rounded-full"></div>
-            <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
+            <span className="text-sm font-medium text-slate-700">
               {config.name} Unit Configuration
             </span>
           </div>
-          <button
-            type="button"
-            onClick={() => setShowTips(!showTips)}
-            className="text-xs text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
-          >
-            {showTips ? "Hide Tips" : "Show Tips"}
-          </button>
         </div>
-
-        {showTips && (
-          <div className="mt-3 pt-3 border-t border-slate-200 dark:border-slate-600">
-            <h4 className="text-xs font-medium text-slate-600 dark:text-slate-400 mb-2">
-              Tips for {config.name} Units:
-            </h4>
-            <ul className="text-xs text-slate-600 dark:text-slate-400 space-y-1">
-              {getPropertyTypeTips(propertyType).map((tip, index) => (
-                <li key={index} className="flex items-start">
-                  <span className="text-blue-500 mr-2">•</span>
-                  <span>{tip}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
       </div>
 
       {/* Dynamic Fields Layout */}
@@ -419,12 +394,12 @@ const DynamicUnitForm = ({
         </div>
       )}
 
-      {/* Action Buttons */}
-      <div className="flex justify-end space-x-3 pt-4 border-t border-slate-200 dark:border-slate-700">
+      {/* Action Buttons - Removed dark mode classes */}
+      <div className="flex justify-end space-x-3 pt-4 border-t border-slate-200">
         <button
           type="button"
           onClick={onCancel}
-          className="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0d9488] dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 dark:hover:bg-gray-600"
+          className="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0d9488]"
         >
           Cancel
         </button>

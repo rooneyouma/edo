@@ -232,8 +232,9 @@ const ManageUnitsModal = ({
         <div className="mt-4 space-y-4">
           {property.units && property.units.length > 0 ? (
             <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                <thead className="bg-gray-50 dark:bg-gray-800">
+              {/* Removed dark mode classes from table elements */}
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
                   <tr>
                     <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Unit ID
@@ -261,41 +262,41 @@ const ManageUnitsModal = ({
                     </th>
                   </tr>
                 </thead>
-                <tbody className="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700">
+                <tbody className="bg-white divide-y divide-gray-200">
                   {property.units.map((unit) => (
                     <tr key={unit.id}>
-                      <td className="px-4 py-2 text-sm text-gray-900 dark:text-gray-100">
+                      <td className="px-4 py-2 text-sm text-gray-900">
                         {unit.unit_id || "-"}
                       </td>
-                      <td className="px-4 py-2 text-sm text-gray-900 dark:text-gray-100">
+                      <td className="px-4 py-2 text-sm text-gray-900">
                         {unit.floor}
                       </td>
-                      <td className="px-4 py-2 text-sm text-gray-900 dark:text-gray-100">
+                      <td className="px-4 py-2 text-sm text-gray-900">
                         {unit.bedrooms}
                       </td>
-                      <td className="px-4 py-2 text-sm text-gray-900 dark:text-gray-100">
+                      <td className="px-4 py-2 text-sm text-gray-900">
                         {unit.bathrooms}
                       </td>
-                      <td className="px-4 py-2 text-sm text-gray-900 dark:text-gray-100">
+                      <td className="px-4 py-2 text-sm text-gray-900">
                         {unit.rent_amount ? `Kes ${unit.rent_amount}` : "-"}
                       </td>
-                      <td className="px-4 py-2 text-sm text-gray-900 dark:text-gray-100">
+                      <td className="px-4 py-2 text-sm text-gray-900">
                         {unit.security_deposit
                           ? `Kes ${unit.security_deposit}`
                           : "-"}
                       </td>
-                      <td className="px-4 py-2 text-sm text-gray-900 dark:text-gray-100">
+                      <td className="px-4 py-2 text-sm text-gray-900">
                         <span
                           className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
                             unit.status === "vacant"
-                              ? "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400"
-                              : "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400"
+                              ? "bg-green-100 text-green-800"
+                              : "bg-red-100 text-red-800"
                           }`}
                         >
                           {unit.status === "vacant" ? "Vacant" : "Occupied"}
                         </span>
                       </td>
-                      <td className="px-4 py-2 text-sm text-gray-900 dark:text-gray-100 flex gap-2 items-center">
+                      <td className="px-4 py-2 text-sm text-gray-900 flex gap-2 items-center">
                         {unit.status === "vacant" && (
                           <button
                             className="text-blue-600 hover:text-blue-900 mr-2 cursor-pointer"
@@ -350,7 +351,8 @@ const ManageUnitsModal = ({
               )}
             </div>
           ) : (
-            <div className="text-gray-500 dark:text-gray-400 text-center py-8">
+            // Removed dark mode class from no units message
+            <div className="text-gray-500 text-center py-8">
               No units found for this property.
             </div>
           )}

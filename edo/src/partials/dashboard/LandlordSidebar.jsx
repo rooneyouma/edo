@@ -126,8 +126,8 @@ function LandlordSidebar({ sidebarOpen, setSidebarOpen }) {
   // Don't render anything until mounted to prevent hydration issues
   if (!mounted) {
     return (
-      <aside
-        className={`sidebar fixed inset-y-0 left-0 z-50 w-64 bg-white dark:bg-slate-800 shadow-lg transform transition-transform duration-200 ease-in-out lg:translate-x-0 ${
+      <div
+        className={`sidebar fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg transform transition-transform duration-200 ease-in-out lg:translate-x-0 ${
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         } rounded-tr-2xl`}
       >
@@ -147,7 +147,7 @@ function LandlordSidebar({ sidebarOpen, setSidebarOpen }) {
             {navigation.map((item) => (
               <div
                 key={item.name}
-                className="flex items-center px-4 py-2 text-sm font-medium rounded-md"
+                className="flex items-center px-4 py-2 text-sm font-medium rounded-md text-slate-700"
               >
                 <div className="w-5 h-5 mr-3" /> {/* Placeholder for icon */}
                 {item.name}
@@ -157,14 +157,14 @@ function LandlordSidebar({ sidebarOpen, setSidebarOpen }) {
 
           {/* Sidebar Footer */}
           <div className="p-4 mt-auto">
-            <div className="border-t border-slate-200 dark:border-slate-700 mb-4"></div>
-            <div className="flex items-center w-full px-4 py-2 text-sm font-medium rounded-md">
+            <div className="border-t border-slate-200 mb-4"></div>
+            <div className="flex items-center w-full px-4 py-2 text-sm font-medium rounded-md text-slate-700">
               <div className="w-5 h-5 mr-3" /> {/* Placeholder for icon */}
               Sign Out
             </div>
           </div>
         </div>
-      </aside>
+      </div>
     );
   }
 
@@ -179,8 +179,8 @@ function LandlordSidebar({ sidebarOpen, setSidebarOpen }) {
       )}
 
       {/* Sidebar */}
-      <aside
-        className={`sidebar fixed inset-y-0 left-0 z-50 w-64 bg-white dark:bg-slate-800 shadow-lg transform transition-transform duration-200 ease-in-out lg:translate-x-0 ${
+      <div
+        className={`sidebar fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg transform transition-transform duration-200 ease-in-out lg:translate-x-0 ${
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         } rounded-tr-2xl`}
       >
@@ -193,7 +193,7 @@ function LandlordSidebar({ sidebarOpen, setSidebarOpen }) {
               </Link>
             </div>
             <button
-              className="lg:hidden text-slate-500 hover:text-slate-600 dark:hover:text-slate-400"
+              className="lg:hidden text-slate-500 hover:text-slate-600"
               onClick={() => setSidebarOpen(false)}
               aria-label="Close sidebar"
             >
@@ -221,8 +221,8 @@ function LandlordSidebar({ sidebarOpen, setSidebarOpen }) {
                 href={item.href}
                 className={`flex items-center px-4 py-2 text-sm font-medium rounded-md ${
                   item.current
-                    ? "bg-[#0d9488]/10 dark:bg-[#0d9488]/20 text-[#0d9488] dark:text-[#0d9488]"
-                    : "text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50"
+                    ? "bg-teal-100 text-teal-800"
+                    : "text-slate-700 hover:bg-slate-100"
                 }`}
               >
                 <item.icon className="w-5 h-5 mr-3" />
@@ -233,9 +233,9 @@ function LandlordSidebar({ sidebarOpen, setSidebarOpen }) {
 
           {/* Sidebar Footer */}
           <div className="p-4 mt-auto">
-            <div className="border-t border-slate-200 dark:border-slate-700 mb-4"></div>
+            <div className="border-t border-slate-200 mb-4"></div>
             <button
-              className="flex items-center w-full px-4 py-2 text-sm font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/50 rounded-md"
+              className="flex items-center w-full px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-50 rounded-md"
               onClick={() => {
                 // Handle logout
               }}
@@ -245,7 +245,7 @@ function LandlordSidebar({ sidebarOpen, setSidebarOpen }) {
             </button>
           </div>
         </div>
-      </aside>
+      </div>
     </>
   );
 }

@@ -97,7 +97,7 @@ const HostHeader = ({ toggleSidebar }) => {
           <div className="flex items-center space-x-4">
             {/* Search button */}
             <button
-              className="p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-teal-500"
+              className="p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-[#0d9488]"
               onClick={() => setIsSearchOpen(!isSearchOpen)}
             >
               <span className="sr-only">Search</span>
@@ -107,7 +107,7 @@ const HostHeader = ({ toggleSidebar }) => {
             {/* Notifications */}
             <div className="relative">
               <button
-                className="p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-teal-500"
+                className="p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-[#0d9488]"
                 onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}
               >
                 <span className="sr-only">View notifications</span>
@@ -158,7 +158,7 @@ const HostHeader = ({ toggleSidebar }) => {
             {/* Profile dropdown */}
             <div className="relative">
               <button
-                className="flex items-center space-x-3 p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-teal-500"
+                className="flex items-center space-x-3 p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-[#0d9488]"
                 onClick={() => setIsProfileOpen(!isProfileOpen)}
               >
                 <span className="sr-only">Open user menu</span>

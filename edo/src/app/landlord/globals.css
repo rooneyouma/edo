@@ -1,0 +1,22 @@
+/* Force light theme for landlord pages */
+:root {
+  --background: #f8fafc;
+  --foreground: #0f172a;
+}
+
+body {
+  background-color: #f8fafc;
+  color: #0f172a;
+}
+
+/* Override any dark theme styles */
+.dark body,
+body.dark {
+  background-color: #f8fafc !important;
+  color: #0f172a !important;
+}
+
+/* Ensure all elements use light theme colors */
+* {
+  color-scheme: light;
+}

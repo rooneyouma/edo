@@ -222,13 +222,13 @@ const LandlordTenantsPage = () => {
   const getStatusColor = (status) => {
     switch (status) {
       case "Active":
-        return "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400";
+        return "bg-green-100 text-green-800";
       case "Pending":
-        return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400";
+        return "bg-yellow-100 text-yellow-800";
       case "Inactive":
-        return "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400";
+        return "bg-red-100 text-red-800";
       default:
-        return "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300";
+        return "bg-gray-100 text-gray-800";
     }
   };
 
@@ -238,7 +238,7 @@ const LandlordTenantsPage = () => {
 
   // Render the main component structure consistently to avoid hydration errors
   return (
-    <div className="flex h-screen overflow-hidden bg-slate-50 dark:bg-slate-900">
+    <div className="flex h-screen overflow-hidden bg-slate-50">
       {/* Sidebar */}
       <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
 
@@ -252,7 +252,7 @@ const LandlordTenantsPage = () => {
             {/* Page Title and Add Button */}
             <div className="sm:flex sm:items-center">
               <div className="sm:flex-auto">
-                <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-100">
+                <h2 className="text-2xl font-bold text-slate-800">
                   Tenants
                 </h2>
               </div>
@@ -280,10 +280,10 @@ const LandlordTenantsPage = () => {
             {!isTenantsLoading &&
               !isTenantsError &&
               filteredTenants.length === 0 && (
-                <div className="mb-6 p-4 bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 rounded-lg">
+                <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
                   <div className="flex items-center">
                     <svg
-                      className="w-5 h-5 text-blue-500 dark:text-blue-400 mr-2"
+                      className="w-5 h-5 text-blue-500 mr-2"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -295,7 +295,7 @@ const LandlordTenantsPage = () => {
                         d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                       />
                     </svg>
-                    <span className="text-blue-800 dark:text-blue-200">
+                    <span className="text-blue-800">
                       {searchQuery ||
                       statusFilter !== "all" ||
                       propertyFilter !== "all"
@@ -309,9 +309,9 @@ const LandlordTenantsPage = () => {
             {/* Loading state */}
             {isTenantsLoading && (
               <div className="space-y-4">
-                <div className="h-10 w-full bg-gray-200 dark:bg-gray-700 rounded-md animate-pulse"></div>
+                <div className="h-10 w-full bg-gray-200 rounded-md animate-pulse"></div>
                 <div className="h-64 flex items-center justify-center">
-                  <div className="text-lg text-gray-500 dark:text-gray-400">
+                  <div className="text-lg text-gray-500">
                     Loading tenants...
                   </div>
                 </div>
@@ -321,7 +321,7 @@ const LandlordTenantsPage = () => {
             {/* Error state */}
             {isTenantsError && (
               <div className="h-64 flex items-center justify-center">
-                <div className="text-lg text-red-500 dark:text-red-400 text-center">
+                <div className="text-lg text-red-500 text-center">
                   <p>Error loading tenants. Please try again later.</p>
                   {tenantsError && (
                     <p className="text-sm mt-2">

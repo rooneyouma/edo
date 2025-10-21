@@ -61,14 +61,14 @@ const NewRequestModal = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-gray-500/50 dark:bg-gray-900/50 z-40">
+    <div className="fixed inset-0 bg-gray-500/50 z-40">
       <div className="fixed inset-0 z-50 overflow-y-auto">
         <div className="flex min-h-full items-end justify-center p-2 text-center sm:items-center sm:p-0">
-          <div className="relative transform overflow-hidden rounded-lg bg-white dark:bg-slate-800 w-full max-w-sm sm:max-w-lg px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:p-6">
+          <div className="relative transform overflow-hidden rounded-lg bg-white w-full max-w-sm sm:max-w-lg px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:p-6">
             <div className="absolute right-0 top-0 pr-4 pt-4">
               <button
                 type="button"
-                className="rounded-md bg-white dark:bg-slate-800 text-gray-400 hover:text-gray-500 focus:outline-none"
+                className="rounded-md bg-white text-gray-400 hover:text-gray-500 focus:outline-none"
                 onClick={onClose}
               >
                 <span className="sr-only">Close</span>
@@ -90,19 +90,17 @@ const NewRequestModal = ({
 
             <div className="sm:flex sm:items-start">
               <div className="mt-3 text-center sm:mt-0 sm:text-left w-full">
-                <h3 className="text-lg font-semibold leading-6 text-gray-900 dark:text-gray-100">
+                <h3 className="text-lg font-semibold leading-6 text-gray-900">
                   New Maintenance Request
                 </h3>
-                <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                <p className="mt-1 text-sm text-gray-500">
                   Submit a new maintenance request for your property
                 </p>
 
                 {/* Error Display */}
                 {errors && errors.general && (
-                  <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg dark:bg-red-900/20 dark:border-red-800">
-                    <p className="text-red-700 dark:text-red-300 text-sm">
-                      {errors.general}
-                    </p>
+                  <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+                    <p className="text-red-700 text-sm">{errors.general}</p>
                   </div>
                 )}
 
@@ -114,7 +112,7 @@ const NewRequestModal = ({
                   <div>
                     <label
                       htmlFor="subject"
-                      className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                      className="block text-sm font-medium text-gray-700 mb-1"
                     >
                       Subject
                     </label>
@@ -124,12 +122,12 @@ const NewRequestModal = ({
                       name="subject"
                       value={localFormData.subject}
                       onChange={handleInputChange}
-                      className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-teal-500 focus:ring-teal-500 sm:text-sm dark:bg-gray-700 dark:text-gray-100 py-2 px-3 text-sm"
+                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500 sm:text-sm py-2 px-3 text-sm"
                       placeholder="Brief description of the issue"
                       required
                     />
                     {errors && errors.subject && (
-                      <p className="mt-1 text-sm text-red-600 dark:text-red-400">
+                      <p className="mt-1 text-sm text-red-600">
                         {errors.subject}
                       </p>
                     )}
@@ -139,7 +137,7 @@ const NewRequestModal = ({
                   <div>
                     <label
                       htmlFor="description"
-                      className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                      className="block text-sm font-medium text-gray-700 mb-1"
                     >
                       Description
                     </label>
@@ -149,12 +147,12 @@ const NewRequestModal = ({
                       rows={4}
                       value={localFormData.description}
                       onChange={handleInputChange}
-                      className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-teal-500 focus:ring-teal-500 sm:text-sm dark:bg-gray-700 dark:text-gray-100 py-2 px-3 text-sm"
+                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500 sm:text-sm py-2 px-3 text-sm"
                       placeholder="Please provide detailed information about the issue..."
                       required
                     />
                     {errors && errors.description && (
-                      <p className="mt-1 text-sm text-red-600 dark:text-red-400">
+                      <p className="mt-1 text-sm text-red-600">
                         {errors.description}
                       </p>
                     )}
@@ -164,7 +162,7 @@ const NewRequestModal = ({
                   <div>
                     <label
                       htmlFor="priority"
-                      className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                      className="block text-sm font-medium text-gray-700 mb-1"
                     >
                       Priority
                     </label>
@@ -173,7 +171,7 @@ const NewRequestModal = ({
                       name="priority"
                       value={localFormData.priority}
                       onChange={handleInputChange}
-                      className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-teal-500 focus:ring-teal-500 sm:text-sm dark:bg-gray-700 dark:text-gray-100 py-2 px-3 text-sm"
+                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500 sm:text-sm py-2 px-3 text-sm"
                       required
                     >
                       <option value="">Select priority</option>
@@ -184,7 +182,7 @@ const NewRequestModal = ({
                       ))}
                     </select>
                     {errors && errors.priority && (
-                      <p className="mt-1 text-sm text-red-600 dark:text-red-400">
+                      <p className="mt-1 text-sm text-red-600">
                         {errors.priority}
                       </p>
                     )}
@@ -192,13 +190,13 @@ const NewRequestModal = ({
 
                   {/* Image Upload */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                    <label className="block text-sm font-medium text-gray-700">
                       Images (Optional)
                     </label>
-                    <div className="mt-1 flex justify-center px-4 sm:px-6 pt-4 pb-5 border-2 border-gray-300 dark:border-gray-600 border-dashed rounded-md">
+                    <div className="mt-1 flex justify-center px-4 sm:px-6 pt-4 pb-5 border-2 border-gray-300 border-dashed rounded-md">
                       <div className="space-y-1 text-center">
                         <svg
-                          className="mx-auto h-10 w-10 sm:h-12 sm:w-12 text-gray-400"
+                          className="mx-auto h-8 w-8 text-gray-400"
                           stroke="currentColor"
                           fill="none"
                           viewBox="0 0 48 48"
@@ -211,12 +209,12 @@ const NewRequestModal = ({
                             strokeLinejoin="round"
                           />
                         </svg>
-                        <div className="flex text-xs sm:text-sm text-gray-600 dark:text-gray-400">
+                        <div className="flex text-sm text-gray-600">
                           <label
                             htmlFor="file-upload"
-                            className="relative cursor-pointer rounded-md font-medium text-teal-600 hover:text-teal-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-teal-500"
+                            className="relative cursor-pointer bg-white rounded-md font-medium text-teal-600 hover:text-teal-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-teal-500"
                           >
-                            <span>Upload files</span>
+                            <span>Upload images</span>
                             <input
                               id="file-upload"
                               name="file-upload"
@@ -229,60 +227,60 @@ const NewRequestModal = ({
                           </label>
                           <p className="pl-1">or drag and drop</p>
                         </div>
-                        <p className="text-xs text-gray-500 dark:text-gray-400">
+                        <p className="text-xs text-gray-500">
                           PNG, JPG, GIF up to 10MB
                         </p>
                       </div>
                     </div>
+
+                    {/* Preview uploaded images */}
+                    {localFormData.images.length > 0 && (
+                      <div className="mt-3 grid grid-cols-3 gap-2">
+                        {localFormData.images.map((file, index) => (
+                          <div key={index} className="relative">
+                            <img
+                              src={URL.createObjectURL(file)}
+                              alt={`Preview ${index}`}
+                              className="h-16 w-full object-cover rounded"
+                            />
+                            <button
+                              type="button"
+                              className="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1"
+                              onClick={() => handleRemoveImage(index)}
+                            >
+                              <svg
+                                className="h-3 w-3"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M6 18L18 6M6 6l12 12"
+                                />
+                              </svg>
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
 
-                  {/* Image Previews */}
-                  {localFormData.images.length > 0 && (
-                    <div className="grid grid-cols-2 gap-3">
-                      {localFormData.images.map((image, index) => (
-                        <div key={index} className="relative">
-                          <img
-                            src={URL.createObjectURL(image)}
-                            alt={`Preview ${index + 1}`}
-                            className="h-24 sm:h-32 w-full object-cover rounded-lg"
-                          />
-                          <button
-                            type="button"
-                            onClick={() => handleRemoveImage(index)}
-                            className="absolute top-1 right-1 sm:top-2 sm:right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
-                          >
-                            <svg
-                              className="h-3 w-3 sm:h-4 sm:w-4"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              stroke="currentColor"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M6 18L18 6M6 6l12 12"
-                              />
-                            </svg>
-                          </button>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-
                   {/* Form Actions */}
-                  <div className="mt-4 sm:mt-6 flex flex-col-reverse sm:flex-row sm:justify-end space-y-3 sm:space-y-0 sm:space-x-3">
+                  <div className="flex justify-end space-x-3 pt-4">
                     <button
                       type="button"
                       onClick={onClose}
-                      className="w-full sm:w-auto inline-flex justify-center rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 shadow-sm hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
+                      className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500"
                       disabled={submitting}
                     >
                       Cancel
                     </button>
                     <button
                       type="submit"
-                      className="w-full sm:w-auto inline-flex justify-center rounded-md border border-transparent bg-teal-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 disabled:opacity-50"
+                      className="px-4 py-2 text-sm font-medium text-white bg-teal-600 border border-transparent rounded-md hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500"
                       disabled={submitting}
                     >
                       {submitting ? "Submitting..." : "Submit Request"}

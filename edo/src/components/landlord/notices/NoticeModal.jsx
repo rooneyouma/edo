@@ -16,17 +16,13 @@ const NoticeModal = ({
       <div className="space-y-4">
         <div className="flex justify-between items-start">
           <div>
-            <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">
+            <h3 className="text-lg font-medium text-gray-900">
               {type === "general" ? notice.title : "Eviction Notice Details"}
             </h3>
             {type === "general" ? (
-              <p className="text-sm text-gray-500 dark:text-gray-400">
-                {notice.date}
-              </p>
+              <p className="text-sm text-gray-500">{notice.date}</p>
             ) : (
-              <p className="text-sm text-gray-500 dark:text-gray-400">
-                Sent on {notice.dateSent}
-              </p>
+              <p className="text-sm text-gray-500">Sent on {notice.dateSent}</p>
             )}
           </div>
         </div>
@@ -34,9 +30,7 @@ const NoticeModal = ({
           {type === "general" ? (
             <>
               <div>
-                <h4 className="text-sm font-medium text-gray-500 dark:text-gray-400">
-                  Type
-                </h4>
+                <h4 className="text-sm font-medium text-gray-500">Type</h4>
                 <p className="mt-1">
                   <span
                     className={`inline-flex rounded-full px-2 text-xs font-semibold leading-5 ${getTypeColor(
@@ -48,60 +42,40 @@ const NoticeModal = ({
                 </p>
               </div>
               <div>
-                <h4 className="text-sm font-medium text-gray-500 dark:text-gray-400">
-                  Unit
-                </h4>
-                <p className="mt-1 text-sm text-gray-900 dark:text-gray-100">
-                  {notice.unit}
-                </p>
+                <h4 className="text-sm font-medium text-gray-500">Unit</h4>
+                <p className="mt-1 text-sm text-gray-900">{notice.unit}</p>
               </div>
               <div>
-                <h4 className="text-sm font-medium text-gray-500 dark:text-gray-400">
-                  Audience
-                </h4>
-                <p className="mt-1 text-sm text-gray-900 dark:text-gray-100">
-                  {notice.audience}
-                </p>
+                <h4 className="text-sm font-medium text-gray-500">Audience</h4>
+                <p className="mt-1 text-sm text-gray-900">{notice.audience}</p>
               </div>
             </>
           ) : (
             <>
               <div>
-                <h4 className="text-sm font-medium text-gray-500 dark:text-gray-400">
-                  Tenant
-                </h4>
-                <p className="mt-1 text-sm text-gray-900 dark:text-gray-100">
+                <h4 className="text-sm font-medium text-gray-500">Tenant</h4>
+                <p className="mt-1 text-sm text-gray-900">
                   {notice.tenantName}
                 </p>
               </div>
               <div>
-                <h4 className="text-sm font-medium text-gray-500 dark:text-gray-400">
-                  Property
-                </h4>
-                <p className="mt-1 text-sm text-gray-900 dark:text-gray-100">
-                  {notice.property}
-                </p>
+                <h4 className="text-sm font-medium text-gray-500">Property</h4>
+                <p className="mt-1 text-sm text-gray-900">{notice.property}</p>
               </div>
               <div>
-                <h4 className="text-sm font-medium text-gray-500 dark:text-gray-400">
-                  Reason
-                </h4>
-                <p className="mt-1 text-sm text-gray-900 dark:text-gray-100">
-                  {notice.reason}
-                </p>
+                <h4 className="text-sm font-medium text-gray-500">Reason</h4>
+                <p className="mt-1 text-sm text-gray-900">{notice.reason}</p>
               </div>
               <div>
-                <h4 className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                <h4 className="text-sm font-medium text-gray-500">
                   Move-Out Deadline
                 </h4>
-                <p className="mt-1 text-sm text-gray-900 dark:text-gray-100">
+                <p className="mt-1 text-sm text-gray-900">
                   {notice.moveOutDeadline}
                 </p>
               </div>
               <div>
-                <h4 className="text-sm font-medium text-gray-500 dark:text-gray-400">
-                  Status
-                </h4>
+                <h4 className="text-sm font-medium text-gray-500">Status</h4>
                 <p className="mt-1">
                   <span
                     className={`inline-flex rounded-full px-2 text-xs font-semibold leading-5 ${getStatusColor(

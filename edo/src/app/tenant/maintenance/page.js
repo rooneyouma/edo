@@ -202,15 +202,15 @@ const Maintenance = () => {
 
   if (!isClient) {
     return (
-      <div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex items-center justify-center">
-        <div className="text-slate-600 dark:text-slate-400">Loading...</div>
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+        <div className="text-slate-600 text-slate-500">Loading...</div>
       </div>
     );
   }
 
   if (!isAuthenticated()) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-slate-50 dark:bg-slate-900">
+      <div className="flex flex-col items-center justify-center min-h-screen bg-slate-50">
         <h2 className="text-2xl font-bold mb-4">Sign in required</h2>
         <p className="mb-6">You must be signed in to access this page.</p>
         <Link
@@ -225,7 +225,7 @@ const Maintenance = () => {
 
   if (loading) {
     return (
-      <div className="flex h-screen bg-slate-50 dark:bg-slate-900">
+      <div className="flex h-screen bg-slate-50">
         <TenantSidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
         <div className="relative flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
           <div className="lg:ml-64">
@@ -242,7 +242,7 @@ const Maintenance = () => {
   }
 
   return (
-    <div className="flex h-screen bg-slate-50 dark:bg-slate-900">
+    <div className="flex h-screen bg-slate-50">
       <TenantSidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
 
       <div className="relative flex flex-col flex-1 overflow-y-auto overflow-x-hidden lg:ml-64">
@@ -252,20 +252,20 @@ const Maintenance = () => {
           <div>
             {/* Header */}
             <div className="mb-8">
-              <h1 className="text-2xl font-bold text-slate-800 dark:text-slate-100 mb-2">
+              <h1 className="text-2xl font-bold text-slate-800 text-slate-900 mb-2">
                 Maintenance Requests
               </h1>
-              <p className="text-slate-600 dark:text-slate-400 text-sm sm:text-base">
+              <p className="text-slate-600 text-slate-500 text-sm sm:text-base">
                 Submit and track maintenance requests for your rental property
               </p>
             </div>
 
             {/* Error Display */}
             {error && (
-              <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg dark:bg-red-900/20 dark:border-red-800">
+              <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg bg-red-50 border-red-200">
                 <div className="flex items-center">
                   <AlertCircle className="h-5 w-5 text-red-500 mr-2 flex-shrink-0" />
-                  <span className="text-red-700 dark:text-red-300 text-sm">
+                  <span className="text-red-700 text-red-700 text-sm">
                     {error &&
                     error.toLowerCase().includes("rental property not found")
                       ? "No rental property found. Please contact your landlord to set up your tenancy."
@@ -304,7 +304,7 @@ const Maintenance = () => {
             </div>
 
             {/* Results Count */}
-            <div className="mb-4 text-sm text-slate-600 dark:text-slate-400">
+            <div className="mb-4 text-sm text-slate-600 text-slate-500">
               {filteredAndSortedRequests.length} request
               {filteredAndSortedRequests.length !== 1 ? "s" : ""} found
             </div>

@@ -16,17 +16,17 @@ const MaintenanceTable = ({
         {requests.map((request) => (
           <div
             key={request.id}
-            className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-md transition-shadow cursor-pointer"
+            className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow cursor-pointer"
             onClick={() => onRequestClick(request)}
           >
             <div className="p-4">
               {/* Card Header */}
               <div className="flex justify-between items-start mb-3">
                 <div className="flex-1">
-                  <h3 className="font-medium text-gray-900 dark:text-gray-100 text-sm">
+                  <h3 className="font-medium text-gray-900 text-sm">
                     {request.subject}
                   </h3>
-                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                  <p className="text-xs text-gray-500 mt-1">
                     {request.property} - {request.unit}
                   </p>
                 </div>
@@ -36,7 +36,7 @@ const MaintenanceTable = ({
                       e.stopPropagation();
                       onDeleteClick(request);
                     }}
-                    className="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300 cursor-pointer"
+                    className="text-red-600 hover:text-red-900 cursor-pointer"
                   >
                     <svg
                       className="w-5 h-5"
@@ -54,15 +54,17 @@ const MaintenanceTable = ({
                   </button>
                 </div>
               </div>
-              
+
               {/* Tenant */}
               <div className="mb-3">
-                <span className="text-xs font-medium text-gray-500 dark:text-gray-400">Tenant:</span>
-                <span className="text-sm font-medium text-gray-900 dark:text-gray-100 ml-2">
+                <span className="text-xs font-medium text-gray-500">
+                  Tenant:
+                </span>
+                <span className="text-sm font-medium text-gray-900 ml-2">
                   {request.tenant}
                 </span>
               </div>
-              
+
               {/* Status and Priority */}
               <div className="flex flex-wrap gap-2 mb-3">
                 <span
@@ -79,19 +81,17 @@ const MaintenanceTable = ({
                 >
                   {request.priority}
                 </span>
-                <span className="text-xs text-gray-500 dark:text-gray-400">
-                  {request.date}
-                </span>
+                <span className="text-xs text-gray-500">{request.date}</span>
               </div>
-              
+
               {/* Assignment Info */}
               {request.assignedTo && (
-                <div className="mt-2 border-t border-gray-100 dark:border-gray-700 pt-2">
-                  <p className="text-xs text-gray-500 dark:text-gray-400">Assigned to:</p>
-                  <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                <div className="mt-2 border-t border-gray-100 pt-2">
+                  <p className="text-xs text-gray-500">Assigned to:</p>
+                  <p className="text-sm font-medium text-gray-900">
                     {request.assignedTo}
                     {request.contact && (
-                      <span className="text-xs text-gray-500 dark:text-gray-400 ml-2">
+                      <span className="text-xs text-gray-500 ml-2">
                         ({request.contact})
                       </span>
                     )}
@@ -108,81 +108,81 @@ const MaintenanceTable = ({
         <div className="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8">
           <div className="overflow-hidden md:rounded-lg">
             <table className="min-w-full">
-              <thead className="bg-gray-50 dark:bg-gray-800">
+              <thead className="bg-gray-50">
                 <tr>
                   <th
                     scope="col"
-                    className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-100 sm:pl-6"
+                    className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6"
                   >
                     Tenant
                   </th>
                   <th
                     scope="col"
-                    className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
+                    className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
                   >
                     Property & Unit
                   </th>
                   <th
                     scope="col"
-                    className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
+                    className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
                   >
                     Subject
                   </th>
                   <th
                     scope="col"
-                    className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
+                    className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
                   >
                     Priority
                   </th>
                   <th
                     scope="col"
-                    className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
+                    className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
                   >
                     Status
                   </th>
                   <th
                     scope="col"
-                    className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
+                    className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
                   >
                     Date
                   </th>
                   <th
                     scope="col"
-                    className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-100 sm:pl-6"
+                    className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6"
                   >
                     Assigned To
                   </th>
                   <th
                     scope="col"
-                    className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
+                    className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
                   >
                     Contact
                   </th>
                   <th
                     scope="col"
-                    className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
+                    className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
                   >
                     Actions
                   </th>
                 </tr>
               </thead>
-              <tbody className="bg-white dark:bg-gray-900">
+              <tbody className="bg-white">
                 {requests.map((request) => (
                   <tr
                     key={request.id}
-                    className="hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer"
+                    className="hover:bg-gray-50 cursor-pointer"
                     onClick={() => onRequestClick(request)}
                   >
-                    <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 dark:text-gray-100 sm:pl-6">
+                    <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
                       {request.tenant}
                     </td>
-                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
+                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                       {request.property} - {request.unit}
                     </td>
-                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
+                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                       {request.subject}
                     </td>
-                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
+                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                       <span
                         className={`inline-flex rounded-full px-2 text-xs font-semibold leading-5 ${getPriorityColor(
                           request.priority
@@ -191,7 +191,7 @@ const MaintenanceTable = ({
                         {request.priority}
                       </span>
                     </td>
-                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
+                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                       <span
                         className={`inline-flex rounded-full px-2 text-xs font-semibold leading-5 ${getStatusColor(
                           request.status
@@ -200,13 +200,13 @@ const MaintenanceTable = ({
                         {request.status}
                       </span>
                     </td>
-                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
+                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                       {request.date}
                     </td>
-                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
+                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                       {request.assignedTo || "Not Assigned"}
                     </td>
-                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
+                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                       {request.contact || "-"}
                     </td>
                     <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
@@ -216,7 +216,7 @@ const MaintenanceTable = ({
                             e.stopPropagation();
                             onDeleteClick(request);
                           }}
-                          className="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300 cursor-pointer"
+                          className="text-red-600 hover:text-red-900 cursor-pointer"
                         >
                           <svg
                             className="w-5 h-5"

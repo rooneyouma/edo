@@ -13,15 +13,15 @@ const MAINTENANCE_ENDPOINTS = {
 export const getStatusColor = (status) => {
   switch (status?.toLowerCase()) {
     case "pending":
-      return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200";
+      return "bg-yellow-100 text-yellow-800";
     case "in_progress":
-      return "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200";
+      return "bg-blue-100 text-blue-800";
     case "completed":
-      return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200";
+      return "bg-green-100 text-green-800";
     case "cancelled":
-      return "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200";
+      return "bg-red-100 text-red-800";
     default:
-      return "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200";
+      return "bg-gray-100 text-gray-800";
   }
 };
 
@@ -29,15 +29,15 @@ export const getStatusColor = (status) => {
 export const getPriorityColor = (priority) => {
   switch (priority?.toLowerCase()) {
     case "low":
-      return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200";
+      return "bg-green-100 text-green-800";
     case "medium":
-      return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200";
+      return "bg-yellow-100 text-yellow-800";
     case "high":
-      return "bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200";
+      return "bg-orange-100 text-orange-800";
     case "emergency":
-      return "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200";
+      return "bg-red-100 text-red-800";
     default:
-      return "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200";
+      return "bg-gray-100 text-gray-800";
   }
 };
 

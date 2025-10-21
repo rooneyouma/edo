@@ -14,16 +14,16 @@ const MaintenanceTable = ({
         {requests.map((request) => (
           <div
             key={request.id}
-            className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 hover:bg-gray-50 dark:hover:bg-gray-700/50 cursor-pointer border border-gray-200 dark:border-gray-700 transition-all"
+            className="bg-white rounded-lg shadow p-4 hover:bg-gray-50 cursor-pointer border border-gray-200 transition-all"
             onClick={() => onRequestClick(request)}
           >
             <div className="flex justify-between items-start mb-2">
               <div className="flex-1 min-w-0 pr-2">
-                <h3 className="font-medium text-gray-900 dark:text-gray-100 truncate">
+                <h3 className="font-medium text-gray-900 truncate">
                   {request.subject}
                 </h3>
                 {hasMultipleProperties && (
-                  <p className="text-sm text-gray-500 dark:text-gray-400 mt-1 truncate">
+                  <p className="text-sm text-gray-500 mt-1 truncate">
                     {request.property} - {request.unit}
                   </p>
                 )}
@@ -44,18 +44,16 @@ const MaintenanceTable = ({
               >
                 {request.status}
               </span>
-              <span className="text-xs text-gray-500 dark:text-gray-400">
-                {request.date}
-              </span>
+              <span className="text-xs text-gray-500">{request.date}</span>
             </div>
             {request.assignedTo && (
-              <div className="mt-3 text-sm border-t border-gray-100 dark:border-gray-700 pt-2">
-                <p className="text-gray-600 dark:text-gray-300 text-xs">Assigned to:</p>
-                <p className="font-medium text-gray-900 dark:text-gray-100 truncate">
+              <div className="mt-3 text-sm border-t border-gray-100 pt-2">
+                <p className="text-gray-600 text-xs">Assigned to:</p>
+                <p className="font-medium text-gray-900 truncate">
                   {request.assignedTo}
                 </p>
                 {request.contact && (
-                  <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
+                  <p className="text-xs text-gray-500 truncate">
                     {request.contact}
                   </p>
                 )}
@@ -67,65 +65,65 @@ const MaintenanceTable = ({
 
       {/* Desktop view - table */}
       <div className="hidden sm:block overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
-        <table className="min-w-full divide-y divide-gray-300 dark:divide-gray-700">
-          <thead className="bg-gray-50 dark:bg-gray-800">
+        <table className="min-w-full divide-y divide-gray-300">
+          <thead className="bg-gray-50">
             <tr>
               {hasMultipleProperties && (
                 <th
                   scope="col"
-                  className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-100 sm:pl-6"
+                  className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6"
                 >
                   Property & Unit
                 </th>
               )}
               <th
                 scope="col"
-                className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
+                className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
               >
                 Subject
               </th>
               <th
                 scope="col"
-                className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
+                className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
               >
                 Priority
               </th>
               <th
                 scope="col"
-                className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
+                className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
               >
                 Status
               </th>
               <th
                 scope="col"
-                className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
+                className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
               >
                 Date
               </th>
               <th
                 scope="col"
-                className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
+                className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
               >
                 Assigned To
               </th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-900">
+          <tbody className="divide-y divide-gray-200 bg-white">
             {requests.map((request) => (
               <tr
                 key={request.id}
-                className="hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer"
+                className="hover:bg-gray-50 cursor-pointer"
                 onClick={() => onRequestClick(request)}
               >
                 {hasMultipleProperties && (
-                  <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 dark:text-gray-100 sm:pl-6">
+                  <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
                     {request.property} - {request.unit}
                   </td>
                 )}
-                <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
+                <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                   {request.subject}
                 </td>
-                <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
+                <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                   <span
                     className={`inline-flex rounded-full px-2 text-xs font-semibold leading-5 ${getPriorityColor(
                       request.priority
@@ -134,7 +132,7 @@ const MaintenanceTable = ({
                     {request.priority}
                   </span>
                 </td>
-                <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
+                <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                   <span
                     className={`inline-flex rounded-full px-2 text-xs font-semibold leading-5 ${getStatusColor(
                       request.status
@@ -143,10 +141,10 @@ const MaintenanceTable = ({
                     {request.status}
                   </span>
                 </td>
-                <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
+                <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                   {request.date}
                 </td>
-                <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
+                <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                   {request.assignedTo ? (
                     <div>
                       <div>{request.assignedTo}</div>

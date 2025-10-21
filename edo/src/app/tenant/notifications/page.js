@@ -76,15 +76,15 @@ const Notifications = () => {
   // Show loading state during initial hydration
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex items-center justify-center">
-        <div className="text-slate-600 dark:text-slate-400">Loading...</div>
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+        <div className="text-slate-600 text-slate-500">Loading...</div>
       </div>
     );
   }
 
   if (!isAuthenticated_State) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-slate-50 dark:bg-slate-900">
+      <div className="flex flex-col items-center justify-center min-h-screen bg-slate-50">
         <h2 className="text-2xl font-bold mb-4">Sign in required</h2>
         <p className="mb-6">You must be signed in to access this page.</p>
         <Link
@@ -115,30 +115,27 @@ const Notifications = () => {
     switch (type) {
       case "eviction":
         return {
-          container: "bg-red-50 dark:bg-red-900/20",
-          icon: "text-red-600 dark:text-red-400",
-          badge: "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300",
+          container: "bg-red-50 bg-red-50",
+          icon: "text-red-600 text-red-600",
+          badge: "bg-red-100 text-red-800 bg-red-100 text-red-800",
         };
       case "maintenance":
         return {
-          container: "bg-blue-50 dark:bg-blue-900/20",
-          icon: "text-blue-600 dark:text-blue-400",
-          badge:
-            "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300",
+          container: "bg-blue-50 bg-blue-50",
+          icon: "text-blue-600 text-blue-600",
+          badge: "bg-blue-100 text-blue-800 bg-blue-100 text-blue-800",
         };
       case "payment":
         return {
-          container: "bg-green-50 dark:bg-green-900/20",
-          icon: "text-green-600 dark:text-green-400",
-          badge:
-            "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300",
+          container: "bg-green-50 bg-green-50",
+          icon: "text-green-600 text-green-600",
+          badge: "bg-green-100 text-green-800 bg-green-100 text-green-800",
         };
       default:
         return {
-          container: "bg-yellow-50 dark:bg-yellow-900/20",
-          icon: "text-yellow-600 dark:text-yellow-400",
-          badge:
-            "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300",
+          container: "bg-yellow-50 bg-yellow-50",
+          icon: "text-yellow-600 text-yellow-600",
+          badge: "bg-yellow-100 text-yellow-800 bg-yellow-100 text-yellow-800",
         };
     }
   };
@@ -162,7 +159,7 @@ const Notifications = () => {
   });
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-900">
+    <div className="min-h-screen bg-slate-50">
       <div className="flex">
         <TenantSidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
         <div className="flex-1 flex flex-col lg:ml-64">
@@ -171,10 +168,10 @@ const Notifications = () => {
           <main className="flex-1 py-2 sm:py-4 pl-4 pr-8 sm:pl-6 sm:pr-12 lg:pl-8 lg:pr-16">
             {/* Page header - Title always at top on mobile */}
             <div className="mb-4 sm:mb-6">
-              <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">
+              <h1 className="text-2xl font-bold text-slate-900 text-slate-900">
                 Notifications
               </h1>
-              <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+              <p className="mt-1 text-sm text-slate-500 text-slate-500">
                 View and manage your notifications
               </p>
             </div>
@@ -185,14 +182,14 @@ const Notifications = () => {
                 <div className="relative">
                   <button
                     onClick={() => setIsFilterOpen(!isFilterOpen)}
-                    className="inline-flex items-center px-4 py-2 border border-slate-300 dark:border-slate-600 text-sm font-medium rounded-md text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0d9488]"
+                    className="inline-flex items-center px-4 py-2 border border-slate-300 border-slate-300 text-sm font-medium rounded-md text-slate-700 text-slate-700 hover:bg-slate-50 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0d9488]"
                   >
                     <Filter className="h-4 w-4 mr-2" />
                     Filter
                     <ChevronDown className="h-4 w-4 ml-2" />
                   </button>
                   {isFilterOpen && (
-                    <div className="absolute left-0 right-0 sm:right-0 sm:left-auto mt-2 w-full sm:w-48 rounded-md shadow-lg bg-white dark:bg-slate-800 ring-1 ring-black ring-opacity-5 focus:outline-none z-10 max-w-xs sm:max-w-none">
+                    <div className="absolute left-0 right-0 sm:right-0 sm:left-auto mt-2 w-full sm:w-48 rounded-md shadow-lg bg-white bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-10 max-w-xs sm:max-w-none">
                       <button
                         onClick={() => {
                           setFilterType("all");
@@ -201,7 +198,7 @@ const Notifications = () => {
                         className={`block w-full text-left px-4 py-2 text-sm ${
                           filterType === "all"
                             ? "text-[#0d9488] dark:text-[#0d9488] bg-[#0d9488]/10 dark:bg-[#0d9488]/10"
-                            : "text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/50"
+                            : "text-slate-700 text-slate-700 hover:bg-slate-50 hover:bg-slate-50"
                         }`}
                       >
                         All Notifications
@@ -214,7 +211,7 @@ const Notifications = () => {
                         className={`block w-full text-left px-4 py-2 text-sm ${
                           filterType === "eviction"
                             ? "text-[#0d9488] dark:text-[#0d9488] bg-[#0d9488]/10 dark:bg-[#0d9488]/10"
-                            : "text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/50"
+                            : "text-slate-700 text-slate-700 hover:bg-slate-50 hover:bg-slate-50"
                         }`}
                       >
                         Eviction Notices
@@ -227,7 +224,7 @@ const Notifications = () => {
                         className={`block w-full text-left px-4 py-2 text-sm ${
                           filterType === "maintenance"
                             ? "text-[#0d9488] dark:text-[#0d9488] bg-[#0d9488]/10 dark:bg-[#0d9488]/10"
-                            : "text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/50"
+                            : "text-slate-700 text-slate-700 hover:bg-slate-50 hover:bg-slate-50"
                         }`}
                       >
                         Maintenance Updates
@@ -240,7 +237,7 @@ const Notifications = () => {
                         className={`block w-full text-left px-4 py-2 text-sm ${
                           filterType === "payment"
                             ? "text-[#0d9488] dark:text-[#0d9488] bg-[#0d9488]/10 dark:bg-[#0d9488]/10"
-                            : "text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/50"
+                            : "text-slate-700 text-slate-700 hover:bg-slate-50 hover:bg-slate-50"
                         }`}
                       >
                         Payment Reminders
@@ -253,7 +250,7 @@ const Notifications = () => {
                         className={`block w-full text-left px-4 py-2 text-sm ${
                           filterType === "notice"
                             ? "text-[#0d9488] dark:text-[#0d9488] bg-[#0d9488]/10 dark:bg-[#0d9488]/10"
-                            : "text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/50"
+                            : "text-slate-700 text-slate-700 hover:bg-slate-50 hover:bg-slate-50"
                         }`}
                       >
                         General Notices
@@ -266,13 +263,13 @@ const Notifications = () => {
                 <div className="relative">
                   <button
                     onClick={() => setIsSortOpen(!isSortOpen)}
-                    className="inline-flex items-center px-4 py-2 border border-slate-300 dark:border-slate-600 text-sm font-medium rounded-md text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500"
+                    className="inline-flex items-center px-4 py-2 border border-slate-300 border-slate-300 text-sm font-medium rounded-md text-slate-700 text-slate-700 hover:bg-slate-50 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500"
                   >
                     Sort
                     <ChevronDown className="h-4 w-4 ml-2" />
                   </button>
                   {isSortOpen && (
-                    <div className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white dark:bg-slate-800 ring-1 ring-black ring-opacity-5 focus:outline-none z-10">
+                    <div className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-10">
                       <button
                         onClick={() => {
                           setSortBy("date");
@@ -280,8 +277,8 @@ const Notifications = () => {
                         }}
                         className={`block w-full text-left px-4 py-2 text-sm ${
                           sortBy === "date"
-                            ? "text-teal-600 dark:text-teal-400 bg-teal-50 dark:bg-teal-900/20"
-                            : "text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/50"
+                            ? "text-teal-600 text-teal-600 bg-teal-50 bg-teal-50"
+                            : "text-slate-700 text-slate-700 hover:bg-slate-50 hover:bg-slate-50"
                         }`}
                       >
                         Most Recent
@@ -293,8 +290,8 @@ const Notifications = () => {
                         }}
                         className={`block w-full text-left px-4 py-2 text-sm ${
                           sortBy === "unread"
-                            ? "text-teal-600 dark:text-teal-400 bg-teal-50 dark:bg-teal-900/20"
-                            : "text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/50"
+                            ? "text-teal-600 text-teal-600 bg-teal-50 bg-teal-50"
+                            : "text-slate-700 text-slate-700 hover:bg-slate-50 hover:bg-slate-50"
                         }`}
                       >
                         Unread First
@@ -339,14 +336,14 @@ const Notifications = () => {
                               </span>
                             )}
                           </div>
-                          <span className="text-sm text-slate-500 dark:text-slate-400">
+                          <span className="text-sm text-slate-500 text-slate-500">
                             {notification.time}
                           </span>
                         </div>
-                        <h3 className="mt-2 text-sm font-medium text-slate-900 dark:text-slate-100">
+                        <h3 className="mt-2 text-sm font-medium text-slate-900 text-slate-900">
                           {notification.title}
                         </h3>
-                        <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+                        <p className="mt-1 text-sm text-slate-500 text-slate-500">
                           {notification.message}
                         </p>
                       </div>

@@ -16,73 +16,49 @@ const MaintenanceDetailModal = ({
       <div className="space-y-4">
         <div className="flex justify-between items-start">
           <div>
-            <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">
+            <h3 className="text-lg font-medium text-gray-900">
               {request.subject}
             </h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400">
-              {request.date}
-            </p>
+            <p className="text-sm text-gray-500">{request.date}</p>
           </div>
         </div>
 
         <div className="mt-4 space-y-4">
           <div>
-            <h4 className="text-sm font-medium text-gray-500 dark:text-gray-400">
-              Description
-            </h4>
-            <p className="mt-1 text-sm text-gray-900 dark:text-gray-100">
-              {request.description}
-            </p>
+            <h4 className="text-sm font-medium text-gray-500">Description</h4>
+            <p className="mt-1 text-sm text-gray-900">{request.description}</p>
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <h4 className="text-sm font-medium text-gray-500 dark:text-gray-400">
-                Tenant
-              </h4>
-              <p className="mt-1 text-sm text-gray-900 dark:text-gray-100">
-                {request.tenant}
-              </p>
+              <h4 className="text-sm font-medium text-gray-500">Tenant</h4>
+              <p className="mt-1 text-sm text-gray-900">{request.tenant}</p>
             </div>
             <div>
-              <h4 className="text-sm font-medium text-gray-500 dark:text-gray-400">
+              <h4 className="text-sm font-medium text-gray-500">
                 Property & Unit
               </h4>
-              <p className="mt-1 text-sm text-gray-900 dark:text-gray-100">
+              <p className="mt-1 text-sm text-gray-900">
                 {request.property} - {request.unit}
               </p>
             </div>
             <div>
-              <h4 className="text-sm font-medium text-gray-500 dark:text-gray-400">
-                Priority
-              </h4>
-              <p className="mt-1 text-sm text-gray-900 dark:text-gray-100">
-                {request.priority}
-              </p>
+              <h4 className="text-sm font-medium text-gray-500">Priority</h4>
+              <p className="mt-1 text-sm text-gray-900">{request.priority}</p>
             </div>
             <div>
-              <h4 className="text-sm font-medium text-gray-500 dark:text-gray-400">
-                Status
-              </h4>
-              <p className="mt-1 text-sm text-gray-900 dark:text-gray-100">
-                {request.status}
-              </p>
+              <h4 className="text-sm font-medium text-gray-500">Status</h4>
+              <p className="mt-1 text-sm text-gray-900">{request.status}</p>
             </div>
             <div>
-              <h4 className="text-sm font-medium text-gray-500 dark:text-gray-400">
-                Assigned To
-              </h4>
-              <p className="mt-1 text-sm text-gray-900 dark:text-gray-100">
-                {request.assignedTo}
-              </p>
+              <h4 className="text-sm font-medium text-gray-500">Assigned To</h4>
+              <p className="mt-1 text-sm text-gray-900">{request.assignedTo}</p>
             </div>
           </div>
 
           {/* Image Gallery */}
           {request.images && request.images.length > 0 && (
             <div className="mt-6">
-              <h4 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-4">
-                Images
-              </h4>
+              <h4 className="text-sm font-medium text-gray-500 mb-4">Images</h4>
               <div className="grid grid-cols-2 gap-4">
                 {request.images.map((image, index) => (
                   <div key={index} className="relative aspect-square">
@@ -106,7 +82,7 @@ const MaintenanceDetailModal = ({
             <button
               type="button"
               onClick={() => onMarkComplete(request)}
-              className="inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 dark:focus:ring-offset-gray-800"
+              className="inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
             >
               Mark as Complete
             </button>
@@ -116,7 +92,7 @@ const MaintenanceDetailModal = ({
             <button
               type="button"
               onClick={() => onCancel(request)}
-              className="inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-yellow-600 hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 dark:focus:ring-offset-gray-800"
+              className="inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-yellow-600 hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500"
             >
               Cancel
             </button>
@@ -126,7 +102,7 @@ const MaintenanceDetailModal = ({
             <button
               type="button"
               onClick={() => onReopen(request)}
-              className="inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-800"
+              className="inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
             >
               Reopen
             </button>
@@ -140,7 +116,7 @@ const MaintenanceDetailModal = ({
                 ? "bg-gray-300 text-gray-500 cursor-not-allowed"
                 : request.status === "Cancelled"
                 ? "bg-[#0d9488] text-white opacity-60 cursor-not-allowed"
-                : "bg-[#0d9488] text-white hover:bg-[#0f766e] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0d9488] dark:focus:ring-offset-gray-800")
+                : "bg-[#0d9488] text-white hover:bg-[#0f766e] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0d9488]")
             }
             disabled={
               request.status === "Completed" || request.status === "Cancelled"

@@ -72,7 +72,7 @@ const EvictionNoticeForm = ({ onSubmit, onCancel, tenants = [] }) => {
       <div className="relative" ref={dropdownRef}>
         <label
           htmlFor="tenantName"
-          className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+          className="block text-sm font-medium text-gray-700"
         >
           Tenant
         </label>
@@ -84,30 +84,28 @@ const EvictionNoticeForm = ({ onSubmit, onCancel, tenants = [] }) => {
           onChange={handleChange}
           onFocus={() => setShowDropdown(true)}
           placeholder="Search by tenant name, unit or property"
-          className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-gray-700 dark:text-gray-100 py-2 px-3 sm:text-sm"
+          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] bg-white text-gray-900 py-2 px-3 sm:text-sm"
           required
         />
         {showDropdown && searchQuery && (
-          <div className="absolute z-10 mt-1 w-full bg-white dark:bg-gray-800 shadow-lg rounded-md border border-gray-200 dark:border-gray-700">
+          <div className="absolute z-10 mt-1 w-full bg-white shadow-lg rounded-md border border-gray-200">
             {filteredTenants.length > 0 ? (
               <ul className="max-h-60 overflow-auto py-1">
                 {filteredTenants.map((tenant) => (
                   <li
                     key={tenant.id}
-                    className="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer"
+                    className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
                     onClick={() => handleTenantSelect(tenant)}
                   >
-                    <div className="text-sm text-gray-900 dark:text-gray-100">
-                      {tenant.name}
-                    </div>
-                    <div className="text-xs text-gray-500 dark:text-gray-400">
+                    <div className="text-sm text-gray-900">{tenant.name}</div>
+                    <div className="text-xs text-gray-500">
                       {tenant.property} {tenant.unit && `- Unit ${tenant.unit}`}
                     </div>
                   </li>
                 ))}
               </ul>
             ) : (
-              <div className="px-4 py-2 text-sm text-gray-500 dark:text-gray-400">
+              <div className="px-4 py-2 text-sm text-gray-500">
                 No tenants found
               </div>
             )}
@@ -118,7 +116,7 @@ const EvictionNoticeForm = ({ onSubmit, onCancel, tenants = [] }) => {
       <div>
         <label
           htmlFor="property"
-          className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+          className="block text-sm font-medium text-gray-700"
         >
           Property
         </label>
@@ -128,7 +126,7 @@ const EvictionNoticeForm = ({ onSubmit, onCancel, tenants = [] }) => {
           name="property"
           value={formData.property}
           onChange={handleChange}
-          className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-gray-700 dark:text-gray-100 py-2 px-3 sm:text-sm"
+          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] bg-white text-gray-900 py-2 px-3 sm:text-sm"
           required
         />
       </div>
@@ -136,7 +134,7 @@ const EvictionNoticeForm = ({ onSubmit, onCancel, tenants = [] }) => {
       <div>
         <label
           htmlFor="unit"
-          className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+          className="block text-sm font-medium text-gray-700"
         >
           Unit
         </label>
@@ -146,7 +144,7 @@ const EvictionNoticeForm = ({ onSubmit, onCancel, tenants = [] }) => {
           name="unit"
           value={formData.unit}
           onChange={handleChange}
-          className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-gray-700 dark:text-gray-100 py-2 px-3 sm:text-sm"
+          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] bg-white text-gray-900 py-2 px-3 sm:text-sm"
           required
         />
       </div>
@@ -154,7 +152,7 @@ const EvictionNoticeForm = ({ onSubmit, onCancel, tenants = [] }) => {
       <div>
         <label
           htmlFor="reason"
-          className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+          className="block text-sm font-medium text-gray-700"
         >
           Reason
         </label>
@@ -164,7 +162,7 @@ const EvictionNoticeForm = ({ onSubmit, onCancel, tenants = [] }) => {
           value={formData.reason}
           onChange={handleChange}
           rows={3}
-          className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-gray-700 dark:text-gray-100 py-2 px-3 sm:text-sm"
+          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] bg-white text-gray-900 py-2 px-3 sm:text-sm"
           required
         />
       </div>
@@ -172,7 +170,7 @@ const EvictionNoticeForm = ({ onSubmit, onCancel, tenants = [] }) => {
       <div>
         <label
           htmlFor="moveOutDeadline"
-          className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+          className="block text-sm font-medium text-gray-700"
         >
           Move-out Deadline
         </label>
@@ -183,7 +181,7 @@ const EvictionNoticeForm = ({ onSubmit, onCancel, tenants = [] }) => {
           value={formData.moveOutDeadline}
           onChange={handleChange}
           min={new Date().toISOString().split("T")[0]}
-          className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] dark:bg-gray-700 dark:text-gray-100 py-2 px-3 sm:text-sm"
+          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] bg-white text-gray-900 py-2 px-3 sm:text-sm"
           required
         />
       </div>
@@ -192,7 +190,7 @@ const EvictionNoticeForm = ({ onSubmit, onCancel, tenants = [] }) => {
         <button
           type="button"
           onClick={onCancel}
-          className="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0d9488] dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 dark:hover:bg-gray-600"
+          className="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0d9488]"
         >
           Cancel
         </button>
