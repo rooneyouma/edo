@@ -1,7 +1,7 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # dependencies
-/node_modules
+/edo/node_modules
 /.pnp
 .pnp.*
 .yarn/*
@@ -11,14 +11,14 @@
 !.yarn/versions
 
 # testing
-/coverage
+/edo/coverage
 
 # next.js
-/.next/
-/out/
+/edo/.next/
+/edo/out/
 
 # production
-/build
+/edo/build
 
 # misc
 .DS_Store
@@ -38,4 +38,12 @@ yarn-error.log*
 
 # typescript
 *.tsbuildinfo
-next-env.d.ts
+/edo/next-env.d.ts
+
+# Django backend
+/backend/db.sqlite3
+/backend/media/
+/backend/venv/
+
+.zencoder/
+.continue/
