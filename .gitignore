@@ -45,5 +45,5 @@ yarn-error.log*
 /backend/media/
 /backend/venv/
 
-.zencoder/
-.continue/
+# zencoder
+/.zencoder/
