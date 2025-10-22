@@ -3,13 +3,14 @@
 import React, { useState, useEffect } from "react";
 import TenantHeader from "@/partials/tenant/TenantHeader.jsx";
 import TenantSidebar from "@/partials/tenant/TenantSidebar.jsx";
-import { Search, Filter, X, ArrowUpDown } from "lucide-react";
+import { Search, Filter, ChevronDown, ArrowUpDown } from "lucide-react";
 import Modal from "@/partials/Modal.jsx";
 import { isAuthenticated } from "@/utils/api.js";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { jsPDF } from "jspdf";
+import StyledDropdown from "@/components/ui/StyledDropdown";
 
 const Payments = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -577,7 +578,7 @@ Payment Method: ${payment.method}`;
                     <input
                       type="text"
                       placeholder="Search payments..."
-                      className="w-full pl-10 pr-4 py-2 sm:py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0d9488] focus:border-[#0d9488]"
+                      className="block w-full rounded-lg border border-gray-300 pl-10 pr-4 py-2 focus:border-[#0d9488] focus:ring-[#0d9488] focus:ring-2 focus:ring-opacity-20 bg-white text-gray-900 sm:text-sm shadow-sm transition-all duration-200"
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
                     />
@@ -590,11 +591,11 @@ Payment Method: ${payment.method}`;
                   >
                     <Filter className="h-4 w-4 mr-2" />
                     Filter
-                    {isFilterOpen ? (
-                      <X className="h-4 w-4 ml-2" />
-                    ) : (
-                      <span className="ml-2">▼</span>
-                    )}
+                    <ChevronDown
+                      className={`h-4 w-4 ml-2 transition-transform duration-200 ${
+                        isFilterOpen ? "rotate-180" : ""
+                      }`}
+                    />
                   </button>
                   <button
                     onClick={() =>
@@ -611,46 +612,34 @@ Payment Method: ${payment.method}`;
               </div>
 
               {isFilterOpen && (
-                <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                  <div>
-                    <label
-                      htmlFor="status"
-                      className="block text-xs sm:text-sm font-medium text-gray-700 mb-1"
-                    >
-                      Status
-                    </label>
-                    <select
-                      id="status"
-                      className="block w-full rounded-md border-gray-300 pl-3 pr-10 py-2 text-xs sm:text-sm focus:border-[#0d9488] focus:ring-[#0d9488]"
-                      value={statusFilter}
-                      onChange={(e) => setStatusFilter(e.target.value)}
-                    >
-                      <option value="all">All Status</option>
-                      <option value="paid">Paid</option>
-                      <option value="pending">Pending</option>
-                      <option value="failed">Failed</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label
-                      htmlFor="method"
-                      className="block text-xs sm:text-sm font-medium text-gray-700 mb-1"
-                    >
-                      Payment Method
-                    </label>
-                    <select
-                      id="method"
-                      className="block w-full rounded-md border-gray-300 pl-3 pr-10 py-2 text-xs sm:text-sm focus:border-[#0d9488] focus:ring-[#0d9488]"
-                      value={methodFilter}
-                      onChange={(e) => setMethodFilter(e.target.value)}
-                    >
-                      <option value="all">All Methods</option>
-                      <option value="bank transfer">Bank Transfer</option>
-                      <option value="credit card">Credit Card</option>
-                      <option value="m-pesa">M-PESA</option>
-                      <option value="paypal">PayPal</option>
-                    </select>
-                  </div>
+                <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <StyledDropdown
+                    id="status"
+                    label="Status"
+                    options={[
+                      { value: "all", label: "All Status" },
+                      { value: "paid", label: "Paid" },
+                      { value: "pending", label: "Pending" },
+                      { value: "failed", label: "Failed" },
+                    ]}
+                    value={statusFilter}
+                    onChange={setStatusFilter}
+                    placeholder="All Status"
+                  />
+                  <StyledDropdown
+                    id="method"
+                    label="Payment Method"
+                    options={[
+                      { value: "all", label: "All Methods" },
+                      { value: "bank transfer", label: "Bank Transfer" },
+                      { value: "credit card", label: "Credit Card" },
+                      { value: "m-pesa", label: "M-PESA" },
+                      { value: "paypal", label: "PayPal" },
+                    ]}
+                    value={methodFilter}
+                    onChange={setMethodFilter}
+                    placeholder="All Methods"
+                  />
                 </div>
               )}
 
@@ -1164,7 +1153,7 @@ Payment Method: ${payment.method}`;
                           </p>
                           <button
                             type="button"
-                            className="inline-flex items-center px-3 py-2 sm:px-4 sm:py-2 border border-transparent rounded-md shadow-sm text-xs sm:text-sm font-medium text-white bg-[#0d9488] hover:bg-[#0f766e] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0d9488]"
+                            className="inline-flex items-center px-3 py-2 sm:px-4 sm:py-2 border border-transparent rounded-md shadow-sm text-xs sm:text-sm font-semibold text-white bg-[#0d9488] hover:bg-[#0f766e] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0d9488]"
                           >
                             Continue with PayPal
                           </button>

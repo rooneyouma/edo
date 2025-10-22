@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Search, Filter } from "lucide-react";
 
 const PropertyFilters = ({
@@ -7,13 +7,40 @@ const PropertyFilters = ({
   typeFilter,
   onTypeFilterChange,
 }) => {
-  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [isTypeDropdownOpen, setIsTypeDropdownOpen] = useState(false);
+  const dropdownRef = useRef(null);
 
   // Get display name for current filter
   const getFilterDisplayName = (filterValue) => {
     if (filterValue === "all") return "All Types";
     return filterValue;
   };
+
+  // Property type options
+  const propertyTypeOptions = [
+    { value: "all", label: "All Types" },
+    { value: "Apartment", label: "Apartment" },
+    { value: "Apartment Complex", label: "Apartment Complex" },
+    { value: "Condominium", label: "Condominium" },
+    { value: "Townhouse", label: "Townhouse" },
+    { value: "Loft", label: "Loft" },
+    { value: "Villa", label: "Villa" },
+    { value: "Other", label: "Other" },
+  ];
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsTypeDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   return (
     <div className="flex flex-col sm:flex-row gap-4 mb-8">
@@ -31,61 +58,40 @@ const PropertyFilters = ({
           onChange={(e) => onSearchChange(e.target.value)}
         />
       </div>
-      <div className="relative flex-shrink-0 w-full sm:w-auto">
-        <div className="sm:hidden">
+      <div className="relative flex-shrink-0 w-full sm:w-48" ref={dropdownRef}>
+        <div className="w-full">
           <button
             type="button"
-            onClick={() => setIsFilterOpen(!isFilterOpen)}
+            onClick={() => setIsTypeDropdownOpen(!isTypeDropdownOpen)}
             className="w-full flex items-center justify-between rounded-lg border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 transition-colors duration-200 px-4 py-2"
             title="Filter by type"
           >
             <span className="truncate">{getFilterDisplayName(typeFilter)}</span>
             <Filter className="h-5 w-5 ml-2 flex-shrink-0" />
           </button>
-          {isFilterOpen && (
-            <div className="absolute left-0 right-0 mt-2 rounded-lg shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-10">
+          {isTypeDropdownOpen && (
+            <div className="absolute left-0 sm:left-auto sm:right-0 sm:w-48 mt-2 rounded-lg shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-10">
               <div className="py-1" role="menu" aria-orientation="vertical">
-                {[
-                  "all",
-                  "Apartment Complex",
-                  "Condominium",
-                  "Townhouse",
-                  "Loft",
-                  "Villa",
-                  "Other",
-                ].map((option) => (
+                {propertyTypeOptions.map((option) => (
                   <button
-                    key={option}
+                    key={option.value}
                     className={`block w-full text-left px-4 py-2 text-sm ${
-                      typeFilter === option
+                      typeFilter === option.value
                         ? "text-[#0d9488] bg-[#f0fdfa] font-medium"
                         : "text-gray-700 hover:bg-gray-100"
                     }`}
                     onClick={() => {
-                      onTypeFilterChange(option);
-                      setIsFilterOpen(false);
+                      onTypeFilterChange(option.value);
+                      setIsTypeDropdownOpen(false);
                     }}
                   >
-                    {option === "all" ? "All Types" : option}
+                    {option.label}
                   </button>
                 ))}
               </div>
             </div>
           )}
         </div>
-        <select
-          className="hidden sm:block w-full rounded-lg border border-gray-300 pl-3 pr-10 py-2 text-sm focus:border-[#0d9488] focus:ring-[#0d9488] focus:ring-2 focus:ring-opacity-20 bg-white text-gray-900 shadow-sm transition-all duration-200"
-          value={typeFilter}
-          onChange={(e) => onTypeFilterChange(e.target.value)}
-        >
-          <option value="all">All Types</option>
-          <option value="Apartment Complex">Apartment Complex</option>
-          <option value="Condominium">Condominium</option>
-          <option value="Townhouse">Townhouse</option>
-          <option value="Loft">Loft</option>
-          <option value="Villa">Villa</option>
-          <option value="Other">Other</option>
-        </select>
       </div>
     </div>
   );

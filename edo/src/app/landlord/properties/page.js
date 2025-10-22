@@ -56,8 +56,12 @@ const Properties = () => {
   if (!isAuthenticated()) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-slate-50">
-        <h2 className="text-2xl font-bold mb-4 text-slate-900">Sign in required</h2>
-        <p className="mb-6 text-slate-700">You must be signed in to access this page.</p>
+        <h2 className="text-2xl font-bold mb-4 text-slate-900">
+          Sign in required
+        </h2>
+        <p className="mb-6 text-slate-700">
+          You must be signed in to access this page.
+        </p>
         <button
           className="px-6 py-2 bg-teal-600 text-white rounded-lg font-semibold hover:bg-teal-700 transition"
           onClick={() =>
@@ -90,7 +94,8 @@ const Properties = () => {
       // If no search query, only filter by type
       if (!search) {
         return (
-          typeFilter === "all" || propertyType === typeFilter.toLowerCase()
+          typeFilter === "all" ||
+          propertyType.includes(typeFilter.toLowerCase())
         );
       }
 
@@ -102,7 +107,7 @@ const Properties = () => {
 
       // Check if property matches type filter
       const matchesType =
-        typeFilter === "all" || propertyType === typeFilter.toLowerCase();
+        typeFilter === "all" || propertyType.includes(typeFilter.toLowerCase());
 
       return matchesSearch && matchesType;
     });
@@ -218,9 +223,7 @@ const Properties = () => {
             {loading ? (
               <div className="text-center py-8">
                 <div className="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[#0d9488]"></div>
-                <p className="mt-2 text-gray-600">
-                  Loading properties...
-                </p>
+                <p className="mt-2 text-gray-600">Loading properties...</p>
               </div>
             ) : filteredProperties.length === 0 ? (
               <div className="text-center py-12">

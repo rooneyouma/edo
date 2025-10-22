@@ -11,6 +11,7 @@ import { apiRequest } from "@/utils/api";
 import Link from "next/link";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import StyledAlert from "@/components/ui/StyledAlert"; // Keep the import for future use
+import StyledDropdown from "@/components/ui/StyledDropdown";
 
 const Notices = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -839,7 +840,7 @@ const Notices = () => {
                       type="text"
                       name="search"
                       id="search"
-                      className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0d9488] focus:border-[#0d9488] text-sm sm:text-sm"
+                      className="block w-full rounded-lg border border-gray-300 pl-10 pr-4 py-2 focus:border-[#0d9488] focus:ring-[#0d9488] focus:ring-2 focus:ring-opacity-20 bg-white text-gray-900 sm:text-sm shadow-sm transition-all duration-200"
                       placeholder="Search by property, unit, or reason..."
                       value={vacateSearch}
                       onChange={(e) => setVacateSearch(e.target.value)}
@@ -850,27 +851,15 @@ const Notices = () => {
                   <button
                     type="button"
                     onClick={() => setShowVacateFilters((prev) => !prev)}
-                    className="inline-flex items-center px-3 py-2 border border-gray-300 rounded-lg text-xs sm:text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0d9488]"
+                    className="inline-flex items-center px-4 py-2 border border-gray-200 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0d9488]"
                   >
-                    <Filter className="h-4 w-4 mr-1 sm:mr-2" />
+                    <Filter className="h-4 w-4 mr-2" />
                     Filter
-                    {showVacateFilters ? (
-                      <svg
-                        className="h-4 w-4 ml-1 sm:ml-2"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        strokeWidth="1.5"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M6 18L18 6M6 6l12 12"
-                        />
-                      </svg>
-                    ) : (
-                      <span className="ml-1 sm:ml-2">▼</span>
-                    )}
+                    <ChevronDown
+                      className={`h-4 w-4 ml-2 transition-transform duration-200 ${
+                        showVacateFilters ? "rotate-180" : ""
+                      }`}
+                    />
                   </button>
                   <button
                     type="button"
@@ -879,51 +868,54 @@ const Notices = () => {
                         vacateSortOrder === "latest" ? "earliest" : "latest"
                       )
                     }
-                    className="inline-flex items-center px-3 py-2 border border-gray-200 rounded-lg text-xs sm:text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0d9488]"
+                    className="inline-flex items-center px-4 py-2 border border-gray-200 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0d9488]"
                   >
-                    <ArrowUpDown className="h-4 w-4 mr-1 sm:mr-2" />
+                    <ArrowUpDown className="h-4 w-4 mr-2" />
                     {vacateSortOrder === "latest" ? "Latest" : "Earliest"}
                   </button>
                   {/* Desktop: Submit Vacate Notice button in controls */}
                   <button
                     type="button"
                     onClick={() => setShowVacateForm(true)}
-                    className="hidden sm:inline-flex items-center px-3 py-2 border border-transparent text-xs sm:text-sm font-medium rounded-lg shadow-sm text-white bg-[#0d9488] hover:bg-[#0f766e] focus:outline-none focus:ring-[#0d9488]"
+                    className="hidden sm:inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-[#0d9488] hover:bg-[#0d7a6f] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0d9488]"
                   >
                     Submit Vacate Notice
                   </button>
                 </div>
               </div>
               {showVacateFilters && (
-                <div className="mb-6 grid grid-cols-1 sm:grid-cols-2 gap-3 p-4 bg-white rounded-lg shadow border border-gray-200">
-                  <div>
-                    <select
-                      className="block w-full rounded-md border-gray-300 pl-3 pr-10 py-2 text-sm focus:border-[#0d9488] focus:ring-[#0d9488]"
-                      value={vacateStatusFilter}
-                      onChange={(e) => setVacateStatusFilter(e.target.value)}
-                    >
-                      <option value="all">All Status</option>
-                      <option value="pending">Pending</option>
-                      <option value="approved">Approved</option>
-                      <option value="declined">Declined</option>
-                    </select>
-                  </div>
-                  <div>
-                    <select
-                      className="block w-full rounded-md border-gray-300 pl-3 pr-10 py-2 text-sm focus:border-[#0d9488] focus:ring-[#0d9488]"
-                      value={vacateTimeFilter}
-                      onChange={(e) => setVacateTimeFilter(e.target.value)}
-                    >
-                      <option value="all">All Dates</option>
-                      <option value="today">Today</option>
-                      <option value="week">This Week</option>
-                      <option value="month">This Month</option>
-                      <option value="year">This Year</option>
-                    </select>
-                  </div>
+                <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <StyledDropdown
+                    id="status"
+                    label="Status"
+                    options={[
+                      { value: "all", label: "All Status" },
+                      { value: "pending", label: "Pending" },
+                      { value: "approved", label: "Approved" },
+                      { value: "declined", label: "Declined" },
+                    ]}
+                    value={vacateStatusFilter}
+                    onChange={setVacateStatusFilter}
+                    placeholder="All Status"
+                  />
+                  <StyledDropdown
+                    id="date"
+                    label="Date"
+                    options={[
+                      { value: "all", label: "All Dates" },
+                      { value: "today", label: "Today" },
+                      { value: "week", label: "This Week" },
+                      { value: "month", label: "This Month" },
+                      { value: "year", label: "This Year" },
+                    ]}
+                    value={vacateTimeFilter}
+                    onChange={setVacateTimeFilter}
+                    placeholder="All Dates"
+                  />
                 </div>
               )}
-              <div className="flex flex-col gap-4">
+              {/* Add margin top to create separation between filters and cards */}
+              <div className="flex flex-col gap-4 mt-6">
                 {vacateRequestsLoading ? (
                   <div className="text-center text-gray-500 py-8">
                     Loading vacate requests...

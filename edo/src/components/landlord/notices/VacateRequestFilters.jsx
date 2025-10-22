@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Search, Filter, X, ArrowUpDown } from "lucide-react";
+import { Search, Filter, ChevronDown, ArrowUpDown } from "lucide-react";
 
 const VacateRequestFilters = ({
   searchQuery,
@@ -39,11 +39,11 @@ const VacateRequestFilters = ({
           >
             <Filter className="h-4 w-4 mr-2" />
             Filter
-            {isFilterOpen ? (
-              <X className="h-4 w-4 ml-2" />
-            ) : (
-              <span className="ml-2">▼</span>
-            )}
+            <ChevronDown
+              className={`h-4 w-4 ml-2 transition-transform duration-200 ${
+                isFilterOpen ? "rotate-180" : ""
+              }`}
+            />
           </button>
           <button
             onClick={() =>

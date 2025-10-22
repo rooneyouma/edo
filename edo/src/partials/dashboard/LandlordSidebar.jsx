@@ -123,55 +123,10 @@ function LandlordSidebar({ sidebarOpen, setSidebarOpen }) {
     },
   ];
 
-  // Don't render anything until mounted to prevent hydration issues
-  if (!mounted) {
-    return (
-      <div
-        className={`sidebar fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg transform transition-transform duration-200 ease-in-out lg:translate-x-0 ${
-          sidebarOpen ? "translate-x-0" : "-translate-x-full"
-        } rounded-tr-2xl`}
-      >
-        <div className="h-full flex flex-col">
-          {/* Sidebar Header */}
-          <div className="h-16 flex items-center justify-between px-4">
-            <div className="flex-1 flex justify-center">
-              <div className="h-8 w-auto" /> {/* Placeholder for logo */}
-            </div>
-            <div className="lg:hidden">
-              <div className="w-6 h-6" /> {/* Placeholder for close button */}
-            </div>
-          </div>
-
-          {/* Sidebar Navigation */}
-          <nav className="flex-1 px-4 py-4 space-y-1">
-            {navigation.map((item) => (
-              <div
-                key={item.name}
-                className="flex items-center px-4 py-2 text-sm font-medium rounded-md text-slate-700"
-              >
-                <div className="w-5 h-5 mr-3" /> {/* Placeholder for icon */}
-                {item.name}
-              </div>
-            ))}
-          </nav>
-
-          {/* Sidebar Footer */}
-          <div className="p-4 mt-auto">
-            <div className="border-t border-slate-200 mb-4"></div>
-            <div className="flex items-center w-full px-4 py-2 text-sm font-medium rounded-md text-slate-700">
-              <div className="w-5 h-5 mr-3" /> {/* Placeholder for icon */}
-              Sign Out
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <>
-      {/* Mobile backdrop */}
-      {sidebarOpen && (
+      {/* Mobile backdrop - only rendered on client after mount */}
+      {mounted && sidebarOpen && (
         <div
           className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-40 lg:hidden"
           onClick={() => setSidebarOpen(false)}
@@ -188,29 +143,35 @@ function LandlordSidebar({ sidebarOpen, setSidebarOpen }) {
           {/* Sidebar Header */}
           <div className="h-16 flex items-center justify-between px-4">
             <div className="flex-1 flex justify-center">
-              <Link href="/landlord" className="flex items-center">
-                <EdoLogo className="h-8 w-auto" />
-              </Link>
+              {mounted ? (
+                <Link href="/landlord" className="flex items-center">
+                  <EdoLogo className="h-8 w-auto" />
+                </Link>
+              ) : (
+                <div className="h-8 w-auto" /> // Placeholder for logo during SSR
+              )}
             </div>
-            <button
-              className="lg:hidden text-slate-500 hover:text-slate-600"
-              onClick={() => setSidebarOpen(false)}
-              aria-label="Close sidebar"
-            >
-              <svg
-                className="w-6 h-6"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
+            {mounted && (
+              <button
+                className="lg:hidden text-slate-500 hover:text-slate-600"
+                onClick={() => setSidebarOpen(false)}
+                aria-label="Close sidebar"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              </svg>
-            </button>
+                <svg
+                  className="w-6 h-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
+            )}
           </div>
 
           {/* Sidebar Navigation */}
@@ -225,7 +186,11 @@ function LandlordSidebar({ sidebarOpen, setSidebarOpen }) {
                     : "text-slate-700 hover:bg-slate-100"
                 }`}
               >
-                <item.icon className="w-5 h-5 mr-3" />
+                {mounted ? (
+                  <item.icon className="w-5 h-5 mr-3" />
+                ) : (
+                  <div className="w-5 h-5 mr-3" /> // Placeholder during SSR
+                )}
                 {item.name}
               </Link>
             ))}
@@ -234,15 +199,22 @@ function LandlordSidebar({ sidebarOpen, setSidebarOpen }) {
           {/* Sidebar Footer */}
           <div className="p-4 mt-auto">
             <div className="border-t border-slate-200 mb-4"></div>
-            <button
-              className="flex items-center w-full px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-50 rounded-md"
-              onClick={() => {
-                // Handle logout
-              }}
-            >
-              <LogOut className="w-5 h-5 mr-3" />
-              Sign Out
-            </button>
+            {mounted ? (
+              <button
+                className="flex items-center w-full px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-50 rounded-md"
+                onClick={() => {
+                  // Handle logout
+                }}
+              >
+                <LogOut className="w-5 h-5 mr-3" />
+                Sign Out
+              </button>
+            ) : (
+              <div className="flex items-center w-full px-4 py-2 text-sm font-medium rounded-md text-slate-700">
+                <div className="w-5 h-5 mr-3" /> {/* Placeholder for icon */}
+                Sign Out
+              </div>
+            )}
           </div>
         </div>
       </div>

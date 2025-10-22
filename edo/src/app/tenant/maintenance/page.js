@@ -277,30 +277,18 @@ const Maintenance = () => {
 
             {/* Controls */}
             <div className="mb-6">
-              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-start sm:items-center justify-between">
-                {/* Search and Filters */}
-                <div className="w-full sm:max-w-3xl">
-                  <TenantMaintenanceFilters
-                    searchQuery={searchQuery}
-                    setSearchQuery={setSearchQuery}
-                    statusFilter={statusFilter}
-                    setStatusFilter={setStatusFilter}
-                    priorityFilter={priorityFilter}
-                    setPriorityFilter={setPriorityFilter}
-                    sortOrder={sortOrder}
-                    setSortOrder={setSortOrder}
-                  />
-                </div>
-
-                {/* New Request Button */}
-                <button
-                  onClick={() => setShowNewRequestModal(true)}
-                  className="flex items-center w-full sm:w-auto justify-center px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors whitespace-nowrap text-sm font-medium"
-                >
-                  <Plus className="h-4 w-4 mr-2" />
-                  New Request
-                </button>
-              </div>
+              {/* Search and Filters */}
+              <TenantMaintenanceFilters
+                searchQuery={searchQuery}
+                setSearchQuery={setSearchQuery}
+                statusFilter={statusFilter}
+                setStatusFilter={setStatusFilter}
+                priorityFilter={priorityFilter}
+                setPriorityFilter={setPriorityFilter}
+                sortOrder={sortOrder}
+                setSortOrder={setSortOrder}
+                onOpenNewRequest={() => setShowNewRequestModal(true)}
+              />
             </div>
 
             {/* Results Count */}

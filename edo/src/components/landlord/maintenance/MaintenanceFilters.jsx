@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { Search, Filter, X, ArrowUpDown } from "lucide-react";
+import { Search, Filter, ChevronDown, ArrowUpDown } from "lucide-react";
+import StyledDropdown from "../../ui/StyledDropdown";
 
 const MaintenanceFilters = ({
   searchQuery,
@@ -16,6 +17,37 @@ const MaintenanceFilters = ({
   setSortOrder,
 }) => {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
+
+  // Options for dropdowns
+  const statusOptions = [
+    { value: "all", label: "All Status" },
+    { value: "Pending", label: "Pending" },
+    { value: "In Progress", label: "In Progress" },
+    { value: "Completed", label: "Completed" },
+  ];
+
+  const priorityOptions = [
+    { value: "all", label: "All Priority" },
+    { value: "High", label: "High" },
+    { value: "Medium", label: "Medium" },
+    { value: "Low", label: "Low" },
+  ];
+
+  const propertyOptions = [
+    { value: "all", label: "All Properties" },
+    { value: "Sunset Apartments", label: "Sunset Apartments" },
+    { value: "Mountain View Condos", label: "Mountain View Condos" },
+    { value: "Riverside Townhomes", label: "Riverside Townhomes" },
+    { value: "Downtown Lofts", label: "Downtown Lofts" },
+    { value: "Garden Villas", label: "Garden Villas" },
+  ];
+
+  const dateOptions = [
+    { value: "all", label: "All Dates" },
+    { value: "today", label: "Today" },
+    { value: "week", label: "Last 7 Days" },
+    { value: "month", label: "Last 30 Days" },
+  ];
 
   return (
     <div className="mt-4">
@@ -41,11 +73,11 @@ const MaintenanceFilters = ({
           >
             <Filter className="h-4 w-4 mr-2" />
             Filter
-            {isFilterOpen ? (
-              <X className="h-4 w-4 ml-2" />
-            ) : (
-              <span className="ml-2">▼</span>
-            )}
+            <ChevronDown
+              className={`h-4 w-4 ml-2 transition-transform duration-200 ${
+                isFilterOpen ? "rotate-180" : ""
+              }`}
+            />
           </button>
           <button
             onClick={() =>
@@ -61,84 +93,38 @@ const MaintenanceFilters = ({
 
       {isFilterOpen && (
         <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div>
-            <label
-              htmlFor="status"
-              className="block text-sm font-medium text-gray-700 mb-1"
-            >
-              Status
-            </label>
-            <select
-              id="status"
-              className="block w-full rounded-lg border border-gray-300 pl-3 pr-10 py-2 text-sm focus:border-[#0d9488] focus:ring-[#0d9488] focus:ring-2 focus:ring-opacity-20 bg-white text-gray-900 shadow-sm transition-all duration-200"
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-            >
-              <option value="all">All Status</option>
-              <option value="Pending">Pending</option>
-              <option value="In Progress">In Progress</option>
-              <option value="Completed">Completed</option>
-            </select>
-          </div>
-          <div>
-            <label
-              htmlFor="priority"
-              className="block text-sm font-medium text-gray-700 mb-1"
-            >
-              Priority
-            </label>
-            <select
-              id="priority"
-              className="block w-full rounded-lg border border-gray-300 pl-3 pr-10 py-2 text-sm focus:border-[#0d9488] focus:ring-[#0d9488] focus:ring-2 focus:ring-opacity-20 bg-white text-gray-900 shadow-sm transition-all duration-200"
-              value={priorityFilter}
-              onChange={(e) => setPriorityFilter(e.target.value)}
-            >
-              <option value="all">All Priority</option>
-              <option value="High">High</option>
-              <option value="Medium">Medium</option>
-              <option value="Low">Low</option>
-            </select>
-          </div>
-          <div>
-            <label
-              htmlFor="property"
-              className="block text-sm font-medium text-gray-700 mb-1"
-            >
-              Property
-            </label>
-            <select
-              id="property"
-              className="block w-full rounded-lg border border-gray-300 pl-3 pr-10 py-2 text-sm focus:border-[#0d9488] focus:ring-[#0d9488] focus:ring-2 focus:ring-opacity-20 bg-white text-gray-900 shadow-sm transition-all duration-200"
-              value={propertyFilter}
-              onChange={(e) => setPropertyFilter(e.target.value)}
-            >
-              <option value="all">All Properties</option>
-              <option value="Sunset Apartments">Sunset Apartments</option>
-              <option value="Mountain View Condos">Mountain View Condos</option>
-              <option value="Riverside Townhomes">Riverside Townhomes</option>
-              <option value="Downtown Lofts">Downtown Lofts</option>
-              <option value="Garden Villas">Garden Villas</option>
-            </select>
-          </div>
-          <div>
-            <label
-              htmlFor="date"
-              className="block text-sm font-medium text-gray-700 mb-1"
-            >
-              Date
-            </label>
-            <select
-              id="date"
-              className="block w-full rounded-lg border border-gray-300 pl-3 pr-10 py-2 text-sm focus:border-[#0d9488] focus:ring-[#0d9488] focus:ring-2 focus:ring-opacity-20 bg-white text-gray-900 shadow-sm transition-all duration-200"
-              value={dateFilter}
-              onChange={(e) => setDateFilter(e.target.value)}
-            >
-              <option value="all">All Dates</option>
-              <option value="today">Today</option>
-              <option value="week">Last 7 Days</option>
-              <option value="month">Last 30 Days</option>
-            </select>
-          </div>
+          <StyledDropdown
+            id="status"
+            label="Status"
+            options={statusOptions}
+            value={statusFilter}
+            onChange={setStatusFilter}
+            placeholder="All Status"
+          />
+          <StyledDropdown
+            id="priority"
+            label="Priority"
+            options={priorityOptions}
+            value={priorityFilter}
+            onChange={setPriorityFilter}
+            placeholder="All Priority"
+          />
+          <StyledDropdown
+            id="property"
+            label="Property"
+            options={propertyOptions}
+            value={propertyFilter}
+            onChange={setPropertyFilter}
+            placeholder="All Properties"
+          />
+          <StyledDropdown
+            id="date"
+            label="Date"
+            options={dateOptions}
+            value={dateFilter}
+            onChange={setDateFilter}
+            placeholder="All Dates"
+          />
         </div>
       )}
     </div>

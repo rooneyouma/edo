@@ -26,6 +26,8 @@ import { AlertCircle, Search } from "lucide-react";
 
 const LandlordMaintenance = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  // Add mounted state to prevent hydration errors
+  const [mounted, setMounted] = useState(false);
   const [selectedRequest, setSelectedRequest] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
@@ -45,6 +47,11 @@ const LandlordMaintenance = () => {
   const pathname = usePathname();
   const queryClient = useQueryClient();
 
+  // Set mounted to true after component mounts
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   // React Query for fetching maintenance requests with optimized settings
   const {
     data: requestsData,
@@ -60,7 +67,7 @@ const LandlordMaintenance = () => {
         throw new Error(result.error || "Failed to fetch maintenance requests");
       }
     },
-    enabled: !!isAuthenticated(),
+    enabled: mounted && !!isAuthenticated(), // Only fetch when mounted and authenticated
     staleTime: 5 * 60 * 1000, // 5 minutes
     gcTime: 10 * 60 * 1000, // 10 minutes
     retry: 1, // Reduce retries for faster failure
@@ -226,31 +233,58 @@ const LandlordMaintenance = () => {
   // Handle error state from React Query
   const error = queryError ? queryError.message : null;
 
-  if (!isAuthenticated()) {
+  // Check authentication status
+  const authenticated = isAuthenticated();
+
+  // If not authenticated, show sign in prompt with consistent structure
+  if (!authenticated) {
     return (
-      <div className="flex h-screen overflow-hidden bg-slate-50">
+      <div className="flex h-screen bg-slate-50">
         {/* Sidebar */}
-        <LandlordSidebar sidebarOpen={false} setSidebarOpen={() => {}} />
+        <LandlordSidebar
+          sidebarOpen={sidebarOpen}
+          setSidebarOpen={setSidebarOpen}
+        />
 
         {/* Content area */}
         <div className="relative flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
           <div className="lg:ml-64">
-            <div className="w-full">
-              <h2 className="text-2xl font-bold mb-4 text-slate-900">Sign in required</h2>
-              <p className="mb-6 text-slate-700">You must be signed in to access this page.</p>
-              <button
-                className="px-6 py-2 bg-teal-600 text-white rounded-lg font-semibold hover:bg-teal-700 transition"
-                onClick={() =>
-                  router.push(
-                    `/auth/signin?role=landlord&next=${encodeURIComponent(
-                      pathname
-                    )}`
-                  )
-                }
-              >
-                Proceed
-              </button>
-            </div>
+            {/* Site header */}
+            <LandlordHeader toggleSidebar={toggleSidebar} />
+
+            {/* Main content area */}
+            <main className="flex-1 px-4 sm:pl-6 sm:pr-12 lg:pl-8 lg:pr-16 py-4 sm:py-6 lg:py-8 overflow-auto">
+              <div className="w-full">
+                {/* Page header */}
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
+                  <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">
+                    Maintenance Requests
+                  </h1>
+                </div>
+                <div className="w-full">
+                  <div className="flex-1 flex flex-col items-center justify-center bg-slate-50 rounded-lg">
+                    <h2 className="text-2xl font-bold mb-4">
+                      Sign in required
+                    </h2>
+                    <p className="mb-6">
+                      You must be signed in to access this page.
+                    </p>
+                    <button
+                      className="px-6 py-2 bg-teal-600 text-white rounded-lg font-semibold hover:bg-teal-700 transition"
+                      onClick={() =>
+                        router.push(
+                          `/auth/signin?role=landlord&next=${encodeURIComponent(
+                            pathname
+                          )}`
+                        )
+                      }
+                    >
+                      Proceed
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </main>
           </div>
         </div>
       </div>
@@ -259,7 +293,7 @@ const LandlordMaintenance = () => {
 
   if (loading) {
     return (
-      <div className="flex h-screen overflow-hidden bg-slate-50">
+      <div className="flex h-screen bg-slate-50">
         <LandlordSidebar
           sidebarOpen={sidebarOpen}
           setSidebarOpen={setSidebarOpen}
@@ -270,6 +304,39 @@ const LandlordMaintenance = () => {
             <div className="flex-1 flex items-center justify-center">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-teal-600"></div>
             </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Don't render anything until mounted to prevent hydration issues
+  if (!mounted) {
+    return (
+      <div className="flex h-screen bg-slate-50">
+        {/* Sidebar */}
+        <LandlordSidebar sidebarOpen={false} setSidebarOpen={() => {}} />
+
+        {/* Content area */}
+        <div className="relative flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
+          <div className="lg:ml-64">
+            {/* Site header */}
+            <LandlordHeader toggleSidebar={toggleSidebar} />
+
+            {/* Main content area */}
+            <main className="flex-1 px-4 sm:pl-6 sm:pr-12 lg:pl-8 lg:pr-16 py-4 sm:py-6 lg:py-8 overflow-auto">
+              <div className="w-full">
+                {/* Page header */}
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
+                  <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">
+                    Maintenance Requests
+                  </h1>
+                </div>
+                <div className="text-center text-gray-500 text-slate-500 mt-12 text-lg">
+                  Loading...
+                </div>
+              </div>
+            </main>
           </div>
         </div>
       </div>
@@ -304,9 +371,7 @@ const LandlordMaintenance = () => {
                 <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
                   <div className="flex items-center">
                     <AlertCircle className="h-5 w-5 text-red-500 mr-2" />
-                    <span className="text-red-700">
-                      {error}
-                    </span>
+                    <span className="text-red-700">{error}</span>
                   </div>
                 </div>
               )}

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { Search, Filter, X, ArrowUpDown } from "lucide-react";
+import { Search, Filter, ArrowUpDown, ChevronDown } from "lucide-react";
+import StyledDropdown from "../../ui/StyledDropdown";
 
 const NoticeFilters = ({
   searchQuery,
@@ -12,21 +13,6 @@ const NoticeFilters = ({
   setSortOrder,
 }) => {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
-  const [isNoticeTypeDropdownOpen, setIsNoticeTypeDropdownOpen] =
-    useState(false);
-  const [isAudienceDropdownOpen, setIsAudienceDropdownOpen] = useState(false);
-
-  // Get display name for notice type filter
-  const getNoticeTypeDisplayName = (filterValue) => {
-    if (filterValue === "all") return "All Types";
-    return filterValue;
-  };
-
-  // Get display name for audience filter
-  const getAudienceDisplayName = (filterValue) => {
-    if (filterValue === "all") return "All Audiences";
-    return filterValue;
-  };
 
   // Notice type options
   const noticeTypeOptions = [
@@ -75,11 +61,11 @@ const NoticeFilters = ({
           >
             <Filter className="h-4 w-4 mr-2" />
             Filter
-            {isFilterOpen ? (
-              <X className="h-4 w-4 ml-2" />
-            ) : (
-              <span className="ml-2">▼</span>
-            )}
+            <ChevronDown
+              className={`h-4 w-4 ml-2 transition-transform duration-200 ${
+                isFilterOpen ? "rotate-180" : ""
+              }`}
+            />
           </button>
           <button
             onClick={() =>
@@ -95,123 +81,22 @@ const NoticeFilters = ({
 
       {isFilterOpen && (
         <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {/* Notice Type Filter - Custom Dropdown for Mobile */}
-          <div className="relative">
-            <label
-              htmlFor="noticeType"
-              className="block text-sm font-medium text-gray-700 mb-1"
-            >
-              Notice Type
-            </label>
-            <div className="sm:hidden">
-              <button
-                type="button"
-                onClick={() =>
-                  setIsNoticeTypeDropdownOpen(!isNoticeTypeDropdownOpen)
-                }
-                className="w-full flex items-center justify-between rounded-lg border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 transition-colors duration-200 px-4 py-2"
-                title="Filter by notice type"
-              >
-                <span className="truncate">
-                  {getNoticeTypeDisplayName(noticeTypeFilter)}
-                </span>
-                <Filter className="h-5 w-5 ml-2 flex-shrink-0" />
-              </button>
-              {isNoticeTypeDropdownOpen && (
-                <div className="absolute left-0 right-0 mt-2 rounded-lg shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-10">
-                  <div className="py-1" role="menu" aria-orientation="vertical">
-                    {noticeTypeOptions.map((option) => (
-                      <button
-                        key={option.value}
-                        className={`block w-full text-left px-4 py-2 text-sm ${
-                          noticeTypeFilter === option.value
-                            ? "text-teal-600 bg-teal-50 font-medium"
-                            : "text-gray-700 hover:bg-gray-100"
-                        }`}
-                        onClick={() => {
-                          setNoticeTypeFilter(option.value);
-                          setIsNoticeTypeDropdownOpen(false);
-                        }}
-                      >
-                        {option.label}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-            <select
-              id="noticeType"
-              className="hidden sm:block w-full rounded-lg border border-gray-300 pl-3 pr-10 py-2 text-sm focus:border-teal-500 focus:ring-teal-500 focus:ring-2 focus:ring-opacity-20 bg-white text-gray-900 shadow-sm transition-all duration-200"
-              value={noticeTypeFilter}
-              onChange={(e) => setNoticeTypeFilter(e.target.value)}
-            >
-              {noticeTypeOptions.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Audience Filter - Custom Dropdown for Mobile */}
-          <div className="relative">
-            <label
-              htmlFor="audience"
-              className="block text-sm font-medium text-gray-700 mb-1"
-            >
-              Audience
-            </label>
-            <div className="sm:hidden">
-              <button
-                type="button"
-                onClick={() =>
-                  setIsAudienceDropdownOpen(!isAudienceDropdownOpen)
-                }
-                className="w-full flex items-center justify-between rounded-lg border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 transition-colors duration-200 px-4 py-2"
-                title="Filter by audience"
-              >
-                <span className="truncate">
-                  {getAudienceDisplayName(audienceFilter)}
-                </span>
-                <Filter className="h-5 w-5 ml-2 flex-shrink-0" />
-              </button>
-              {isAudienceDropdownOpen && (
-                <div className="absolute left-0 right-0 mt-2 rounded-lg shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-10">
-                  <div className="py-1" role="menu" aria-orientation="vertical">
-                    {audienceOptions.map((option) => (
-                      <button
-                        key={option.value}
-                        className={`block w-full text-left px-4 py-2 text-sm ${
-                          audienceFilter === option.value
-                            ? "text-teal-600 bg-teal-50 font-medium"
-                            : "text-gray-700 hover:bg-gray-100"
-                        }`}
-                        onClick={() => {
-                          setAudienceFilter(option.value);
-                          setIsAudienceDropdownOpen(false);
-                        }}
-                      >
-                        {option.label}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-            <select
-              id="audience"
-              className="hidden sm:block w-full rounded-lg border border-gray-300 pl-3 pr-10 py-2 text-sm focus:border-teal-500 focus:ring-teal-500 focus:ring-2 focus:ring-opacity-20 bg-white text-gray-900 shadow-sm transition-all duration-200"
-              value={audienceFilter}
-              onChange={(e) => setAudienceFilter(e.target.value)}
-            >
-              {audienceOptions.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
-          </div>
+          <StyledDropdown
+            id="noticeType"
+            label="Notice Type"
+            options={noticeTypeOptions}
+            value={noticeTypeFilter}
+            onChange={setNoticeTypeFilter}
+            placeholder="All Types"
+          />
+          <StyledDropdown
+            id="audience"
+            label="Audience"
+            options={audienceOptions}
+            value={audienceFilter}
+            onChange={setAudienceFilter}
+            placeholder="All Audiences"
+          />
         </div>
       )}
     </div>

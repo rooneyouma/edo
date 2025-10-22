@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { Search, Filter, X, ArrowUpDown } from "lucide-react";
+import { Search, Filter, ChevronDown, ArrowUpDown } from "lucide-react";
+import StyledDropdown from "../../ui/StyledDropdown";
 
 const PaymentFilters = ({
   searchQuery,
@@ -17,6 +18,38 @@ const PaymentFilters = ({
   propertyOptions,
 }) => {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
+
+  // Options for dropdowns
+  const statusOptions = [
+    { value: "all", label: "All Status" },
+    { value: "Paid", label: "Paid" },
+    { value: "Pending", label: "Pending" },
+    { value: "Overdue", label: "Overdue" },
+  ];
+
+  const dateOptions = [
+    { value: "all", label: "All Dates" },
+    { value: "today", label: "Today" },
+    { value: "week", label: "Last 7 Days" },
+    { value: "month", label: "Last 30 Days" },
+  ];
+
+  const paymentMethodOptions = [
+    { value: "all", label: "All Methods" },
+    { value: "Credit Card", label: "Credit Card" },
+    { value: "Bank Transfer", label: "Bank Transfer" },
+    { value: "Cash", label: "Cash" },
+    { value: "Check", label: "Check" },
+  ];
+
+  // Generate property options from propertyOptions prop
+  const propertyDropdownOptions = [
+    { value: "all", label: "All Properties" },
+    ...(propertyOptions?.map((property) => ({
+      value: property,
+      label: property,
+    })) || []),
+  ];
 
   return (
     <div className="mt-4">
@@ -43,11 +76,11 @@ const PaymentFilters = ({
           >
             <Filter className="h-4 w-4 mr-2" />
             Filter
-            {isFilterOpen ? (
-              <X className="h-4 w-4 ml-2" />
-            ) : (
-              <span className="ml-2">▼</span>
-            )}
+            <ChevronDown
+              className={`h-4 w-4 ml-2 transition-transform duration-200 ${
+                isFilterOpen ? "rotate-180" : ""
+              }`}
+            />
           </button>
           <button
             onClick={() =>
@@ -63,85 +96,38 @@ const PaymentFilters = ({
 
       {isFilterOpen && (
         <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div>
-            <label
-              htmlFor="status"
-              className="block text-sm font-medium text-gray-700 mb-1"
-            >
-              Status
-            </label>
-            <select
-              id="status"
-              className="block w-full rounded-md border-gray-300 pl-3 pr-10 py-2 text-sm focus:border-[#0d9488] focus:ring-[#0d9488] bg-white text-gray-900"
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-            >
-              <option value="all">All Status</option>
-              <option value="Paid">Paid</option>
-              <option value="Pending">Pending</option>
-              <option value="Overdue">Overdue</option>
-            </select>
-          </div>
-          <div>
-            <label
-              htmlFor="property"
-              className="block text-sm font-medium text-gray-700 mb-1"
-            >
-              Property
-            </label>
-            <select
-              id="property"
-              className="block w-full rounded-md border-gray-300 pl-3 pr-10 py-2 text-sm focus:border-[#0d9488] focus:ring-[#0d9488] bg-white text-gray-900"
-              value={propertyFilter}
-              onChange={(e) => setPropertyFilter(e.target.value)}
-            >
-              <option value="all">All Properties</option>
-              {propertyOptions.map((property) => (
-                <option key={property} value={property}>
-                  {property}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div>
-            <label
-              htmlFor="date"
-              className="block text-sm font-medium text-gray-700 mb-1"
-            >
-              Date
-            </label>
-            <select
-              id="date"
-              className="block w-full rounded-md border-gray-300 pl-3 pr-10 py-2 text-sm focus:border-[#0d9488] focus:ring-[#0d9488] bg-white text-gray-900"
-              value={dateFilter}
-              onChange={(e) => setDateFilter(e.target.value)}
-            >
-              <option value="all">All Dates</option>
-              <option value="today">Today</option>
-              <option value="week">Last 7 Days</option>
-              <option value="month">Last 30 Days</option>
-            </select>
-          </div>
-          <div>
-            <label
-              htmlFor="paymentMethod"
-              className="block text-sm font-medium text-gray-700 mb-1"
-            >
-              Payment Method
-            </label>
-            <select
-              id="paymentMethod"
-              className="block w-full rounded-md border-gray-300 pl-3 pr-10 py-2 text-sm focus:border-[#0d9488] focus:ring-[#0d9488] bg-white text-gray-900"
-              value={paymentMethodFilter}
-              onChange={(e) => setPaymentMethodFilter(e.target.value)}
-            >
-              <option value="all">All Methods</option>
-              <option value="Credit Card">Credit Card</option>
-              <option value="Bank Transfer">Bank Transfer</option>
-              <option value="Cash">Cash</option>
-              <option value="Check">Check</option>
-            </select>
-          </div>
+          <StyledDropdown
+            id="status"
+            label="Status"
+            options={statusOptions}
+            value={statusFilter}
+            onChange={setStatusFilter}
+            placeholder="All Status"
+          />
+          <StyledDropdown
+            id="property"
+            label="Property"
+            options={propertyDropdownOptions}
+            value={propertyFilter}
+            onChange={setPropertyFilter}
+            placeholder="All Properties"
+          />
+          <StyledDropdown
+            id="date"
+            label="Date"
+            options={dateOptions}
+            value={dateFilter}
+            onChange={setDateFilter}
+            placeholder="All Dates"
+          />
+          <StyledDropdown
+            id="paymentMethod"
+            label="Payment Method"
+            options={paymentMethodOptions}
+            value={paymentMethodFilter}
+            onChange={setPaymentMethodFilter}
+            placeholder="All Methods"
+          />
         </div>
       )}
     </div>

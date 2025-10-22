@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { Search, Filter, ArrowUpDown, X } from "lucide-react";
+import { Search, Filter, ChevronDown, ArrowUpDown, X } from "lucide-react";
+import StyledDropdown from "../../ui/StyledDropdown";
 
 const MessageFilters = ({
   searchTerm,
@@ -27,6 +28,22 @@ const MessageFilters = ({
   };
 
   const activeFiltersCount = getActiveFiltersCount();
+
+  // Status options
+  const statusOptions = [
+    { value: "all", label: "All Status" },
+    { value: "read", label: "Read" },
+    { value: "unread", label: "Unread" },
+  ];
+
+  // Property options
+  const propertyOptions = [
+    { value: "all", label: "All Properties" },
+    ...availableProperties.map((property) => ({
+      value: property,
+      label: property,
+    })),
+  ];
 
   return (
     <div className="mt-4">
@@ -62,11 +79,11 @@ const MessageFilters = ({
                 {activeFiltersCount}
               </span>
             )}
-            {isFilterOpen ? (
-              <X className="h-4 w-4 ml-2" />
-            ) : (
-              <span className="ml-2">▼</span>
-            )}
+            <ChevronDown
+              className={`h-4 w-4 ml-2 transition-transform duration-200 ${
+                isFilterOpen ? "rotate-180" : ""
+              }`}
+            />
           </button>
           <button
             onClick={() =>
@@ -117,47 +134,24 @@ const MessageFilters = ({
         <div className="mt-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {!isSent && (
-              <div>
-                <label
-                  htmlFor="status"
-                  className="block text-sm font-medium text-gray-700 mb-1"
-                >
-                  Status
-                </label>
-                <select
-                  id="status"
-                  value={statusFilter}
-                  onChange={(e) => setStatusFilter(e.target.value)}
-                  className="block w-full rounded-lg border border-gray-300 pl-3 pr-10 py-2 text-sm focus:border-teal-500 focus:ring-teal-500 focus:ring-2 focus:ring-opacity-20 shadow-sm transition-all duration-200"
-                >
-                  <option value="all">All Status</option>
-                  <option value="read">Read</option>
-                  <option value="unread">Unread</option>
-                </select>
-              </div>
+              <StyledDropdown
+                id="status"
+                label="Status"
+                options={statusOptions}
+                value={statusFilter}
+                onChange={setStatusFilter}
+                placeholder="All Status"
+              />
             )}
 
-            <div>
-              <label
-                htmlFor="property"
-                className="block text-sm font-medium text-gray-700 mb-1"
-              >
-                Property
-              </label>
-              <select
-                id="property"
-                value={propertyFilter}
-                onChange={(e) => setPropertyFilter(e.target.value)}
-                className="block w-full rounded-lg border border-gray-300 pl-3 pr-10 py-2 text-sm focus:border-teal-500 focus:ring-teal-500 focus:ring-2 focus:ring-opacity-20 shadow-sm transition-all duration-200"
-              >
-                <option value="all">All Properties</option>
-                {availableProperties.map((property) => (
-                  <option key={property} value={property}>
-                    {property}
-                  </option>
-                ))}
-              </select>
-            </div>
+            <StyledDropdown
+              id="property"
+              label="Property"
+              options={propertyOptions}
+              value={propertyFilter}
+              onChange={setPropertyFilter}
+              placeholder="All Properties"
+            />
 
             <div className="sm:col-span-2 lg:col-span-2">
               <label className="block text-sm font-medium text-gray-700 mb-2">
