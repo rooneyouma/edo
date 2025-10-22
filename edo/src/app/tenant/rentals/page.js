@@ -256,8 +256,8 @@ const MyRentals = () => {
       {selectedRental && (
         <div className="fixed inset-0 bg-gray-500/50 z-40 transition-opacity">
           <div className="fixed inset-0 z-50 overflow-y-auto">
-            <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
-              <div className="relative transform overflow-hidden rounded-lg bg-white px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-2xl sm:p-6">
+            <div className="flex min-h-full items-end justify-center p-2 text-center sm:items-center sm:p-0">
+              <div className="relative transform overflow-hidden rounded-lg bg-white px-3 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-3xl sm:p-6 w-full max-w-md">
                 <div className="absolute right-0 top-0 pr-4 pt-4">
                   <button
                     type="button"
@@ -329,122 +329,134 @@ const MyRentals = () => {
                             : selectedRental.lease_type || "N/A"}
                         </dd>
                       </div>
-                      <div>
-                        <dt className="text-sm text-slate-500">Start Date</dt>
-                        <dd className="mt-1 text-sm text-slate-900">
-                          {formatDate(selectedRental.lease_start_date)}
-                        </dd>
-                      </div>
-                      <div>
-                        <dt className="text-sm text-slate-500">End Date</dt>
-                        <dd className="mt-1 text-sm text-slate-900">
-                          {formatDate(selectedRental.lease_end_date)}
-                        </dd>
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <dt className="text-sm text-slate-500">Start Date</dt>
+                          <dd className="mt-1 text-sm text-slate-900">
+                            {formatDate(selectedRental.lease_start_date)}
+                          </dd>
+                        </div>
+                        <div>
+                          <dt className="text-sm text-slate-500">End Date</dt>
+                          <dd className="mt-1 text-sm text-slate-900">
+                            {formatDate(selectedRental.lease_end_date)}
+                          </dd>
+                        </div>
                       </div>
                     </dl>
                   </div>
 
-                  {/* Property Details */}
+                  {/* Property Details and Address */}
                   <div>
                     <h4 className="text-sm font-medium text-slate-900 mb-3">
                       Property Details
                     </h4>
                     <dl className="space-y-3">
-                      <div>
-                        <dt className="text-sm text-slate-500">Type</dt>
-                        <dd className="mt-1 text-sm text-slate-900">
-                          {selectedRental.property_type}
-                        </dd>
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <dt className="text-sm text-slate-500">Type</dt>
+                          <dd className="mt-1 text-sm text-slate-900">
+                            {selectedRental.property_type}
+                          </dd>
+                        </div>
+                        <div>
+                          <dt className="text-sm text-slate-500">Floor</dt>
+                          <dd className="mt-1 text-sm text-slate-900">
+                            {selectedRental.floor || "N/A"}
+                          </dd>
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <dt className="text-sm text-slate-500">Bedrooms</dt>
+                          <dd className="mt-1 text-sm text-slate-900">
+                            {selectedRental.bedrooms}
+                          </dd>
+                        </div>
+                        <div>
+                          <dt className="text-sm text-slate-500">Bathrooms</dt>
+                          <dd className="mt-1 text-sm text-slate-900">
+                            {selectedRental.bathrooms}
+                          </dd>
+                        </div>
                       </div>
                       <div>
-                        <dt className="text-sm text-slate-500">
-                          Bedrooms/Bathrooms
-                        </dt>
+                        <dt className="text-sm text-slate-500">Address</dt>
                         <dd className="mt-1 text-sm text-slate-900">
-                          {selectedRental.bedrooms} bed /{" "}
-                          {selectedRental.bathrooms} bath
-                        </dd>
-                      </div>
-                      <div>
-                        <dt className="text-sm text-slate-500">Size</dt>
-                        <dd className="mt-1 text-sm text-slate-900">
-                          {selectedRental.size
-                            ? `${selectedRental.size} sq ft`
-                            : "N/A"}
-                        </dd>
-                      </div>
-                      <div>
-                        <dt className="text-sm text-slate-500">Floor</dt>
-                        <dd className="mt-1 text-sm text-slate-900">
-                          {selectedRental.floor || "N/A"}
+                          {selectedRental.address}
                         </dd>
                       </div>
                     </dl>
-                  </div>
-
-                  {/* Address */}
-                  <div className="sm:col-span-2">
-                    <h4 className="text-sm font-medium text-slate-900 mb-3">
-                      Address
-                    </h4>
-                    <p className="text-sm text-slate-900">
-                      {selectedRental.address}
-                    </p>
                   </div>
 
                   {/* Contact Information */}
-                  <div>
+                  <div className="sm:col-span-2">
                     <h4 className="text-sm font-medium text-slate-900 mb-3">
-                      Landlord Contact
+                      Contact Information
                     </h4>
-                    <dl className="space-y-3">
+                    <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                      {/* Landlord Contact */}
                       <div>
-                        <dt className="text-sm text-slate-500">Name</dt>
-                        <dd className="mt-1 text-sm text-slate-900">
-                          {selectedRental.landlord_name}
-                        </dd>
+                        <h5 className="text-xs font-medium text-slate-700 mb-2">
+                          Landlord
+                        </h5>
+                        <dl className="space-y-3">
+                          <div className="grid grid-cols-2 gap-4">
+                            <div>
+                              <dt className="text-sm text-slate-500">Name</dt>
+                              <dd className="mt-1 text-sm text-slate-900">
+                                {selectedRental.landlord_name}
+                              </dd>
+                            </div>
+                            <div>
+                              <dt className="text-sm text-slate-500">Email</dt>
+                              <dd className="mt-1 text-sm text-slate-900">
+                                {selectedRental.landlord_email}
+                              </dd>
+                            </div>
+                          </div>
+                          <div>
+                            <dt className="text-sm text-slate-500">Phone</dt>
+                            <dd className="mt-1 text-sm text-slate-900">
+                              {selectedRental.landlord_phone || "N/A"}
+                            </dd>
+                          </div>
+                        </dl>
                       </div>
-                      <div>
-                        <dt className="text-sm text-slate-500">Email</dt>
-                        <dd className="mt-1 text-sm text-slate-900">
-                          {selectedRental.landlord_email}
-                        </dd>
-                      </div>
-                      <div>
-                        <dt className="text-sm text-slate-500">Phone</dt>
-                        <dd className="mt-1 text-sm text-slate-900">
-                          {selectedRental.landlord_phone || "N/A"}
-                        </dd>
-                      </div>
-                    </dl>
-                  </div>
 
-                  {/* Emergency Contact */}
-                  <div>
-                    <h4 className="text-sm font-medium text-slate-900 mb-3">
-                      Emergency Contact
-                    </h4>
-                    <dl className="space-y-3">
+                      {/* Emergency Contact */}
                       <div>
-                        <dt className="text-sm text-slate-500">Name</dt>
-                        <dd className="mt-1 text-sm text-slate-900">
-                          {selectedRental.emergency_contact_name || "N/A"}
-                        </dd>
+                        <h5 className="text-xs font-medium text-slate-700 mb-2">
+                          Emergency Contact
+                        </h5>
+                        <dl className="space-y-3">
+                          <div>
+                            <dt className="text-sm text-slate-500">Name</dt>
+                            <dd className="mt-1 text-sm text-slate-900">
+                              {selectedRental.emergency_contact_name || "N/A"}
+                            </dd>
+                          </div>
+                          <div className="grid grid-cols-2 gap-4">
+                            <div>
+                              <dt className="text-sm text-slate-500">Phone</dt>
+                              <dd className="mt-1 text-sm text-slate-900">
+                                {selectedRental.emergency_contact_phone ||
+                                  "N/A"}
+                              </dd>
+                            </div>
+                            <div>
+                              <dt className="text-sm text-slate-500">
+                                Relationship
+                              </dt>
+                              <dd className="mt-1 text-sm text-slate-900">
+                                {selectedRental.emergency_contact_relationship ||
+                                  "N/A"}
+                              </dd>
+                            </div>
+                          </div>
+                        </dl>
                       </div>
-                      <div>
-                        <dt className="text-sm text-slate-500">Phone</dt>
-                        <dd className="mt-1 text-sm text-slate-900">
-                          {selectedRental.emergency_contact_phone || "N/A"}
-                        </dd>
-                      </div>
-                      <div>
-                        <dt className="text-sm text-slate-500">Relationship</dt>
-                        <dd className="mt-1 text-sm text-slate-900">
-                          {selectedRental.emergency_contact_relationship ||
-                            "N/A"}
-                        </dd>
-                      </div>
-                    </dl>
+                    </div>
                   </div>
                 </div>
 

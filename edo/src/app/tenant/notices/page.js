@@ -34,6 +34,10 @@ const Notices = () => {
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [requestToWithdraw, setRequestToWithdraw] = useState(null);
   const [formError, setFormError] = useState(""); // Add state for form validation errors
+  // Add pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const noticesPerPage = 6;
+
   const router = useRouter();
   const searchParams = useSearchParams();
   const queryClient = useQueryClient();
@@ -529,10 +533,22 @@ const Notices = () => {
     return 0;
   });
 
+  // Pagination logic
+  const indexOfLastNotice = currentPage * noticesPerPage;
+  const indexOfFirstNotice = indexOfLastNotice - noticesPerPage;
+  const currentNotices = isExpandedView
+    ? sortedNotices.slice(indexOfFirstNotice, indexOfLastNotice)
+    : sortedNotices.slice(0, 2);
+
+  const totalPages = Math.ceil(sortedNotices.length / noticesPerPage);
+
+  // Function to change page
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
   // Get visible notices based on view mode
   const visibleNotices = isExpandedView
-    ? sortedNotices
-    : sortedNotices.slice(0, 3);
+    ? currentNotices
+    : sortedNotices.slice(0, 2);
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -550,13 +566,19 @@ const Notices = () => {
                   </h1>
                   <p className="mt-1 text-xs sm:text-sm text-slate-500 text-slate-500">
                     {isExpandedView
-                      ? "All notices and announcements"
+                      ? `All notices (${sortedNotices.length}) - Page ${currentPage} of ${totalPages}`
                       : "Recent notices and announcements"}
                   </p>
                 </div>
                 <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:space-x-3 mt-3 sm:mt-0">
                   <button
-                    onClick={() => setIsExpandedView(!isExpandedView)}
+                    onClick={() => {
+                      setIsExpandedView(!isExpandedView);
+                      // Reset to first page when toggling view
+                      if (!isExpandedView) {
+                        setCurrentPage(1);
+                      }
+                    }}
                     className="inline-flex items-center justify-center px-3 py-2 border border-[#0d9488] text-xs sm:text-sm font-medium rounded-md text-[#0d9488] hover:bg-[#0d9488]/10 text-[#0d9488] hover:bg-[#0d9488]/10 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0d9488] w-full sm:w-auto"
                   >
                     {isExpandedView ? "Show Recent" : "View All Notices"}
@@ -569,8 +591,8 @@ const Notices = () => {
             <div
               className={`grid gap-4 sm:gap-6 ${
                 isExpandedView
-                  ? "grid-cols-1"
-                  : "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
+                  ? "grid-cols-2 sm:grid-cols-2 lg:grid-cols-3"
+                  : "grid-cols-2 sm:grid-cols-2 lg:grid-cols-2"
               }`}
             >
               {visibleNotices.map((notice) => {
@@ -578,22 +600,16 @@ const Notices = () => {
                 return (
                   <div
                     key={notice.id}
-                    className={`bg-white bg-white rounded-lg shadow-sm border ${styles.container} cursor-pointer hover:shadow-md transition-shadow duration-200`}
+                    className={`bg-white rounded-lg shadow-sm border ${styles.container} cursor-pointer hover:shadow-md transition-shadow duration-200`}
                     onClick={() => handleNoticeClick(notice)}
                   >
-                    <div
-                      className={`p-4 sm:p-6 ${
-                        isExpandedView
-                          ? "flex flex-col sm:flex-row sm:items-start sm:space-x-4"
-                          : ""
-                      }`}
-                    >
-                      {isExpandedView && (
+                    <div className={`p-4 sm:p-6 ${""}`}>
+                      {false && (
                         <div className="flex-shrink-0 mb-3 sm:mb-0">
                           <div
                             className={`p-2 sm:p-3 rounded-lg ${
                               notice.type === "eviction"
-                                ? "bg-red-100 bg-red-100"
+                                ? "bg-red-100"
                                 : notice.type === "important"
                                 ? "bg-yellow-100"
                                 : "bg-blue-100"
@@ -621,9 +637,7 @@ const Notices = () => {
                           </div>
                         </div>
                       )}
-                      <div
-                        className={`flex-1 ${isExpandedView ? "min-w-0" : ""}`}
-                      >
+                      <div className={`flex-1 ${""}`}>
                         <div className="flex flex-wrap items-center justify-between gap-2">
                           <div className="flex flex-wrap items-center gap-2">
                             <span
@@ -650,11 +664,7 @@ const Notices = () => {
                           {notice.title}
                         </h3>
                         <p
-                          className={`mt-2 text-xs sm:text-sm text-slate-500 text-slate-500 ${
-                            isExpandedView
-                              ? "whitespace-pre-wrap"
-                              : "line-clamp-2"
-                          }`}
+                          className={`mt-2 text-xs sm:text-sm text-slate-500 ${"line-clamp-2"}`}
                         >
                           {notice.content}
                         </p>
@@ -680,6 +690,59 @@ const Notices = () => {
                 );
               })}
             </div>
+
+            {/* Pagination controls */}
+            {isExpandedView && totalPages > 1 && (
+              <div className="mt-6 flex items-center justify-between border-t border-gray-200 pt-4">
+                <div className="text-sm text-gray-700">
+                  Showing{" "}
+                  <span className="font-medium">{indexOfFirstNotice + 1}</span>{" "}
+                  to{" "}
+                  <span className="font-medium">
+                    {Math.min(indexOfLastNotice, sortedNotices.length)}
+                  </span>{" "}
+                  of <span className="font-medium">{sortedNotices.length}</span>{" "}
+                  notices
+                </div>
+                <div className="flex space-x-2">
+                  <button
+                    onClick={() => paginate(currentPage - 1)}
+                    disabled={currentPage === 1}
+                    className={`inline-flex items-center px-3 py-1 text-sm font-medium rounded-md ${
+                      currentPage === 1
+                        ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                        : "bg-white text-gray-700 hover:bg-gray-50 border border-gray-300"
+                    }`}
+                  >
+                    Previous
+                  </button>
+                  {[...Array(totalPages)].map((_, index) => (
+                    <button
+                      key={index + 1}
+                      onClick={() => paginate(index + 1)}
+                      className={`inline-flex items-center px-3 py-1 text-sm font-medium rounded-md ${
+                        currentPage === index + 1
+                          ? "bg-[#0d9488] text-white"
+                          : "bg-white text-gray-700 hover:bg-gray-50 border border-gray-300"
+                      }`}
+                    >
+                      {index + 1}
+                    </button>
+                  ))}
+                  <button
+                    onClick={() => paginate(currentPage + 1)}
+                    disabled={currentPage === totalPages}
+                    className={`inline-flex items-center px-3 py-1 text-sm font-medium rounded-md ${
+                      currentPage === totalPages
+                        ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                        : "bg-white text-gray-700 hover:bg-gray-50 border border-gray-300"
+                    }`}
+                  >
+                    Next
+                  </button>
+                </div>
+              </div>
+            )}
 
             {/* Notice Details Modal */}
             {showNoticeModal && selectedNotice && (

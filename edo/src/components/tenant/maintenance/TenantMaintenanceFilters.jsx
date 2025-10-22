@@ -81,6 +81,7 @@ const TenantMaintenanceFilters = ({
             onClick={onOpenNewRequest}
             className="hidden sm:inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-[#0d9488] hover:bg-[#0d7a6f] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0d9488]"
           >
+            <Plus className="h-4 w-4 mr-2" />
             New Request
           </button>
         </div>

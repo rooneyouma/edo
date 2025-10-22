@@ -241,7 +241,7 @@ const Payments = () => {
     });
 
   // Pagination
-  const itemsPerPage = 10;
+  const itemsPerPage = 8;
   const totalPages = Math.ceil(filteredPayments.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
@@ -430,7 +430,7 @@ Payment Method: ${payment.method}`;
       <div className="relative flex flex-col flex-1 overflow-y-auto overflow-x-hidden lg:ml-64">
         <TenantHeader toggleSidebar={toggleSidebar} />
         <main className="grow bg-white">
-          <div className="pl-4 pr-8 sm:pl-6 sm:pr-12 lg:pl-8 lg:pr-16 py-8 w-full">
+          <div className="py-4 sm:py-6 px-4 sm:px-6 lg:px-8 w-full">
             {/* Page header - Responsive, title always at top, button below on mobile */}
             <div className="flex flex-col gap-3 sm:flex-row sm:justify-between sm:items-center mb-6">
               <div>
@@ -567,7 +567,7 @@ Payment Method: ${payment.method}`;
             </div>
 
             {/* Payment history table */}
-            <div className="p-4 sm:p-6">
+            <div className="px-4 sm:px-6">
               <div className="flex flex-col sm:flex-row gap-4">
                 <div className="flex-1">
                   <div className="relative">
@@ -654,7 +654,7 @@ Payment Method: ${payment.method}`;
                         className="bg-white rounded-lg shadow-sm border border-slate-200 cursor-pointer hover:shadow-md transition-shadow duration-200"
                         onClick={() => setSelectedPayment(payment)}
                       >
-                        <div className="p-4">
+                        <div className="px-4 py-3 sm:px-6 sm:py-4">
                           <div className="flex items-start justify-between mb-3">
                             <div className="flex-1">
                               <h3 className="text-sm font-medium text-slate-900">

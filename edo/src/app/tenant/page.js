@@ -466,7 +466,7 @@ const TenantDashboard = () => {
       <TenantSidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
       <div className="relative flex flex-col flex-1 overflow-y-auto overflow-x-hidden lg:ml-64">
         <TenantHeader toggleSidebar={toggleSidebar} />
-        <main className="h-full transition-all duration-200 overflow-y-auto">
+        <main className="flex-1 transition-all duration-200 overflow-y-auto">
           <div className="px-4 sm:px-6 lg:px-8 py-4 sm:py-6 w-full">
             {/* Welcome Banner with Profile Picture */}
             <div className="mb-4 sm:mb-6 flex items-center gap-3 sm:gap-4 w-full">
@@ -522,13 +522,15 @@ const TenantDashboard = () => {
                         setShowVacateNoticeModal(true);
                       }
                     }}
-                    className="flex items-center gap-2 bg-teal-700 rounded-lg px-3 py-3 sm:px-4 sm:py-4 transition-colors hover:bg-teal-800 cursor-pointer flex-1 min-w-[140px] sm:min-w-[200px] max-w-[250px]"
+                    className="flex items-center justify-center sm:justify-start gap-2 bg-teal-700 rounded-lg px-3 py-3 sm:px-4 sm:py-4 transition-colors hover:bg-teal-800 cursor-pointer flex-1 min-w-[140px] sm:min-w-[200px] max-w-[250px]"
                   >
-                    <div className="text-white">{action.icon}</div>
-                    <span className="font-medium text-xs sm:text-sm text-white whitespace-nowrap overflow-hidden text-ellipsis">
+                    <div className="text-white flex-shrink-0">
+                      {action.icon}
+                    </div>
+                    <span className="font-medium text-xs sm:text-sm text-white whitespace-nowrap overflow-hidden text-ellipsis text-center sm:text-left">
                       {action.label}
                     </span>
-                    <ArrowRight className="h-3 w-3 sm:h-4 sm:w-4 text-white ml-auto" />
+                    <ArrowRight className="h-3 w-3 sm:h-4 sm:w-4 text-white ml-auto hidden sm:block" />
                   </div>
                 ))}
               </div>
@@ -539,7 +541,7 @@ const TenantDashboard = () => {
               <h3 className="text-base sm:text-lg font-semibold text-slate-800 mb-3 sm:mb-4">
                 Rental Overview
               </h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5">
+              <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5">
                 <AnalyticsCard
                   title="Active Rentals"
                   value={propertiesData?.length || "0"}
@@ -585,7 +587,7 @@ const TenantDashboard = () => {
               <h3 className="text-base sm:text-lg font-semibold text-slate-800 mb-3 sm:mb-4">
                 Financial Summary
               </h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-5">
+              <div className="grid grid-cols-2 gap-3 sm:gap-5">
                 <FinancialCard
                   title="Monthly Rent"
                   amount="$1,200"
