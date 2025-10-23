@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import CustomSelect from "../../ui/CustomSelect";
 
 const PayRentModal = ({ isOpen, onClose, onSubmit, submitting }) => {
   const [selectedProperty, setSelectedProperty] = useState(null);
@@ -130,6 +131,16 @@ const PayRentModal = ({ isOpen, onClose, onSubmit, submitting }) => {
     }
   }, [isOpen]);
 
+  const handlePropertyChange = (propertyId) => {
+    // Convert string ID back to number for comparison
+    const property = properties.find(
+      (p) =>
+        p.id ===
+        (typeof propertyId === "string" ? parseInt(propertyId) : propertyId)
+    );
+    setSelectedProperty(property);
+  };
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -153,7 +164,7 @@ const PayRentModal = ({ isOpen, onClose, onSubmit, submitting }) => {
     <div className="fixed inset-0 bg-gray-500/50 z-40 transition-opacity">
       <div className="fixed inset-0 z-50 overflow-y-auto">
         <div className="flex min-h-full items-center justify-center p-4 text-center">
-          <div className="relative transform overflow-hidden rounded-lg bg-white px-4 pb-4 pt-5 text-left shadow-xl transition-all w-full max-w-lg">
+          <div className="relative transform overflow-visible rounded-lg bg-white px-4 pb-4 pt-5 text-left shadow-xl transition-all w-full max-w-lg z-50">
             <div className="absolute right-0 top-0 pr-4 pt-4">
               <button
                 type="button"
@@ -195,25 +206,21 @@ const PayRentModal = ({ isOpen, onClose, onSubmit, submitting }) => {
                   >
                     Select Property
                   </label>
-                  <select
+                  <CustomSelect
                     id="property"
-                    name="property"
-                    value={selectedProperty?.id || ""}
-                    onChange={(e) => {
-                      const property = properties.find(
-                        (p) => p.id === parseInt(e.target.value)
-                      );
-                      setSelectedProperty(property);
-                    }}
-                    className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] sm:text-sm py-2 px-3"
-                  >
-                    <option value="">Select a property</option>
-                    {properties.map((property) => (
-                      <option key={property.id} value={property.id}>
-                        {property.address} - {property.unit}
-                      </option>
-                    ))}
-                  </select>
+                    options={[
+                      { value: "", label: "Select a property" },
+                      ...properties.map((property) => ({
+                        value: property.id.toString(), // Convert to string for consistency
+                        label: `${property.address} - ${property.unit}`,
+                      })),
+                    ]}
+                    value={
+                      selectedProperty ? selectedProperty.id.toString() : ""
+                    } // Convert to string for consistency
+                    onChange={handlePropertyChange}
+                    required
+                  />
                 </div>
               )}
 

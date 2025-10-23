@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import EdoLogo from "@/components/EdoLogo.jsx";
 import { ArrowLeft } from "lucide-react";
 import Modal from "@/partials/Modal.jsx";
+import CustomSelect from "@/components/ui/CustomSelect";
 
 const ListProperty = () => {
   const router = useRouter();
@@ -367,21 +368,21 @@ const ListProperty = () => {
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Property Type
                   </label>
-                  <select
+                  <CustomSelect
+                    id="bnbPropertyType"
+                    label="Property Type"
+                    options={[
+                      { value: "", label: "Select a property type" },
+                      { value: "house", label: "Entire House" },
+                      { value: "apartment", label: "Entire Apartment" },
+                      { value: "room", label: "Private Room" },
+                      { value: "villa", label: "Villa" },
+                      { value: "cabin", label: "Cabin" },
+                    ]}
                     value={bnbData.propertyType}
-                    onChange={(e) =>
-                      handleBnbChange("propertyType", e.target.value)
-                    }
-                    className="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-[#0d9488] focus:border-[#0d9488] sm:text-sm"
+                    onChange={(value) => handleBnbChange("propertyType", value)}
                     required
-                  >
-                    <option value="">Select a property type</option>
-                    <option value="house">Entire House</option>
-                    <option value="apartment">Entire Apartment</option>
-                    <option value="room">Private Room</option>
-                    <option value="villa">Villa</option>
-                    <option value="cabin">Cabin</option>
-                  </select>
+                  />
                 </div>
               )}
               {bnbStep === 2 && (
@@ -554,21 +555,23 @@ const ListProperty = () => {
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Property Type
                   </label>
-                  <select
+                  <CustomSelect
+                    id="rentalPropertyType"
+                    label="Property Type"
+                    options={[
+                      { value: "", label: "Select a property type" },
+                      { value: "apartment", label: "Apartment" },
+                      { value: "house", label: "House" },
+                      { value: "condo", label: "Condo" },
+                      { value: "townhouse", label: "Townhouse" },
+                      { value: "loft", label: "Loft" },
+                    ]}
                     value={rentalData.propertyType}
-                    onChange={(e) =>
-                      handleRentalChange("propertyType", e.target.value)
+                    onChange={(value) =>
+                      handleRentalChange("propertyType", value)
                     }
-                    className="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-[#0d9488] focus:border-[#0d9488] sm:text-sm"
                     required
-                  >
-                    <option value="">Select a property type</option>
-                    <option value="apartment">Apartment</option>
-                    <option value="house">House</option>
-                    <option value="condo">Condo</option>
-                    <option value="townhouse">Townhouse</option>
-                    <option value="loft">Loft</option>
-                  </select>
+                  />
                 </div>
               )}
               {rentalStep === 2 && (
@@ -745,21 +748,23 @@ const ListProperty = () => {
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Property Type
                   </label>
-                  <select
+                  <CustomSelect
+                    id="propertyType"
+                    label="Property Type"
+                    options={[
+                      { value: "", label: "Select a property type" },
+                      { value: "apartment", label: "Apartment" },
+                      { value: "house", label: "House" },
+                      { value: "condo", label: "Condo" },
+                      { value: "townhouse", label: "Townhouse" },
+                      { value: "loft", label: "Loft" },
+                    ]}
                     value={propertyData.propertyType}
-                    onChange={(e) =>
-                      handlePropertyChange("propertyType", e.target.value)
+                    onChange={(value) =>
+                      handlePropertyChange("propertyType", value)
                     }
-                    className="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-[#0d9488] focus:border-[#0d9488] sm:text-sm"
                     required
-                  >
-                    <option value="">Select a property type</option>
-                    <option value="apartment">Apartment</option>
-                    <option value="house">House</option>
-                    <option value="condo">Condo</option>
-                    <option value="townhouse">Townhouse</option>
-                    <option value="loft">Loft</option>
-                  </select>
+                  />
                 </div>
               )}
               {propertyStep === 2 && (
@@ -936,21 +941,21 @@ const ListProperty = () => {
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Land Type
                   </label>
-                  <select
+                  <CustomSelect
+                    id="landType"
+                    label="Land Type"
+                    options={[
+                      { value: "", label: "Select a land type" },
+                      { value: "residential", label: "Residential" },
+                      { value: "commercial", label: "Commercial" },
+                      { value: "agricultural", label: "Agricultural" },
+                      { value: "industrial", label: "Industrial" },
+                      { value: "mixed", label: "Mixed Use" },
+                    ]}
                     value={landData.landType}
-                    onChange={(e) =>
-                      handleLandChange("landType", e.target.value)
-                    }
-                    className="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-[#0d9488] focus:border-[#0d9488] sm:text-sm"
+                    onChange={(value) => handleLandChange("landType", value)}
                     required
-                  >
-                    <option value="">Select a land type</option>
-                    <option value="residential">Residential</option>
-                    <option value="commercial">Commercial</option>
-                    <option value="agricultural">Agricultural</option>
-                    <option value="industrial">Industrial</option>
-                    <option value="mixed">Mixed Use</option>
-                  </select>
+                  />
                 </div>
               )}
               {landStep === 2 && (
@@ -1109,21 +1114,23 @@ const ListProperty = () => {
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Property Type
                   </label>
-                  <select
+                  <CustomSelect
+                    id="commercialPropertyType"
+                    label="Property Type"
+                    options={[
+                      { value: "", label: "Select a property type" },
+                      { value: "office", label: "Office" },
+                      { value: "retail", label: "Retail" },
+                      { value: "warehouse", label: "Warehouse" },
+                      { value: "industrial", label: "Industrial" },
+                      { value: "mixed", label: "Mixed Use" },
+                    ]}
                     value={commercialData.propertyType}
-                    onChange={(e) =>
-                      handleCommercialChange("propertyType", e.target.value)
+                    onChange={(value) =>
+                      handleCommercialChange("propertyType", value)
                     }
-                    className="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-[#0d9488] focus:border-[#0d9488] sm:text-sm"
                     required
-                  >
-                    <option value="">Select a property type</option>
-                    <option value="office">Office</option>
-                    <option value="retail">Retail</option>
-                    <option value="warehouse">Warehouse</option>
-                    <option value="industrial">Industrial</option>
-                    <option value="mixed">Mixed Use</option>
-                  </select>
+                  />
                 </div>
               )}
               {commercialStep === 2 && (

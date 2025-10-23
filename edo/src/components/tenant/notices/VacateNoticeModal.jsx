@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import CustomSelect from "../../ui/CustomSelect";
 
 const VacateNoticeModal = ({
   isOpen,
@@ -8,7 +9,7 @@ const VacateNoticeModal = ({
   tenantProperties = [],
 }) => {
   const [formData, setFormData] = useState({
-    property: tenantProperties.length === 1 ? tenantProperties[0].id : "",
+    propertyId: tenantProperties.length === 1 ? tenantProperties[0].id : "",
     moveOutDate: "",
     reason: "",
   });
@@ -20,7 +21,7 @@ const VacateNoticeModal = ({
   useEffect(() => {
     if (isOpen) {
       setFormData({
-        property: tenantProperties.length === 1 ? tenantProperties[0].id : "",
+        propertyId: tenantProperties.length === 1 ? tenantProperties[0].id : "",
         moveOutDate: "",
         reason: "",
       });
@@ -108,7 +109,7 @@ const VacateNoticeModal = ({
     }
 
     const selectedProperty = tenantProperties.find(
-      (p) => p.id === parseInt(formData.property)
+      (p) => p.id === parseInt(formData.propertyId)
     );
 
     if (!selectedProperty) {
@@ -226,21 +227,21 @@ const VacateNoticeModal = ({
                   >
                     Property
                   </label>
-                  <select
+                  <CustomSelect
                     id="property"
-                    name="property"
-                    value={formData.property}
-                    onChange={handleInputChange}
+                    options={[
+                      { value: "", label: "Select a property" },
+                      ...tenantProperties.map((property) => ({
+                        value: property.id,
+                        label: `${property.address} - ${property.unit}`,
+                      })),
+                    ]}
+                    value={formData.propertyId}
+                    onChange={(value) =>
+                      setFormData((prev) => ({ ...prev, propertyId: value }))
+                    }
                     required
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] text-sm sm:text-sm py-2 px-3"
-                  >
-                    <option value="">Select a property</option>
-                    {tenantProperties.map((property) => (
-                      <option key={property.id} value={property.id}>
-                        {property.name} - {property.unit}
-                      </option>
-                    ))}
-                  </select>
+                  />
                 </div>
               )}
 

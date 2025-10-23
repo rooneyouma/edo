@@ -4,6 +4,7 @@ import {
   CreditCardIcon,
   BuildingOfficeIcon,
 } from "@heroicons/react/24/outline";
+import CustomSelect from "../ui/CustomSelect";
 
 const LandlordBilling = () => {
   const navigate = useNavigate();
@@ -391,16 +392,18 @@ const LandlordBilling = () => {
                       >
                         Country
                       </label>
-                      <select
+                      <CustomSelect
                         id="country"
-                        name="country"
+                        options={[
+                          { value: "United States", label: "United States" },
+                          { value: "Canada", label: "Canada" },
+                        ]}
                         value={formData.country}
-                        onChange={handleChange}
-                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#0d9488] focus:border-[#0d9488] sm:text-sm"
-                      >
-                        <option value="United States">United States</option>
-                        <option value="Canada">Canada</option>
-                      </select>
+                        onChange={(value) =>
+                          handleChange({ target: { name: "country", value } })
+                        }
+                        className="mt-1"
+                      />
                     </div>
                   </div>
                 </div>

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { authAPI, landlordPropertyAPI } from "../utils/api";
+import CustomSelect from "./ui/CustomSelect";
 
 const OnboardRoleModal = ({
   isOpen,
@@ -154,18 +155,19 @@ const OnboardRoleModal = ({
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Property Type
                   </label>
-                  <select
+                  <CustomSelect
+                    id="propertyType"
+                    options={[
+                      { value: "apartment", label: "Apartment" },
+                      { value: "house", label: "House" },
+                      { value: "condo", label: "Condo" },
+                      { value: "townhouse", label: "Townhouse" },
+                      { value: "other", label: "Other" },
+                    ]}
                     value={propertyType}
-                    onChange={(e) => setPropertyType(e.target.value)}
-                    className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#009688] focus:border-[#009688] transition-all duration-300"
-                  >
-                    <option value="apartment">Apartment</option>
-                    <option value="house">House</option>
-                    <option value="condo">Condo</option>
-                    <option value="townhouse">Townhouse</option>
-                    <option value="duplex">Duplex</option>
-                    <option value="commercial">Commercial</option>
-                  </select>
+                    onChange={setPropertyType}
+                    required
+                  />
                 </div>
 
                 <div>

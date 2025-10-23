@@ -1,4 +1,5 @@
 import React from "react";
+import CustomSelect from "../../ui/CustomSelect";
 
 const StatusModal = ({
   isOpen,
@@ -50,17 +51,18 @@ const StatusModal = ({
                   >
                     Select New Status
                   </label>
-                  <select
+                  <CustomSelect
                     id="status"
-                    className="mt-1 block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 text-base focus:border-violet-500 focus:outline-none focus:ring-violet-500 sm:text-sm"
+                    label="Select New Status"
+                    options={[
+                      { value: "", label: "Select a status" },
+                      { value: "Pending", label: "Pending" },
+                      { value: "In Progress", label: "In Progress" },
+                      { value: "Completed", label: "Completed" },
+                    ]}
                     value={selectedStatus}
-                    onChange={(e) => setSelectedStatus(e.target.value)}
-                  >
-                    <option value="">Select a status</option>
-                    <option value="Pending">Pending</option>
-                    <option value="In Progress">In Progress</option>
-                    <option value="Completed">Completed</option>
-                  </select>
+                    onChange={setSelectedStatus}
+                  />
                 </div>
               </div>
               <div className="mt-6 flex space-x-3">

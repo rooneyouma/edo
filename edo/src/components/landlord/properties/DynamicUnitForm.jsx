@@ -9,6 +9,7 @@ import {
   getPropertyTypeTips,
   getFieldHelpText,
 } from "../../../utils/unitValidators";
+import CustomSelect from "../../ui/CustomSelect";
 
 const DynamicUnitForm = ({
   propertyType,
@@ -158,17 +159,18 @@ const DynamicUnitForm = ({
 
       if (fieldName === "status") {
         return (
-          <select
+          <CustomSelect
             id={fieldName}
-            name={fieldName}
+            options={[
+              { value: "vacant", label: "Vacant" },
+              { value: "occupied", label: "Occupied" },
+            ]}
             value={formData[fieldName] || ""}
-            onChange={handleChange}
+            onChange={(value) =>
+              handleChange({ target: { name: fieldName, value } })
+            }
             required={fieldConfig.required}
-            className={baseInputClass}
-          >
-            <option value="vacant">Vacant</option>
-            <option value="occupied">Occupied</option>
-          </select>
+          />
         );
       }
 

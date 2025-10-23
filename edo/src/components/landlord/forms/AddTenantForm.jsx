@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest, tenantAPI } from "../../../utils/api";
+import CustomSelect from "../../ui/CustomSelect";
 
 const AddTenantForm = ({
   onClose,
@@ -20,7 +21,7 @@ const AddTenantForm = ({
     rentAmount: "",
     securityDeposit: "",
     leaseType: "rental",
-    startDate: new Date().toISOString().split("T")[0], // Default to today's date
+    startDate: "", // Will be set after component mounts to avoid hydration issues
     endDate: "",
     emergencyContact: {
       name: "",
@@ -45,6 +46,14 @@ const AddTenantForm = ({
   const [searchingEmail, setSearchingEmail] = useState(false);
   const [emailChecked, setEmailChecked] = useState(false);
   const queryClient = useQueryClient();
+
+  // Set the start date after component mounts to avoid hydration issues
+  useEffect(() => {
+    setFormData((prev) => ({
+      ...prev,
+      startDate: new Date().toISOString().split("T")[0],
+    }));
+  }, []);
 
   // React Query for fetching properties
   const { data: properties = [] } = useQuery({
@@ -153,26 +162,44 @@ const AddTenantForm = ({
 
   // Update formData if initialPropertyId, initialUnitNumber, or initialUnitId change
   useEffect(() => {
-    // Only update if values have actually changed to prevent infinite loops
+    // Only update if initialPropertyId is provided and has actually changed
     if (
-      initialPropertyId !== formData.propertyId ||
-      initialUnitNumber !== formData.unitNumber
+      initialPropertyId !== undefined &&
+      initialPropertyId !== formData.propertyId
     ) {
       setFormData((prev) => ({
         ...prev,
-        propertyId: initialPropertyId || "",
-        unitNumber: initialUnitNumber || "",
+        propertyId: initialPropertyId,
       }));
     }
 
     if (
-      initialPropertyId !== inviteData.propertyId ||
+      initialUnitNumber !== undefined &&
+      initialUnitNumber !== formData.unitNumber
+    ) {
+      setFormData((prev) => ({
+        ...prev,
+        unitNumber: initialUnitNumber,
+      }));
+    }
+
+    if (
+      initialPropertyId !== undefined &&
+      initialPropertyId !== inviteData.propertyId
+    ) {
+      setInviteData((prev) => ({
+        ...prev,
+        propertyId: initialPropertyId,
+      }));
+    }
+
+    if (
+      initialUnitNumber !== undefined &&
       initialUnitNumber !== inviteData.unitNumber
     ) {
       setInviteData((prev) => ({
         ...prev,
-        propertyId: initialPropertyId || "",
-        unitNumber: initialUnitNumber || "",
+        unitNumber: initialUnitNumber,
       }));
     }
 
@@ -191,7 +218,13 @@ const AddTenantForm = ({
         setSelectedUnit(specificUnit);
       }
     }
-  }, [initialPropertyId, initialUnitNumber, initialUnitId, units.length]);
+  }, [
+    initialPropertyId,
+    initialUnitNumber,
+    initialUnitId,
+    units,
+    selectedUnit,
+  ]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -210,6 +243,14 @@ const AddTenantForm = ({
         [name]: value,
       }));
     }
+  };
+
+  // Handle custom select changes
+  const handleSelectChange = (name, value) => {
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
   const handleSubmit = async (e) => {
@@ -457,6 +498,7 @@ const AddTenantForm = ({
           selectedUnit={selectedUnit}
           setSelectedUnit={setSelectedUnit}
           handleChange={handleChange}
+          handleSelectChange={handleSelectChange}
           error={error}
           userFound={userFound}
           checking={checking}
@@ -515,6 +557,7 @@ const QuickAddForm = ({
   selectedUnit,
   setSelectedUnit,
   handleChange,
+  handleSelectChange,
   error,
   userFound,
   checking,
@@ -730,21 +773,20 @@ const QuickAddForm = ({
           >
             Property
           </label>
-          <select
+          <CustomSelect
             id="propertyId"
-            name="propertyId"
+            options={[
+              { value: "", label: "Select Property" },
+              ...properties.map((property) => ({
+                value: property.id,
+                label: property.name,
+              })),
+            ]}
             value={formData.propertyId}
-            onChange={handleChange}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] bg-white text-gray-900 py-2 px-3 sm:text-sm"
+            onChange={(value) => handleSelectChange("propertyId", value)}
             required
-          >
-            <option value="">Select Property</option>
-            {properties.map((property) => (
-              <option key={property.id} value={property.id}>
-                {property.name}
-              </option>
-            ))}
-          </select>
+            className="mt-1"
+          />
         </div>
 
         <div>
@@ -754,30 +796,31 @@ const QuickAddForm = ({
           >
             Unit
           </label>
-          <select
+          <CustomSelect
             id="unitNumber"
-            name="unitNumber"
+            options={[
+              {
+                value: "",
+                label: loadingUnits ? "Loading units..." : "Select Unit",
+                disabled: loadingUnits,
+              },
+              ...units
+                .filter((unit) =>
+                  initialUnitId
+                    ? unit.id === initialUnitId
+                    : unit.status === "vacant"
+                )
+                .map((unit) => ({
+                  value: unit.unit_id,
+                  label: unit.unit_id,
+                })),
+            ]}
             value={formData.unitNumber}
-            onChange={handleChange}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] bg-white text-gray-900 py-2 px-3 sm:text-sm"
+            onChange={(value) => handleSelectChange("unitNumber", value)}
             required
             disabled={!formData.propertyId || loadingUnits}
-          >
-            <option value="">
-              {loadingUnits ? "Loading units..." : "Select Unit"}
-            </option>
-            {units
-              .filter((unit) =>
-                initialUnitId
-                  ? unit.id === initialUnitId
-                  : unit.status === "vacant"
-              )
-              .map((unit) => (
-                <option key={unit.id} value={unit.unit_id}>
-                  {unit.unit_id}
-                </option>
-              ))}
-          </select>
+            className="mt-1"
+          />
           {formData.propertyId &&
             !loadingUnits &&
             units.filter((unit) => unit.status === "vacant").length === 0 && (
@@ -862,17 +905,17 @@ const QuickAddForm = ({
           >
             Agreement Type
           </label>
-          <select
+          <CustomSelect
             id="leaseType"
-            name="leaseType"
+            options={[
+              { value: "rental", label: "Rental Agreement" },
+              { value: "lease", label: "Lease Agreement" },
+            ]}
             value={formData.leaseType}
-            onChange={handleChange}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] bg-white text-gray-900 py-2 px-3 sm:text-sm"
+            onChange={(value) => handleSelectChange("leaseType", value)}
             required
-          >
-            <option value="rental">Rental Agreement</option>
-            <option value="lease">Lease Agreement</option>
-          </select>
+            className="mt-1"
+          />
         </div>
 
         <div>
@@ -1193,21 +1236,22 @@ const InviteForm = ({
           >
             Property
           </label>
-          <select
+          <CustomSelect
             id="invitePropertyId"
-            name="propertyId"
+            options={[
+              { value: "", label: "Select Property" },
+              ...properties.map((property) => ({
+                value: property.id,
+                label: property.name,
+              })),
+            ]}
             value={inviteData.propertyId}
-            onChange={handleInviteChange}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] bg-white text-gray-900 py-2 px-3 sm:text-sm"
+            onChange={(value) =>
+              handleInviteChange({ target: { name: "propertyId", value } })
+            }
             required
-          >
-            <option value="">Select Property</option>
-            {properties.map((property) => (
-              <option key={property.id} value={property.id}>
-                {property.name}
-              </option>
-            ))}
-          </select>
+            className="mt-1"
+          />
         </div>
 
         <div>
@@ -1217,26 +1261,29 @@ const InviteForm = ({
           >
             Unit
           </label>
-          <select
+          <CustomSelect
             id="inviteUnitNumber"
-            name="unitNumber"
+            options={[
+              {
+                value: "",
+                label: loadingUnits ? "Loading units..." : "Select Unit",
+                disabled: loadingUnits,
+              },
+              ...units
+                .filter((unit) => unit.status === "vacant")
+                .map((unit) => ({
+                  value: unit.unit_id,
+                  label: unit.unit_id,
+                })),
+            ]}
             value={inviteData.unitNumber}
-            onChange={handleInviteChange}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] bg-white text-gray-900 py-2 px-3 sm:text-sm"
+            onChange={(value) =>
+              handleInviteChange({ target: { name: "unitNumber", value } })
+            }
             required
             disabled={!inviteData.propertyId || loadingUnits}
-          >
-            <option value="">
-              {loadingUnits ? "Loading units..." : "Select Unit"}
-            </option>
-            {units
-              .filter((unit) => unit.status === "vacant")
-              .map((unit) => (
-                <option key={unit.id} value={unit.unit_id}>
-                  {unit.unit_id}
-                </option>
-              ))}
-          </select>
+            className="mt-1"
+          />
           {inviteData.propertyId &&
             !loadingUnits &&
             units.filter((unit) => unit.status === "vacant").length === 0 && (

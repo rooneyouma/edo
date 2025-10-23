@@ -1,5 +1,6 @@
 import React, { useState, useCallback, memo } from "react";
 import { Search, Filter, ChevronDown, ChevronUp } from "lucide-react";
+import CustomSelect from "../ui/CustomSelect";
 
 const SearchFilters = memo(
   ({
@@ -105,72 +106,68 @@ const SearchFilters = memo(
                       <label className="block text-xs sm:text-sm font-semibold text-gray-700">
                         Transaction Type
                       </label>
-                      <select
-                        className="block w-full px-3 py-2 sm:px-4 sm:py-3 border border-gray-200 rounded-lg sm:rounded-xl bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#009688] focus:border-[#009688] text-xs sm:text-sm font-medium transition-all duration-300 hover:border-[#009688]/50"
+                      <CustomSelect
+                        options={[
+                          { value: "all", label: "All Transactions" },
+                          { value: "rent", label: "For Rent" },
+                          { value: "sale", label: "For Sale" },
+                          { value: "lease", label: "For Lease" },
+                        ]}
                         value={transactionType}
                         onChange={handleTransactionTypeChange}
-                      >
-                        <option value="all">All Transactions</option>
-                        <option value="rent">For Rent</option>
-                        <option value="sale">For Sale</option>
-                        <option value="lease">For Lease</option>
-                      </select>
+                      />
                     </div>
 
                     <div className="space-y-2">
                       <label className="block text-xs sm:text-sm font-semibold text-gray-700">
                         Bedrooms
                       </label>
-                      <select
-                        className="block w-full px-3 py-2 sm:px-4 sm:py-3 border border-gray-200 rounded-lg sm:rounded-xl bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#009688] focus:border-[#009688] text-xs sm:text-sm font-medium transition-all duration-300 hover:border-[#009688]/50"
+                      <CustomSelect
+                        options={[
+                          { value: "any", label: "Any" },
+                          { value: "1", label: "1+" },
+                          { value: "2", label: "2+" },
+                          { value: "3", label: "3+" },
+                          { value: "4", label: "4+" },
+                          { value: "5", label: "5+" },
+                        ]}
                         value={bedrooms}
                         onChange={handleBedroomsChange}
-                      >
-                        <option value="any">Any</option>
-                        <option value="1">1+</option>
-                        <option value="2">2+</option>
-                        <option value="3">3+</option>
-                        <option value="4">4+</option>
-                        <option value="5">5+</option>
-                      </select>
+                      />
                     </div>
 
                     <div className="space-y-2">
                       <label className="block text-xs sm:text-sm font-semibold text-gray-700">
                         Bathrooms
                       </label>
-                      <select
-                        className="block w-full px-3 py-2 sm:px-4 sm:py-3 border border-gray-200 rounded-lg sm:rounded-xl bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#009688] focus:border-[#009688] text-xs sm:text-sm font-medium transition-all duration-300 hover:border-[#009688]/50"
+                      <CustomSelect
+                        options={[
+                          { value: "any", label: "Any" },
+                          { value: "1", label: "1+" },
+                          { value: "2", label: "2+" },
+                          { value: "3", label: "3+" },
+                          { value: "4", label: "4+" },
+                        ]}
                         value={bathrooms}
                         onChange={handleBathroomsChange}
-                      >
-                        <option value="any">Any</option>
-                        <option value="1">1+</option>
-                        <option value="2">2+</option>
-                        <option value="3">3+</option>
-                        <option value="4">4+</option>
-                      </select>
+                      />
                     </div>
 
                     <div className="space-y-2">
                       <label className="block text-xs sm:text-sm font-semibold text-gray-700">
                         Property Type
                       </label>
-                      <select
-                        className="block w-full px-3 py-2 sm:px-4 sm:py-3 border border-gray-200 rounded-lg sm:rounded-xl bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#009688] focus:border-[#009688] text-xs sm:text-sm font-medium transition-all duration-300 hover:border-[#009688]/50"
+                      <CustomSelect
+                        options={[
+                          { value: "all", label: "All Types" },
+                          { value: "apartment", label: "Apartment" },
+                          { value: "house", label: "House" },
+                          { value: "condo", label: "Condo" },
+                          { value: "townhouse", label: "Townhouse" },
+                        ]}
                         value={propertyType}
                         onChange={handlePropertyTypeChange}
-                      >
-                        <option value="all">All Types</option>
-                        <option value="apartment">Apartment</option>
-                        <option value="house">House</option>
-                        <option value="condo">Condo</option>
-                        <option value="townhouse">Townhouse</option>
-                        <option value="loft">Loft</option>
-                        <option value="bnb">BnB</option>
-                        <option value="commercial">Commercial</option>
-                        <option value="land">Land</option>
-                      </select>
+                      />
                     </div>
                   </div>
 

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import CustomSelect from "../../ui/CustomSelect";
 
 const NewRequestModal = ({
   isOpen,
@@ -166,26 +167,23 @@ const NewRequestModal = ({
                     >
                       Priority
                     </label>
-                    <select
+                    <CustomSelect
                       id="priority"
-                      name="priority"
+                      options={[
+                        { value: "", label: "Select priority" },
+                        ...priorities.map((priority) => ({
+                          value: priority.toLowerCase(),
+                          label: priority,
+                        })),
+                      ]}
                       value={localFormData.priority}
-                      onChange={handleInputChange}
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500 sm:text-sm py-2 px-3 text-sm"
+                      onChange={(value) =>
+                        handleInputChange({
+                          target: { name: "priority", value },
+                        })
+                      }
                       required
-                    >
-                      <option value="">Select priority</option>
-                      {priorities.map((priority) => (
-                        <option key={priority} value={priority.toLowerCase()}>
-                          {priority}
-                        </option>
-                      ))}
-                    </select>
-                    {errors && errors.priority && (
-                      <p className="mt-1 text-sm text-red-600">
-                        {errors.priority}
-                      </p>
-                    )}
+                    />
                   </div>
 
                   {/* Image Upload */}

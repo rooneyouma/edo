@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import CustomSelect from "../../ui/CustomSelect";
 
 const EditTenantForm = ({ tenant, onClose, onSubmit }) => {
   const [formData, setFormData] = useState({
@@ -156,17 +157,16 @@ const EditTenantForm = ({ tenant, onClose, onSubmit }) => {
           >
             Property
           </label>
-          <select
+          <CustomSelect
             id="propertyId"
-            name="propertyId"
+            options={[{ value: "", label: "Select Property" }]}
             value={formData.propertyId}
-            onChange={handleChange}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] bg-white text-gray-900 py-2 px-3 sm:text-sm"
+            onChange={(value) =>
+              handleChange({ target: { name: "propertyId", value } })
+            }
             required
-          >
-            <option value="">Select Property</option>
-            {/* Property options will be populated dynamically */}
-          </select>
+            className="mt-1"
+          />
         </div>
 
         <div>
@@ -240,17 +240,19 @@ const EditTenantForm = ({ tenant, onClose, onSubmit }) => {
           >
             Agreement Type
           </label>
-          <select
+          <CustomSelect
             id="leaseType"
-            name="leaseType"
+            options={[
+              { value: "rental", label: "Rental Agreement" },
+              { value: "lease", label: "Lease Agreement" },
+            ]}
             value={formData.leaseType}
-            onChange={handleChange}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] bg-white text-gray-900 py-2 px-3 sm:text-sm"
+            onChange={(value) =>
+              handleChange({ target: { name: "leaseType", value } })
+            }
             required
-          >
-            <option value="rental">Rental Agreement</option>
-            <option value="lease">Lease Agreement</option>
-          </select>
+            className="mt-1"
+          />
         </div>
 
         <div>

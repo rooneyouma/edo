@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import CustomSelect from "../../ui/CustomSelect";
 
 const CreateNoticeForm = ({
   onSubmit,
@@ -132,19 +133,21 @@ const CreateNoticeForm = ({
         >
           Notice Type
         </label>
-        <select
+        <CustomSelect
           id="type"
-          name="type"
+          options={[
+            { value: "general", label: "General" },
+            { value: "maintenance", label: "Maintenance" },
+            { value: "payment", label: "Payment" },
+            { value: "emergency", label: "Emergency" },
+            { value: "policy", label: "Policy Change" },
+          ]}
           value={formData.type}
-          onChange={handleChange}
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] bg-white text-gray-900 py-2 px-3 sm:text-sm"
-        >
-          <option value="general">General</option>
-          <option value="maintenance">Maintenance</option>
-          <option value="payment">Payment</option>
-          <option value="emergency">Emergency</option>
-          <option value="policy">Policy Change</option>
-        </select>
+          onChange={(value) =>
+            handleChange({ target: { name: "type", value } })
+          }
+          className="mt-1"
+        />
       </div>
 
       <div>
@@ -154,18 +157,20 @@ const CreateNoticeForm = ({
         >
           Priority
         </label>
-        <select
+        <CustomSelect
           id="priority"
-          name="priority"
+          options={[
+            { value: "low", label: "Low" },
+            { value: "normal", label: "Normal" },
+            { value: "high", label: "High" },
+            { value: "urgent", label: "Urgent" },
+          ]}
           value={formData.priority}
-          onChange={handleChange}
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] bg-white text-gray-900 py-2 px-3 sm:text-sm"
-        >
-          <option value="low">Low</option>
-          <option value="normal">Normal</option>
-          <option value="high">High</option>
-          <option value="urgent">Urgent</option>
-        </select>
+          onChange={(value) =>
+            handleChange({ target: { name: "priority", value } })
+          }
+          className="mt-1"
+        />
       </div>
 
       <div>

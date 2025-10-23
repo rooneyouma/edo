@@ -1,6 +1,18 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Filter } from "lucide-react";
 
+/**
+ * StyledDropdown Component
+ *
+ * A reusable custom dropdown/select component that replaces native select elements.
+ *
+ * @param {Array} options - Array of option objects with value and label properties
+ * @param {*} value - Current selected value
+ * @param {Function} onChange - Callback function when selection changes
+ * @param {string} placeholder - Placeholder text when no option is selected
+ * @param {string} label - Optional label text to display above the dropdown
+ * @param {string} id - HTML id attribute for the select element
+ */
 const StyledDropdown = ({
   options,
   value,

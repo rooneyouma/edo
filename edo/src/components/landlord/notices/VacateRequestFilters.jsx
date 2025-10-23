@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Search, Filter, ChevronDown, ArrowUpDown } from "lucide-react";
+import CustomSelect from "../../ui/CustomSelect";
 
 const VacateRequestFilters = ({
   searchQuery,
@@ -66,17 +67,18 @@ const VacateRequestFilters = ({
             >
               Status
             </label>
-            <select
+            <CustomSelect
               id="status"
-              className="block w-full rounded-md border-gray-300 pl-3 pr-10 py-2 text-sm focus:border-violet-500 focus:ring-violet-500 bg-white text-gray-900"
+              label="Status"
+              options={[
+                { value: "all", label: "All Status" },
+                { value: "Pending", label: "Pending" },
+                { value: "Approved", label: "Approved" },
+                { value: "Declined", label: "Declined" },
+              ]}
               value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-            >
-              <option value="all">All Status</option>
-              <option value="Pending">Pending</option>
-              <option value="Approved">Approved</option>
-              <option value="Declined">Declined</option>
-            </select>
+              onChange={setStatusFilter}
+            />
           </div>
           <div>
             <label
@@ -85,19 +87,19 @@ const VacateRequestFilters = ({
             >
               Property
             </label>
-            <select
+            <CustomSelect
               id="property"
-              className="block w-full rounded-md border-gray-300 pl-3 pr-10 py-2 text-sm focus:border-violet-500 focus:ring-violet-500 bg-white text-gray-900"
+              label="Property"
+              options={[
+                { value: "all", label: "All Properties" },
+                ...propertyOptions.map((property) => ({
+                  value: property,
+                  label: property,
+                })),
+              ]}
               value={propertyFilter}
-              onChange={(e) => setPropertyFilter(e.target.value)}
-            >
-              <option value="all">All Properties</option>
-              {propertyOptions.map((property) => (
-                <option key={property} value={property}>
-                  {property}
-                </option>
-              ))}
-            </select>
+              onChange={setPropertyFilter}
+            />
           </div>
         </div>
       )}

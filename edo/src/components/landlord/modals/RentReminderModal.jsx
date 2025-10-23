@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import ConsistentModal from "./ConsistentModal";
+import CustomSelect from "../../ui/CustomSelect";
 
 const RentReminderModal = ({ isOpen, onClose }) => {
   const [formData, setFormData] = useState({
@@ -178,18 +179,21 @@ const RentReminderModal = ({ isOpen, onClose }) => {
           >
             Priority
           </label>
-          <select
+          <CustomSelect
             id="priority"
-            name="priority"
+            label="Priority"
+            options={[
+              { value: "low", label: "Low" },
+              { value: "normal", label: "Normal" },
+              { value: "high", label: "High" },
+              { value: "urgent", label: "Urgent" },
+            ]}
             value={formData.priority}
-            onChange={handleChange}
-            className="mt-1 block w-full rounded-md border border-gray-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] py-2 px-3 sm:text-sm"
-          >
-            <option value="low">Low</option>
-            <option value="normal">Normal</option>
-            <option value="high">High</option>
-            <option value="urgent">Urgent</option>
-          </select>
+            onChange={(value) =>
+              handleChange({ target: { name: "priority", value } })
+            }
+            className="mt-1"
+          />
         </div>
 
         <div>

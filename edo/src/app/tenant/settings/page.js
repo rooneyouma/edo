@@ -16,6 +16,7 @@ import {
   Eye,
   EyeOff,
 } from "lucide-react";
+import CustomSelect from "../../../components/ui/CustomSelect";
 import {
   isAuthenticated,
   getStoredUser,
@@ -432,96 +433,103 @@ const TenantSettings = () => {
                       >
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                           <div>
-                            <label className="block text-sm font-medium text-slate-700 mb-2">
-                              Language
-                            </label>
-                            <select
+                            <CustomSelect
+                              id="language"
+                              options={[
+                                { value: "en", label: "English" },
+                                { value: "es", label: "Spanish" },
+                                { value: "fr", label: "French" },
+                              ]}
                               value={preferences.language}
-                              onChange={(e) =>
+                              onChange={(value) =>
                                 setPreferences({
                                   ...preferences,
-                                  language: e.target.value,
+                                  language: value,
                                 })
                               }
-                              className="w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500"
-                            >
-                              <option value="en">English</option>
-                              <option value="es">Spanish</option>
-                              <option value="fr">French</option>
-                            </select>
+                              className="w-full"
+                            />
                           </div>
                           <div></div> {/* Empty div for proper spacing */}
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                           <div>
-                            <label className="block text-sm font-medium text-slate-700 mb-2">
-                              Date Format
-                            </label>
-                            <select
+                            <CustomSelect
+                              id="dateFormat"
+                              options={[
+                                { value: "MM/DD/YYYY", label: "MM/DD/YYYY" },
+                                { value: "DD/MM/YYYY", label: "DD/MM/YYYY" },
+                                { value: "YYYY-MM-DD", label: "YYYY-MM-DD" },
+                              ]}
                               value={preferences.dateFormat}
-                              onChange={(e) =>
+                              onChange={(value) =>
                                 setPreferences({
                                   ...preferences,
-                                  dateFormat: e.target.value,
+                                  dateFormat: value,
                                 })
                               }
-                              className="w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500"
-                            >
-                              <option value="MM/DD/YYYY">MM/DD/YYYY</option>
-                              <option value="DD/MM/YYYY">DD/MM/YYYY</option>
-                              <option value="YYYY-MM-DD">YYYY-MM-DD</option>
-                            </select>
+                              className="w-full"
+                            />
                           </div>
                           <div>
-                            <label className="block text-sm font-medium text-slate-700 mb-2">
-                              Timezone
-                            </label>
-                            <select
+                            <CustomSelect
+                              id="timezone"
+                              options={[
+                                {
+                                  value: "America/New_York",
+                                  label: "Eastern Time",
+                                },
+                                {
+                                  value: "America/Chicago",
+                                  label: "Central Time",
+                                },
+                                {
+                                  value: "America/Denver",
+                                  label: "Mountain Time",
+                                },
+                                {
+                                  value: "America/Los_Angeles",
+                                  label: "Pacific Time",
+                                },
+                              ]}
                               value={preferences.timezone}
-                              onChange={(e) =>
+                              onChange={(value) =>
                                 setPreferences({
                                   ...preferences,
-                                  timezone: e.target.value,
+                                  timezone: value,
                                 })
                               }
-                              className="w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500"
-                            >
-                              <option value="America/New_York">
-                                Eastern Time
-                              </option>
-                              <option value="America/Chicago">
-                                Central Time
-                              </option>
-                              <option value="America/Denver">
-                                Mountain Time
-                              </option>
-                              <option value="America/Los_Angeles">
-                                Pacific Time
-                              </option>
-                            </select>
+                              className="w-full"
+                            />
                           </div>
                         </div>
-                        {/* Add this currency selection dropdown */}
-                        <div>
-                          <label className="block text-sm font-medium text-slate-700 mb-2">
-                            Currency
-                          </label>
-                          <select
-                            value={preferences.currency}
-                            onChange={(e) =>
-                              setPreferences({
-                                ...preferences,
-                                currency: e.target.value,
-                              })
-                            }
-                            className="w-full max-w-xs px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500"
-                          >
-                            <option value="USD">USD - US Dollar</option>
-                            <option value="KES">KES - Kenyan Shilling</option>
-                            <option value="EUR">EUR - Euro</option>
-                            <option value="GBP">GBP - British Pound</option>
-                            <option value="CAD">CAD - Canadian Dollar</option>
-                          </select>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                          <div>
+                            <CustomSelect
+                              id="currency"
+                              options={[
+                                { value: "USD", label: "USD - US Dollar" },
+                                {
+                                  value: "KES",
+                                  label: "KES - Kenyan Shilling",
+                                },
+                                { value: "EUR", label: "EUR - Euro" },
+                                { value: "GBP", label: "GBP - British Pound" },
+                                {
+                                  value: "CAD",
+                                  label: "CAD - Canadian Dollar",
+                                },
+                              ]}
+                              value={preferences.currency}
+                              onChange={(value) =>
+                                setPreferences({
+                                  ...preferences,
+                                  currency: value,
+                                })
+                              }
+                              className="w-full max-w-xs"
+                            />
+                          </div>
                         </div>
                         <div className="flex justify-end">
                           <button

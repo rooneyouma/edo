@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
+import CustomSelect from "../../ui/CustomSelect";
 
 const RecordPaymentForm = ({ onClose, onSubmit }) => {
   const [formData, setFormData] = useState({
@@ -244,21 +245,22 @@ const RecordPaymentForm = ({ onClose, onSubmit }) => {
           >
             Payment Method
           </label>
-          <select
+          <CustomSelect
             id="paymentMethod"
-            name="paymentMethod"
+            options={[
+              { value: "", label: "Select Method" },
+              ...paymentMethods.map((method) => ({
+                value: method,
+                label: method,
+              })),
+            ]}
             value={formData.paymentMethod}
-            onChange={handleChange}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] bg-white text-gray-900 py-2 px-3 sm:text-sm"
+            onChange={(value) =>
+              handleChange({ target: { name: "paymentMethod", value } })
+            }
             required
-          >
-            <option value="">Select Method</option>
-            {paymentMethods.map((method) => (
-              <option key={method} value={method}>
-                {method}
-              </option>
-            ))}
-          </select>
+            className="mt-1"
+          />
         </div>
 
         <div>
@@ -268,21 +270,22 @@ const RecordPaymentForm = ({ onClose, onSubmit }) => {
           >
             Payment Type
           </label>
-          <select
+          <CustomSelect
             id="paymentType"
-            name="paymentType"
+            options={[
+              { value: "", label: "Select Type" },
+              ...paymentTypes.map((type) => ({
+                value: type,
+                label: type,
+              })),
+            ]}
             value={formData.paymentType}
-            onChange={handleChange}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] bg-white text-gray-900 py-2 px-3 sm:text-sm"
+            onChange={(value) =>
+              handleChange({ target: { name: "paymentType", value } })
+            }
             required
-          >
-            <option value="">Select Type</option>
-            {paymentTypes.map((type) => (
-              <option key={type} value={type}>
-                {type}
-              </option>
-            ))}
-          </select>
+            className="mt-1"
+          />
         </div>
 
         <div>

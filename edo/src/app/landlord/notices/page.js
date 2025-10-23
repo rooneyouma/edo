@@ -12,6 +12,7 @@ import NoticeFilters from "../../../components/landlord/notices/NoticeFilters";
 import VacateRequestFilters from "../../../components/landlord/notices/VacateRequestFilters";
 import EvictionNoticeFilters from "../../../components/landlord/notices/EvictionNoticeFilters";
 import { isAuthenticated, apiRequest } from "../../../utils/api";
+import CustomSelect from "../../../components/ui/CustomSelect";
 
 const Notices = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -916,17 +917,19 @@ const Notices = () => {
               >
                 Status
               </label>
-              <select
+              <CustomSelect
                 id="edit-status"
+                label="Status"
+                options={[
+                  { value: "Pending", label: "Pending" },
+                  { value: "Acknowledged", label: "Acknowledged" },
+                ]}
                 value={noticeToEdit.status}
-                onChange={(e) =>
-                  setNoticeToEdit({ ...noticeToEdit, status: e.target.value })
+                onChange={(value) =>
+                  setNoticeToEdit({ ...noticeToEdit, status: value })
                 }
-                className="mt-1 block w-full rounded-md border-gray-300 border-gray-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] bg-slate-50 text-slate-900 py-2 px-3 sm:text-sm"
-              >
-                <option value="Pending">Pending</option>
-                <option value="Acknowledged">Acknowledged</option>
-              </select>
+                className="mt-1"
+              />
             </div>
             <div className="flex justify-end space-x-3 pt-4">
               <button

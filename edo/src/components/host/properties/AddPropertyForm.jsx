@@ -1,73 +1,78 @@
-import React, { useState } from 'react';
-import { MapPin, Home, DollarSign, Bed, Bath, Square, Image as ImageIcon, ChevronLeft, ChevronRight } from 'lucide-react';
+import React, { useState } from "react";
+import {
+  MapPin,
+  Home,
+  DollarSign,
+  Bed,
+  Bath,
+  Square,
+  Image as ImageIcon,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
+import CustomSelect from "../../ui/CustomSelect";
 
 const steps = [
-  'Basic Info',
-  'Details',
-  'Amenities',
-  'Photos',
-  'Description',
-  'Preview'
+  "Basic Info",
+  "Details",
+  "Amenities",
+  "Photos",
+  "Description",
+  "Preview",
 ];
 
 const AddPropertyForm = ({ onClose, onSubmit }) => {
   const [formData, setFormData] = useState({
-    name: '',
-    location: '',
-    type: 'House',
-    price: '',
-    bedrooms: '',
-    bathrooms: '',
-    area: '',
-    description: '',
+    name: "",
+    location: "",
+    type: "House",
+    price: "",
+    bedrooms: "",
+    bathrooms: "",
+    area: "",
+    description: "",
     amenities: [],
-    photos: []
+    photos: [],
   });
   const [step, setStep] = useState(0);
 
-  const propertyTypes = [
-    'House',
-    'Apartment',
-    'Cabin',
-    'Villa',
-    'Condo'
-  ];
+  const propertyTypes = ["House", "Apartment", "Cabin", "Villa", "Condo"];
 
   const commonAmenities = [
-    'WiFi',
-    'Parking',
-    'Pool',
-    'Gym',
-    'Air Conditioning',
-    'Heating',
-    'Washer/Dryer',
-    'Kitchen',
-    'TV',
-    'Security System'
+    "WiFi",
+    "Parking",
+    "Pool",
+    "Gym",
+    "Air Conditioning",
+    "Heating",
+    "Washer/Dryer",
+    "Kitchen",
+    "TV",
+    "Security System",
   ];
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
   const handleAmenityChange = (amenity) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       amenities: prev.amenities.includes(amenity)
-        ? prev.amenities.filter(a => a !== amenity)
-        : [...prev.amenities, amenity]
+        ? prev.amenities.filter((a) => a !== amenity)
+        : [...prev.amenities, amenity],
     }));
   };
 
   const handlePhotoChange = (e) => {
     const files = Array.from(e.target.files);
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      photos: files
+      photos: files,
     }));
   };
 
@@ -88,17 +93,27 @@ const AddPropertyForm = ({ onClose, onSubmit }) => {
       {/* Progress Indicator */}
       <div className="flex items-center justify-center gap-2 mb-6">
         {steps.map((label, idx) => (
-          <div key={label} className={`flex-1 h-2 rounded-full ${idx <= step ? 'bg-teal-500' : 'bg-gray-200 dark:bg-gray-700'}`}></div>
+          <div
+            key={label}
+            className={`flex-1 h-2 rounded-full ${
+              idx <= step ? "bg-teal-500" : "bg-gray-200 dark:bg-gray-700"
+            }`}
+          ></div>
         ))}
       </div>
-      <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2 text-center">{steps[step]}</h2>
+      <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2 text-center">
+        {steps[step]}
+      </h2>
 
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Step 1: Basic Info */}
         {step === 0 && (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div>
-              <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+              <label
+                htmlFor="name"
+                className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+              >
                 Listing Title
               </label>
               <input
@@ -112,7 +127,10 @@ const AddPropertyForm = ({ onClose, onSubmit }) => {
               />
             </div>
             <div>
-              <label htmlFor="location" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+              <label
+                htmlFor="location"
+                className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+              >
                 Location
               </label>
               <div className="mt-1 relative rounded-md shadow-sm">
@@ -137,29 +155,36 @@ const AddPropertyForm = ({ onClose, onSubmit }) => {
         {step === 1 && (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div>
-              <label htmlFor="type" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+              <label
+                htmlFor="type"
+                className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+              >
                 Property Type
               </label>
               <div className="mt-1 relative rounded-md shadow-sm">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                   <Home className="h-5 w-5 text-gray-400" />
                 </div>
-                <select
-                  name="type"
+                <CustomSelect
                   id="type"
-                  required
+                  label="Property Type"
+                  options={propertyTypes.map((type) => ({
+                    value: type,
+                    label: type,
+                  }))}
                   value={formData.type}
-                  onChange={handleChange}
-                  className="block w-full pl-10 rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-teal-500 focus:ring-teal-500 dark:bg-gray-700 dark:text-gray-100 sm:text-sm"
-                >
-                  {propertyTypes.map(type => (
-                    <option key={type} value={type}>{type}</option>
-                  ))}
-                </select>
+                  onChange={(value) =>
+                    handleChange({ target: { name: "type", value } })
+                  }
+                  required
+                />
               </div>
             </div>
             <div>
-              <label htmlFor="price" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+              <label
+                htmlFor="price"
+                className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+              >
                 Price per Night
               </label>
               <div className="mt-1 relative rounded-md shadow-sm">
@@ -179,7 +204,10 @@ const AddPropertyForm = ({ onClose, onSubmit }) => {
               </div>
             </div>
             <div>
-              <label htmlFor="bedrooms" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+              <label
+                htmlFor="bedrooms"
+                className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+              >
                 Bedrooms
               </label>
               <div className="mt-1 relative rounded-md shadow-sm">
@@ -199,7 +227,10 @@ const AddPropertyForm = ({ onClose, onSubmit }) => {
               </div>
             </div>
             <div>
-              <label htmlFor="bathrooms" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+              <label
+                htmlFor="bathrooms"
+                className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+              >
                 Bathrooms
               </label>
               <div className="mt-1 relative rounded-md shadow-sm">
@@ -220,7 +251,10 @@ const AddPropertyForm = ({ onClose, onSubmit }) => {
               </div>
             </div>
             <div>
-              <label htmlFor="area" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+              <label
+                htmlFor="area"
+                className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+              >
                 Area (sqft)
               </label>
               <div className="mt-1 relative rounded-md shadow-sm">
@@ -248,7 +282,7 @@ const AddPropertyForm = ({ onClose, onSubmit }) => {
               Amenities
             </label>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-              {commonAmenities.map(amenity => (
+              {commonAmenities.map((amenity) => (
                 <div key={amenity} className="flex items-center">
                   <input
                     type="checkbox"
@@ -257,7 +291,10 @@ const AddPropertyForm = ({ onClose, onSubmit }) => {
                     onChange={() => handleAmenityChange(amenity)}
                     className="h-4 w-4 rounded border-gray-300 text-teal-600 focus:ring-teal-500 dark:border-gray-600 dark:bg-gray-700"
                   />
-                  <label htmlFor={amenity} className="ml-2 text-sm text-gray-700 dark:text-gray-300">
+                  <label
+                    htmlFor={amenity}
+                    className="ml-2 text-sm text-gray-700 dark:text-gray-300"
+                  >
                     {amenity}
                   </label>
                 </div>
@@ -281,8 +318,15 @@ const AddPropertyForm = ({ onClose, onSubmit }) => {
             {formData.photos.length > 0 && (
               <div className="mt-4 grid grid-cols-2 sm:grid-cols-3 gap-3">
                 {formData.photos.map((file, idx) => (
-                  <div key={idx} className="w-full h-24 bg-gray-200 dark:bg-gray-700 rounded-md overflow-hidden flex items-center justify-center">
-                    <img src={URL.createObjectURL(file)} alt="Preview" className="object-cover w-full h-full" />
+                  <div
+                    key={idx}
+                    className="w-full h-24 bg-gray-200 dark:bg-gray-700 rounded-md overflow-hidden flex items-center justify-center"
+                  >
+                    <img
+                      src={URL.createObjectURL(file)}
+                      alt="Preview"
+                      className="object-cover w-full h-full"
+                    />
                   </div>
                 ))}
               </div>
@@ -292,7 +336,10 @@ const AddPropertyForm = ({ onClose, onSubmit }) => {
         {/* Step 5: Description */}
         {step === 4 && (
           <div>
-            <label htmlFor="description" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+            <label
+              htmlFor="description"
+              className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+            >
               Description
             </label>
             <textarea
@@ -309,22 +356,43 @@ const AddPropertyForm = ({ onClose, onSubmit }) => {
         {/* Step 6: Preview & Submit */}
         {step === 5 && (
           <div className="space-y-4">
-            <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">Preview Listing</h3>
+            <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">
+              Preview Listing
+            </h3>
             <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4">
               <div className="font-semibold">{formData.name}</div>
-              <div className="text-sm text-gray-500 dark:text-gray-300">{formData.location}</div>
-              <div className="text-sm text-gray-500 dark:text-gray-300">{formData.type} • {formData.bedrooms} bd • {formData.bathrooms} ba • {formData.area} sqft</div>
-              <div className="text-sm text-gray-500 dark:text-gray-300">${formData.price}/night</div>
-              <div className="mt-2 text-sm text-gray-700 dark:text-gray-200">{formData.description}</div>
+              <div className="text-sm text-gray-500 dark:text-gray-300">
+                {formData.location}
+              </div>
+              <div className="text-sm text-gray-500 dark:text-gray-300">
+                {formData.type} • {formData.bedrooms} bd • {formData.bathrooms}{" "}
+                ba • {formData.area} sqft
+              </div>
+              <div className="text-sm text-gray-500 dark:text-gray-300">
+                ${formData.price}/night
+              </div>
+              <div className="mt-2 text-sm text-gray-700 dark:text-gray-200">
+                {formData.description}
+              </div>
               <div className="mt-2 flex flex-wrap gap-2">
-                {formData.amenities.map(a => (
-                  <span key={a} className="px-2 py-0.5 rounded bg-teal-100 text-teal-800 dark:bg-teal-900 dark:text-teal-200 text-xs">{a}</span>
+                {formData.amenities.map((a) => (
+                  <span
+                    key={a}
+                    className="px-2 py-0.5 rounded bg-teal-100 text-teal-800 dark:bg-teal-900 dark:text-teal-200 text-xs"
+                  >
+                    {a}
+                  </span>
                 ))}
               </div>
               {formData.photos.length > 0 && (
                 <div className="mt-2 grid grid-cols-2 sm:grid-cols-3 gap-2">
                   {formData.photos.map((file, idx) => (
-                    <img key={idx} src={URL.createObjectURL(file)} alt="Preview" className="object-cover w-full h-20 rounded" />
+                    <img
+                      key={idx}
+                      src={URL.createObjectURL(file)}
+                      alt="Preview"
+                      className="object-cover w-full h-20 rounded"
+                    />
                   ))}
                 </div>
               )}
@@ -366,4 +434,4 @@ const AddPropertyForm = ({ onClose, onSubmit }) => {
   );
 };
 
-export default AddPropertyForm; 
+export default AddPropertyForm;

@@ -11,6 +11,7 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { jsPDF } from "jspdf";
 import StyledDropdown from "@/components/ui/StyledDropdown";
+import CustomSelect from "@/components/ui/CustomSelect";
 
 const Payments = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -955,25 +956,25 @@ Payment Method: ${payment.method}`;
                       >
                         Select Property
                       </label>
-                      <select
+                      <CustomSelect
                         id="property"
-                        name="property"
+                        label="Select Property"
+                        options={[
+                          { value: "", label: "Select a property" },
+                          ...properties.map((property) => ({
+                            value: property.id,
+                            label: `${property.address} - ${property.unit}`,
+                          })),
+                        ]}
                         value={selectedProperty?.id || ""}
-                        onChange={(e) => {
+                        onChange={(value) => {
                           const property = properties.find(
-                            (p) => p.id === parseInt(e.target.value)
+                            (p) => p.id === parseInt(value)
                           );
                           setSelectedProperty(property);
                         }}
-                        className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] text-xs sm:text-sm py-2 px-3"
-                      >
-                        <option value="">Select a property</option>
-                        {properties.map((property) => (
-                          <option key={property.id} value={property.id}>
-                            {property.address} - {property.unit}
-                          </option>
-                        ))}
-                      </select>
+                        className="mt-1"
+                      />
                     </div>
                   )}
 

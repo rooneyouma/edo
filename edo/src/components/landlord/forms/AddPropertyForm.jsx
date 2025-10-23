@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import CustomSelect from "../../ui/CustomSelect";
 
 const AddPropertyForm = ({ property, onSubmit, onClose }) => {
   const [formData, setFormData] = useState({
@@ -80,23 +81,25 @@ const AddPropertyForm = ({ property, onSubmit, onClose }) => {
         >
           Property Type
         </label>
-        <select
+        <CustomSelect
           id="type"
-          name="type"
+          options={[
+            { value: "", label: "Select Type" },
+            { value: "House", label: "House" },
+            { value: "Apartment", label: "Apartment" },
+            { value: "Villa", label: "Villa" },
+            { value: "Townhouse", label: "Townhouse" },
+            { value: "Office", label: "Office" },
+            { value: "Commercial", label: "Commercial" },
+            { value: "Other", label: "Other" },
+          ]}
           value={formData.type}
-          onChange={handleChange}
+          onChange={(value) =>
+            handleChange({ target: { name: "type", value } })
+          }
           required
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] bg-white text-gray-900 py-2 px-3 sm:text-sm"
-        >
-          <option value="">Select Type</option>
-          <option value="House">House</option>
-          <option value="Apartment">Apartment</option>
-          <option value="Villa">Villa</option>
-          <option value="Townhouse">Townhouse</option>
-          <option value="Office">Office</option>
-          <option value="Commercial">Commercial</option>
-          <option value="Other">Other</option>
-        </select>
+          className="mt-1"
+        />
       </div>
 
       <div className="space-y-4">

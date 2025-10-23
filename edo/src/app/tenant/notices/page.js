@@ -12,6 +12,7 @@ import Link from "next/link";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import StyledAlert from "@/components/ui/StyledAlert"; // Keep the import for future use
 import StyledDropdown from "@/components/ui/StyledDropdown";
+import CustomSelect from "@/components/ui/CustomSelect";
 
 const Notices = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -1138,21 +1139,25 @@ const Notices = () => {
                       >
                         Property
                       </label>
-                      <select
+                      <CustomSelect
                         id="property"
-                        name="property"
+                        label="Property"
+                        options={[
+                          { value: "", label: "Select a property" },
+                          ...tenantProperties.map((property) => ({
+                            value: property.id,
+                            label: `${property.name} - ${property.unit}`,
+                          })),
+                        ]}
                         value={formData.property}
-                        onChange={handleInputChange}
+                        onChange={(value) =>
+                          handleInputChange({
+                            target: { name: "property", value },
+                          })
+                        }
                         required
-                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#0d9488] focus:ring-[#0d9488] sm:text-sm py-2 px-3"
-                      >
-                        <option value="">Select a property</option>
-                        {tenantProperties.map((property) => (
-                          <option key={property.id} value={property.id}>
-                            {property.name} - {property.unit}
-                          </option>
-                        ))}
-                      </select>
+                        className="mt-1"
+                      />
                     </div>
                   )}
 
