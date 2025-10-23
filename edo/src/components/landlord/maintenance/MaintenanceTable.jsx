@@ -16,9 +16,14 @@ const MaintenanceTable = ({
         {requests.map((request) => (
           <div
             key={request.id}
-            className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow cursor-pointer"
+            className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow cursor-pointer relative"
             onClick={() => onRequestClick(request)}
           >
+            {/* Teal dot indicator for new/unread requests */}
+            {request.status === "Pending" && (
+              <div className="absolute top-2 left-2 w-3 h-3 bg-teal-500 rounded-full border-2 border-white"></div>
+            )}
+
             <div className="p-4">
               {/* Card Header */}
               <div className="flex justify-between items-start mb-3">
@@ -114,6 +119,12 @@ const MaintenanceTable = ({
                     scope="col"
                     className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6"
                   >
+                    {/* Empty header for indicator column */}
+                  </th>
+                  <th
+                    scope="col"
+                    className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6"
+                  >
                     Tenant
                   </th>
                   <th
@@ -173,6 +184,12 @@ const MaintenanceTable = ({
                     className="hover:bg-gray-50 cursor-pointer"
                     onClick={() => onRequestClick(request)}
                   >
+                    {/* Indicator column */}
+                    <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-6">
+                      {request.status === "Pending" && (
+                        <div className="w-3 h-3 bg-teal-500 rounded-full"></div>
+                      )}
+                    </td>
                     <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
                       {request.tenant}
                     </td>

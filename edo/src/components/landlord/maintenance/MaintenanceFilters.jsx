@@ -13,6 +13,8 @@ const MaintenanceFilters = ({
   setPropertyFilter,
   dateFilter,
   setDateFilter,
+  assignmentFilter, // New prop
+  setAssignmentFilter, // New prop
   sortOrder,
   setSortOrder,
 }) => {
@@ -47,6 +49,13 @@ const MaintenanceFilters = ({
     { value: "today", label: "Today" },
     { value: "week", label: "Last 7 Days" },
     { value: "month", label: "Last 30 Days" },
+  ];
+
+  // New assignment options
+  const assignmentOptions = [
+    { value: "all", label: "All Assignments" },
+    { value: "assigned", label: "Assigned" },
+    { value: "unassigned", label: "Unassigned" },
   ];
 
   return (
@@ -92,7 +101,7 @@ const MaintenanceFilters = ({
       </div>
 
       {isFilterOpen && (
-        <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
           <StyledDropdown
             id="status"
             label="Status"
@@ -124,6 +133,14 @@ const MaintenanceFilters = ({
             value={dateFilter}
             onChange={setDateFilter}
             placeholder="All Dates"
+          />
+          <StyledDropdown
+            id="assignment"
+            label="Assignment"
+            options={assignmentOptions}
+            value={assignmentFilter}
+            onChange={setAssignmentFilter}
+            placeholder="All Assignments"
           />
         </div>
       )}

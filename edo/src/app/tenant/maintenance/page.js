@@ -104,6 +104,25 @@ const Maintenance = () => {
 
   const requests = requestsData || [];
 
+  // Calculate summary statistics
+  const summaryStats = useMemo(() => {
+    if (!requests.length)
+      return { total: 0, pending: 0, inProgress: 0, completed: 0 };
+
+    const total = requests.length;
+    const pending = requests.filter(
+      (request) => request.status.toLowerCase() === "pending"
+    ).length;
+    const inProgress = requests.filter(
+      (request) => request.status.toLowerCase() === "in progress"
+    ).length;
+    const completed = requests.filter(
+      (request) => request.status.toLowerCase() === "completed"
+    ).length;
+
+    return { total, pending, inProgress, completed };
+  }, [requests]);
+
   // Memoize expensive filtering and sorting operations
   const filteredAndSortedRequests = useMemo(() => {
     if (!requests.length) return [];
@@ -260,6 +279,121 @@ const Maintenance = () => {
               </p>
             </div>
 
+            {/* Summary Cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+                <div className="flex items-center">
+                  <div className="rounded-full bg-blue-100 p-2">
+                    <svg
+                      className="w-6 h-6 text-blue-600"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                      />
+                    </svg>
+                  </div>
+                  <div className="ml-4">
+                    <h3 className="text-sm font-medium text-gray-500">
+                      Total Requests
+                    </h3>
+                    <p className="text-2xl font-semibold text-gray-900">
+                      {summaryStats.total}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+                <div className="flex items-center">
+                  <div className="rounded-full bg-yellow-100 p-2">
+                    <svg
+                      className="w-6 h-6 text-yellow-600"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                      />
+                    </svg>
+                  </div>
+                  <div className="ml-4">
+                    <h3 className="text-sm font-medium text-gray-500">
+                      Pending
+                    </h3>
+                    <p className="text-2xl font-semibold text-gray-900">
+                      {summaryStats.pending}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+                <div className="flex items-center">
+                  <div className="rounded-full bg-blue-100 p-2">
+                    <svg
+                      className="w-6 h-6 text-blue-600"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M13 10V3L4 14h7v7l9-11h-7z"
+                      />
+                    </svg>
+                  </div>
+                  <div className="ml-4">
+                    <h3 className="text-sm font-medium text-gray-500">
+                      In Progress
+                    </h3>
+                    <p className="text-2xl font-semibold text-gray-900">
+                      {summaryStats.inProgress}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+                <div className="flex items-center">
+                  <div className="rounded-full bg-green-100 p-2">
+                    <svg
+                      className="w-6 h-6 text-green-600"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                      />
+                    </svg>
+                  </div>
+                  <div className="ml-4">
+                    <h3 className="text-sm font-medium text-gray-500">
+                      Completed
+                    </h3>
+                    <p className="text-2xl font-semibold text-gray-900">
+                      {summaryStats.completed}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             {/* Error Display */}
             {error && (
               <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg bg-red-50 border-red-200">
@@ -289,12 +423,6 @@ const Maintenance = () => {
                 setSortOrder={setSortOrder}
                 onOpenNewRequest={() => setShowNewRequestModal(true)}
               />
-            </div>
-
-            {/* Results Count */}
-            <div className="mb-4 text-sm text-slate-600 text-slate-500">
-              {filteredAndSortedRequests.length} request
-              {filteredAndSortedRequests.length !== 1 ? "s" : ""} found
             </div>
 
             {/* Maintenance Table */}

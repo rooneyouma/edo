@@ -11,7 +11,7 @@ const ConsistentModal = ({
 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto">
-      <div className="flex min-h-full items-center justify-center p-4 text-center sm:p-0 sm:ml-64">
+      <div className="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
         {/* Backdrop */}
         <div
           className="fixed inset-0 bg-gray-900/30 transition-opacity"

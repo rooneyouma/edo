@@ -26,14 +26,13 @@ import { AlertCircle, Search } from "lucide-react";
 
 const LandlordMaintenance = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  // Add mounted state to prevent hydration errors
-  const [mounted, setMounted] = useState(false);
   const [selectedRequest, setSelectedRequest] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [priorityFilter, setPriorityFilter] = useState("all");
   const [propertyFilter, setPropertyFilter] = useState("all");
   const [dateFilter, setDateFilter] = useState("all");
+  const [assignmentFilter, setAssignmentFilter] = useState("all"); // New filter for assigned/unassigned
   const [sortOrder, setSortOrder] = useState("latest");
   const [currentPage, setCurrentPage] = useState(1);
   const [pageInputValue, setPageInputValue] = useState("1");
@@ -43,6 +42,8 @@ const LandlordMaintenance = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedRequestForAction, setSelectedRequestForAction] =
     useState(null);
+  // Add mounted state to prevent hydration errors
+  const [mounted, setMounted] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
   const queryClient = useQueryClient();
@@ -75,9 +76,32 @@ const LandlordMaintenance = () => {
 
   const requests = requestsData || [];
 
+  // Calculate summary statistics - moved after requestsData is defined
+  const summaryStats = useMemo(() => {
+    // Return default values when not mounted to prevent hydration issues
+    if (!mounted) return { total: 0, unread: 0, assigned: 0, unassigned: 0 };
+
+    // Return default values when requestsData is not available
+    if (!requestsData || !requestsData.length)
+      return { total: 0, unread: 0, assigned: 0, unassigned: 0 };
+
+    const total = requestsData.length;
+    const unread = requestsData.filter(
+      (request) => request.status === "pending"
+    ).length;
+    const assigned = requestsData.filter(
+      (request) => request.assigned_to_name
+    ).length;
+    const unassigned = requestsData.filter(
+      (request) => !request.assigned_to_name
+    ).length;
+
+    return { total, unread, assigned, unassigned };
+  }, [requestsData, mounted]);
+
   // Memoize expensive filtering and sorting operations
   const filteredAndSortedRequests = useMemo(() => {
-    if (!requests.length) return [];
+    if (!mounted || !requests.length) return [];
 
     // Filter requests
     const filtered = requests.filter((request) => {
@@ -93,12 +117,17 @@ const LandlordMaintenance = () => {
       const matchesProperty =
         propertyFilter === "all" || request.property_id === propertyFilter;
       const matchesDate = dateFilter === "all" || true; // Simplified for now
+      const matchesAssignment =
+        assignmentFilter === "all" ||
+        (assignmentFilter === "assigned" && request.assigned_to_name) ||
+        (assignmentFilter === "unassigned" && !request.assigned_to_name);
       return (
         matchesSearch &&
         matchesStatus &&
         matchesPriority &&
         matchesProperty &&
-        matchesDate
+        matchesDate &&
+        matchesAssignment
       );
     });
 
@@ -121,7 +150,9 @@ const LandlordMaintenance = () => {
     priorityFilter,
     propertyFilter,
     dateFilter,
+    assignmentFilter, // Add assignmentFilter to dependencies
     sortOrder,
+    mounted,
   ]);
 
   const totalPages = Math.ceil(filteredAndSortedRequests.length / itemsPerPage);
@@ -301,9 +332,21 @@ const LandlordMaintenance = () => {
         <div className="relative flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
           <div className="lg:ml-64">
             <LandlordHeader toggleSidebar={toggleSidebar} />
-            <div className="flex-1 flex items-center justify-center">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-teal-600"></div>
-            </div>
+            <main className="flex-1 px-4 sm:pl-6 sm:pr-12 lg:pl-8 lg:pr-16 py-4 sm:py-6 lg:py-8 overflow-auto">
+              <div className="w-full">
+                {/* Page header */}
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
+                  <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">
+                    Maintenance Requests
+                  </h1>
+                </div>
+                <div className="w-full">
+                  <div className="flex-1 flex flex-col items-center justify-center bg-slate-50 rounded-lg">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-teal-600"></div>
+                  </div>
+                </div>
+              </div>
+            </main>
           </div>
         </div>
       </div>
@@ -332,8 +375,10 @@ const LandlordMaintenance = () => {
                     Maintenance Requests
                   </h1>
                 </div>
-                <div className="text-center text-gray-500 text-slate-500 mt-12 text-lg">
-                  Loading...
+                <div className="w-full">
+                  <div className="flex-1 flex flex-col items-center justify-center bg-slate-50 rounded-lg">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-teal-600"></div>
+                  </div>
                 </div>
               </div>
             </main>
@@ -376,6 +421,121 @@ const LandlordMaintenance = () => {
                 </div>
               )}
 
+              {/* Summary Cards */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+                  <div className="flex items-center">
+                    <div className="rounded-full bg-blue-100 p-2">
+                      <svg
+                        className="w-6 h-6 text-blue-600"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                        />
+                      </svg>
+                    </div>
+                    <div className="ml-4">
+                      <h3 className="text-sm font-medium text-gray-500">
+                        Total Requests
+                      </h3>
+                      <p className="text-2xl font-semibold text-gray-900">
+                        {summaryStats.total}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+                  <div className="flex items-center">
+                    <div className="rounded-full bg-yellow-100 p-2">
+                      <svg
+                        className="w-6 h-6 text-yellow-600"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                        />
+                      </svg>
+                    </div>
+                    <div className="ml-4">
+                      <h3 className="text-sm font-medium text-gray-500">
+                        Pending
+                      </h3>
+                      <p className="text-2xl font-semibold text-gray-900">
+                        {summaryStats.unread}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+                  <div className="flex items-center">
+                    <div className="rounded-full bg-green-100 p-2">
+                      <svg
+                        className="w-6 h-6 text-green-600"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                        />
+                      </svg>
+                    </div>
+                    <div className="ml-4">
+                      <h3 className="text-sm font-medium text-gray-500">
+                        Assigned
+                      </h3>
+                      <p className="text-2xl font-semibold text-gray-900">
+                        {summaryStats.assigned}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+                  <div className="flex items-center">
+                    <div className="rounded-full bg-red-100 p-2">
+                      <svg
+                        className="w-6 h-6 text-red-600"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+                        />
+                      </svg>
+                    </div>
+                    <div className="ml-4">
+                      <h3 className="text-sm font-medium text-gray-500">
+                        Unassigned
+                      </h3>
+                      <p className="text-2xl font-semibold text-gray-900">
+                        {summaryStats.unassigned}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
               {/* Filters */}
               <MaintenanceFilters
                 searchQuery={searchQuery}
@@ -388,15 +548,11 @@ const LandlordMaintenance = () => {
                 setPropertyFilter={setPropertyFilter}
                 dateFilter={dateFilter}
                 setDateFilter={setDateFilter}
+                assignmentFilter={assignmentFilter} // Pass new filter
+                setAssignmentFilter={setAssignmentFilter} // Pass new filter setter
                 sortOrder={sortOrder}
                 setSortOrder={setSortOrder}
               />
-
-              {/* Results Count */}
-              <div className="mb-4 text-sm text-slate-600">
-                {filteredAndSortedRequests.length} request
-                {filteredAndSortedRequests.length !== 1 ? "s" : ""} found
-              </div>
 
               {/* Maintenance Table */}
               <div className="mt-8">
