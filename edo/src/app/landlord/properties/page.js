@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import Sidebar from "../../../partials/dashboard/LandlordSidebar";
 import Header from "../../../partials/dashboard/LandlordHeader";
@@ -22,9 +22,15 @@ const Properties = () => {
   const [isAddPropertyModalOpen, setIsAddPropertyModalOpen] = useState(false);
   const [isEditPropertyModalOpen, setIsEditPropertyModalOpen] = useState(false);
   const [propertyToEdit, setPropertyToEdit] = useState(null);
+  const [isClient, setIsClient] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
   const queryClient = useQueryClient();
+
+  // Set isClient to true after component mounts to prevent hydration issues
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   // React Query for fetching properties
   const {
@@ -34,7 +40,7 @@ const Properties = () => {
   } = useQuery({
     queryKey: ["properties"],
     queryFn: () => landlordPropertyAPI.list(),
-    enabled: isAuthenticated(),
+    enabled: isAuthenticated() && isClient,
   });
 
   // React Query mutation for deleting properties
@@ -50,37 +56,8 @@ const Properties = () => {
     },
   });
 
-  // Handle error state from React Query
-  const error = queryError ? "Failed to load properties." : null;
-
-  if (!isAuthenticated()) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-slate-50">
-        <h2 className="text-2xl font-bold mb-4 text-slate-900">
-          Sign in required
-        </h2>
-        <p className="mb-6 text-slate-700">
-          You must be signed in to access this page.
-        </p>
-        <button
-          className="px-6 py-2 bg-teal-600 text-white rounded-lg font-semibold hover:bg-teal-700 transition"
-          onClick={() =>
-            router.push(
-              `/auth/signin?role=landlord&next=${encodeURIComponent(pathname)}`
-            )
-          }
-        >
-          Proceed
-        </button>
-      </div>
-    );
-  }
-
-  const toggleSidebar = () => {
-    setSidebarOpen(!sidebarOpen);
-  };
-
   // Improved filtering with useMemo for performance
+  // Moved this to a consistent position to fix hook order issue
   const filteredProperties = useMemo(() => {
     if (!properties || properties.length === 0) return [];
 
@@ -113,63 +90,119 @@ const Properties = () => {
     });
   }, [properties, searchQuery, typeFilter]);
 
-  const handleDeleteProperty = async () => {
+  // Handle error state from React Query
+  const error = queryError ? "Failed to load properties." : null;
+
+  // Callbacks for event handlers
+  const toggleSidebar = useCallback(() => {
+    setSidebarOpen((prev) => !prev);
+  }, []);
+
+  const handleDeleteProperty = useCallback(async () => {
     if (!propertyToDelete) return;
     deletePropertyMutation.mutate(propertyToDelete.id);
-  };
+  }, [propertyToDelete, deletePropertyMutation]);
 
-  const handleAddProperty = async (formData) => {
-    // Transform formData to match backend model
-    const propertyData = {
-      name: formData.name,
-      type: formData.type,
-      street: formData.address.street,
-      city: formData.address.city,
-      state: formData.address.state,
-      zip_code: formData.address.zipCode,
-      description: formData.description,
-    };
-    try {
-      const newProperty = await landlordPropertyAPI.create(propertyData);
-      queryClient.invalidateQueries({ queryKey: ["properties"] });
-      setIsAddPropertyModalOpen(false);
-      // Reset form data
-      setSearchQuery("");
-      setTypeFilter("all");
-    } catch (err) {
-      console.error("Error adding property:", err);
-    }
-  };
+  const handleAddProperty = useCallback(
+    async (formData) => {
+      // Transform formData to match backend model
+      const propertyData = {
+        name: formData.name,
+        type: formData.type,
+        street: formData.address.street,
+        city: formData.address.city,
+        state: formData.address.state,
+        zip_code: formData.address.zipCode,
+        description: formData.description,
+      };
+      try {
+        const newProperty = await landlordPropertyAPI.create(propertyData);
+        queryClient.invalidateQueries({ queryKey: ["properties"] });
+        setIsAddPropertyModalOpen(false);
+        // Reset form data
+        setSearchQuery("");
+        setTypeFilter("all");
+      } catch (err) {
+        console.error("Error adding property:", err);
+      }
+    },
+    [queryClient]
+  );
 
-  const handleEditProperty = async (formData) => {
-    if (!propertyToEdit) return;
-    // Transform formData to match backend model
-    const propertyData = {
-      name: formData.name,
-      type: formData.type,
-      street: formData.address.street,
-      city: formData.address.city,
-      state: formData.address.state,
-      zip_code: formData.address.zipCode,
-      description: formData.description,
-    };
-    try {
-      const updatedProperty = await landlordPropertyAPI.update(
-        propertyToEdit.id,
-        propertyData
-      );
-      queryClient.invalidateQueries({ queryKey: ["properties"] });
-      setIsEditPropertyModalOpen(false);
-      setPropertyToEdit(null);
-    } catch (err) {
-      console.error("Error updating property:", err);
-    }
-  };
+  const handleEditProperty = useCallback(
+    async (formData) => {
+      if (!propertyToEdit) return;
+      // Transform formData to match backend model
+      const propertyData = {
+        name: formData.name,
+        type: formData.type,
+        street: formData.address.street,
+        city: formData.address.city,
+        state: formData.address.state,
+        zip_code: formData.address.zipCode,
+        description: formData.description,
+      };
+      try {
+        const updatedProperty = await landlordPropertyAPI.update(
+          propertyToEdit.id,
+          propertyData
+        );
+        queryClient.invalidateQueries({ queryKey: ["properties"] });
+        setIsEditPropertyModalOpen(false);
+        setPropertyToEdit(null);
+      } catch (err) {
+        console.error("Error updating property:", err);
+      }
+    },
+    [propertyToEdit, queryClient]
+  );
 
   // Add this handler to update a property in the properties array
-  const handleUnitsUpdated = (updatedProperty) => {
-    queryClient.invalidateQueries({ queryKey: ["properties"] });
-  };
+  const handleUnitsUpdated = useCallback(
+    (updatedProperty) => {
+      queryClient.invalidateQueries({ queryKey: ["properties"] });
+    },
+    [queryClient]
+  );
+
+  // Only render the authenticated content after we've confirmed we're on the client
+  if (!isClient) {
+    return (
+      <div className="flex h-screen overflow-hidden bg-slate-50">
+        <div className="flex flex-col items-center justify-center min-h-screen bg-slate-50 w-full">
+          <div className="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[#0d9488]"></div>
+          <p className="mt-2 text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated()) {
+    return (
+      <div className="flex h-screen overflow-hidden bg-slate-50">
+        <div className="flex flex-col items-center justify-center min-h-screen bg-slate-50 w-full">
+          <h2 className="text-2xl font-bold mb-4 text-slate-900">
+            Sign in required
+          </h2>
+          <p className="mb-6 text-slate-700">
+            You must be signed in to access this page.
+          </p>
+          <button
+            className="px-6 py-2 bg-teal-600 text-white rounded-lg font-semibold hover:bg-teal-700 transition"
+            onClick={() =>
+              router.push(
+                `/auth/signin?role=landlord&next=${encodeURIComponent(
+                  pathname
+                )}`
+              )
+            }
+          >
+            Proceed
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex h-screen overflow-hidden bg-slate-50">

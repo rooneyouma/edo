@@ -141,13 +141,6 @@ const PropertyCard = memo(({ property, onBookmarkToggle }) => {
             </p>
           </div>
         </Link>
-        <div className="mt-auto">
-          <Link href={`/property/${id}`} className="block">
-            <button className="w-full bg-gradient-to-r from-[#009688] to-[#33bbaa] text-white py-3 px-4 rounded-xl hover:from-[#00796b] hover:to-[#26a69a] transition-all duration-300 text-sm font-semibold shadow-md hover:shadow-lg transform hover:scale-[1.02]">
-              View Details
-            </button>
-          </Link>
-        </div>
       </div>
     </div>
   );

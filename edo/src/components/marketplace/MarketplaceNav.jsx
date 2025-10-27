@@ -84,6 +84,27 @@ const MarketplaceNav = () => {
         Bookmarks
       </Link>
       <Link
+        href="/about"
+        className="block w-full text-left px-4 py-2 text-base text-gray-700 hover:bg-gray-100 rounded"
+        onClick={() => setShowOptionsMenu(false)}
+      >
+        About
+      </Link>
+      <Link
+        href="/pricing"
+        className="block w-full text-left px-4 py-2 text-base text-gray-700 hover:bg-gray-100 rounded"
+        onClick={() => setShowOptionsMenu(false)}
+      >
+        Pricing
+      </Link>
+      <Link
+        href="/faq"
+        className="block w-full text-left px-4 py-2 text-base text-gray-700 hover:bg-gray-100 rounded"
+        onClick={() => setShowOptionsMenu(false)}
+      >
+        FAQ
+      </Link>
+      <Link
         href="/settings"
         className="block w-full text-left px-4 py-2 text-base text-gray-700 hover:bg-gray-100 rounded"
         onClick={() => setShowOptionsMenu(false)}
@@ -100,18 +121,92 @@ const MarketplaceNav = () => {
   );
 
   return (
-    <nav className="fixed top-0 right-0 left-0 z-50 p-4 bg-transparent w-full">
-      {/* Always: Logo left, actions right in the same row */}
-      <div className="flex flex-row items-center justify-between w-full">
-        {/* Logo (always left) */}
-        <div className="flex items-center">
-          <EdoLogo
-            className="h-8 w-auto sm:h-10 drop-shadow-lg"
-            color="#00695c"
-          />
+    <nav className="fixed top-0 right-0 left-0 z-50 p-4 pt-6 bg-transparent w-full">
+      <div className="flex items-center justify-center w-full max-w-7xl mx-auto">
+        {/* Logo - Absolute positioned on the left */}
+        <div className="absolute left-4">
+          <Link href="/">
+            <EdoLogo
+              className="h-8 w-auto sm:h-10 drop-shadow-lg"
+              color="#00695c"
+            />
+          </Link>
         </div>
-        {/* Actions (Sign In + Hamburger) right */}
-        <div className="flex flex-row items-center gap-2 ml-auto">
+        
+        {/* Navigation Links - Truly centered */}
+        <div className="hidden md:flex items-center justify-center">
+          <div className="flex items-center space-x-1">
+            <Link
+              href="/about"
+              className="px-3 py-2 text-sm font-medium text-gray-700 hover:text-[#009688] rounded-md"
+            >
+              About
+            </Link>
+            <Link
+              href="/pricing"
+              className="px-3 py-2 text-sm font-medium text-gray-700 hover:text-[#009688] rounded-md"
+            >
+              Pricing
+            </Link>
+            <Link
+              href="/faq"
+              className="px-3 py-2 text-sm font-medium text-gray-700 hover:text-[#009688] rounded-md"
+            >
+              FAQ
+            </Link>
+          </div>
+        </div>
+        
+        {/* Actions (Sign In + Hamburger) - Absolute positioned on the right */}
+        <div className="absolute right-4 flex flex-row items-center gap-2">
+          {/* Navigation Links - Shown on mobile when hamburger is clicked */}
+          <div
+            className={`absolute top-12 right-4 w-48 bg-white border border-gray-200 rounded-md shadow-lg z-[9999] ${
+              showRoleMenu ? "block" : "hidden"
+            }`}
+          >
+            <Link
+              href="/bookmarks"
+              className="block w-full text-left px-4 py-2 text-base text-gray-700 hover:bg-gray-100 rounded"
+              onClick={() => setShowRoleMenu(!showRoleMenu)}
+            >
+              Bookmarks
+            </Link>
+            <Link
+              href="/about"
+              className="block w-full text-left px-4 py-2 text-base text-gray-700 hover:bg-gray-100 rounded"
+              onClick={() => setShowRoleMenu(!showRoleMenu)}
+            >
+              About
+            </Link>
+            <Link
+              href="/pricing"
+              className="block w-full text-left px-4 py-2 text-base text-gray-700 hover:bg-gray-100 rounded"
+              onClick={() => setShowRoleMenu(!showRoleMenu)}
+            >
+              Pricing
+            </Link>
+            <Link
+              href="/faq"
+              className="block w-full text-left px-4 py-2 text-base text-gray-700 hover:bg-gray-100 rounded"
+              onClick={() => setShowRoleMenu(!showRoleMenu)}
+            >
+              FAQ
+            </Link>
+            <Link
+              href="/settings"
+              className="block w-full text-left px-4 py-2 text-base text-gray-700 hover:bg-gray-100 rounded"
+              onClick={() => setShowRoleMenu(!showRoleMenu)}
+            >
+              Settings
+            </Link>
+            <button
+              className="block w-full text-left px-4 py-2 text-base text-gray-700 hover:bg-gray-100 rounded"
+              onClick={handleLogout}
+            >
+              Log Out
+            </button>
+          </div>
           {!authenticated ? (
             <Link
               href="/auth/signin"
@@ -185,6 +280,27 @@ const MarketplaceNav = () => {
                           onClick={() => setShowOptionsMenu(false)}
                         >
                           Bookmarks
+                        </Link>
+                        <Link
+                          href="/about"
+                          className="block w-full text-left px-4 py-2 text-base text-gray-700 hover:bg-gray-100 rounded"
+                          onClick={() => setShowOptionsMenu(false)}
+                        >
+                          About
+                        </Link>
+                        <Link
+                          href="/pricing"
+                          className="block w-full text-left px-4 py-2 text-base text-gray-700 hover:bg-gray-100 rounded"
+                          onClick={() => setShowOptionsMenu(false)}
+                        >
+                          Pricing
+                        </Link>
+                        <Link
+                          href="/faq"
+                          className="block w-full text-left px-4 py-2 text-base text-gray-700 hover:bg-gray-100 rounded"
+                          onClick={() => setShowOptionsMenu(false)}
+                        >
+                          FAQ
                         </Link>
                         <Link
                           href="/settings"

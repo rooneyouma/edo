@@ -880,18 +880,17 @@ const MarketplaceHome = () => {
 
       {/* Property Listings */}
       <div
-        className="max-w-[90rem] mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6"
-        style={{ maxWidth: "85%" }}
+        className="max-w-[90rem] mx-auto px-0 sm:px-2 lg:px-4 py-4 sm:py-6"
+        style={{ maxWidth: "95%" }}
       >
         {paginatedProperties.length > 0 ? (
           <>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-6 animate-fade-in-up">
+            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4 sm:gap-6 animate-fade-in-up">
               {paginatedProperties.map((property) => (
                 <PropertyCard
                   key={property.id}
                   property={property}
                   onBookmarkToggle={handleBookmarkToggle}
-                  style={{ transform: "scale(0.85)" }}
                 />
               ))}
             </div>
@@ -935,7 +934,7 @@ const MarketplaceHome = () => {
                   )
                 )}
                 <button
-                  className="flex items-center px-4 py-2 rounded-xl bg-white/80 backdrop-blur-sm text-[#009688] font-semibold shadow-md hover:shadow-lg hover:bg-white border border-gray-200/50 hover:border-[#009688]/30 transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:transform-none"
+                  className="flex items-center px-4 py-2 rounded-xl bg-white/80 backdrop-blur-sm text-[#009688] font-semibold shadow-md hover:shadow-lg hover:bg-white border border-gray-200/50 hover:border-[#009688]/30 transition-all duration-3300 transform hover:scale-105 disabled:opacity-50 disabled:transform-none"
                   onClick={() => handlePageChange(currentPage + 1)}
                   disabled={currentPage === totalPages}
                   aria-label="Next page"
@@ -997,6 +996,18 @@ const MarketplaceHome = () => {
                 className="hover:text-[#009688] transition-colors duration-300 font-medium"
               >
                 About
+              </Link>
+              <Link
+                href="/pricing"
+                className="hover:text-[#009688] transition-colors duration-300 font-medium"
+              >
+                Pricing
+              </Link>
+              <Link
+                href="/faq"
+                className="hover:text-[#009688] transition-colors duration-300 font-medium"
+              >
+                FAQ
               </Link>
               <Link
                 href="/contact"
