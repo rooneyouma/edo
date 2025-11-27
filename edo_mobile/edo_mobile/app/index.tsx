@@ -11,6 +11,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { DeviceEventEmitter } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import MarketplaceHeader from "../components/MarketplaceHeader";
 import SearchFilters from "../components/SearchFilters";
 import PropertyTabs from "../components/PropertyTabs";
@@ -18,6 +19,7 @@ import PropertyList from "../components/PropertyList";
 
 export default function MarketplaceHome() {
   const router = useRouter();
+  const insets = useSafeAreaInsets();
   const [searchQuery, setSearchQuery] = useState("");
   const [priceRange, setPriceRange] = useState({ min: "", max: "" });
   const [propertyType, setPropertyType] = useState("all");
@@ -499,79 +501,85 @@ export default function MarketplaceHome() {
   return (
     <SafeAreaView style={styles.container}>
       <MarketplaceHeader />
-      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-        {/* Hero Section with CTA Buttons */}
-        <View style={styles.heroSection}>
-          <Text style={styles.heroTitle}>Find Your Dream Space</Text>
-          <Text style={styles.heroSubtitle}>
-            Explore wonderful and unique spaces with edo
-          </Text>
+      <View style={[styles.contentWrapper, { marginBottom: insets.bottom }]}>
+        <ScrollView
+          style={styles.content}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.scrollContent}
+        >
+          {/* Hero Section with CTA Buttons */}
+          <View style={styles.heroSection}>
+            <Text style={styles.heroTitle}>Find Your Dream Space</Text>
+            <Text style={styles.heroSubtitle}>
+              Explore wonderful and unique spaces with edo
+            </Text>
 
-          {/* CTA Buttons */}
-          <View style={styles.ctaButtonsContainer}>
-            <TouchableOpacity style={styles.primaryButton}>
-              <Text style={styles.primaryButtonText}>
-                To Property Management
-              </Text>
-              <Ionicons
-                name="arrow-forward"
-                size={16}
-                color="#009688"
-                style={styles.buttonIcon}
-              />
-            </TouchableOpacity>
+            {/* CTA Buttons */}
+            <View style={styles.ctaButtonsContainer}>
+              <TouchableOpacity style={styles.primaryButton}>
+                <Text style={styles.primaryButtonText}>
+                  To Property Management
+                </Text>
+                <Ionicons
+                  name="arrow-forward"
+                  size={16}
+                  color="#009688"
+                  style={styles.buttonIcon}
+                />
+              </TouchableOpacity>
 
-            <TouchableOpacity style={styles.secondaryButton}>
-              <Text style={styles.secondaryButtonText}>
-                To Tenant Dashboard
+              <TouchableOpacity style={styles.secondaryButton}>
+                <Text style={styles.secondaryButtonText}>
+                  To Tenant Dashboard
+                </Text>
+                <Ionicons
+                  name="arrow-forward"
+                  size={16}
+                  color="#009688"
+                  style={styles.buttonIcon}
+                />
+              </TouchableOpacity>
+            </View>
+
+            {/* List Property CTA */}
+            <TouchableOpacity
+              style={styles.listPropertyButton}
+              onPress={() => router.push("/list-property/page")}
+            >
+              <Ionicons name="add" size={20} color="#009688" />
+              <Text style={styles.listPropertyText}>
+                List Your Property or Host a Space
               </Text>
-              <Ionicons
-                name="arrow-forward"
-                size={16}
-                color="#009688"
-                style={styles.buttonIcon}
-              />
             </TouchableOpacity>
           </View>
 
-          {/* List Property CTA */}
-          <TouchableOpacity
-            style={styles.listPropertyButton}
-            onPress={() => router.push("/list-property/page")}
-          >
-            <Ionicons name="add" size={20} color="#009688" />
-            <Text style={styles.listPropertyText}>
-              List Your Property or Host a Space
-            </Text>
-          </TouchableOpacity>
-        </View>
+          <SearchFilters
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+            priceRange={priceRange}
+            setPriceRange={setPriceRange}
+            propertyType={propertyType}
+            setPropertyType={setPropertyType}
+            transactionType={transactionType}
+            setTransactionType={setTransactionType}
+            bedrooms={bedrooms}
+            setBedrooms={setBedrooms}
+            bathrooms={bathrooms}
+            setBathrooms={setBathrooms}
+          />
 
-        <SearchFilters
-          searchQuery={searchQuery}
-          setSearchQuery={setSearchQuery}
-          priceRange={priceRange}
-          setPriceRange={setPriceRange}
-          propertyType={propertyType}
-          setPropertyType={setPropertyType}
-          transactionType={transactionType}
-          setTransactionType={setTransactionType}
-          bedrooms={bedrooms}
-          setBedrooms={setBedrooms}
-          bathrooms={bathrooms}
-          setBathrooms={setBathrooms}
-        />
+          <PropertyTabs activeTab={activeTab} setActiveTab={setActiveTab} />
 
-        <PropertyTabs activeTab={activeTab} setActiveTab={setActiveTab} />
-
-        <PropertyList
-          properties={filteredProperties.map((p) => ({
-            ...p,
-            isBookmarked: bookmarkedProperties.includes(p.id),
-          }))}
-          itemsPerPage={12}
-          onBookmarkToggle={handleBookmarkToggle}
-        />
-      </ScrollView>
+          <PropertyList
+            properties={filteredProperties.map((p) => ({
+              ...p,
+              isBookmarked: bookmarkedProperties.includes(p.id),
+            }))}
+            itemsPerPage={12}
+            onBookmarkToggle={handleBookmarkToggle}
+          />
+        </ScrollView>
+      </View>
     </SafeAreaView>
   );
 }
@@ -581,9 +589,15 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#f5f5f5",
   },
+  contentWrapper: {
+    flex: 1,
+  },
   content: {
     flex: 1,
     paddingHorizontal: 16,
+  },
+  scrollContent: {
+    paddingBottom: 0, // Remove padding
   },
   heroSection: {
     paddingVertical: 20,

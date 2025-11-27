@@ -1,6 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
 
 interface Property {
   id: number;
@@ -46,6 +47,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
   property,
   onBookmarkToggle,
 }) => {
+  const router = useRouter();
   const { id, title, price, location, image, isBookmarked, type } = property;
 
   const formattedPrice = formatPrice(price);
@@ -75,8 +77,15 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
 
   const statusInfo = getStatusLabel(type);
 
+  const handleCardPress = () => {
+    router.push({
+      pathname: "/property/[id]/page",
+      params: { id: id.toString() },
+    });
+  };
+
   return (
-    <View style={styles.cardContainer}>
+    <TouchableOpacity style={styles.cardContainer} onPress={handleCardPress}>
       <View style={styles.imageContainer}>
         <Image
           source={{ uri: image }}
@@ -94,7 +103,10 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
         {/* Bookmark Button */}
         <TouchableOpacity
           style={styles.bookmarkButton}
-          onPress={() => onBookmarkToggle(id)}
+          onPress={(e) => {
+            e.stopPropagation(); // Prevent triggering card press
+            onBookmarkToggle(id);
+          }}
         >
           <Ionicons
             name={isBookmarked ? "bookmark" : "bookmark-outline"}
@@ -120,7 +132,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
           <Text style={styles.priceText}>{formattedPrice}</Text>
         </View>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 

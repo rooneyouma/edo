@@ -12,6 +12,7 @@ import {
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Ionicons } from "@expo/vector-icons";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import PropertyCard from "./PropertyCard";
 import PropertyPagination from "./PropertyPagination";
 
@@ -38,7 +39,7 @@ interface PropertyListProps {
 
 const PropertyList: React.FC<PropertyListProps> = ({
   properties,
-  itemsPerPage = 12, // Match web app's PROPERTIES_PER_PAGE = 12
+  itemsPerPage = 12,
   onBookmarkToggle,
 }) => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -48,6 +49,7 @@ const PropertyList: React.FC<PropertyListProps> = ({
   const [showScrollTop, setShowScrollTop] = useState(false);
   const flatListRef = useRef<FlatList>(null);
   const scrollY = useRef(new Animated.Value(0)).current;
+  const insets = useSafeAreaInsets(); // Get safe area insets
 
   // Load bookmarked properties from AsyncStorage on component mount
   useEffect(() => {
@@ -158,7 +160,10 @@ const PropertyList: React.FC<PropertyListProps> = ({
             keyExtractor={(item) => item.id.toString()}
             numColumns={2}
             columnWrapperStyle={styles.columnWrapper}
-            contentContainerStyle={styles.listContainer}
+            contentContainerStyle={[
+              styles.listContainer,
+              { paddingBottom: Math.max(insets.bottom, 16) },
+            ]}
             showsVerticalScrollIndicator={false}
             onScroll={handleScroll}
             scrollEventThrottle={16}
@@ -181,10 +186,10 @@ const PropertyList: React.FC<PropertyListProps> = ({
         </View>
       )}
 
-      {/* Scroll to top button */}
+      {/* Scroll to top button - positioned above navigation buttons */}
       {showScrollTop && (
         <TouchableOpacity
-          style={styles.scrollTopButton}
+          style={[styles.scrollTopButton, { bottom: 100 + insets.bottom }]}
           onPress={scrollToTop}
           accessibilityLabel="Scroll to top"
         >
@@ -200,7 +205,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   listContainer: {
-    paddingBottom: 16,
+    // paddingBottom dynamically set based on safe area insets
   },
   columnWrapper: {
     justifyContent: "space-between",
@@ -211,7 +216,6 @@ const styles = StyleSheet.create({
   },
   scrollTopButton: {
     position: "absolute",
-    bottom: 100,
     right: 20,
     backgroundColor: "#009688",
     width: 50,

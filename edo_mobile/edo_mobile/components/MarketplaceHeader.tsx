@@ -136,7 +136,10 @@ const MarketplaceHeader = () => {
                 />
                 <Text style={styles.menuItemText}>FAQ</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.menuItem}>
+              <TouchableOpacity
+                style={styles.menuItem}
+                onPress={navigateToSettings}
+              >
                 <Ionicons
                   name="settings-outline"
                   size={20}
@@ -234,19 +237,21 @@ const styles = StyleSheet.create({
   },
   menuItemsContainer: {
     paddingVertical: 8,
-    paddingBottom: 32, // Increased bottom padding for better spacing
+    // Reduced padding to decrease spacing between menu items
   },
   menuItem: {
     flexDirection: "row",
     alignItems: "center",
-    paddingVertical: 14,
+    // Reduced padding to decrease spacing between menu items
+    paddingVertical: 8,
     paddingHorizontal: 16,
   },
   // Updated style for the last menu item
   lastMenuItem: {
     flexDirection: "row",
     alignItems: "center",
-    paddingVertical: 14,
+    // Reduced padding to decrease spacing between menu items
+    paddingVertical: 8,
     paddingHorizontal: 16,
     // Removed marginBottom to prevent spacing issues
   },
