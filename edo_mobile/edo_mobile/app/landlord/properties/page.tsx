@@ -6,13 +6,12 @@ import {
   ScrollView,
   SafeAreaView,
   TouchableOpacity,
-  Modal,
   TextInput,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import * as NavigationBar from "expo-navigation-bar";
+import LandlordSidebar from "../../../components/LandlordSidebar";
 
 export default function LandlordProperties() {
   const router = useRouter();
@@ -110,89 +109,13 @@ export default function LandlordProperties() {
     return ["all", ...Array.from(new Set(types))];
   }, [properties]);
 
-  // Sidebar menu items
-  const menuItems = [
-    { label: "Dashboard", icon: "grid-outline", route: "/landlord/page" },
-    {
-      label: "Properties",
-      icon: "home",
-      route: "/landlord/properties/page",
-    },
-    {
-      label: "Tenants",
-      icon: "people",
-      route: "/landlord/tenants/page",
-    },
-    {
-      label: "Maintenance",
-      icon: "construct",
-      route: "/landlord/maintenance/page",
-    },
-    {
-      label: "Payments",
-      icon: "cash",
-      route: "/landlord/payments/page",
-    },
-    {
-      label: "Notices",
-      icon: "document-text",
-      route: "/landlord/notices/page",
-    },
-    { label: "Settings", icon: "settings", route: "/settings/page" },
-  ];
-
-  const navigateTo = (route: any) => {
-    setSidebarOpen(false);
-    router.push(route);
-  };
-
   return (
     <SafeAreaView style={[styles.container, { paddingTop: insets.top }]}>
-      {/* Sidebar Modal */}
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={sidebarOpen}
-        onRequestClose={() => setSidebarOpen(false)}
-      >
-        <TouchableOpacity
-          style={styles.sidebarOverlay}
-          onPress={() => setSidebarOpen(false)}
-          onLayout={() => {
-            // Preserve navigation bar styling when modal is active
-            NavigationBar.setButtonStyleAsync("dark");
-          }}
-        >
-          <View style={styles.sidebar}>
-            <View style={styles.sidebarHeader}>
-              <Text style={styles.sidebarTitle}>Landlord Menu</Text>
-              <TouchableOpacity onPress={() => setSidebarOpen(false)}>
-                <Ionicons name="close" size={24} color="#333" />
-              </TouchableOpacity>
-            </View>
-
-            <View style={styles.sidebarContent}>
-              {menuItems.map((item, index) => (
-                <TouchableOpacity
-                  key={index}
-                  style={styles.sidebarItem}
-                  onPress={() => navigateTo(item.route)}
-                >
-                  <Ionicons name={item.icon as any} size={20} color="#009688" />
-                  <Text style={styles.sidebarItemText}>{item.label}</Text>
-                </TouchableOpacity>
-              ))}
-            </View>
-
-            <View style={styles.sidebarFooter}>
-              <TouchableOpacity style={styles.sidebarFooterItem}>
-                <Ionicons name="log-out" size={20} color="#EF4444" />
-                <Text style={styles.sidebarFooterText}>Logout</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </TouchableOpacity>
-      </Modal>
+      <LandlordSidebar
+        isOpen={sidebarOpen}
+        onClose={() => setSidebarOpen(false)}
+        currentRoute="/landlord/properties/page"
+      />
 
       <View style={styles.header}>
         <TouchableOpacity onPress={() => setSidebarOpen(true)}>

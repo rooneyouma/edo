@@ -15,6 +15,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import LandlordSidebar from "../../../components/LandlordSidebar";
 
 // Types for our payment data
 interface Payment {
@@ -51,35 +52,6 @@ export default function LandlordPayments() {
   const [filtersExpanded, setFiltersExpanded] = useState(false);
 
   // Sidebar menu items
-  const menuItems = [
-    { label: "Dashboard", icon: "grid-outline", route: "/landlord/page" },
-    {
-      label: "Properties",
-      icon: "home",
-      route: "/landlord/properties/page",
-    },
-    {
-      label: "Tenants",
-      icon: "people",
-      route: "/landlord/tenants/page",
-    },
-    {
-      label: "Maintenance",
-      icon: "construct",
-      route: "/landlord/maintenance/page",
-    },
-    {
-      label: "Payments",
-      icon: "cash",
-      route: "/landlord/payments/page",
-    },
-    {
-      label: "Notices",
-      icon: "document-text",
-      route: "/landlord/notices/page",
-    },
-    { label: "Settings", icon: "settings", route: "/settings/page" },
-  ];
 
   // Mock data for payments (in a real app, this would come from an API)
   const mockPayments: Payment[] = [
@@ -291,11 +263,6 @@ export default function LandlordPayments() {
     paymentMethodFilter,
     sortOrder,
   ]);
-
-  const navigateTo = (route: string) => {
-    setSidebarOpen(false);
-    router.push(route as any);
-  };
 
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
@@ -739,53 +706,11 @@ export default function LandlordPayments() {
 
   return (
     <SafeAreaView style={[styles.container, { paddingTop: insets.top }]}>
-      {/* Sidebar Modal */}
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={sidebarOpen}
-        onRequestClose={() => setSidebarOpen(false)}
-      >
-        <TouchableOpacity
-          style={styles.sidebarOverlay}
-          onPress={() => setSidebarOpen(false)}
-        >
-          <View style={styles.sidebar}>
-            <View style={styles.sidebarHeader}>
-              <Text style={styles.sidebarTitle}>Landlord Menu</Text>
-              <TouchableOpacity onPress={() => setSidebarOpen(false)}>
-                <Ionicons name="close" size={24} color="#333" />
-              </TouchableOpacity>
-            </View>
-
-            <View style={styles.sidebarContent}>
-              {menuItems.map((item, index) => (
-                <TouchableOpacity
-                  key={index}
-                  style={styles.sidebarItem}
-                  onPress={() => navigateTo(item.route)}
-                >
-                  <Ionicons name={item.icon as any} size={20} color="#009688" />
-                  <Text style={styles.sidebarItemText}>{item.label}</Text>
-                </TouchableOpacity>
-              ))}
-            </View>
-
-            <View style={styles.sidebarFooter}>
-              <TouchableOpacity
-                style={styles.sidebarFooterItem}
-                onPress={() => {
-                  AsyncStorage.removeItem("access_token");
-                  router.push("/auth/signin" as any);
-                }}
-              >
-                <Ionicons name="log-out" size={20} color="#EF4444" />
-                <Text style={styles.sidebarFooterText}>Logout</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </TouchableOpacity>
-      </Modal>
+      <LandlordSidebar
+        isOpen={sidebarOpen}
+        onClose={() => setSidebarOpen(false)}
+        currentRoute="/landlord/payments/page"
+      />
 
       <View style={styles.header}>
         <TouchableOpacity onPress={() => setSidebarOpen(true)}>
@@ -930,61 +855,6 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     paddingHorizontal: 16,
-  },
-  sidebarOverlay: {
-    flex: 1,
-    backgroundColor: "rgba(0,0,0,0.5)",
-  },
-  sidebar: {
-    width: "80%",
-    height: "100%",
-    backgroundColor: "white",
-    paddingTop: 50,
-    paddingLeft: 20,
-    paddingRight: 20,
-    paddingBottom: 20,
-    justifyContent: "space-between",
-  },
-  sidebarHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 30,
-  },
-  sidebarTitle: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: "#333",
-  },
-  sidebarContent: {
-    flex: 1,
-  },
-  sidebarItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingVertical: 15,
-    borderBottomWidth: 1,
-    borderBottomColor: "#f0f0f0",
-  },
-  sidebarItemText: {
-    fontSize: 16,
-    color: "#333",
-    marginLeft: 15,
-  },
-  sidebarFooter: {
-    borderTopWidth: 1,
-    borderTopColor: "#f0f0f0",
-    paddingTop: 20,
-  },
-  sidebarFooterItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingVertical: 15,
-  },
-  sidebarFooterText: {
-    fontSize: 16,
-    color: "#EF4444",
-    marginLeft: 15,
   },
   section: {
     marginVertical: 16,

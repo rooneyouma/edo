@@ -7,11 +7,11 @@ import {
   SafeAreaView,
   TouchableOpacity,
   Image,
-  Modal,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import TenantSidebar from "../../components/TenantSidebar";
 
 export default function TenantDashboard() {
   const router = useRouter();
@@ -83,25 +83,6 @@ export default function TenantDashboard() {
     },
   ];
 
-  // Sidebar menu items
-  const menuItems = [
-    { label: "Dashboard", icon: "home", route: "/tenant/page" },
-    {
-      label: "My Rentals",
-      icon: "home-outline",
-      route: "/tenant/rentals/page",
-    },
-    { label: "Payments", icon: "cash", route: "/tenant/payments/page" },
-    {
-      label: "Maintenance",
-      icon: "construct",
-      route: "/tenant/maintenance/page",
-    },
-    { label: "Notices", icon: "document-text", route: "/tenant/notices/page" },
-    { label: "Messages", icon: "chatbubble", route: "/tenant/messages/page" },
-    { label: "Settings", icon: "settings", route: "/settings/page" },
-  ];
-
   const handleQuickAction = (action: string) => {
     switch (action) {
       case "payRent":
@@ -121,54 +102,14 @@ export default function TenantDashboard() {
     }
   };
 
-  const navigateTo = (route: any) => {
-    setSidebarOpen(false);
-    router.push(route);
-  };
-
   return (
     <SafeAreaView style={[styles.container, { paddingTop: insets.top }]}>
-      {/* Sidebar Modal */}
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={sidebarOpen}
-        onRequestClose={() => setSidebarOpen(false)}
-      >
-        <TouchableOpacity
-          style={styles.sidebarOverlay}
-          onPress={() => setSidebarOpen(false)}
-        >
-          <View style={styles.sidebar}>
-            <View style={styles.sidebarHeader}>
-              <Text style={styles.sidebarTitle}>Tenant Menu</Text>
-              <TouchableOpacity onPress={() => setSidebarOpen(false)}>
-                <Ionicons name="close" size={24} color="#333" />
-              </TouchableOpacity>
-            </View>
-
-            <View style={styles.sidebarContent}>
-              {menuItems.map((item, index) => (
-                <TouchableOpacity
-                  key={index}
-                  style={styles.sidebarItem}
-                  onPress={() => navigateTo(item.route)}
-                >
-                  <Ionicons name={item.icon as any} size={20} color="#009688" />
-                  <Text style={styles.sidebarItemText}>{item.label}</Text>
-                </TouchableOpacity>
-              ))}
-            </View>
-
-            <View style={styles.sidebarFooter}>
-              <TouchableOpacity style={styles.sidebarFooterItem}>
-                <Ionicons name="log-out" size={20} color="#EF4444" />
-                <Text style={styles.sidebarFooterText}>Logout</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </TouchableOpacity>
-      </Modal>
+      {/* Tenant Sidebar */}
+      <TenantSidebar
+        isOpen={sidebarOpen}
+        onClose={() => setSidebarOpen(false)}
+        currentRoute="/tenant/page"
+      />
 
       <View style={styles.header}>
         <TouchableOpacity onPress={() => setSidebarOpen(true)}>
@@ -299,61 +240,6 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     paddingHorizontal: 16,
-  },
-  sidebarOverlay: {
-    flex: 1,
-    backgroundColor: "rgba(0,0,0,0.5)",
-  },
-  sidebar: {
-    width: "80%",
-    height: "100%",
-    backgroundColor: "white",
-    paddingTop: 50,
-    paddingLeft: 20,
-    paddingRight: 20,
-    paddingBottom: 20,
-    justifyContent: "space-between",
-  },
-  sidebarHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 30,
-  },
-  sidebarTitle: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: "#333",
-  },
-  sidebarContent: {
-    flex: 1,
-  },
-  sidebarItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingVertical: 15,
-    borderBottomWidth: 1,
-    borderBottomColor: "#f0f0f0",
-  },
-  sidebarItemText: {
-    fontSize: 16,
-    color: "#333",
-    marginLeft: 15,
-  },
-  sidebarFooter: {
-    borderTopWidth: 1,
-    borderTopColor: "#f0f0f0",
-    paddingTop: 20,
-  },
-  sidebarFooterItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingVertical: 15,
-  },
-  sidebarFooterText: {
-    fontSize: 16,
-    color: "#EF4444",
-    marginLeft: 15,
   },
   welcomeBanner: {
     flexDirection: "row",

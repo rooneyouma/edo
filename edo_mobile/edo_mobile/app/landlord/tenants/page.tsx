@@ -6,13 +6,13 @@ import {
   ScrollView,
   SafeAreaView,
   TouchableOpacity,
-  Modal,
   TextInput,
+  Modal,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import * as NavigationBar from "expo-navigation-bar";
+import LandlordSidebar from "../../../components/LandlordSidebar";
 
 // Define the Tenant type
 type Tenant = {
@@ -234,42 +234,6 @@ export default function LandlordTenants() {
     return ["all", ...Array.from(new Set(propertyList))];
   }, [tenants]);
 
-  // Sidebar menu items
-  const menuItems = [
-    { label: "Dashboard", icon: "grid-outline", route: "/landlord/page" },
-    {
-      label: "Properties",
-      icon: "home",
-      route: "/landlord/properties/page",
-    },
-    {
-      label: "Tenants",
-      icon: "people",
-      route: "/landlord/tenants/page",
-    },
-    {
-      label: "Maintenance",
-      icon: "construct",
-      route: "/landlord/maintenance/page",
-    },
-    {
-      label: "Payments",
-      icon: "cash",
-      route: "/landlord/payments/page",
-    },
-    {
-      label: "Notices",
-      icon: "document-text",
-      route: "/landlord/notices/page",
-    },
-    { label: "Settings", icon: "settings", route: "/settings/page" },
-  ];
-
-  const navigateTo = (route: any) => {
-    setSidebarOpen(false);
-    router.push(route);
-  };
-
   const getStatusColor = (status: string) => {
     switch (status) {
       case "Active":
@@ -301,51 +265,11 @@ export default function LandlordTenants() {
 
   return (
     <SafeAreaView style={[styles.container, { paddingTop: insets.top }]}>
-      {/* Sidebar Modal */}
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={sidebarOpen}
-        onRequestClose={() => setSidebarOpen(false)}
-      >
-        <TouchableOpacity
-          style={styles.sidebarOverlay}
-          onPress={() => setSidebarOpen(false)}
-          onLayout={() => {
-            // Preserve navigation bar styling when modal is active
-            NavigationBar.setButtonStyleAsync("dark");
-          }}
-        >
-          <View style={styles.sidebar}>
-            <View style={styles.sidebarHeader}>
-              <Text style={styles.sidebarTitle}>Landlord Menu</Text>
-              <TouchableOpacity onPress={() => setSidebarOpen(false)}>
-                <Ionicons name="close" size={24} color="#333" />
-              </TouchableOpacity>
-            </View>
-
-            <View style={styles.sidebarContent}>
-              {menuItems.map((item, index) => (
-                <TouchableOpacity
-                  key={index}
-                  style={styles.sidebarItem}
-                  onPress={() => navigateTo(item.route)}
-                >
-                  <Ionicons name={item.icon as any} size={20} color="#009688" />
-                  <Text style={styles.sidebarItemText}>{item.label}</Text>
-                </TouchableOpacity>
-              ))}
-            </View>
-
-            <View style={styles.sidebarFooter}>
-              <TouchableOpacity style={styles.sidebarFooterItem}>
-                <Ionicons name="log-out" size={20} color="#EF4444" />
-                <Text style={styles.sidebarFooterText}>Logout</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </TouchableOpacity>
-      </Modal>
+      <LandlordSidebar
+        isOpen={sidebarOpen}
+        onClose={() => setSidebarOpen(false)}
+        currentRoute="/landlord/tenants/page"
+      />
 
       {/* Tenant Detail Modal */}
       <Modal
@@ -354,25 +278,18 @@ export default function LandlordTenants() {
         visible={modalVisible}
         onRequestClose={closeTenantModal}
       >
-        <TouchableOpacity
-          style={styles.modalOverlay}
-          onPress={closeTenantModal}
-          onLayout={() => {
-            // Preserve navigation bar styling when modal is active
-            NavigationBar.setButtonStyleAsync("dark");
-          }}
-        >
-          <TouchableOpacity style={styles.modalContent} activeOpacity={1}>
-            {selectedTenant && (
-              <>
-                <View style={styles.modalHeader}>
-                  <Text style={styles.modalTitle}>{selectedTenant.name}</Text>
-                  <TouchableOpacity onPress={closeTenantModal}>
-                    <Ionicons name="close" size={24} color="#333" />
-                  </TouchableOpacity>
-                </View>
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>{selectedTenant?.name}</Text>
+              <TouchableOpacity onPress={closeTenantModal}>
+                <Ionicons name="close" size={24} color="#333" />
+              </TouchableOpacity>
+            </View>
 
-                <ScrollView style={styles.modalBody}>
+            <ScrollView style={styles.modalBody}>
+              {selectedTenant && (
+                <>
                   <View style={styles.detailRow}>
                     <Text style={styles.detailLabel}>Property</Text>
                     <Text style={styles.detailValue}>
@@ -388,13 +305,6 @@ export default function LandlordTenants() {
                   </View>
 
                   <View style={styles.detailRow}>
-                    <Text style={styles.detailLabel}>Email</Text>
-                    <Text style={styles.detailValue}>
-                      {selectedTenant.email}
-                    </Text>
-                  </View>
-
-                  <View style={styles.detailRow}>
                     <Text style={styles.detailLabel}>Phone</Text>
                     <Text style={styles.detailValue}>
                       {selectedTenant.phone}
@@ -402,9 +312,16 @@ export default function LandlordTenants() {
                   </View>
 
                   <View style={styles.detailRow}>
-                    <Text style={styles.detailLabel}>Rent</Text>
+                    <Text style={styles.detailLabel}>Email</Text>
                     <Text style={styles.detailValue}>
-                      ${selectedTenant.rent}/month
+                      {selectedTenant.email}
+                    </Text>
+                  </View>
+
+                  <View style={styles.detailRow}>
+                    <Text style={styles.detailLabel}>Monthly Rent</Text>
+                    <Text style={styles.detailValue}>
+                      ${selectedTenant.rent}
                     </Text>
                   </View>
 
@@ -433,28 +350,32 @@ export default function LandlordTenants() {
                   </View>
 
                   <View style={styles.detailRow}>
-                    <Text style={styles.detailLabel}>Lease Period</Text>
+                    <Text style={styles.detailLabel}>Lease Start</Text>
                     <Text style={styles.detailValue}>
-                      {selectedTenant.leaseStart} - {selectedTenant.leaseEnd}
+                      {selectedTenant.leaseStart}
                     </Text>
                   </View>
-                </ScrollView>
 
-                <View style={styles.modalActions}>
-                  <TouchableOpacity style={styles.editButton}>
-                    <Ionicons name="create-outline" size={20} color="#009688" />
-                    <Text style={styles.editButtonText}>Edit</Text>
-                  </TouchableOpacity>
+                  <View style={styles.detailRow}>
+                    <Text style={styles.detailLabel}>Lease End</Text>
+                    <Text style={styles.detailValue}>
+                      {selectedTenant.leaseEnd}
+                    </Text>
+                  </View>
+                </>
+              )}
+            </ScrollView>
 
-                  <TouchableOpacity style={styles.deleteButton}>
-                    <Ionicons name="trash-outline" size={20} color="#009688" />
-                    <Text style={styles.deleteButtonText}>Delete</Text>
-                  </TouchableOpacity>
-                </View>
-              </>
-            )}
-          </TouchableOpacity>
-        </TouchableOpacity>
+            <View style={styles.modalFooter}>
+              <TouchableOpacity
+                style={styles.closeButton}
+                onPress={closeTenantModal}
+              >
+                <Text style={styles.closeButtonText}>Close</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
       </Modal>
 
       <View style={styles.header}>
@@ -620,14 +541,14 @@ export default function LandlordTenants() {
 
                   <View style={styles.cardContent}>
                     <View style={styles.cardRow}>
-                      <Ionicons name="home" size={14} color="#6b7280" />
+                      <Ionicons name="home" size={14} color="#009688" />
                       <Text style={styles.cardText} numberOfLines={1}>
                         {tenant.property}
                       </Text>
                     </View>
 
                     <View style={styles.cardRow}>
-                      <Ionicons name="cube" size={14} color="#6b7280" />
+                      <Ionicons name="cube" size={14} color="#009688" />
                       <Text style={styles.cardText}>
                         Unit {tenant.unit_number}
                       </Text>
@@ -784,29 +705,30 @@ const styles = StyleSheet.create({
   modalOverlay: {
     flex: 1,
     backgroundColor: "rgba(0,0,0,0.5)",
-    justifyContent: "flex-end",
+    justifyContent: "center",
+    alignItems: "center",
   },
   modalContent: {
     backgroundColor: "white",
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    maxHeight: "70%",
+    borderRadius: 8,
+    width: "90%",
+    maxHeight: "80%",
   },
   modalHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    padding: 20,
+    padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: "#f0f0f0",
+    borderBottomColor: "#e0e0e0",
   },
   modalTitle: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: "bold",
     color: "#333",
   },
   modalBody: {
-    padding: 20,
+    padding: 16,
   },
   detailRow: {
     flexDirection: "row",
@@ -835,44 +757,21 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "500",
   },
-  modalActions: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    padding: 20,
+  modalFooter: {
+    padding: 16,
+    borderTopWidth: 1,
+    borderTopColor: "#e0e0e0",
   },
-  editButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    borderWidth: 1,
-    borderColor: "#009688",
-    borderRadius: 8,
-    paddingHorizontal: 20,
+  closeButton: {
+    backgroundColor: "#009688",
     paddingVertical: 12,
-    flex: 1,
-    marginRight: 10,
-  },
-  editButtonText: {
-    color: "#009688",
-    fontSize: 16,
-    fontWeight: "500",
-    marginLeft: 8,
-  },
-  deleteButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    borderWidth: 1,
-    borderColor: "#009688",
     borderRadius: 8,
-    paddingHorizontal: 20,
-    paddingVertical: 12,
-    flex: 1,
-    marginLeft: 10,
+    alignItems: "center",
   },
-  deleteButtonText: {
-    color: "#009688",
+  closeButtonText: {
+    color: "white",
     fontSize: 16,
-    fontWeight: "500",
-    marginLeft: 8,
+    fontWeight: "600",
   },
   pageHeader: {
     marginVertical: 16,
