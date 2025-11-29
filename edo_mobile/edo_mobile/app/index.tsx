@@ -516,7 +516,10 @@ export default function MarketplaceHome() {
 
             {/* CTA Buttons */}
             <View style={styles.ctaButtonsContainer}>
-              <TouchableOpacity style={styles.primaryButton}>
+              <TouchableOpacity
+                style={styles.primaryButton}
+                onPress={() => router.push("/landlord/page")}
+              >
                 <Text style={styles.primaryButtonText}>
                   To Property Management
                 </Text>
@@ -528,7 +531,10 @@ export default function MarketplaceHome() {
                 />
               </TouchableOpacity>
 
-              <TouchableOpacity style={styles.secondaryButton}>
+              <TouchableOpacity
+                style={styles.secondaryButton}
+                onPress={() => router.push("/tenant/page")}
+              >
                 <Text style={styles.secondaryButtonText}>
                   To Tenant Dashboard
                 </Text>
